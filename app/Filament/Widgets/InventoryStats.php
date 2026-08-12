@@ -65,7 +65,7 @@ class InventoryStats extends StatsOverviewWidget
             Stat::make('Stock Movements Today', $stockMovementsToday)
                 ->description('Today activity')
                 ->icon('heroicon-o-arrow-path')
-                ->color('secondary'),
+                ->color('gray'),
 
             Stat::make('Purchase Orders This Month', $purchaseOrdersThisMonth)
                 ->description('Monthly orders')

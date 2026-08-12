@@ -38,11 +38,59 @@ class LoginRequest extends FormRequest
      *
      * @throws ValidationException
      */
-    public function authenticate(): void
-    {
-        $this->ensureIsNotRateLimited();
+   public function authenticate(): void
+{
+    $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+    $credentials = [
+        'email' => $this->email,
+        'password' => $this->password,
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Restrict login based on the login page
+    |--------------------------------------------------------------------------
+    */
+
+    // Admin Login (/admin-login)
+    if ($this->route()->getName() === 'admin.login.store') {
+        $credentials['role'] = 'admin';
+    }
+
+    // POS Login (/pos/login)
+    elseif ($this->route()->getName() === 'pos.login.post') {
+        $credentials['role'] = 'cashier';
+    }
+
+    // Normal Login (/login)
+    else {
+        $credentials['role'] = ['patient', 'dentist', 'staff', 'cashier', 'customer'];
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Authenticate
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        isset($credentials['role']) &&
+        is_array($credentials['role'])
+    ) {
+
+        $user = \App\Models\User::where('email', $credentials['email'])
+            ->whereIn('role', $credentials['role'])
+            ->first();
+
+        if (
+            ! $user ||
+            ! \Illuminate\Support\Facades\Hash::check(
+                $credentials['password'],
+                $user->password
+            )
+        ) {
+
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -50,8 +98,22 @@ class LoginRequest extends FormRequest
             ]);
         }
 
-        RateLimiter::clear($this->throttleKey());
+        Auth::login($user, $this->boolean('remember'));
+
+    } else {
+
+        if (! Auth::attempt($credentials, $this->boolean('remember'))) {
+
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => trans('auth.failed'),
+            ]);
+        }
     }
+
+    RateLimiter::clear($this->throttleKey());
+}
 
     /**
      * Ensure the login request is not rate limited.

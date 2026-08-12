@@ -129,22 +129,28 @@
                 </div>
 
                 <div class="hidden md:flex space-x-10 items-center font-semibold text-sm">
-                    <a href="#platform" class="text-slate-600 hover:text-pink-600 transition-colors">Platform</a>
-                    <a href="#solutions" class="text-slate-600 hover:text-pink-600 transition-colors">Solutions</a>
-                    <a href="#about-dev" class="text-slate-600 hover:text-pink-600 transition-colors">The Team</a>
-                    <a href="#location" class="text-slate-600 hover:text-pink-600 transition-colors">Location</a>
+                    <a href="#home" class="text-slate-600 hover:text-pink-600 transition-colors">Home</a>
+                    <a href="#team" class="text-slate-600 hover:text-pink-600 transition-colors">The Team</a>
+                    <a href="#services" class="text-slate-600 hover:text-pink-600 transition-colors">Our Services</a>
                     <div class="h-6 w-px bg-slate-200 mx-2"></div>
 
-                    @auth
-                        <a href="{{ url('/admin') }}" class="text-slate-600 hover:text-pink-600 transition-colors">Dashboard</a>
-                    @else
-                        <a href="{{ route('login') }}" class="text-slate-600 hover:text-pink-600 transition-colors">Login</a>
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="btn-premium bg-pink-600 text-white px-6 py-2.5 rounded-lg font-bold shadow-lg hover:bg-pink-700 transition-all">
-                                Sign Up
-                            </a>
-                        @endif
-                    @endauth
+                    @if(Auth::check() && Auth::user()->role === 'admin')
+
+<a href="{{ url('/admin') }}"
+        class="text-slate-600 hover:text-pink-600 transition-colors">
+        Admin Dashboard
+    </a>
+
+@else
+
+
+
+    <a href="{{ url('/admin/login') }}"
+        class="btn-premium bg-pink-600 text-white px-6 py-2.5 rounded-lg font-bold shadow-lg hover:bg-pink-700 transition-all">
+        Login
+    </a>
+
+@endif
                 </div>
 
                 <div class="md:hidden">
@@ -155,28 +161,40 @@
             </div>
 
             <div id="mobile-menu" class="hidden md:hidden pb-4">
-                <div class="flex flex-col gap-4 font-semibold text-sm">
-                    <a href="#platform" class="text-slate-600 py-2">Platform</a>
-                    <a href="#solutions" class="text-slate-600 py-2">Solutions</a>
-                    <a href="#about-dev" class="text-slate-600 py-2">The Team</a>
-                    <a href="#location" class="text-slate-600 py-2">Location</a>
+    <div class="flex flex-col gap-4 font-semibold text-sm">
 
-                    @auth
-                        <a href="{{ url('/admin') }}" class="text-slate-600 py-2">Dashboard</a>
-                    @else
-                        <a href="{{ route('login') }}" class="text-slate-600 py-2">Login</a>
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="btn-premium bg-pink-600 text-white px-6 py-2.5 rounded-lg font-bold shadow-lg text-center">
-                                Get Started Now
-                            </a>
-                        @endif
-                    @endauth
-                </div>
+        <a href="#home" class="text-slate-600 py-2">Home</a>
+        <a href="#services" class="text-slate-600 py-2">Our Services</a>
+        <a href="#team" class="text-slate-600 py-2">The Team</a>
+
+        @if(Auth::check() && auth()->user()->role === 'admin')
+
+            <a href="{{ url('/admin') }}"
+                class="text-slate-600 py-2">
+                Admin Dashboard
+            </a>
+
+        @else
+
+            <a href="{{ url('/admin/login') }}"
+               class="text-slate-600 py-2">
+                Login
+            </a>
+
+            <a href="{{ url('/admin/login') }"
+               class="btn-premium bg-pink-600 text-white px-6 py-2.5 rounded-lg font-bold shadow-lg text-center">
+                Get Started Now
+            </a>
+
+        @endif
+
+    </div>
+</div>
             </div>
         </div>
     </nav>
 
-    <section class="relative pt-20 pb-20 lg:pt-32 lg:pb-40 overflow-hidden hero-gradient">
+    <section id="home" class="relative pt-20 pb-20 lg:pt-32 lg:pb-40 overflow-hidden hero-gradient">
         <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
             <div class="grid lg:grid-cols-2 gap-16 items-start">
                 <div>
@@ -193,19 +211,33 @@
                     </p>
                     <div class="flex flex-col sm:flex-row gap-5 mb-12">
                         @auth
-                            <a href="{{ url('/admin') }}" class="btn-premium bg-slate-900 text-white px-10 py-5 rounded-xl font-bold text-lg flex items-center justify-center gap-3">
-                                Go to Dashboard
-                                <i data-lucide="chevron-right" class="w-5 h-5"></i>
-                            </a>
-                        @else
-                            @if (Route::has('register'))
-                                <a href="{{ route('register') }}" class="btn-premium bg-slate-900 text-white px-10 py-5 rounded-xl font-bold text-lg flex items-center justify-center gap-3">
-                                    Sign Up Now
-                                    <i data-lucide="chevron-right" class="w-5 h-5"></i>
-                                </a>
-                            @endif
-                        @endauth
-                    </div>
+
+   @if(Auth::check() && auth()->user()->role === 'admin')
+
+    <a href="{{ url('/admin') }}"
+        class="btn-premium bg-slate-900 text-white px-10 py-5 rounded-xl font-bold text-lg flex items-center justify-center gap-3">
+        Admin Dashboard
+    </a>
+
+@else
+
+    <a href="{{ url('/admin/login') }}"
+        class="btn-premium bg-slate-900 text-white px-10 py-5 rounded-xl font-bold text-lg flex items-center justify-center gap-3">
+        Get Started
+    </a>
+
+@endif
+
+    @else
+
+        <a href="{{ url('/admin/login') }}"
+            class="btn-premium bg-slate-900 text-white px-10 py-5 rounded-xl font-bold text-lg flex items-center justify-center gap-3">
+            Start Now!
+        </a>
+
+    @endauth
+
+</div>
                 </div>
                 <div class="relative lg:mt-0 mt-12">
                     <div class="relative z-20 shadow-2xl rounded-3xl overflow-hidden border border-slate-200">
@@ -216,7 +248,7 @@
         </div>
     </section>
 
-    <section id="about-dev" class="py-24 bg-slate-50">
+    <section id="team" class="py-24 bg-slate-50">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="text-center mb-16">
                 <h2 class="text-pink-600 font-bold tracking-widest uppercase text-xs mb-4">The Engineering Core</h2>
@@ -380,58 +412,93 @@
         </div>
     </section>
 
-    <section id="location" class="py-24 bg-white">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-pink-600 font-bold tracking-widest uppercase text-xs mb-4">Our Flagship Clinic</h2>
-                <h2 class="text-4xl lg:text-5xl font-extrabold text-slate-900 mb-4">Visit Us in the Heart of the City</h2>
-                <p class="text-slate-500 max-w-2xl mx-auto">Experience the future of dentistry at our showcase facility where we test every new platform feature.</p>
-            </div>
 
-            <div class="grid lg:grid-cols-3 gap-8 items-start">
-                <div class="lg:col-span-1 space-y-6">
-                    <div class="bg-slate-50 p-8 rounded-2xl border border-slate-100">
-                        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
-                            <i data-lucide="map-pin" class="text-pink-600"></i> Headquarters
-                        </h3>
-                        <p class="text-slate-600 leading-relaxed mb-6">
-                            Door 5, MDFI Bldg,<br>
-                            Rafael Alunan Ave, <br>
-                            Brgy. Zone III,<br>
-                            Koronadal, South Cotabato (9506)<br>
-                        </p>
+  <!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-                        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
-                            <i data-lucide="clock" class="text-pink-600"></i> Hours
-                        </h3>
-                        <ul class="text-slate-600 space-y-2 mb-6">
-                            <li class="flex justify-between"><span>Mon - Fri</span> <span class="font-semibold text-slate-900">8AM - 6PM</span></li>
-                            <li class="flex justify-between"><span>Saturday</span> <span class="font-semibold text-slate-900">9AM - 2PM</span></li>
-                        </ul>
+<!-- Animation -->
+<style>
+@keyframes pulseIcon {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+.group:hover .icon-pulse {
+    animation: pulseIcon 0.6s ease-in-out;
+}
+.icon-pulse {
+    will-change: transform;
+}
+</style>
 
-                        <a href="https://www.google.com/maps/dir/?api=1&destination=Door+5+MDFI+Bldg+Rafael+Alunan+Ave+Koronadal+South+Cotabato+9506"
-                           target="_blank"
-                           class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-slate-800 transition-all flex items-center justify-center gap-2">
-                            Get Directions
-                            <i data-lucide="corner-up-right" class="w-4 h-4"></i>
-                        </a>
-                    </div>
-                </div>
+<section id="services" class="py-24 bg-white relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
-                <div class="lg:col-span-2 rounded-3xl overflow-hidden shadow-2xl border border-slate-200 map-container h-[500px]">
-                    <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.8354345093747!2d-122.41941550000001!3d37.7749295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80859a6d00690021%3A0x4a501367f076adff!2sSan%20Francisco%2C%20CA!5e0!3m2!1sen!2sus!4v1715000000000!5m2!1sen!2sus"
-                        width="100%"
-                        height="100%"
-                        style="border:0;"
-                        allowfullscreen=""
-                        loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
-                </div>
-            </div>
+        <!-- Header -->
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <span class="text-xs font-extrabold text-primary-600 uppercase tracking-wider bg-primary-50 px-3 py-1.5 rounded-full">
+                Outstanding Admin Portfolio
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-3 tracking-tight">
+                Our Professional Admin Services
+            </h2>
+            <div class="w-16 h-1 bg-primary-500 mx-auto mt-4 rounded-full"></div>
+            <p class="text-slate-500 mt-4 leading-relaxed">
+                Our admin system delivers centralized oversight, enabling streamlined management of services, records, and daily operations.
+            </p>
         </div>
-    </section>
+
+        <!-- Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <!-- Inventory -->
+            <div onclick="selectService('Inventory')" class="group bg-slate-50 hover:bg-white rounded-3xl p-8 border hover:shadow-xl hover:-translate-y-1.5 transition-all cursor-pointer">
+                <div class="w-14 h-14 bg-primary-50 group-hover:bg-primary-500 rounded-2xl flex items-center justify-center text-primary-600 group-hover:text-white mb-6">
+                    <i class="fa-solid fa-boxes-stacked text-2xl icon-pulse"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Inventory</h3>
+                <p class="text-slate-500 text-sm mb-6">Tracks stock levels, manages supplies, and prevents shortages or overstocking.</p>
+            </div>
+
+            <!-- POS -->
+            <div onclick="selectService('Point-of-Sale')" class="group bg-slate-50 hover:bg-white rounded-3xl p-8 border hover:shadow-xl hover:-translate-y-1.5 transition-all cursor-pointer">
+                <div class="w-14 h-14 bg-primary-50 group-hover:bg-primary-500 rounded-2xl flex items-center justify-center text-primary-600 group-hover:text-white mb-6">
+                    <i class="fa-solid fa-cash-register text-2xl icon-pulse"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Point of Sale</h3>
+                <p class="text-slate-500 text-sm mb-6">Handles billing, payments, and transaction processing efficiently.</p>
+            </div>
+
+            <!-- Ordering -->
+            <div onclick="selectService('Ordering')" class="group bg-slate-50 hover:bg-white rounded-3xl p-8 border hover:shadow-xl hover:-translate-y-1.5 transition-all cursor-pointer">
+                <div class="w-14 h-14 bg-primary-50 group-hover:bg-primary-500 rounded-2xl flex items-center justify-center text-primary-600 group-hover:text-white mb-6">
+                    <i class="fa-solid fa-cart-shopping text-2xl icon-pulse"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Ordering</h3>
+                <p class="text-slate-500 text-sm mb-6">Simplifies ordering of products and services with accuracy and speed.</p>
+            </div>
+
+            <!-- Patient Records -->
+            <div onclick="selectService('Patient Records')" class="group bg-slate-50 hover:bg-white rounded-3xl p-8 border hover:shadow-xl hover:-translate-y-1.5 transition-all cursor-pointer">
+                <div class="w-14 h-14 bg-primary-50 group-hover:bg-primary-500 rounded-2xl flex items-center justify-center text-primary-600 group-hover:text-white mb-6">
+                    <i class="fa-solid fa-notes-medical text-2xl icon-pulse"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Patient Records</h3>
+                <p class="text-slate-500 text-sm mb-6">Securely stores and manages patient information for better healthcare decisions.</p>
+            </div>
+
+            <!-- Appointments -->
+            <div onclick="selectService('Appointments')" class="group bg-slate-50 hover:bg-white rounded-3xl p-8 border hover:shadow-xl hover:-translate-y-1.5 transition-all cursor-pointer">
+                <div class="w-14 h-14 bg-primary-50 group-hover:bg-primary-500 rounded-2xl flex items-center justify-center text-primary-600 group-hover:text-white mb-6">
+                    <i class="fa-solid fa-calendar-check text-2xl icon-pulse"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Appointments</h3>
+                <p class="text-slate-500 text-sm mb-6">Allows easy scheduling and management of clinic visits and bookings.</p>
+            </div>
+
+        </div>
+    </div>
+</section>
 
     <footer class="bg-slate-50 pt-24 pb-12 border-t border-slate-200">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
@@ -470,30 +537,5 @@
         </div>
     </footer>
 
-    <script>
-        lucide.createIcons();
-
-        const menuBtn = document.getElementById('menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        if (menuBtn && mobileMenu) {
-            menuBtn.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
-
-        window.addEventListener('scroll', () => {
-            const nav = document.querySelector('nav');
-            if (!nav) return;
-
-            if (window.scrollY > 50) {
-                nav.classList.add('shadow-xl', 'h-16');
-                nav.classList.remove('h-20');
-            } else {
-                nav.classList.remove('shadow-xl', 'h-16');
-                nav.classList.add('h-20');
-            }
-        });
-    </script>
 </body>
 </html>

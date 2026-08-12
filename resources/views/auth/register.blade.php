@@ -30,6 +30,16 @@
 
 <body class="min-h-screen flex items-center justify-center p-4">
 
+
+
+ <a href="{{ url('/') }}"
+       class="fixed top-6 left-6 flex items-center gap-2
+              text-base font-semibold text-slate-600
+              hover:text-pink-500 transition duration-200 group">
+        <span class="text-xl transform group-hover:-translate-x-1 transition">←</span>
+        Back
+    </a>
+
 <div class="card w-full max-w-md rounded-2xl shadow-xl p-8">
 
     <!-- REGISTER -->

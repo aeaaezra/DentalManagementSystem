@@ -13,10 +13,48 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+   <form method="POST"
+      action="{{ route('profile.update') }}"
+      enctype="multipart/form-data"
+      class="mt-6 space-y-6">
         @csrf
         @method('patch')
 
+        <!-- Profile Picture -->
+<div>
+
+    <x-input-label for="profile_picture" :value="__('Profile Picture')" />
+
+    <div class="mt-3 flex items-center gap-5">
+
+        <img
+            src="{{ $user->profile_picture
+                    ? asset('storage/'.$user->profile_picture)
+                    : 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=FCE7F3&color=E91E63' }}"
+            class="w-24 h-24 rounded-full object-cover border-2 border-pink-500"
+            id="preview">
+
+        <input
+            id="profile_picture"
+            name="profile_picture"
+            type="file"
+            accept="image/*"
+            onchange="previewImage(event)"
+            class="block w-full text-sm text-gray-700
+                   file:mr-4 file:py-2 file:px-4
+                   file:rounded-full
+                   file:border-0
+                   file:bg-pink-500
+                   file:text-white
+                   hover:file:bg-pink-600">
+
+    </div>
+
+    <x-input-error
+        class="mt-2"
+        :messages="$errors->get('profile_picture')" />
+
+</div>
         <div>
             <x-input-label for="name" :value="__('Name')" />
             <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />

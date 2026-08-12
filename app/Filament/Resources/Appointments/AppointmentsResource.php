@@ -29,6 +29,8 @@ class AppointmentsResource extends Resource
     protected static ?string $navigationLabel = 'Appointments';
 
     protected static ?string $recordTitleAttribute = 'id';
+
+
     public static function canViewAny(): bool
     {
         return true;

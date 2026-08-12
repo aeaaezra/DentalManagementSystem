@@ -48,6 +48,11 @@ class AppointmentsForm
                             ->required(),
                     ]),
 
+                    Textarea::make('treatment_summary')
+                    ->label('Treatment Summary')
+                    ->rows(4)
+                    ->visible(fn ($record) => $record?->status === 'completed') ,
+
                     Textarea::make('reason')
                         ->label('Reason for Appointment')
                         ->rows(2)

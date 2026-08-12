@@ -31,12 +31,13 @@ class UsersForm
                 Select::make('role')
                     ->label('Role')
                     ->options([
-                        'admin' => 'Admin',
-                        'cashier' => 'Cashier',
-                        'customer' => 'Customer',
-                        'patient' => 'Patient',
-                        'dentist' => 'Dentist',
-                        'staff' => 'Staff',
+                        'Admin' => 'Admin',
+                        'Staff' => 'Staff',
+                        'Dentist' => 'Dentist',
+                        'Patient' => 'Patient',
+                        'Customer' => 'Customer',
+                        'Cashier' => 'Cashier',
+
                     ])
 
                     ->required()

@@ -20,56 +20,143 @@ class AuthenticatedSessionController extends Controller
     }
 
     /**
-     * Handle an incoming authentication request.
+     * Handle login request
      */
-    public function store(LoginRequest $request): RedirectResponse
-    {
-        // Authenticate user
-        $request->authenticate();
+  public function store(LoginRequest $request): RedirectResponse
+{
+    // Authenticate user
+    $request->authenticate();
 
-        // Regenerate session
-        $request->session()->regenerate();
+    // Regenerate session
+    $request->session()->regenerate();
 
-        // Get logged in user
-        $user = Auth::user();
+    // Get authenticated user
+    $user = Auth::user();
 
-        // If no user found
-        if (!$user) {
-            return redirect()->route('login');
-        }
+if (!$user) {
+    return redirect()->route('login');
+}
 
-        // Convert role to lowercase and remove spaces
-        $role = strtolower(trim($user->role));
+/*
+|--------------------------------------------------------------------------
+| Google Authenticator Check
+|--------------------------------------------------------------------------
+*/
 
-        // Redirect based on role
-        return match ($role) {
+if ($user->two_factor_enabled) {
 
-            'admin' => redirect('/admin'),
+    // Save the user ID temporarily
+    session([
+        '2fa:user:id' => $user->id,
+    ]);
 
-            'patient' => redirect('/appointments-booking'),
+    // Logout until OTP is verified
+    Auth::logout();
 
-            'dentist' => redirect('/dentist'),
+    return redirect()->route('2fa.login');
+}
 
-            'cashier' => redirect('/cashier'),
+// Normalize role
+$role = strtolower(trim($user->role ?? ''));
 
-            'staff' => redirect('/staff'),
+    // Normalize role
+    $role = strtolower(trim($user->role ?? ''));
 
-            // Default redirect if role does not match
-            default => redirect('/admin'),
-        };
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Login (/admin-login)
+    |--------------------------------------------------------------------------
+    | Only administrators are allowed.
+    */
+    if (
+        $request->route()->getName() === 'admin.login.store'
+        && $role !== 'admin'
+    ) {
+        Auth::logout();
+
+        return back()->withErrors([
+            'email' => 'Only administrators can log in here.',
+        ])->onlyInput('email');
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Normal Login (/login)
+    |--------------------------------------------------------------------------
+    | Everyone EXCEPT admin can log in here.
+    */
+    if (
+        $request->route()->getName() === 'login'
+        && $role === 'admin'
+    ) {
+        Auth::logout();
+
+        return back()->withErrors([
+            'email' => 'Administrators must sign in through the Admin Login page.',
+        ])->onlyInput('email');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | POS Login (/pos/login)
+    |--------------------------------------------------------------------------
+    | Cashier only.
+    */
+    if (
+        $request->route()->getName() === 'pos.login.post'
+        && $role !== 'cashier'
+    ) {
+        Auth::logout();
+
+        return back()->withErrors([
+            'email' => 'Only cashier accounts can log in here.',
+        ])->onlyInput('email');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Redirect users
+    |--------------------------------------------------------------------------
+    */
+
+    return match ($role) {
+
+        'admin' => redirect('/admin'),
+
+        'patient' => redirect()->route('appointments.homepage'),
+
+        'dentist' => redirect()->route('dentist.dashboard'),
+
+        'cashier' => redirect()->route('pos.homepage'),
+
+        'staff' => redirect()->route('staff.dashboard'),
+
+        'customer' => redirect()->route('customer.dashboard'),
+
+        default => redirect('/dashboard'),
+    };
+}
 
     /**
-     * Destroy an authenticated session.
+     * Logout
      */
-    public function destroy(Request $request): RedirectResponse
-    {
-        Auth::guard('web')->logout();
+public function destroy(Request $request): RedirectResponse
+{
+    $user = Auth::user();
+    $role = $user?->role;
 
-        $request->session()->invalidate();
+    Auth::guard('web')->logout();
 
-        $request->session()->regenerateToken();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
 
-        return redirect('/');
+    if ($role === 'patient') {
+        return redirect()->route('appointments.landing');
     }
+    if ($role === 'cashier') {
+        return redirect()->route('pos.pos-landing');
+    }
+
+    return redirect('/');
+}
 }

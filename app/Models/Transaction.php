@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\TransactionItems;
 class Transaction extends Model
 {
     protected $fillable = [
@@ -19,7 +19,7 @@ class Transaction extends Model
     ];
      public function items()
     {
-        return $this->hasMany(TransactionItem::class);
+        return $this->hasMany(TransactionItems::class);
     }
 
 

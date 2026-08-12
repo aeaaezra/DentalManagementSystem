@@ -3,167 +3,242 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dental Supply Login | Shine & Smile</title>
+    <title>Shine and Smile Online Dental Clinic</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #ffcce6 0%, #ffffff 100%);
+            min-height: 100vh;
+        }
+
+        .login-card {
+            border: 1px solid #ffb3d9;
+            box-shadow: 0 4px 6px -1px rgba(255, 102, 178, 0.2);
+        }
+    </style>
 </head>
-<body class="min-h-screen flex items-center justify-center bg-gray-100">
 
-    <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
-        <div class="text-center mb-8">
-            <div class="w-20 h-20 bg-[#ffe4ec] rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-10 h-10 text-[#db2777]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 15v2m-6 4h12a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2zm10-10V7a4 4 0 0 0-8 0v4h8" />
-                </svg>
-            </div>
+<body class="flex items-center justify-center p-4">
 
-            <h1 class="text-2xl font-bold text-gray-800 uppercase tracking-tight">Dental Supply Login</h1>
-            <p class="text-gray-500 mt-2">Shine and Smile Dental Clinic</p>
-        </div>
+<div class="max-w-4xl w-full bg-white rounded-2xl p-8 md:p-12 login-card flex flex-col md:flex-row gap-12 items-center">
 
-        @if (session('status'))
-            <div class="mb-4 text-sm text-green-600">
-                {{ session('status') }}
+    <!-- Left Side -->
+    <div class="flex flex-col items-center text-center w-full md:w-1/2">
+
+        <div class="w-full aspect-square border-4 border-dashed border-pink-200 rounded-lg flex flex-col items-center justify-center mb-6 text-pink-400 bg-pink-50">
+
+        <img
+            src="{{ asset('images/logo.jpg') }}"
+            alt="Shine and Smile Logo"
+            class="w-100 h-100 object-contain">
+
+
+
+    </div>
+
+        <h1 class="text-2xl font-bold text-pink-500">
+            Welcome to Shine and Smile Online Dental Clinic
+        </h1>
+
+    </div>
+
+    <!-- Right Side -->
+    <div class="w-full md:w-1/2">
+
+        <h2 class="text-3xl font-semibold text-pink-400 mb-2">
+            Sign in to your account
+        </h2>
+
+        <p class="text-gray-500 mb-6">
+            Welcome back, please enter your details.
+        </p>
+
+        {{-- Success Message --}}
+        @if(session('success'))
+            <div class="mb-4 p-3 rounded-lg bg-green-100 border border-green-300 text-green-700">
+                {{ session('success') }}
             </div>
         @endif
 
-        <form method="POST" action="{{ route('login') }}" class="space-y-6">
+        {{-- Validation Errors --}}
+        @if ($errors->any())
+            <div class="mb-4 p-3 rounded-lg bg-red-100 border border-red-300 text-red-700">
+                <ul class="list-disc list-inside">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form
+            action="{{ route('login') }}"
+            method="POST"
+            class="space-y-4"
+        >
+
             @csrf
 
+            <!-- Email -->
             <div>
-                <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
+
+                <label class="block text-sm font-medium text-gray-700 mb-1">
                     Email Address
                 </label>
+
                 <input
-                    id="email"
                     type="email"
                     name="email"
                     value="{{ old('email') }}"
                     required
                     autofocus
-                    autocomplete="username"
-                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#db2777] focus:border-[#db2777] outline-none transition"
-                    placeholder="admin@shineandsmile.com"
-                >
-                @error('email')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
+                    class="w-full p-3 border border-pink-200 rounded-md focus:ring-2 focus:ring-pink-400 focus:outline-none">
+
             </div>
 
-            <div>
-                <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
-                    Password
-                </label>
+            <!-- Password -->
+           <div>
+    <label class="block text-sm font-medium text-gray-700 mb-1">
+        Password
+    </label>
 
-                <div class="relative">
-                    <input
-                        id="password"
-                        type="password"
-                        name="password"
-                        required
-                        autocomplete="current-password"
-                        class="w-full px-4 py-3 pr-14 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#db2777] focus:border-[#db2777] outline-none transition"
-                        placeholder="••••••••"
-                    >
+    <div class="relative">
+        <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            class="w-full p-3 pr-12 border border-pink-200 rounded-md focus:ring-2 focus:ring-pink-400 focus:outline-none">
 
-                    <button
-                        type="button"
-                        onclick="togglePassword()"
-                        class="absolute inset-y-0 right-0 flex items-center px-4 text-[#db2777]"
-                    >
-                        <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7Z" />
-                        </svg>
+        <button
+            type="button"
+            onclick="togglePassword()"
+            class="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-pink-500">
 
-                        <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 3l18 18" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M10.584 10.587a2 2 0 0 0 2.829 2.828" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9.88 5.09A9.953 9.953 0 0 1 12 5c4.478 0 8.268 2.943 9.542 7a9.97 9.97 0 0 1-4.132 5.411M6.228 6.227A9.956 9.956 0 0 0 2.458 12c1.274 4.057 5.064 7 9.542 7a9.95 9.95 0 0 0 5.197-1.46" />
-                        </svg>
-                    </button>
-                </div>
+            <!-- Eye SVG -->
+            <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg"
+                class="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2">
 
-                @error('password')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div>
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943
+                    9.542 7c-1.274 4.057-5.065 7-9.542
+                    7S3.732 16.057 2.458 12z"/>
 
+                <circle cx="12" cy="12" r="3"/>
+            </svg>
+
+            <!-- Eye Slash SVG -->
+            <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg"
+                class="w-5 h-5 hidden"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2">
+
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M3 3l18 18"/>
+
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M10.58 10.58A2 2 0 0012 14a2 2 0 001.42-.58"/>
+
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9.88 5.09A9.77 9.77 0 0112 5c4.48
+                    0 8.27 2.94 9.54 7a9.96 9.96 0 01-4.29
+                    5.19M6.1 6.1A9.96 9.96 0 002.46
+                    12a9.96 9.96 0 003.42 4.74"/>
+            </svg>
+
+        </button>
+    </div>
+</div>
+
+            <!-- Remember -->
             <div class="flex items-center justify-between">
-                <label for="remember_me" class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+
+                <label class="flex items-center text-sm text-gray-600">
+
                     <input
-                        id="remember_me"
                         type="checkbox"
                         name="remember"
-                        class="rounded border-gray-300 text-[#db2777] shadow-sm focus:ring-[#db2777]"
-                    >
-                    <span>Remember me</span>
+                        class="mr-2 accent-pink-500">
+
+                    Remember Me
+
                 </label>
 
                 @if (Route::has('password.request'))
-                    <a href="{{ route('password.request') }}" class="text-sm text-[#db2777] hover:text-[#c02269]">
-                        Forgot password?
-                    </a>
-                @endif
-            </div>
-
-            <div class="space-y-3 pt-2">
-                <button
-                    type="submit"
-                    class="w-full bg-[#db2777] text-white font-bold py-3 rounded-lg hover:bg-[#c02269] transition shadow-lg shadow-pink-200"
-                >
-                    Sign In
-                </button>
-
-                <div class="relative py-2">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-gray-200"></div>
-                    </div>
-                    <div class="relative flex justify-center text-xs uppercase">
-                        <span class="bg-white px-2 text-gray-400 font-medium">New to Shine & Smile?</span>
-                    </div>
-                </div>
-
-                @if (Route::has('register'))
                     <a
-                        href="{{ route('register') }}"
-                        class="block w-full text-center border-2 border-[#db2777] text-[#db2777] font-bold py-3 rounded-lg hover:bg-[#fff0f5] transition"
-                    >
-                        Create New Account
+                        href="{{ route('password.request') }}"
+                        class="text-sm text-pink-500 hover:underline">
+                        Forgot Password?
                     </a>
                 @endif
+
             </div>
+
+            <!-- Login Button -->
+            <button
+                type="submit"
+                class="w-full bg-pink-500 hover:bg-pink-600 transition text-white font-semibold py-3 rounded-full">
+
+                Login
+
+            </button>
+
         </form>
 
-        <p class="text-center text-xs text-gray-400 mt-8 uppercase tracking-widest font-semibold">
-            Authorized Personnel Only
-        </p>
+        <!-- Divider -->
+        <div class="flex items-center my-6">
+
+            <div class="flex-1 border-t border-gray-200"></div>
+
+            <span class="px-3 text-gray-400 text-sm">
+                OR
+            </span>
+
+            <div class="flex-1 border-t border-gray-200"></div>
+
+        </div>
+
+        <!-- Admin Login -->
+        <div class="text-center">
+
+            <a
+                href="{{ route('filament.admin.auth.login') }}"
+                class="text-pink-500 hover:text-pink-600 font-semibold hover:underline">
+
+                Sign in as Administrator
+
+            </a>
+
+        </div>
+
     </div>
 
-    <script>
-        function togglePassword() {
-            const password = document.getElementById('password');
-            const eyeOpen = document.getElementById('eyeOpen');
-            const eyeClosed = document.getElementById('eyeClosed');
+</div>
 
-            if (password.type === 'password') {
-                password.type = 'text';
-                eyeOpen.classList.add('hidden');
-                eyeClosed.classList.remove('hidden');
-            } else {
-                password.type = 'password';
-                eyeOpen.classList.remove('hidden');
-                eyeClosed.classList.add('hidden');
-            }
-        }
-    </script>
+<script>
+function togglePassword() {
+    const password = document.getElementById('password');
+    const eyeOpen = document.getElementById('eyeOpen');
+    const eyeClosed = document.getElementById('eyeClosed');
 
+    if (password.type === 'password') {
+        password.type = 'text';
+        eyeOpen.classList.add('hidden');
+        eyeClosed.classList.remove('hidden');
+    } else {
+        password.type = 'password';
+        eyeOpen.classList.remove('hidden');
+        eyeClosed.classList.add('hidden');
+    }
+}
+</script>
 </body>
 </html>

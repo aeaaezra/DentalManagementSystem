@@ -31,15 +31,20 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Pink,
                 'success' => Color::Green,
-                'warning' => Color::Amber,
+                'warning' => Color::Yellow,
                 'danger' => Color::Red,
                 'info' => Color::Sky,
                 'gray' => Color::Slate,
             ])
+
             ->discoverResources(
                 in: app_path('Filament/Resources'),
-                for: 'App\\Filament\\Resources'
-            )
+                for: 'App\\Filament\\Resources',
+                )
+
+->resources([])
+
+
             ->discoverPages(
                 in: app_path('Filament/Pages'),
                 for: 'App\\Filament\\Pages'
@@ -52,7 +57,7 @@ class AdminPanelProvider extends PanelProvider
                 for: 'App\\Filament\\Widgets'
             )
             ->widgets([
-                InventoryStats::class,
+               //InventoryStats::class,
             ])
             ->middleware([
                 EncryptCookies::class,

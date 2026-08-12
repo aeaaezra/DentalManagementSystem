@@ -21,27 +21,42 @@ class PatientRecordsTable
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('age')->sortable(),
+                TextColumn::make('age')
+                    ->sortable(),
 
-                TextColumn::make('sex')->badge(),
+                TextColumn::make('sex')
+                    ->badge()
+                    ->color(fn (string $state): string => match (strtolower($state)) {
+                        'male' => 'info',
+                        'female' => 'success',
+                        default => 'gray',
+                    }),
 
                 TextColumn::make('contact_number')
                     ->label('Contact Number')
                     ->searchable(),
 
-                TextColumn::make('occupation')->searchable(),
+                TextColumn::make('occupation')
+                    ->searchable(),
 
-                IconColumn::make('allergy')->boolean(),
-                IconColumn::make('diabetes')->boolean(),
-                IconColumn::make('hypertension')->boolean(),
+                IconColumn::make('allergy')
+                    ->boolean(),
+
+                IconColumn::make('diabetes')
+                    ->boolean(),
+
+                IconColumn::make('hypertension')
+                    ->boolean(),
 
                 TextColumn::make('appointments_count')
                     ->counts('appointments')
-                    ->label('Appointments'),
+                    ->label('Appointments')
+                    ->sortable(),
 
                 TextColumn::make('e_consultations_count')
                     ->counts('eConsultations')
-                    ->label('E-Consults'),
+                    ->label('E-Consults')
+                    ->sortable(),
 
                 TextColumn::make('created_at')
                     ->dateTime()

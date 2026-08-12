@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Appointments;
 use App\Models\Econsultations;
+use App\Models\User;
+use App\Models\Odontogram;
 
 class PatientRecords extends Model
 {
@@ -14,6 +16,7 @@ class PatientRecords extends Model
     protected $table = 'patient_records';
 
     protected $fillable = [
+        'user_id',
         'patient_name',
         'age',
         'sex',
@@ -33,17 +36,38 @@ class PatientRecords extends Model
         'bleeding_tendency_details',
         'asthma',
         'asthma_details',
-        'other_diseases_treatments',
+        'other_conditions',
         'patient_signature',
     ];
 
     public function appointments()
     {
-        return $this->hasMany(Appointments::class, 'patient_record_id');
+        return $this->hasMany(
+            Appointments::class,
+            'patient_record_id'
+        );
     }
 
     public function eConsultations()
     {
-        return $this->hasMany(Econsultations::class, 'patient_record_id');
+        return $this->hasMany(
+            Econsultations::class,
+            'patient_record_id'
+        );
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(
+            User::class,
+            'user_id'
+        );
+    }
+
+    public function odontograms()
+    {
+        return $this->hasMany(
+            Odontogram::class
+        );
     }
 }

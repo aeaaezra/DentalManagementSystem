@@ -2,27 +2,29 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
+use App\Models\PatientRecords;
 
-#[Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
     protected function casts(): array
     {
         return [
@@ -31,9 +33,14 @@ class User extends Authenticatable
             'role' => 'string',
         ];
     }
-    public function getFilamentAvatarUrl(): ?string
-{
-    return 'myimage.jpg';
-}
-}
 
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return strtolower($this->role) === 'admin';
+    }
+
+    public function patientRecord()
+    {
+        return $this->hasOne(PatientRecords::class, 'user_id');
+    }
+}
