@@ -2,41 +2,56 @@
 
 namespace App\Notifications;
 
+use App\Notifications\Concerns\ChecksNotificationPreferences;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class AppointmentSubmitted extends Notification
 {
     use Queueable;
+    use ChecksNotificationPreferences;
 
     protected $appointment;
 
-    /**
-     * Create a new notification instance.
-     */
     public function __construct($appointment)
     {
         $this->appointment = $appointment;
     }
 
-    /**
-     * Get the notification's delivery channels.
-     */
     public function via(object $notifiable): array
     {
-        return ['database'];
-    }
+        if (
+            !$this->appointmentNotificationsEnabled($notifiable)
+        ) {
+            return [];
+        }
 
-
-    public function toArray(object $notifiable): array
-    {
         return [
-            'title' => 'Appointment Submitted',
-            'message' => 'Your dental appointment has been successfully submitted.',
-            'appointment_id' => $this->appointment->id,
+            'database',
         ];
     }
 
+    public function toDatabase(object $notifiable): array
+    {
+        return [
+            'title' => 'Appointment Pending',
+
+            'message' =>
+                'Your dental appointment has been submitted and is currently pending approval.',
+
+            'appointment_id' =>
+                $this->appointment->id,
+
+            'appointment_date' =>
+                $this->appointment->appointment_date
+                    ? $this->appointment->appointment_date->format('F d, Y')
+                    : null,
+
+            'appointment_time' =>
+                $this->appointment->appointment_time,
+
+            'status' =>
+                $this->appointment->status,
+        ];
+    }
 }

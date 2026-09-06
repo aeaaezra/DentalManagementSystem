@@ -2,12 +2,14 @@
 
 namespace App\Notifications;
 
+use App\Notifications\Concerns\ChecksNotificationPreferences;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
 class AppointmentApproved extends Notification
 {
     use Queueable;
+    use ChecksNotificationPreferences;
 
     protected $appointment;
 
@@ -16,31 +18,31 @@ class AppointmentApproved extends Notification
         $this->appointment = $appointment;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | IMPORTANT
-    |--------------------------------------------------------------------------
-    | We are NOT using Laravel's database channel.
-    | The notification will be inserted manually into our custom
-    | notifications table.
-    */
-
     public function via(object $notifiable): array
     {
-        return [];
+        if (! $this->appointmentNotificationsEnabled($notifiable)) {
+            return [];
+        }
+
+        return ['database'];
     }
 
-    public function getData(): array
+    public function toDatabase(object $notifiable): array
     {
         return [
-            'user_id' => $this->appointment->patient->user_id,
-
             'title' => 'Appointment Approved',
 
-            'message' =>
-                'Your appointment has been approved by the clinic.',
+            'message' => 'Your dental appointment has been approved by the clinic.',
 
-            'is_read' => false,
+            'appointment_id' => $this->appointment->id,
+
+            'appointment_date' => $this->appointment->appointment_date
+                ? $this->appointment->appointment_date->format('F d, Y')
+                : null,
+
+            'appointment_time' => $this->appointment->appointment_time,
+
+            'status' => $this->appointment->status,
         ];
     }
 }

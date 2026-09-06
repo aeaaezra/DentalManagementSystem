@@ -9,53 +9,91 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RoleMiddleware
 {
-    /**
-     * Handle an incoming request.
-     */
-    public function handle(Request $request, Closure $next, ...$roles): Response
-    {
-        // If not logged in → redirect to login
+    public function handle(
+        Request $request,
+        Closure $next,
+        ...$roles
+    ): Response {
         if (!Auth::check()) {
-            return redirect()->route('appointments.login')->with('error', 'Please log in to access that page.');
+            if ($request->is('customer/*')) {
+                return redirect()
+                    ->route('customer.login')
+                    ->with('error', 'Please log in to access the ordering system.');
+            }
+
+            if ($request->is('shine-and-smile/appointments/*')) {
+                return redirect()
+                    ->route('appointments.login')
+                    ->with('error', 'Please log in to access the appointment system.');
+            }
+
+            return redirect()
+                ->route('login')
+                ->with('error', 'Please log in to access this page.');
         }
 
         $user = Auth::user();
 
-        // If no role assigned
-        if (!$user->role) {
-            abort(403, 'No role assigned.');
+        if (empty($roles)) {
+            return $next($request);
         }
 
-        // Normalize roles
-        $userRole = strtolower($user->role);
-        $allowedRoles = array_map('strtolower', $roles);
+        $allowedRoles = array_map(
+            fn ($role) => strtolower(trim($role)),
+            $roles
+        );
 
-        // Check if role is allowed → redirect to their dashboard if not
-        if (!in_array($userRole, $allowedRoles)) {
+        foreach ($allowedRoles as $role) {
+            if ($user->hasRole($role)) {
+                return $next($request);
+            }
+        }
+
+        $loginType = session('login_type');
+
+        if ($loginType === 'appointment') {
             return redirect()
-                ->route($this->getDashboardRoute($userRole))
+                ->route('appointments.homepage')
                 ->with('error', 'You do not have access to that page.');
         }
 
-        return $next($request);
+        if ($loginType === 'customer') {
+            return redirect()
+                ->route('customer.shop')
+                ->with('error', 'You do not have access to that page.');
+        }
+
+        if ($user->hasRole('admin')) {
+            return redirect('/admin')
+                ->with('error', 'You do not have access to that page.');
+        }
+
+        if ($user->hasRole('dentist')) {
+            return redirect()
+                ->route('dentist.dashboard')
+                ->with('error', 'You do not have access to that page.');
+        }
+
+        if ($user->hasRole('receptionist')) {
+            return redirect()
+                ->route('receptionist.dashboard')
+                ->with('error', 'You do not have access to that page.');
+        }
+
+        if ($user->hasRole('cashier')) {
+            return redirect()
+                ->route('pos.homepage')
+                ->with('error', 'You do not have access to that page.');
+        }
+
+        if ($user->hasRole('staff')) {
+            return redirect()
+                ->route('staff.dashboard')
+                ->with('error', 'You do not have access to that page.');
+        }
+
+        return redirect()
+            ->route('home')
+            ->with('error', 'You do not have access to that page.');
     }
-
-    /**
-     * Get the dashboard route for a given role.
-     */
-    private function getDashboardRoute(string $role): string
-{
-    return match($role) {
-        'admin' => 'admin.dashboard',
-        'dentist' => 'dentist.dashboard',
-        'staff' => 'staff.dashboard',
-        'manager' => 'manager.dashboard',
-        'cashier' => 'pos.homepage',
-
-        'customer' => 'pos.homepage',
-        'patient' => 'appointments.homepage',
-        default => 'home',
-    };
-}
-
 }

@@ -5,126 +5,69 @@ namespace App\Http\Controllers;
 use App\Models\Products;
 use Illuminate\Http\Request;
 
-class ProductsController extends Controller
+class POSController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display POS homepage.
      */
-    public function index()
+    public function homepage()
     {
-        $products = Products::latest()->get();
-        return view('products.index', compact('products'));
+        return view('pos.homepage');
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Get products for POS.
      */
-    public function create()
+    public function products(Request $request)
     {
-        return view('products.create');
-    }
+        $query = Products::query()
+            ->where('is_active', true);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        // ✅ IMAGE UPLOAD FIX
-        $imagePath = null;
+        // Search by product name, SKU, or brand
+        if ($request->filled('search')) {
+            $search = $request->search;
 
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = time() . '_' . $file->getClientOriginalName();
-
-            $file->move(public_path('images/products'), $filename);
-
-            $imagePath = 'images/products/' . $filename;
+            $query->where(function ($q) use ($search) {
+                $q->where('product_name', 'like', "%{$search}%")
+                    ->orWhere('sku', 'like', "%{$search}%")
+                    ->orWhere('brand_name', 'like', "%{$search}%");
+            });
         }
 
-        // ✅ SAVE TO DATABASE
-        Products::create([
-            'supplier_id' => $request->supplier_id,
-            'sku' => $request->sku,
-            'product_name' => $request->product_name,
-            'brand_name' => $request->brand_name,
-            'category' => $request->category,
-            'description' => $request->description,
-            'cost_price' => $request->cost_price,
-            'selling_price' => $request->selling_price,
-            'unit' => $request->unit,
-            'reorder_level' => $request->reorder_level,
-            'expiration_date' => $request->expiration_date,
-
-            // IMPORTANT FIX (this prevents your error)
-            'image' => $imagePath,
-
-            'is_active' => 1,
-        ]);
-
-        return redirect()->route('products.index')
-            ->with('success', 'Product created successfully!');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Products $products)
-    {
-        return view('products.show', compact('products'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Products $products)
-    {
-        return view('products.edit', compact('products'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Products $products)
-    {
-        // IMAGE UPDATE
-        $imagePath = $products->image;
-
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = time() . '_' . $file->getClientOriginalName();
-
-            $file->move(public_path('images/products'), $filename);
-
-            $imagePath = 'images/products/' . $filename;
+        // Filter by category
+        if (
+            $request->filled('category') &&
+            $request->category !== 'All'
+        ) {
+            $query->where('category', $request->category);
         }
 
-        $products->update([
-            'supplier_id' => $request->supplier_id,
-            'sku' => $request->sku,
-            'product_name' => $request->product_name,
-            'brand_name' => $request->brand_name,
-            'category' => $request->category,
-            'description' => $request->description,
-            'cost_price' => $request->cost_price,
-            'selling_price' => $request->selling_price,
-            'unit' => $request->unit,
-            'reorder_level' => $request->reorder_level,
-            'expiration_date' => $request->expiration_date,
-            'image' => $imagePath,
+        $products = $query
+            ->orderBy('product_name')
+            ->get()
+            ->map(function ($product) {
+                return [
+                    'id' => $product->id,
+                    'sku' => $product->sku,
+                    'product_name' => $product->product_name,
+                    'brand_name' => $product->brand_name,
+                    'category' => $product->category,
+                    'description' => $product->description,
+                    'unit' => $product->unit,
+                    'cost_price' => (float) $product->cost_price,
+                    'selling_price' => (float) $product->selling_price,
+                    'quantity' => $product->quantity,
+                    'reorder_level' => $product->reorder_level,
+                    'expiration_date' => $product->expiration_date,
+                    'image' => $product->image
+                        ? asset($product->image)
+                        : null,
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'products' => $products,
         ]);
-
-        return redirect()->route('products.index')
-            ->with('success', 'Product updated successfully!');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Products $products)
-    {
-        $products->delete();
-
-        return redirect()->route('products.index')
-            ->with('success', 'Product deleted successfully!');
     }
 }

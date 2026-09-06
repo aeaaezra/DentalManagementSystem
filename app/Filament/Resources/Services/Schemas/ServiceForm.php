@@ -10,25 +10,29 @@ class ServiceForm
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema
-            ->components([
+       return $schema
+    ->components([
 
-                TextInput::make('service_name')
-                    ->required(),
+        TextInput::make('service_name')
+            ->required(),
 
-                TextInput::make('price')
-                    ->required()
-                    ->numeric()
-                    ->prefix('₱'),
-                TextInput::make('deposit')
-                    ->required()
-                    ->numeric()
-                    ->prefix('₱')
-                    ->default(0.0),
-                Textarea::make('description')
-                    ->default(null)
-                    ->columnSpanFull(),
+        TextInput::make('price')
+            ->required()
+            ->numeric()
+            ->prefix('₱'),
 
-            ]);
+        TextInput::make('duration_minutes')
+            ->required()
+            ->numeric()
+            ->integer()
+            ->minValue(1)
+            ->suffix('minutes'),
+
+        Textarea::make('description')
+            ->default(null)
+            ->columnSpanFull(),
+
+    ]);
+
     }
 }

@@ -2,30 +2,56 @@
 
 namespace App\Notifications;
 
+use App\Notifications\Concerns\ChecksNotificationPreferences;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class AppointmentCancelled extends Notification
 {
     use Queueable;
+    use ChecksNotificationPreferences;
 
-    public function __construct(
-        public $appointment
-    ) {}
+    protected $appointment;
+
+    public function __construct($appointment)
+    {
+        $this->appointment = $appointment;
+    }
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        if (
+            !$this->appointmentNotificationsEnabled($notifiable)
+        ) {
+            return [];
+        }
+
+        return [
+            'database',
+        ];
     }
 
     public function toDatabase(object $notifiable): array
     {
         return [
             'title' => 'Appointment Cancelled',
-            'message' => 'Your appointment has been cancelled successfully.',
-            'appointment_id' => $this->appointment->id,
+
+            'message' =>
+                'Your appointment cancellation has been approved. Your appointment is now cancelled.',
+
+            'appointment_id' =>
+                $this->appointment->id,
+
+            'appointment_date' =>
+                $this->appointment->appointment_date
+                    ? $this->appointment->appointment_date->format('F d, Y')
+                    : null,
+
+            'appointment_time' =>
+                $this->appointment->appointment_time,
+
+            'status' =>
+                $this->appointment->status,
         ];
     }
 }

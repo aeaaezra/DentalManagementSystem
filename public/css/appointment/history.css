@@ -1,0 +1,2234 @@
+.feedback-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: none !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 24px !important;
+    background: rgba(15, 23, 42, 0.58) !important;
+    backdrop-filter: blur(5px) !important;
+    -webkit-backdrop-filter: blur(5px) !important;
+    z-index: 1000000 !important;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .2s ease, visibility .2s ease;
+}
+
+.feedback-modal.show {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.feedback-modal[aria-hidden="false"] {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.feedback-overlay {
+    position: absolute !important;
+    inset: 0 !important;
+    background: transparent !important;
+    cursor: pointer !important;
+}
+
+.feedback-card {
+    position: relative !important;
+    z-index: 2 !important;
+    width: min(100%, 520px) !important;
+    max-height: min(90vh, 720px) !important;
+    overflow-y: auto !important;
+    padding: 34px !important;
+    background: #ffffff !important;
+    border: 1px solid #f3d4e3 !important;
+    border-radius: 24px !important;
+    box-shadow: 0 30px 80px rgba(15, 23, 42, .25) !important;
+    text-align: center !important;
+    transform: translateY(10px) scale(.98);
+    transition: transform .2s ease;
+}
+
+.feedback-modal.show .feedback-card,
+.feedback-modal[aria-hidden="false"] .feedback-card {
+    transform: translateY(0) scale(1);
+}
+
+.feedback-close {
+    position: absolute !important;
+    top: 14px !important;
+    right: 16px !important;
+    width: 38px !important;
+    height: 38px !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: #fff1f7 !important;
+    color: #db2777 !important;
+    font-size: 25px !important;
+    line-height: 1 !important;
+    cursor: pointer !important;
+    transition: .2s ease !important;
+}
+
+.feedback-close:hover {
+    background: #db2777 !important;
+    color: #ffffff !important;
+    transform: rotate(90deg) !important;
+}
+
+.feedback-icon,
+.feedback-success-icon {
+    width: 72px !important;
+    height: 72px !important;
+    margin: 0 auto 18px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 50% !important;
+    background: #fff1f7 !important;
+    color: #db2777 !important;
+    font-size: 32px !important;
+}
+
+.feedback-success-icon {
+    background: #ecfdf5 !important;
+    color: #16a34a !important;
+    font-size: 34px !important;
+    font-weight: 800 !important;
+}
+
+.feedback-card h2 {
+    margin: 0 !important;
+    color: #1f2937 !important;
+    font-size: 26px !important;
+    line-height: 1.25 !important;
+    font-weight: 800 !important;
+}
+
+#feedbackServiceName {
+    margin: 8px 0 24px !important;
+    color: #db2777 !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+}
+
+.rating-container {
+    margin-bottom: 22px !important;
+    text-align: center !important;
+}
+
+.rating-container > p {
+    margin: 0 0 10px !important;
+    color: #374151 !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+}
+
+.stars {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 7px !important;
+}
+
+.star {
+    border: 0 !important;
+    background: transparent !important;
+    color: #d1d5db !important;
+    font-size: 38px !important;
+    line-height: 1 !important;
+    padding: 2px !important;
+    cursor: pointer !important;
+    transition: transform .15s ease, color .15s ease !important;
+}
+
+.star:hover,
+.star.selected {
+    color: #f59e0b !important;
+    transform: scale(1.12) !important;
+}
+
+.rating-text {
+    display: block !important;
+    margin-top: 8px !important;
+    color: #6b7280 !important;
+    font-size: 13px !important;
+}
+
+.feedback-field {
+    position: relative !important;
+    margin-bottom: 20px !important;
+    text-align: left !important;
+}
+
+.feedback-field label {
+    display: block !important;
+    margin-bottom: 8px !important;
+    color: #374151 !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+}
+
+.feedback-field textarea {
+    display: block !important;
+    width: 100% !important;
+    min-height: 125px !important;
+    resize: vertical !important;
+    padding: 13px 14px 32px !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 14px !important;
+    outline: none !important;
+    color: #1f2937 !important;
+    background: #ffffff !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    box-sizing: border-box !important;
+    transition: border-color .2s ease, box-shadow .2s ease !important;
+}
+
+.feedback-field textarea:focus {
+    border-color: #ec4899 !important;
+    box-shadow: 0 0 0 4px rgba(236, 72, 153, .12) !important;
+}
+
+.feedback-counter {
+    position: absolute !important;
+    right: 12px !important;
+    bottom: 9px !important;
+    color: #9ca3af !important;
+    font-size: 11px !important;
+}
+
+.submit-feedback {
+    width: 100% !important;
+    min-height: 48px !important;
+    border: 0 !important;
+    border-radius: 13px !important;
+    background: linear-gradient(135deg, #ec4899, #db2777) !important;
+    color: #ffffff !important;
+    font-size: 14px !important;
+    font-weight: 800 !important;
+    cursor: pointer !important;
+    box-shadow: 0 10px 22px rgba(219, 39, 119, .22) !important;
+    transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease !important;
+}
+
+.submit-feedback:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 14px 28px rgba(219, 39, 119, .28) !important;
+}
+
+.submit-feedback:disabled {
+    opacity: .65 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+
+#feedbackFormError {
+    display: block;
+    text-align: left;
+}
+
+.feedback-success-text {
+    margin: 12px auto 24px !important;
+    max-width: 390px !important;
+    color: #6b7280 !important;
+    font-size: 14px !important;
+    line-height: 1.7 !important;
+}
+
+body.feedback-open {
+    overflow: hidden !important;
+}
+
+@media (max-width: 640px) {
+    .feedback-modal {
+        padding: 14px !important;
+    }
+
+    .feedback-card {
+        padding: 28px 20px 22px !important;
+        border-radius: 20px !important;
+    }
+
+    .feedback-card h2 {
+        font-size: 22px !important;
+    }
+
+    .star {
+        font-size: 32px !important;
+    }
+}
+
+/* ================================
+   HISTORY TABLE
+================================ */
+
+.history-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+}
+
+/* TABLE HEADER */
+.history-table thead {
+    background: linear-gradient(135deg, #fdf2f8, #fce7f3);
+}
+
+.history-table thead th {
+    padding: 18px 22px;
+    color: #db2777;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    text-align: left;
+    border-bottom: 2px solid #f9a8d4;
+}
+
+/* TABLE BODY */
+.history-table tbody td {
+    padding: 20px 22px;
+    color: #374151;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.history-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ROW HOVER */
+.history-table tbody tr {
+    transition: 0.2s ease;
+}
+
+.history-table tbody tr:hover {
+    background: #fff7fb;
+}
+
+/* RESPONSIVE */
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 16px;
+}
+
+
+.notification-wrapper {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+
+    /* Space between notification and profile */
+    margin-right: 30px !important;
+}
+
+
+/* ============================================================
+   NOTIFICATION BUTTON / BELL
+   ============================================================ */
+
+.notification-btn {
+    position: relative !important;
+
+    /* THIS MOVES THE BELL */
+    left: 5px !important;
+
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+
+    width: 44px !important;
+    height: 44px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    border: 1px solid #fbcfe8 !important;
+    border-radius: 12px !important;
+
+    background: #fdf2f8 !important;
+    color: #db2777 !important;
+
+    cursor: pointer !important;
+
+    z-index: 2147483001 !important;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease !important;
+}
+
+
+.notification-btn:hover {
+    background: #fce7f3 !important;
+    color: #be185d !important;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 5px 15px rgba(219, 39, 119, 0.12);
+}
+
+
+.notification-btn:active {
+    transform: scale(0.96);
+}
+
+
+.notification-btn:focus {
+    outline: none !important;
+
+    box-shadow:
+        0 0 0 4px rgba(236, 72, 153, 0.15) !important;
+}
+
+
+/* ============================================================
+   NOTIFICATION BADGE
+   ============================================================ */
+
+.notification-badge {
+    position: absolute !important;
+
+    top: -7px !important;
+    right: -7px !important;
+
+    min-width: 21px !important;
+    height: 21px !important;
+
+    padding: 0 5px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    border: 2px solid #ffffff !important;
+    border-radius: 999px !important;
+
+    background: #ef4444 !important;
+    color: #ffffff !important;
+
+    font-size: 10px !important;
+    font-weight: 700 !important;
+
+    line-height: 1 !important;
+
+    z-index: 2147483002 !important;
+
+    box-shadow:
+        0 2px 6px rgba(239, 68, 68, 0.25);
+}
+
+
+/* ============================================================
+   NOTIFICATION DROPDOWN
+   ============================================================ */
+
+#notificationDropdown {
+    /*
+     * IMPORTANT:
+     * Fixed = position relative to the browser window.
+     */
+    position: fixed !important;
+
+    top: 84px !important;
+
+    right: 24px !important;
+
+    left: auto !important;
+    bottom: auto !important;
+
+    width: 390px !important;
+
+    max-width:
+        calc(100vw - 48px) !important;
+
+    height: auto !important;
+
+    max-height:
+        calc(100vh - 105px) !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    background: #ffffff !important;
+
+    border:
+        1px solid #fbcfe8 !important;
+
+    border-radius: 18px !important;
+
+    overflow: hidden !important;
+
+    z-index: 2147483646 !important;
+
+    box-shadow:
+        0 24px 55px rgba(15, 23, 42, 0.18),
+        0 10px 25px rgba(219, 39, 119, 0.10) !important;
+
+    /*
+     * IMPORTANT:
+     * Do NOT use translateX here.
+     */
+    transform: none !important;
+
+    transform-origin:
+        top right !important;
+}
+
+
+/* ============================================================
+   HIDDEN
+   ============================================================ */
+
+#notificationDropdown.hidden {
+    display: none !important;
+}
+
+
+/* ============================================================
+   OPEN ANIMATION
+   ============================================================ */
+
+#notificationDropdown:not(.hidden) {
+    display: block !important;
+
+    animation:
+        notificationDropdownOpen
+        0.18s
+        ease-out !important;
+}
+
+
+@keyframes notificationDropdownOpen {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(-8px)
+            scale(0.98) !important;
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1) !important;
+    }
+
+}
+
+
+/* ============================================================
+   NOTIFICATION HEADER
+   ============================================================ */
+
+#notificationDropdown > div:first-child {
+    background:
+        linear-gradient(
+            135deg,
+            #ec4899 0%,
+            #f43f8f 50%,
+            #e83e8c 100%
+        ) !important;
+
+    color: #ffffff !important;
+}
+
+
+#notificationDropdown h3 {
+    color: #ffffff !important;
+}
+
+
+#notificationDropdown .bg-white\/20 {
+    background:
+        rgba(255, 255, 255, 0.18) !important;
+}
+
+
+/* ============================================================
+   NOTIFICATION FILTERS
+   ============================================================ */
+
+.notification-filter {
+    position: relative;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.notification-filter:hover {
+    color: #db2777 !important;
+}
+
+
+.notification-filter.active {
+    color: #db2777 !important;
+
+    border-bottom-color:
+        #ec4899 !important;
+
+    font-weight: 700 !important;
+}
+
+
+/* ============================================================
+   NOTIFICATION LIST
+   ============================================================ */
+
+#notificationList {
+    max-height: 360px !important;
+
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+
+    background: #ffffff !important;
+}
+
+
+#notificationList::-webkit-scrollbar {
+    width: 5px;
+}
+
+
+#notificationList::-webkit-scrollbar-track {
+    background: #fdf2f8;
+}
+
+
+#notificationList::-webkit-scrollbar-thumb {
+    background: #f9a8d4;
+
+    border-radius: 999px;
+}
+
+
+#notificationList::-webkit-scrollbar-thumb:hover {
+    background: #f472b6;
+}
+
+
+/* ============================================================
+   NOTIFICATION ITEM
+   ============================================================ */
+
+.notification-item {
+    position: relative;
+
+    min-height: 90px;
+
+    background: #ffffff;
+
+    transition:
+        background-color 0.2s ease,
+        opacity 0.25s ease,
+        transform 0.25s ease;
+}
+
+
+.notification-item:hover {
+    background: #fdf2f8 !important;
+}
+
+
+.notification-item[data-notification-status="unread"] {
+    background:
+        rgba(253, 242, 248, 0.65);
+}
+
+
+/* ============================================================
+   UNREAD DOT
+   ============================================================ */
+
+.notification-item > span[title="Unread"] {
+    width: 7px !important;
+
+    height: 7px !important;
+
+    background: #ec4899 !important;
+}
+
+
+/* ============================================================
+   NOTIFICATION TEXT
+   ============================================================ */
+
+.notification-item h4 {
+    color: #1f2937;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    line-height: 1.4;
+}
+
+
+.notification-item p {
+    color: #6b7280;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+}
+
+
+.notification-item .text-gray-400 {
+    color: #9ca3af;
+
+    font-size: 10px;
+}
+
+
+/* ============================================================
+   DELETE BUTTON
+   ============================================================ */
+
+.delete-notification {
+    cursor: pointer !important;
+
+    border: none !important;
+
+    background: transparent !important;
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease,
+        transform 0.15s ease !important;
+}
+
+
+.delete-notification:hover {
+    color: #ef4444 !important;
+
+    background: #fef2f2 !important;
+
+    transform: scale(1.08);
+}
+
+
+.delete-notification:active {
+    transform: scale(0.94);
+}
+
+
+.delete-notification:focus {
+    outline: none !important;
+
+    box-shadow:
+        0 0 0 3px rgba(239, 68, 68, 0.12) !important;
+}
+
+
+/* ============================================================
+   EMPTY NOTIFICATION STATE
+   ============================================================ */
+
+#noNotificationsMessage {
+    background: #ffffff !important;
+}
+
+
+#noNotificationsMessage svg {
+    color: #f472b6;
+}
+
+
+/* ============================================================
+   CLEAR ALL
+   ============================================================ */
+
+#clearAllNotifications {
+    cursor: pointer;
+
+    background: transparent;
+
+    border: none;
+}
+
+
+#clearAllNotifications:hover {
+    color: #dc2626 !important;
+}
+
+
+/* ============================================================
+   NOTIFICATION FOOTER
+   ============================================================ */
+
+#notificationDropdown > div:last-child {
+    background:
+        rgba(253, 242, 248, 0.7);
+
+    border-top:
+        1px solid #fce7f3;
+}
+
+
+#notificationDropdown a {
+    color: #db2777;
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+
+#notificationDropdown a:hover {
+    color: #be185d;
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 640px) {
+
+    #notificationDropdown {
+
+        position: fixed !important;
+
+        top: 70px !important;
+
+        right: 10px !important;
+        left: 10px !important;
+
+        bottom: auto !important;
+
+        width: auto !important;
+
+        max-width: none !important;
+
+        max-height:
+            calc(100vh - 82px) !important;
+
+        margin: 0 !important;
+
+        transform: none !important;
+
+        border-radius: 16px !important;
+    }
+
+
+    #notificationDropdown:not(.hidden) {
+
+        animation:
+            mobileNotificationOpen
+            0.18s
+            ease-out !important;
+    }
+
+
+    #notificationList {
+        max-height: 55vh !important;
+    }
+
+}
+
+
+@keyframes mobileNotificationOpen {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(-6px)
+            scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+}
+
+
+
+/* ============================================================
+   NOTIFICATION BUTTON - SPACE FROM PROFILE
+   ============================================================ */
+
+.notification-wrapper .notification-btn {
+    position: relative !important;
+
+    left: 5px !important;
+
+    margin: 0 !important;
+
+    transform: none !important;
+}
+
+/* Keep the bell itself in its normal position */
+.notification-btn {
+    margin: 0 !important;
+    transform: none !important;
+}
+
+/* Keep the badge attached to the bell */
+.notification-badge {
+    position: absolute !important;
+    top: -7px !important;
+    right: -7px !important;
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+    .notification-wrapper {
+        margin-right: 50px !important;
+    }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+    .notification-wrapper {
+        margin-right: 16px !important;
+    }
+}
+
+/* ============================================================
+   SHINE & SMILE — DARK EDITORIAL THEME OVERRIDE
+   Added without changing the existing Blade/JS structure.
+   ============================================================ */
+html.dark-mode :root {
+
+    --ss-black: #080808;
+    --ss-black-2: #111111;
+    --ss-card: #151515;
+    --ss-card-2: #1b1b1b;
+    --ss-white: #f5f2ef;
+    --ss-muted: #9b9b9b;
+    --ss-line: rgba(255,255,255,.12);
+    --ss-pink: #ec1d66;
+    --ss-pink-2: #ff2f78;
+}
+
+
+html.dark-mode {
+
+    background: var(--ss-black) !important;
+}
+
+
+html.dark-mode body {
+
+    background: var(--ss-black) !important;
+    color: var(--ss-white) !important;
+    font-family: Inter, Arial, Helvetica, sans-serif !important;
+}
+/* Fixed navigation */
+
+
+html.dark-mode nav.fixed {
+
+    background: rgba(8,8,8,.92) !important;
+    border-bottom: 1px solid var(--ss-line) !important;
+    box-shadow: 0 12px 35px rgba(0,0,0,.30) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+}
+
+
+html.dark-mode nav.fixed a {
+
+    color: #cfcfcf !important;
+    letter-spacing: .12em !important;
+    text-transform: uppercase !important;
+    font-size: 11px !important;
+}
+
+
+html.dark-mode nav.fixed a:first-of-type,
+
+
+html.dark-mode nav.fixed a:hover {
+
+    color: #fff !important;
+}
+
+
+html.dark-mode nav.fixed a.text-\[\#E91E63\] {
+
+    color: #fff !important;
+    font-family: Georgia, "Times New Roman", serif !important;
+    font-size: 25px !important;
+    letter-spacing: -.03em !important;
+    text-transform: none !important;
+}
+/* Active Home */
+
+
+html.dark-mode nav.fixed a.bg-pink-500 {
+
+    background: transparent !important;
+    color: #fff !important;
+    border-bottom: 1px solid var(--ss-pink) !important;
+    border-radius: 0 !important;
+}
+/* Notification button */
+
+
+html.dark-mode .notification-btn {
+
+    background: #151515 !important;
+    color: var(--ss-pink) !important;
+    border-color: rgba(255,255,255,.16) !important;
+    box-shadow: none !important;
+}
+
+
+html.dark-mode .notification-btn:hover {
+
+    background: #202020 !important;
+    color: #fff !important;
+}
+/* Profile */
+
+
+html.dark-mode nav.fixed .text-gray-800,
+
+
+html.dark-mode nav.fixed .text-gray-700,
+
+
+html.dark-mode nav.fixed .text-gray-500 {
+
+    color: #d0d0d0 !important;
+}
+/* Main page */
+
+
+html.dark-mode main.container {
+
+    position: relative;
+    background: transparent !important;
+}
+/* Add subtle editorial glow behind the dashboard */
+
+
+html.dark-mode main.container::before {
+
+    content: "";
+    position: fixed;
+    width: 520px;
+    height: 520px;
+    right: -180px;
+    top: 180px;
+    border-radius: 50%;
+    background: rgba(236,29,102,.08);
+    filter: blur(100px);
+    pointer-events: none;
+    z-index: -1;
+}
+/* Session messages */
+
+
+html.dark-mode main .bg-green-100 {
+
+    background: rgba(16,185,129,.10) !important;
+    border-color: rgba(16,185,129,.35) !important;
+    color: #8ee6bd !important;
+}
+
+
+html.dark-mode main .bg-red-100 {
+
+    background: rgba(239,68,68,.10) !important;
+    border-color: rgba(239,68,68,.35) !important;
+    color: #ff9b9b !important;
+}
+/* Welcome banner */
+
+
+html.dark-mode .custom-pink {
+
+    position: relative !important;
+    overflow: hidden !important;
+    background:
+        linear-gradient(120deg, #151515 0%, #101010 55%, #1a0c12 100%) !important;
+    border: 1px solid rgba(255,255,255,.12) !important;
+    border-radius: 0 !important;
+    box-shadow: 0 30px 70px rgba(0,0,0,.30) !important;
+}
+
+
+html.dark-mode .custom-pink::after {
+
+    content: "";
+    position: absolute;
+    width: 330px;
+    height: 330px;
+    right: -130px;
+    top: -180px;
+    border-radius: 50%;
+    border: 1px solid rgba(236,29,102,.28);
+    box-shadow: 0 0 0 35px rgba(236,29,102,.025), 0 0 0 70px rgba(236,29,102,.018);
+    pointer-events: none;
+}
+
+
+html.dark-mode .custom-pink h2 {
+
+    position: relative;
+    z-index: 1;
+    font-family: Georgia, "Times New Roman", serif !important;
+    font-size: clamp(30px, 4vw, 52px) !important;
+    font-weight: 400 !important;
+    letter-spacing: -.04em !important;
+}
+
+
+html.dark-mode .custom-pink p {
+
+    color: #9e9e9e !important;
+}
+
+
+html.dark-mode .custom-pink a {
+
+    position: relative;
+    z-index: 2;
+    background: var(--ss-pink) !important;
+    color: #fff !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    letter-spacing: .16em !important;
+    text-transform: uppercase !important;
+    font-size: 10px !important;
+    border: 1px solid var(--ss-pink) !important;
+}
+
+
+html.dark-mode .custom-pink a:hover {
+
+    background: #fff !important;
+    color: #080808 !important;
+}
+/* Dashboard cards */
+
+
+html.dark-mode main .bg-white {
+
+    background: var(--ss-card) !important;
+    border-color: var(--ss-line) !important;
+    color: var(--ss-white) !important;
+    box-shadow: 0 24px 55px rgba(0,0,0,.22) !important;
+    border-radius: 0 !important;
+}
+
+
+html.dark-mode main .bg-white h1,
+
+
+html.dark-mode main .bg-white h2,
+
+
+html.dark-mode main .bg-white h3,
+
+
+html.dark-mode main .bg-white h4 {
+
+    color: var(--ss-white) !important;
+}
+
+
+html.dark-mode main .text-gray-800,
+
+
+html.dark-mode main .text-gray-700,
+
+
+html.dark-mode main .text-gray-600 {
+
+    color: #d8d8d8 !important;
+}
+
+
+html.dark-mode main .text-gray-500,
+
+
+html.dark-mode main .text-gray-400 {
+
+    color: #888 !important;
+}
+/* Section headings */
+
+
+html.dark-mode main h3 {
+
+    font-family: Georgia, "Times New Roman", serif !important;
+    font-weight: 400 !important;
+    letter-spacing: -.025em !important;
+}
+/* Appointment table */
+
+
+html.dark-mode main table {
+
+    color: #ddd !important;
+}
+
+
+html.dark-mode main table thead,
+
+
+html.dark-mode main table thead.bg-gray-50 {
+
+    background: #101010 !important;
+}
+
+
+html.dark-mode main table th {
+
+    color: #8f8f8f !important;
+    border-color: var(--ss-line) !important;
+    letter-spacing: .13em !important;
+}
+
+
+html.dark-mode main table td {
+
+    color: #d4d4d4 !important;
+    border-color: rgba(255,255,255,.07) !important;
+}
+
+
+html.dark-mode main table tbody tr:hover {
+
+    background: rgba(236,29,102,.045) !important;
+}
+/* Generic borders */
+
+
+html.dark-mode main .border-gray-100,
+
+
+html.dark-mode main .border-gray-200 {
+
+    border-color: var(--ss-line) !important;
+}
+/* Pink buttons */
+
+
+html.dark-mode main .bg-pink-500,
+
+
+html.dark-mode main .bg-pink-600 {
+
+    background: var(--ss-pink) !important;
+}
+
+
+html.dark-mode main .text-pink-600,
+
+
+html.dark-mode main .text-pink-700 {
+
+    color: var(--ss-pink) !important;
+}
+
+
+html.dark-mode main a.text-pink-600:hover,
+
+
+html.dark-mode main a.text-pink-700:hover {
+
+    color: #ff6a9c !important;
+}
+/* Status pills */
+
+
+html.dark-mode main .bg-green-50 {
+
+    background: rgba(16,185,129,.10) !important;
+    border-color: rgba(16,185,129,.25) !important;
+    color: #72d9aa !important;
+}
+
+
+html.dark-mode main .bg-yellow-50 {
+
+    background: rgba(245,158,11,.10) !important;
+    border-color: rgba(245,158,11,.25) !important;
+    color: #f5c76e !important;
+}
+
+
+html.dark-mode main .bg-red-50 {
+
+    background: rgba(239,68,68,.10) !important;
+    border-color: rgba(239,68,68,.25) !important;
+    color: #ff8d8d !important;
+}
+/* Mobile sidebar */
+
+
+html.dark-mode #mobileSidebar {
+
+    background: #111 !important;
+    border-right: 1px solid var(--ss-line) !important;
+}
+
+
+html.dark-mode #mobileSidebar .border-gray-200 {
+
+    border-color: var(--ss-line) !important;
+}
+
+
+html.dark-mode #mobileSidebar .text-gray-800,
+
+
+html.dark-mode #mobileSidebar .text-gray-600,
+
+
+html.dark-mode #mobileSidebar .text-gray-500 {
+
+    color: #d0d0d0 !important;
+}
+
+
+html.dark-mode #mobileSidebar a:hover {
+
+    background: rgba(236,29,102,.10) !important;
+    color: #fff !important;
+}
+
+
+html.dark-mode #mobileSidebar a.bg-pink-500 {
+
+    background: var(--ss-pink) !important;
+    color: #fff !important;
+}
+/* Notification dropdown */
+
+
+html.dark-mode #notificationDropdown {
+
+    background: #141414 !important;
+    border-color: rgba(255,255,255,.13) !important;
+    box-shadow: 0 30px 70px rgba(0,0,0,.55) !important;
+}
+
+
+html.dark-mode #notificationDropdown > div:first-child {
+
+    background: linear-gradient(135deg, #1c1c1c, #111) !important;
+    border-bottom: 1px solid var(--ss-line) !important;
+}
+
+
+html.dark-mode #notificationDropdown h3 {
+
+    color: #fff !important;
+}
+
+
+html.dark-mode #notificationDropdown p,
+
+
+html.dark-mode #notificationDropdown .text-gray-500,
+
+
+html.dark-mode #notificationDropdown .text-gray-400 {
+
+    color: #858585 !important;
+}
+
+
+html.dark-mode #notificationDropdown .bg-pink-50\/50,
+
+
+html.dark-mode #notificationDropdown .bg-pink-50\/30,
+
+
+html.dark-mode #notificationDropdown .bg-white {
+
+    background: #141414 !important;
+}
+
+
+html.dark-mode #notificationDropdown .notification-item:hover {
+
+    background: #1d1d1d !important;
+}
+
+
+html.dark-mode #notificationDropdown .border-pink-100,
+
+
+html.dark-mode #notificationDropdown .divide-pink-50 {
+
+    border-color: var(--ss-line) !important;
+}
+
+
+html.dark-mode #notificationDropdown .notification-item[data-notification-status="unread"] {
+
+    background: rgba(236,29,102,.055) !important;
+}
+
+
+html.dark-mode #notificationDropdown .notification-filter {
+
+    color: #858585 !important;
+}
+
+
+html.dark-mode #notificationDropdown .notification-filter.active,
+
+
+html.dark-mode #notificationDropdown .notification-filter:hover {
+
+    color: var(--ss-pink) !important;
+}
+
+
+html.dark-mode #notificationDropdown .delete-notification:hover {
+
+    background: rgba(239,68,68,.10) !important;
+}
+
+
+html.dark-mode #notificationDropdown > div:last-child {
+
+    background: #111 !important;
+    border-color: var(--ss-line) !important;
+}
+/* Profile dropdown */
+
+
+html.dark-mode #profileMenu {
+
+    background: #151515 !important;
+    border-color: var(--ss-line) !important;
+    box-shadow: 0 25px 60px rgba(0,0,0,.45) !important;
+}
+
+
+html.dark-mode #profileMenu a,
+
+
+html.dark-mode #profileMenu button {
+
+    color: #cfcfcf !important;
+}
+
+
+html.dark-mode #profileMenu a:hover {
+
+    background: rgba(236,29,102,.09) !important;
+    color: #fff !important;
+}
+/* Clear notification modal */
+
+
+html.dark-mode #clearNotificationsModal > div {
+
+    background: #151515 !important;
+    border: 1px solid var(--ss-line) !important;
+    color: #fff !important;
+}
+
+
+html.dark-mode #clearNotificationsModal h3 {
+
+    color: #fff !important;
+}
+
+
+html.dark-mode #clearNotificationsModal p {
+
+    color: #8c8c8c !important;
+}
+
+
+html.dark-mode #cancelClearNotifications {
+
+    background: transparent !important;
+    border-color: var(--ss-line) !important;
+    color: #ccc !important;
+}
+
+
+html.dark-mode #cancelClearNotifications:hover {
+
+    background: #222 !important;
+}
+/* Footer */
+
+
+html.dark-mode footer {
+
+    background: #080808 !important;
+    border-color: var(--ss-line) !important;
+    color: #777 !important;
+}
+
+
+html.dark-mode footer .border-slate-200 {
+
+    border-color: var(--ss-line) !important;
+}
+
+
+html.dark-mode footer .text-slate-400 {
+
+    color: #666 !important;
+}
+/* Prevent the existing invalid spacing rule from affecting the bell */
+/* Mobile */
+
+
+@media (max-width: 767px) {
+
+    html.dark-mode body {
+
+        background: #080808 !important;
+    }
+
+
+    html.dark-mode nav.fixed {
+
+        background: rgba(8,8,8,.96) !important;
+    }
+
+
+    html.dark-mode .custom-pink {
+
+        border-radius: 0 !important;
+        padding: 28px !important;
+    }
+
+
+    html.dark-mode .custom-pink h2 {
+
+        font-size: 32px !important;
+    }
+
+
+    html.dark-mode main .bg-white {
+
+        border-radius: 0 !important;
+    }
+
+}
+
+/* ============================================================
+   DARK THEME - HISTORY FILTERS
+   ============================================================ */
+html.dark-mode .history-filter,
+html.dark-mode .history-filter select,
+html.dark-mode .history-filter input,
+html.dark-mode .history-filters select,
+html.dark-mode .history-filters input,
+html.dark-mode #month,
+html.dark-mode #dentist,
+html.dark-mode #service,
+html.dark-mode #status,
+html.dark-mode #search {
+
+    background: #111111 !important;
+    color: #f5f5f5 !important;
+    border: 1px solid #333333 !important;
+}
+/* Placeholder text */
+
+
+html.dark-mode .history-filter input::placeholder,
+
+
+html.dark-mode .history-filters input::placeholder,
+
+
+html.dark-mode #search::placeholder {
+
+    color: #999999 !important;
+}
+/* Select option text */
+
+
+html.dark-mode .history-filter select option,
+
+
+html.dark-mode .history-filters select option,
+
+
+html.dark-mode #month option,
+
+
+html.dark-mode #dentist option,
+
+
+html.dark-mode #service option,
+
+
+html.dark-mode #status option {
+
+    background: #111111 !important;
+    color: #f5f5f5 !important;
+}
+/* Focus */
+
+
+html.dark-mode .history-filter select:focus,
+
+
+html.dark-mode .history-filter input:focus,
+
+
+html.dark-mode .history-filters select:focus,
+
+
+html.dark-mode .history-filters input:focus,
+
+
+html.dark-mode #month:focus,
+
+
+html.dark-mode #dentist:focus,
+
+
+html.dark-mode #service:focus,
+
+
+html.dark-mode #status:focus,
+
+
+html.dark-mode #search:focus {
+
+    outline: none !important;
+    border-color: #ec4899 !important;
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15) !important;
+}
+/* Filter container */
+
+
+html.dark-mode .history-filters,
+
+
+html.dark-mode .history-filter-container {
+
+    background: #0f0f0f !important;
+    border-color: #2f2f2f !important;
+}
+/* Apply Filters button */
+
+
+html.dark-mode .history-filters button,
+
+
+html.dark-mode .history-filter-container button {
+
+    background: #ec1764 !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+
+html.dark-mode .history-filters button:hover,
+
+
+html.dark-mode .history-filter-container button:hover {
+
+    background: #d91459 !important;
+}
+/* Print History button */
+
+
+html.dark-mode button[onclick*="print"],
+
+
+html.dark-mode .print-history {
+
+    background: #ec1764 !important;
+    color: #ffffff !important;
+}
+
+
+html.dark-mode button[onclick*="print"]:hover,
+
+
+html.dark-mode .print-history:hover {
+
+    background: #d91459 !important;
+}
+/* =========================================================
+   SHINE & SMILE DARK THEME
+   HISTORY FILTER CONTROLS
+   ========================================================= */
+/* FILTER CONTAINER */
+
+
+html.dark-mode #historyFilterForm {
+
+    background-color: #0f0f0f !important;
+    border-color: #303030 !important;
+}
+/* ALL FILTER INPUTS */
+
+
+html.dark-mode #historyFilterForm #monthFilter,
+
+
+html.dark-mode #historyFilterForm #dentistFilter,
+
+
+html.dark-mode #historyFilterForm #serviceFilter,
+
+
+html.dark-mode #historyFilterForm #statusFilter,
+
+
+html.dark-mode #historyFilterForm #searchInput {
+
+    background-color: #111111 !important;
+    color: #f5f5f5 !important;
+
+    border: 1px solid #383838 !important;
+
+    -webkit-text-fill-color: #f5f5f5 !important;
+}
+/* SELECT PLACEHOLDER TEXT */
+
+
+html.dark-mode #historyFilterForm #monthFilter,
+
+
+html.dark-mode #historyFilterForm #dentistFilter,
+
+
+html.dark-mode #historyFilterForm #serviceFilter,
+
+
+html.dark-mode #historyFilterForm #statusFilter {
+
+    color: #eeeeee !important;
+}
+/* SELECT OPTIONS */
+
+
+html.dark-mode #historyFilterForm #monthFilter option,
+
+
+html.dark-mode #historyFilterForm #dentistFilter option,
+
+
+html.dark-mode #historyFilterForm #serviceFilter option,
+
+
+html.dark-mode #historyFilterForm #statusFilter option {
+
+    background-color: #111111 !important;
+    color: #f5f5f5 !important;
+}
+/* SEARCH PLACEHOLDER */
+
+
+html.dark-mode #historyFilterForm #searchInput::placeholder {
+
+    color: #888888 !important;
+    opacity: 1 !important;
+}
+/* HOVER */
+
+
+html.dark-mode #historyFilterForm #monthFilter:hover,
+
+
+html.dark-mode #historyFilterForm #dentistFilter:hover,
+
+
+html.dark-mode #historyFilterForm #serviceFilter:hover,
+
+
+html.dark-mode #historyFilterForm #statusFilter:hover,
+
+
+html.dark-mode #historyFilterForm #searchInput:hover {
+
+    border-color: #555555 !important;
+}
+/* FOCUS */
+
+
+html.dark-mode #historyFilterForm #monthFilter:focus,
+
+
+html.dark-mode #historyFilterForm #dentistFilter:focus,
+
+
+html.dark-mode #historyFilterForm #serviceFilter:focus,
+
+
+html.dark-mode #historyFilterForm #statusFilter:focus,
+
+
+html.dark-mode #historyFilterForm #searchInput:focus {
+
+    outline: none !important;
+
+    border-color: #ec1764 !important;
+
+    box-shadow:
+        0 0 0 2px rgba(236, 23, 100, 0.18) !important;
+}
+/* APPLY FILTERS BUTTON */
+
+
+html.dark-mode #historyFilterForm button[type="submit"] {
+
+    background-color: #ec1764 !important;
+    color: #ffffff !important;
+    border: 1px solid #ec1764 !important;
+}
+
+
+html.dark-mode #historyFilterForm button[type="submit"]:hover {
+
+    background-color: #d91459 !important;
+    border-color: #d91459 !important;
+}
+/* CLEAR FILTERS */
+
+
+html.dark-mode #historyFilterForm a {
+
+    color: #ec1764 !important;
+}
+
+
+html.dark-mode #historyFilterForm a:hover {
+
+    color: #ff4f8b !important;
+}
+
+/* ============================================================
+   HISTORY — VIEW BUTTON DARK MODE FIX
+   Keeps the original light-mode button unchanged.
+   ============================================================ */
+
+html.dark-mode .view-history-button {
+    background: #1b1b1b !important;
+    color: #ff2f78 !important;
+    border-color: rgba(236, 29, 102, 0.45) !important;
+    box-shadow: none !important;
+}
+
+html.dark-mode .view-history-button:hover {
+    background: #ec1d66 !important;
+    color: #ffffff !important;
+    border-color: #ec1d66 !important;
+}
+
+html.dark-mode .view-history-button:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(236, 29, 102, 0.18) !important;
+}
+
+/* ============================================================
+   HISTORY — APPOINTMENT DETAILS MODAL DARK MODE
+   ============================================================ */
+
+html.dark-mode #appointmentHistoryModal > div[role="dialog"] {
+    background: #111111 !important;
+    color: #f5f2ef !important;
+    border: 1px solid rgba(255,255,255,.10) !important;
+    box-shadow: 0 30px 80px rgba(0,0,0,.60) !important;
+}
+
+html.dark-mode #appointmentHistoryModal .border-gray-100 {
+    border-color: rgba(255,255,255,.10) !important;
+}
+
+html.dark-mode #appointmentHistoryModal .bg-white {
+    background: #151515 !important;
+}
+
+html.dark-mode #appointmentHistoryModal .bg-gray-50 {
+    background: #181818 !important;
+}
+
+html.dark-mode #appointmentHistoryModal .bg-pink-50 {
+    background: rgba(236,29,102,.10) !important;
+}
+
+html.dark-mode #appointmentHistoryModal .text-gray-900 {
+    color: #f5f2ef !important;
+}
+
+html.dark-mode #appointmentHistoryModal .text-gray-600,
+html.dark-mode #appointmentHistoryModal .text-gray-500,
+html.dark-mode #appointmentHistoryModal .text-gray-400 {
+    color: #a1a1a1 !important;
+}
+
+html.dark-mode #appointmentHistoryModal .text-pink-600 {
+    color: #ff2f78 !important;
+}
+
+html.dark-mode #appointmentHistoryModal .text-green-600 {
+    color: #22c55e !important;
+}
+
+html.dark-mode #appointmentHistoryModal .text-red-600 {
+    color: #ef4444 !important;
+}
+
+html.dark-mode #appointmentHistoryModal #closeAppointmentHistoryModal:hover {
+    background: #222222 !important;
+    color: #ffffff !important;
+}
+
+html.dark-mode #appointmentHistoryModal #viewAppointmentStatus {
+    background: #151515 !important;
+    color: #ff2f78 !important;
+    box-shadow: none !important;
+}
+
+html.dark-mode #appointmentHistoryModal #closeAppointmentHistoryModalFooter {
+    background: #151515 !important;
+    color: #ffffff !important;
+}
+
+html.dark-mode #appointmentHistoryModal #closeAppointmentHistoryModalFooter:hover {
+    background: #ec1d66 !important;
+    color: #ffffff !important;
+}
+
+/* Modal backdrop */
+html.dark-mode #appointmentHistoryOverlay {
+    background: rgba(0,0,0,.68) !important;
+}
+/* ============================================================
+   LOGOUT CONFIRMATION MODAL
+   ============================================================ */
+
+.logout-modal {
+    position: fixed !important;
+    inset: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding: 20px !important;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition:
+        opacity 0.2s ease,
+        visibility 0.2s ease;
+
+    z-index: 9999999 !important;
+}
+
+.logout-modal.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* Overlay */
+
+.logout-modal-overlay {
+    position: absolute !important;
+    inset: 0 !important;
+
+    background: rgba(15, 23, 42, 0.60);
+
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+/* Card */
+
+.logout-modal-card {
+    position: relative !important;
+    z-index: 2 !important;
+
+    width: min(100%, 420px);
+
+    padding: 32px;
+
+    background: #ffffff;
+
+    border: 1px solid #f1f1f1;
+
+    border-radius: 20px;
+
+    text-align: center;
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.25);
+
+    transform: translateY(12px) scale(0.97);
+
+    transition: transform 0.2s ease;
+}
+
+.logout-modal.show .logout-modal-card {
+    transform: translateY(0) scale(1);
+}
+
+/* Icon */
+
+.logout-modal-icon {
+    width: 64px;
+    height: 64px;
+
+    margin: 0 auto 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #fff1f7;
+    color: #db2777;
+}
+
+/* Title */
+
+.logout-modal-card h2 {
+    margin: 0;
+
+    color: #1f2937;
+
+    font-size: 24px;
+    font-weight: 800;
+}
+
+/* Message */
+
+.logout-modal-card p {
+    margin: 10px auto 24px;
+
+    max-width: 320px;
+
+    color: #6b7280;
+
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Buttons */
+
+.logout-modal-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* Cancel */
+
+.logout-cancel-btn,
+.logout-confirm-btn {
+    flex: 1;
+
+    min-height: 46px;
+
+    border-radius: 10px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.15s ease;
+}
+
+.logout-cancel-btn {
+    background: #f5f5f5;
+    color: #374151;
+
+    border: 1px solid #e5e7eb;
+}
+
+.logout-cancel-btn:hover {
+    background: #e5e7eb;
+}
+
+/* Confirm */
+
+.logout-confirm-btn {
+    background: #ec1d66;
+    color: #ffffff;
+
+    border: 1px solid #ec1d66;
+}
+
+.logout-confirm-btn:hover {
+    background: #d91459;
+    border-color: #d91459;
+
+    transform: translateY(-1px);
+}
+
+.logout-cancel-btn:active,
+.logout-confirm-btn:active {
+    transform: scale(0.97);
+}
+
+/* ============================================================
+   DARK MODE
+   ============================================================ */
+
+html.dark-mode .logout-modal-card {
+    background: #111111 !important;
+    color: #f5f2ef !important;
+
+    border-color: rgba(255,255,255,.10) !important;
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.65) !important;
+}
+
+html.dark-mode .logout-modal-icon {
+    background: rgba(236,29,102,.10) !important;
+    color: #ff2f78 !important;
+}
+
+html.dark-mode .logout-modal-card h2 {
+    color: #f5f2ef !important;
+}
+
+html.dark-mode .logout-modal-card p {
+    color: #9b9b9b !important;
+}
+
+html.dark-mode .logout-cancel-btn {
+    background: #1b1b1b !important;
+    color: #d0d0d0 !important;
+
+    border-color: rgba(255,255,255,.12) !important;
+}
+
+html.dark-mode .logout-cancel-btn:hover {
+    background: #252525 !important;
+    color: #ffffff !important;
+}
+
+html.dark-mode .logout-confirm-btn {
+    background: #ec1d66 !important;
+    color: #ffffff !important;
+
+    border-color: #ec1d66 !important;
+}
+
+html.dark-mode .logout-confirm-btn:hover {
+    background: #ff2f78 !important;
+    border-color: #ff2f78 !important;
+}
+
+/* Mobile */
+
+@media (max-width: 480px) {
+
+    .logout-modal-card {
+        padding: 26px 20px;
+        border-radius: 18px;
+    }
+
+    .logout-modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .logout-cancel-btn,
+    .logout-confirm-btn {
+        width: 100%;
+    }
+}
+
+/* ============================================================
+   MAIN NAVIGATION
+   ============================================================ */
+
+.main-nav-link {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+
+    height: 52px;
+
+    color: #2d2d2d;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    letter-spacing: 1.5px;
+
+    text-transform: uppercase;
+
+    text-decoration: none;
+
+    transition: color 0.2s ease;
+}
+
+
+/* HOVER */
+
+.main-nav-link:hover {
+    color: #e91e63 !important;
+}
+
+
+/* ACTIVE */
+
+.main-nav-link.active {
+    color: #e91e63 !important;
+}
+
+
+/* ACTIVE UNDERLINE */
+
+.main-nav-link.active::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    bottom: 0;
+
+    height: 2px;
+
+    background: #e91e63;
+}

@@ -2,21 +2,29 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Odontogram extends Model
 {
-    protected $fillable = [
+    use HasFactory;
 
+    protected $table = 'odontograms';
+
+    protected $fillable = [
         'patient_record_id',
         'tooth_number',
         'condition',
-        'remarks'
-
+        'remarks',
     ];
 
-    public function patient()
+    public function patientRecord(): BelongsTo
     {
-        return $this->belongsTo(PatientRecords::class);
+        return $this->belongsTo(
+            PatientRecords::class,
+            'patient_record_id',
+            'id'
+        );
     }
 }

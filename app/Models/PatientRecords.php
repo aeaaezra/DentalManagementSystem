@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Appointments;
-use App\Models\Econsultations;
 use App\Models\User;
 use App\Models\Odontogram;
 
@@ -15,44 +14,37 @@ class PatientRecords extends Model
 
     protected $table = 'patient_records';
 
-    protected $fillable = [
-        'user_id',
-        'patient_name',
-        'age',
-        'sex',
-        'civil_status',
-        'tel_no',
-        'occupation',
-        'address',
-        'heart_condition',
-        'heart_condition_details',
-        'allergy',
-        'allergy_details',
-        'diabetes',
-        'diabetes_details',
-        'hypertension',
-        'hypertension_details',
-        'bleeding_tendency',
-        'bleeding_tendency_details',
-        'asthma',
-        'asthma_details',
-        'other_conditions',
-        'patient_signature',
-    ];
+protected $fillable = [
+    'user_id',
+    'patient_name',
+    'age',
+    'sex',
+    'civil_status',
+    'tel_no',
+    'occupation',
+    'address',
+    'patient_signature',
 
+    'heart_condition',
+    'heart_condition_details',
+    'allergy',
+    'allergy_details',
+    'diabetes',
+    'diabetes_details',
+    'hypertension',
+    'hypertension_details',
+    'bleeding_tendency',
+    'bleeding_tendency_details',
+    'asthma',
+    'asthma_details',
+    'other_conditions',
+];
     public function appointments()
     {
         return $this->hasMany(
             Appointments::class,
-            'patient_record_id'
-        );
-    }
-
-    public function eConsultations()
-    {
-        return $this->hasMany(
-            Econsultations::class,
-            'patient_record_id'
+            'patient_record_id',
+            'id'
         );
     }
 
@@ -60,14 +52,17 @@ class PatientRecords extends Model
     {
         return $this->belongsTo(
             User::class,
-            'user_id'
+            'user_id',
+            'id'
         );
     }
 
     public function odontograms()
     {
         return $this->hasMany(
-            Odontogram::class
+            Odontogram::class,
+            'patient_record_id',
+            'id'
         );
     }
 }

@@ -14,39 +14,59 @@ class ServicesTable
 {
     public static function configure(Table $table): Table
     {
-        return $table
-            ->columns([
-                TextColumn::make('service_name')
-                    ->searchable(),
-                TextColumn::make('price')
-                ->label('Price')
-                ->formatStateUsing(fn ($state) => '₱' . number_format($state, 2))
-                ->sortable(),
-               TextColumn::make('deposit')
-                ->label('Required Deposit')
-                ->formatStateUsing(fn ($state) => '₱' . number_format($state ?? 0, 2))
-                ->sortable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
-            ])
-            ->recordActions([
-               ViewAction::make(),
-                EditAction::make(),
-                DeleteAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
+       return $table
+    ->columns([
+
+        TextColumn::make('service_name')
+            ->searchable(),
+
+        TextColumn::make('price')
+            ->label('Price')
+            ->formatStateUsing(fn ($state) => '₱' . number_format($state, 2))
+            ->sortable(),
+
+        TextColumn::make('duration_minutes')
+            ->label('Duration')
+            ->suffix(' minutes')
+            ->sortable(),
+
+        TextColumn::make('created_at')
+            ->dateTime()
+            ->sortable()
+            ->toggleable(isToggledHiddenByDefault: true),
+
+        TextColumn::make('updated_at')
+            ->dateTime()
+            ->sortable()
+            ->toggleable(isToggledHiddenByDefault: true),
+
+    ])
+
+    ->filters([
+
+        //
+
+    ])
+
+    ->recordActions([
+
+        ViewAction::make(),
+
+        EditAction::make(),
+
+        DeleteAction::make(),
+
+    ])
+
+    ->toolbarActions([
+
+        BulkActionGroup::make([
+
+            DeleteBulkAction::make(),
+
+        ]),
+
+    ]);
+
     }
 }

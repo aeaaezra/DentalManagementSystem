@@ -2,44 +2,102 @@
 
 namespace App\Notifications;
 
+use App\Notifications\Concerns\ChecksNotificationPreferences;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class AppointmentStatusNotification extends Notification
 {
     use Queueable;
+    use ChecksNotificationPreferences;
+
+
+    // ============================================================
+    // PROPERTIES
+    // ============================================================
 
     protected $status;
+
     protected $appointmentDate;
+
     protected $appointment;
 
-    public function __construct($status, $appointmentDate = null, $appointment = null)
-    {
-        $this->status = $status;
-        $this->appointmentDate = $appointmentDate;
-        $this->appointment = $appointment;
+
+    // ============================================================
+    // CONSTRUCTOR
+    // ============================================================
+
+    public function __construct(
+        $status,
+        $appointmentDate = null,
+        $appointment = null
+    ) {
+
+        $this->status =
+            $status;
+
+        $this->appointmentDate =
+            $appointmentDate;
+
+        $this->appointment =
+            $appointment;
     }
 
-    public function via(object $notifiable): array
-    {
-        return ['database'];
-    }
 
-    public function toArray(object $notifiable): array
-    {
+    // ============================================================
+    // NOTIFICATION CHANNELS
+    // ============================================================
+
+    public function via(
+        object $notifiable
+    ): array {
+
+        // --------------------------------------------------------
+        // Check appointment notification preference
+        // --------------------------------------------------------
+
+        if (
+            !$this->appointmentNotificationsEnabled(
+                $notifiable
+            )
+        ) {
+
+            return [];
+        }
+
+
         return [
-            'title' => 'Appointment Status Updated',
+            'database',
+        ];
+    }
 
-            'message' => 'Your dental appointment has been '
+
+    // ============================================================
+    // DATABASE NOTIFICATION
+    // ============================================================
+
+    public function toArray(
+        object $notifiable
+    ): array {
+
+        return [
+
+            'title' =>
+                'Appointment Status Updated',
+
+            'message' =>
+                'Your dental appointment has been '
                 . $this->status
                 . '.',
 
-            'status' => $this->status,
+            'status' =>
+                $this->status,
 
-            'appointment_date' => $this->appointmentDate,
+            'appointment_date' =>
+                $this->appointmentDate,
 
-            'appointment_id' => $this->appointment?->id,
+            'appointment_id' =>
+                $this->appointment?->id,
         ];
     }
 }

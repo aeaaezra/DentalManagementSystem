@@ -10,83 +10,287 @@ use App\Models\PosSaleItems;
 
 class POSController extends Controller
 {
-    // ✅ This should match your route: /pos/homepage
     public function homepage()
     {
-        return view('pos.homepage', [
-            'products' => Products::all()
-        ]);
+        $products = Products::where('is_active', true)
+            ->orderBy('product_name')
+            ->get();
+
+        return view('pos.homepage', compact('products'));
     }
 
-    // ✅ Optional: if you still want a POS page
     public function index()
     {
-        return view('pos.pos', [
-            'products' => Products::all()
-        ]);
+        $products = Products::where('is_active', true)
+            ->orderBy('product_name')
+            ->get();
+
+        return view('pos.pos', compact('products'));
     }
 
     public function checkout(Request $request)
     {
-        $request->validate([
-            'cart' => 'required|array',
-            'total' => 'required|numeric',
-            'cash_received' => 'required|numeric',
-        ]);
+        /*
+        |--------------------------------------------------------------------------
+        | Validate Checkout
+        |--------------------------------------------------------------------------
+        */
 
-        // ✅ Prevent underpayment
-        if ($request->cash_received < $request->total) {
-            return response()->json([
-                'error' => 'Insufficient payment'
-            ], 400);
-        }
+        $request->validate([
+            'cart' => 'required|array|min:1',
+            'total' => 'required|numeric|min:0',
+            'cash_received' => 'required|numeric|min:0',
+        ]);
 
         try {
             DB::beginTransaction();
 
-            $sale = PosSales::create([
-                'invoice_no' => 'INV-' . now()->format('YmdHis'),
-                'total_amount' => $request->total,
-                'cash_received' => $request->cash_received,
-                'change_amount' => $request->cash_received - $request->total,
-                'payment_method' => $request->payment_method ?? 'cash',
-                'status' => 'completed',
-            ]);
+            /*
+            |--------------------------------------------------------------------------
+            | Get Payment Information
+            |--------------------------------------------------------------------------
+            */
+
+            $totalAmount = (float) $request->total;
+            $cashReceived = (float) $request->cash_received;
+
+            /*
+            |--------------------------------------------------------------------------
+            | Check Cash Payment
+            |--------------------------------------------------------------------------
+            */
+
+            if ($cashReceived < $totalAmount) {
+                throw new \Exception(
+                    'Insufficient payment. Please enter enough cash.'
+                );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Calculate Change
+            |--------------------------------------------------------------------------
+            */
+
+            $changeAmount = $cashReceived - $totalAmount;
+
+            /*
+            |--------------------------------------------------------------------------
+            | Generate Invoice Number
+            |--------------------------------------------------------------------------
+            */
+
+            $invoiceNo = 'INV-' . now()->format('YmdHis');
+
+            /*
+            |--------------------------------------------------------------------------
+            | Calculate Subtotal
+            |--------------------------------------------------------------------------
+            */
+
+            $subtotal = 0;
 
             foreach ($request->cart as $item) {
 
                 $product = Products::findOrFail($item['id']);
 
-                // ✅ Check stock
-                if ($product->stock < $item['qty']) {
-                    throw new \Exception("Not enough stock for {$product->name}");
+                $quantity = (int) $item['qty'];
+
+                /*
+                |--------------------------------------------------------------------------
+                | Validate Quantity
+                |--------------------------------------------------------------------------
+                */
+
+                if ($quantity <= 0) {
+                    throw new \Exception(
+                        "Invalid quantity for {$product->product_name}."
+                    );
                 }
+
+                /*
+                |--------------------------------------------------------------------------
+                | Check Stock
+                |--------------------------------------------------------------------------
+                */
+
+                if ($product->quantity < $quantity) {
+                    throw new \Exception(
+                        "Not enough stock for {$product->product_name}. " .
+                        "Available stock: {$product->quantity}."
+                    );
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | Product Price
+                |--------------------------------------------------------------------------
+                */
+
+                $price = (float) $product->selling_price;
+
+                /*
+                |--------------------------------------------------------------------------
+                | Calculate Item Subtotal
+                |--------------------------------------------------------------------------
+                */
+
+                $subtotal += $quantity * $price;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Create POS Sale
+            |--------------------------------------------------------------------------
+            |
+            | These columns match your actual pos_sales table:
+            |
+            | invoice_no
+            | subtotal
+            | discount
+            | tax
+            | total
+            | amount_paid
+            | change_amount
+            | payment_status
+            | status
+            |
+            */
+
+            $sale = PosSales::create([
+                'invoice_no' => $invoiceNo,
+
+                'subtotal' => $subtotal,
+
+                'discount' => 0,
+
+                'tax' => 0,
+
+                'total' => $totalAmount,
+
+                'amount_paid' => $cashReceived,
+
+                'change_amount' => $changeAmount,
+
+                'payment_status' => 'paid',
+
+                'status' => 'completed',
+            ]);
+
+            /*
+            |--------------------------------------------------------------------------
+            | Create Sale Items
+            |--------------------------------------------------------------------------
+            */
+
+            foreach ($request->cart as $item) {
+
+                $product = Products::findOrFail($item['id']);
+
+                $quantity = (int) $item['qty'];
+
+                $price = (float) $product->selling_price;
+
+                $itemSubtotal = $quantity * $price;
+
+                /*
+                |--------------------------------------------------------------------------
+                | Save Sale Item
+                |--------------------------------------------------------------------------
+                */
 
                 PosSaleItems::create([
                     'pos_sale_id' => $sale->id,
+
                     'product_id' => $product->id,
-                    'quantity' => $item['qty'],
-                    'price' => $product->price,
-                    'subtotal' => $item['qty'] * $product->price,
+
+                    'product_name' => $product->product_name,
+
+                    'sku' => $product->sku ?? null,
+
+                    'quantity' => $quantity,
+
+                    'price' => $price,
+
+                    'discount' => 0,
+
+                    'subtotal' => $itemSubtotal,
                 ]);
 
-                // ✅ Reduce stock
-                $product->decrement('stock', $item['qty']);
+                /*
+                |--------------------------------------------------------------------------
+                | Reduce Inventory
+                |--------------------------------------------------------------------------
+                */
+
+                $product->decrement(
+                    'quantity',
+                    $quantity
+                );
             }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Commit Transaction
+            |--------------------------------------------------------------------------
+            */
 
             DB::commit();
 
+            /*
+            |--------------------------------------------------------------------------
+            | Return Success Response
+            |--------------------------------------------------------------------------
+            */
+
             return response()->json([
                 'success' => true,
-                'message' => 'Sale completed successfully'
+
+                'message' => 'Sale completed successfully.',
+
+                'invoice_no' => $sale->invoice_no,
+
+                'sale_id' => $sale->id,
+
+                'total_amount' => number_format(
+                    $totalAmount,
+                    2,
+                    '.',
+                    ''
+                ),
+
+                'cash_received' => number_format(
+                    $cashReceived,
+                    2,
+                    '.',
+                    ''
+                ),
+
+                'change_amount' => number_format(
+                    $changeAmount,
+                    2,
+                    '.',
+                    ''
+                ),
+
+                'payment_status' => 'paid',
             ]);
 
         } catch (\Exception $e) {
 
+            /*
+            |--------------------------------------------------------------------------
+            | Rollback Transaction
+            |--------------------------------------------------------------------------
+            */
+
             DB::rollBack();
 
             return response()->json([
-                'error' => $e->getMessage()
+                'success' => false,
+
+                'error' => $e->getMessage(),
+
             ], 500);
         }
     }

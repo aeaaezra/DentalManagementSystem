@@ -2,12 +2,14 @@
 
 namespace App\Notifications;
 
+use App\Notifications\Concerns\ChecksNotificationPreferences;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
 class AppointmentDeclined extends Notification
 {
     use Queueable;
+    use ChecksNotificationPreferences;
 
     protected $appointment;
 
@@ -18,7 +20,13 @@ class AppointmentDeclined extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        if (! $this->appointmentNotificationsEnabled($notifiable)) {
+            return [];
+        }
+
+        return [
+            'database',
+        ];
     }
 
     public function toDatabase(object $notifiable): array
@@ -26,26 +34,17 @@ class AppointmentDeclined extends Notification
         return [
             'title' => 'Appointment Declined',
 
-            'message' => 'Your appointment on '
-                . $this->appointment->appointment_date
-                . ' at '
-                . $this->appointment->appointment_time
-                . ' was declined.',
+            'message' => 'Your dental appointment has been declined by the clinic.',
 
             'appointment_id' => $this->appointment->id,
 
-            'doctor' => $this->appointment->doctor_name ?? 'Not assigned',
+            'appointment_date' => $this->appointment->appointment_date
+                ? $this->appointment->appointment_date->format('F d, Y')
+                : null,
 
-            'date' => $this->appointment->appointment_date,
+            'appointment_time' => $this->appointment->appointment_time,
 
-            'time' => $this->appointment->appointment_time,
-
-            'type' => 'appointment',
+            'status' => $this->appointment->status,
         ];
-    }
-
-    public function toArray(object $notifiable): array
-    {
-        return $this->toDatabase($notifiable);
     }
 }

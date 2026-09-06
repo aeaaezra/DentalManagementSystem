@@ -2,25 +2,27 @@
 
 namespace App\Filament\Resources\Appointments\Tables;
 
+use App\Models\Appointments;
+use App\Notifications\AppointmentApproved;
+use App\Notifications\AppointmentDeclined;
+use App\Notifications\CancellationConfirmed;
+use App\Notifications\CancellationDeclined;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
-use Filament\Actions\Action;
-use App\Models\Appointments;
-use App\Models\Notification;
 class AppointmentsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-
                 TextColumn::make('patient.patient_name')
                     ->label('Patient Name')
                     ->searchable()
@@ -51,6 +53,7 @@ class AppointmentsTable
                         'success' => 'confirmed',
                         'info' => 'completed',
                         'danger' => 'cancelled',
+                        'gray' => 'cancellation_requested',
                     ]),
 
                 TextColumn::make('amount')
@@ -64,81 +67,186 @@ class AppointmentsTable
                 TextColumn::make('balance')
                     ->money('PHP')
                     ->sortable(),
+            ])
 
-        ])
             ->filters([
-
                 SelectFilter::make('status')
                     ->options([
                         'pending' => 'Pending',
                         'confirmed' => 'Confirmed',
+                        'cancellation_requested' => 'Cancellation Requested',
                         'completed' => 'Completed',
                         'cancelled' => 'Cancelled',
                     ]),
-
             ])
-
 
             ->recordActions([
 
-    ViewAction::make(),
+                /*
+                |--------------------------------------------------------------------------
+                | View
+                |--------------------------------------------------------------------------
+                */
 
-    EditAction::make(),
+                ViewAction::make(),
 
-    Action::make('confirm')
-        ->label('Confirm')
-        ->icon('heroicon-o-check-circle')
-        ->color('success')
+                /*
+                |--------------------------------------------------------------------------
+                | Edit
+                |--------------------------------------------------------------------------
+                */
 
-        ->visible(fn (Appointments $record) => $record->status === 'pending')
+                EditAction::make(),
 
-        ->action(function (Appointments $record) {
+                /*
+                |--------------------------------------------------------------------------
+                | Confirm Appointment
+                |--------------------------------------------------------------------------
+                */
 
-            $record->update([
-                'status' => 'confirmed',
-            ]);
+                Action::make('confirm')
+                    ->label('Confirm')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->visible(
+                        fn (Appointments $record): bool =>
+                            $record->status === 'pending'
+                    )
+                    ->action(function (Appointments $record): void {
 
-            Notification::create([
-                'user_id' => $record->patient->user_id,
+                        // Change appointment status
+                        $record->update([
+                            'status' => 'confirmed',
+                        ]);
 
-                'title' => 'Appointment Approved',
+                        // Send notification to the patient
+                        if (
+                            $record->patient !== null &&
+                            $record->patient->user !== null
+                        ) {
+                            $record->patient->user->notify(
+                                new AppointmentApproved($record)
+                            );
+                        }
+                    }),
 
-                'message' => 'Your appointment has been approved by the clinic.',
+                /*
+                |--------------------------------------------------------------------------
+                | Decline Appointment
+                |--------------------------------------------------------------------------
+                */
 
-                'is_read' => false,
-            ]);
+                Action::make('decline')
+                    ->label('Decline')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->visible(
+                        fn (Appointments $record): bool =>
+                            $record->status === 'pending'
+                    )
+                    ->action(function (Appointments $record): void {
 
-        }),
+                        // Change appointment status
+                        $record->update([
+                            'status' => 'cancelled',
+                        ]);
 
+                        // Send notification to the patient
+                        if (
+                            $record->patient !== null &&
+                            $record->patient->user !== null
+                        ) {
+                            $record->patient->user->notify(
+                                new AppointmentDeclined($record)
+                            );
+                        }
+                    }),
 
-    Action::make('decline')
-        ->label('Decline')
-        ->icon('heroicon-o-x-circle')
-        ->color('danger')
+                /*
+                |--------------------------------------------------------------------------
+                | Confirm Cancellation
+                |--------------------------------------------------------------------------
+                */
 
-        ->visible(fn (Appointments $record) => $record->status === 'pending')
+                Action::make('confirmCancellation')
+                    ->label('Confirm Cancellation')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalHeading('Confirm Appointment Cancellation')
+                    ->modalDescription(
+                        'Are you sure you want to approve this cancellation request? The appointment will be permanently marked as cancelled.'
+                    )
+                    ->visible(
+                        fn (Appointments $record): bool =>
+                            $record->status === 'cancellation_requested'
+                    )
+                    ->action(function (Appointments $record): void {
 
-        ->action(function (Appointments $record) {
+                        // Change status to cancelled
+                        $record->update([
+                            'status' => 'cancelled',
+                        ]);
 
-            $record->update([
-                'status' => 'cancelled',
-            ]);
+                        // Notify the patient
+                        if (
+                            $record->patient !== null &&
+                            $record->patient->user !== null
+                        ) {
+                            $record->patient->user->notify(
+                                new CancellationConfirmed($record)
+                            );
+                        }
+                    }),
 
-            Notification::create([
-                'user_id' => $record->patient->user_id,
+                /*
+                |--------------------------------------------------------------------------
+                | Decline Cancellation
+                |--------------------------------------------------------------------------
+                */
 
-                'title' => 'Appointment Declined',
+                Action::make('declineCancellation')
+                    ->label('Decline Cancellation')
+                    ->icon('heroicon-o-arrow-uturn-left')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Decline Cancellation Request')
+                    ->modalDescription(
+                        'Are you sure you want to decline this cancellation request? The appointment will remain confirmed.'
+                    )
+                    ->visible(
+                        fn (Appointments $record): bool =>
+                            $record->status === 'cancellation_requested'
+                    )
+                    ->action(function (Appointments $record): void {
 
-                'message' => 'Unfortunately your appointment was declined.',
+                        // Return appointment to confirmed
+                        $record->update([
+                            'status' => 'confirmed',
+                        ]);
 
-                'is_read' => false,
-            ]);
+                        // Notify the patient
+                        if (
+                            $record->patient !== null &&
+                            $record->patient->user !== null
+                        ) {
+                            $record->patient->user->notify(
+                                new CancellationDeclined($record)
+                            );
+                        }
+                    }),
 
-        }),
+                /*
+                |--------------------------------------------------------------------------
+                | Delete
+                |--------------------------------------------------------------------------
+                */
 
-    DeleteAction::make(),
+                DeleteAction::make(),
+            ])
 
-])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),

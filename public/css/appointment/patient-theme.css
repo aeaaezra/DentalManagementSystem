@@ -1,0 +1,943 @@
+
+html,
+body {
+    transition:
+        background-color .25s ease,
+        color .25s ease;
+}
+
+html.dark-mode body {
+    background: #080808 !important;
+    color: #f5f2ef !important;
+}
+
+/* Tailwind body text color used by the patient pages */
+html.dark-mode body.text-\[\#2D2D2D\] {
+    color: #f5f2ef !important;
+}
+
+/* =========================================================
+   COMMON WHITE ELEMENTS
+   ========================================================= */
+
+html.dark-mode .bg-white {
+    background-color: #111111 !important;
+}
+
+html.dark-mode .bg-white\/90 {
+    background-color: rgba(13, 13, 13, .94) !important;
+}
+
+html.dark-mode .bg-white\/95 {
+    background-color: rgba(13, 13, 13, .96) !important;
+}
+
+/* =========================================================
+   COMMON TEXT
+   ========================================================= */
+
+html.dark-mode .text-\[\#2D2D2D\] {
+    color: #f5f2ef !important;
+}
+
+html.dark-mode .text-gray-900,
+html.dark-mode .text-gray-800,
+html.dark-mode .text-gray-700 {
+    color: #f5f2ef !important;
+}
+
+html.dark-mode .text-gray-600,
+html.dark-mode .text-gray-500,
+html.dark-mode .text-gray-400 {
+    color: #a1a1a1 !important;
+}
+
+/* =========================================================
+   COMMON BORDERS
+   ========================================================= */
+
+html.dark-mode .border-gray-100,
+html.dark-mode .border-gray-200,
+html.dark-mode .border-gray-300 {
+    border-color: #2d2d2d !important;
+}
+
+/* =========================================================
+   HOME PAGE
+   ========================================================= */
+
+html.dark-mode #home {
+    background:
+        linear-gradient(
+            135deg,
+            #1b0b12 0%,
+            #111111 55%,
+            #080808 100%
+        ) !important;
+}
+
+html.dark-mode .bg-pink-gradient {
+    background:
+        linear-gradient(
+            135deg,
+            #1b0b12 0%,
+            #111111 55%,
+            #080808 100%
+        ) !important;
+}
+
+html.dark-mode #services,
+html.dark-mode #about,
+html.dark-mode #testimonials,
+html.dark-mode #FAQs,
+html.dark-mode #location,
+html.dark-mode #contact {
+    background-color: #080808 !important;
+    color: #f5f2ef !important;
+}
+
+html.dark-mode #services .bg-white,
+html.dark-mode #about .bg-white,
+html.dark-mode #testimonials .bg-white,
+html.dark-mode #FAQs .bg-white,
+html.dark-mode #location .bg-white,
+html.dark-mode #contact .bg-white {
+    background-color: #111111 !important;
+}
+
+html.dark-mode #home h1,
+html.dark-mode #services h1,
+html.dark-mode #services h2,
+html.dark-mode #services h3,
+html.dark-mode #about h1,
+html.dark-mode #about h2,
+html.dark-mode #about h3,
+html.dark-mode #testimonials h1,
+html.dark-mode #testimonials h2,
+html.dark-mode #testimonials h3,
+html.dark-mode #FAQs h1,
+html.dark-mode #FAQs h2,
+html.dark-mode #FAQs h3,
+html.dark-mode #location h1,
+html.dark-mode #location h2,
+html.dark-mode #location h3,
+html.dark-mode #contact h1,
+html.dark-mode #contact h2,
+html.dark-mode #contact h3 {
+    color: #f5f2ef !important;
+}
+
+html.dark-mode #home p,
+html.dark-mode #services p,
+html.dark-mode #about p,
+html.dark-mode #testimonials p,
+html.dark-mode #FAQs p,
+html.dark-mode #location p,
+html.dark-mode #contact p {
+    color: #a1a1a1 !important;
+}
+
+html.dark-mode .shadow-xl,
+html.dark-mode .shadow-2xl,
+html.dark-mode .shadow-lg {
+    box-shadow: 0 18px 45px rgba(0, 0, 0, .42) !important;
+}
+
+/* Home navbar */
+html.dark-mode nav.fixed {
+    background: rgba(13, 13, 13, .94) !important;
+    border-bottom: 1px solid #292929;
+}
+
+html.dark-mode nav.fixed a {
+    color: #f5f2ef;
+}
+
+html.dark-mode nav.fixed a:hover {
+    color: #ff2f78 !important;
+}
+
+/* =========================================================
+   APPOINTMENT / BOOKING PAGE
+   ========================================================= */
+
+html.dark-mode .booking-container {
+    background: #111111 !important;
+    border-color: #292929 !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .45) !important;
+}
+
+html.dark-mode .booking-header p {
+    color: #a1a1a1 !important;
+}
+
+html.dark-mode .section-card,
+html.dark-mode .form-card,
+html.dark-mode .booking-card,
+html.dark-mode .doctor-card,
+html.dark-mode .service-card,
+html.dark-mode .summary-card {
+    background: #111111 !important;
+    color: #f5f2ef !important;
+    border-color: #2d2d2d !important;
+}
+
+html.dark-mode .booking-container h1,
+html.dark-mode .booking-container h2,
+html.dark-mode .booking-container h3,
+html.dark-mode .booking-container h4 {
+    color: #f5f2ef;
+}
+
+html.dark-mode .booking-container p,
+html.dark-mode .booking-container label {
+    color: #a1a1a1;
+}
+
+html.dark-mode .booking-container input,
+html.dark-mode .booking-container select,
+html.dark-mode .booking-container textarea {
+    background: #181818 !important;
+    color: #f5f2ef !important;
+    border-color: #3a3a3a !important;
+}
+
+html.dark-mode .booking-container input::placeholder,
+html.dark-mode .booking-container textarea::placeholder {
+    color: #777777 !important;
+}
+
+html.dark-mode .booking-container input:focus,
+html.dark-mode .booking-container select:focus,
+html.dark-mode .booking-container textarea:focus {
+    border-color: #ec1d66 !important;
+    box-shadow: 0 0 0 3px rgba(236, 29, 102, .15) !important;
+}
+
+html.dark-mode .doctor-card:hover,
+html.dark-mode .service-card:hover {
+    border-color: #ec1d66 !important;
+    background: #151515 !important;
+}
+
+/* Appointment navbar */
+html.dark-mode body > nav,
+html.dark-mode nav.fixed.top-0 {
+    background: rgba(13, 13, 13, .94) !important;
+    border-bottom: 1px solid #292929;
+}
+
+html.dark-mode nav.fixed.top-0 a {
+    color: #f5f2ef;
+}
+
+html.dark-mode nav.fixed.top-0 a:hover {
+    color: #ff2f78 !important;
+}
+
+/* =========================================================
+   HISTORY PAGE
+   ========================================================= */
+
+html.dark-mode .print-summary .summary-card,
+html.dark-mode #historySummary > div {
+    background: #111111 !important;
+    border-color: #2d2d2d !important;
+    color: #f5f2ef !important;
+}
+
+html.dark-mode .summary-card p {
+    color: #a1a1a1 !important;
+}
+
+html.dark-mode .history-container,
+html.dark-mode .history-card,
+html.dark-mode .history-section,
+html.dark-mode .appointment-history,
+html.dark-mode .history-table-container {
+    background: #111111 !important;
+    color: #f5f2ef !important;
+    border-color: #2d2d2d !important;
+}
+
+html.dark-mode table {
+    background: #111111 !important;
+    color: #f5f2ef !important;
+}
+
+html.dark-mode thead,
+html.dark-mode th {
+    background: #191919 !important;
+    color: #c7c7c7 !important;
+    border-color: #2d2d2d !important;
+}
+
+html.dark-mode tbody,
+html.dark-mode tbody tr,
+html.dark-mode tbody td {
+    background: #111111 !important;
+    color: #d9d9d9 !important;
+    border-color: #2d2d2d !important;
+}
+
+html.dark-mode tbody tr:hover {
+    background: #181818 !important;
+}
+
+html.dark-mode .history-page,
+html.dark-mode main {
+    color: #f5f2ef;
+}
+
+/* History notification UI */
+html.dark-mode .notification-btn {
+    color: #f5f2ef !important;
+}
+
+html.dark-mode .notification-btn:hover {
+    background: #211017 !important;
+    color: #ff2f78 !important;
+    border-color: #4b2032 !important;
+}
+
+html.dark-mode #notificationDropdown {
+    background: #111111 !important;
+    border-color: #3a2030 !important;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, .5) !important;
+}
+
+html.dark-mode .notification-item {
+    background: #111111 !important;
+    color: #f5f2ef !important;
+    border-color: #292929 !important;
+}
+
+html.dark-mode .notification-item:hover {
+    background: #181818 !important;
+}
+
+html.dark-mode .notification-item.unread {
+    background: #1b1015 !important;
+}
+
+html.dark-mode .notification-item strong,
+html.dark-mode .notification-item h4 {
+    color: #f5f2ef !important;
+}
+
+html.dark-mode .notification-item p,
+html.dark-mode .notification-item small {
+    color: #999999 !important;
+}
+
+html.dark-mode .notification-footer {
+    background: #0d0d0d !important;
+    border-color: #292929 !important;
+}
+
+/* =========================================================
+   FAQ PAGE
+   ========================================================= */
+
+html.dark-mode .faq-page {
+    background:
+        linear-gradient(
+            180deg,
+            #170b11 0%,
+            #0d0d0d 40%,
+            #080808 100%
+        ) !important;
+    color: #f5f2ef !important;
+}
+
+html.dark-mode .faq-header {
+    background: rgba(13, 13, 13, .96) !important;
+    border-bottom-color: #2d2d2d !important;
+}
+
+html.dark-mode .clinic-logo {
+    color: #f5f2ef !important;
+}
+
+html.dark-mode .clinic-subtitle {
+    color: #ff2f78 !important;
+}
+
+html.dark-mode .back-button {
+    background: #151515 !important;
+    color: #c7c7c7 !important;
+    border-color: #3a3a3a !important;
+}
+
+html.dark-mode .back-button:hover {
+    background: #211017 !important;
+    color: #ff2f78 !important;
+    border-color: #ec1d66 !important;
+}
+
+html.dark-mode .faq-main {
+    color: #f5f2ef !important;
+}
+
+html.dark-mode .faq-hero h1 {
+    color: #f5f2ef !important;
+}
+
+html.dark-mode .faq-hero p {
+    color: #a1a1a1 !important;
+}
+
+html.dark-mode .faq-search-box {
+    background: #111111 !important;
+    border-color: #2d2d2d !important;
+    box-shadow: 0 12px 35px rgba(0,0,0,.35) !important;
+}
+
+html.dark-mode .faq-search-box input {
+    background: transparent !important;
+    color: #f5f2ef !important;
+}
+
+html.dark-mode .faq-search-box input::placeholder {
+    color: #777777 !important;
+}
+
+html.dark-mode .faq-category {
+    background: #151515 !important;
+    color: #a1a1a1 !important;
+    border-color: #2d2d2d !important;
+}
+
+html.dark-mode .faq-category:hover,
+html.dark-mode .faq-category.active {
+    background: #ec1d66 !important;
+    color: #ffffff !important;
+    border-color: #ec1d66 !important;
+}
+
+html.dark-mode .faq-item,
+html.dark-mode .faq-card,
+html.dark-mode .faq-question,
+html.dark-mode .faq-answer {
+    background: #111111 !important;
+    color: #f5f2ef !important;
+    border-color: #2d2d2d !important;
+}
+
+html.dark-mode .faq-question-content > span,
+html.dark-mode .faq-question {
+    color: #f5f2ef !important;
+}
+
+html.dark-mode .faq-answer {
+    color: #a1a1a1 !important;
+}
+
+html.dark-mode .faq-number {
+    background: #211017 !important;
+    color: #ff2f78 !important;
+}
+
+html.dark-mode .faq-contact {
+    background: #151515 !important;
+    border-color: #2d2d2d !important;
+}
+
+html.dark-mode .faq-contact p,
+html.dark-mode .faq-contact-label {
+    color: #a1a1a1 !important;
+}
+
+html.dark-mode .faq-footer {
+    background: #0d0d0d !important;
+    border-top-color: #292929 !important;
+    color: #777777 !important;
+}
+
+/* =========================================================
+   SETTINGS PAGE
+   ========================================================= */
+
+html.dark-mode .sidebar {
+    background: #0d0d0d !important;
+    border-right-color: #292929 !important;
+}
+
+html.dark-mode .main {
+    background: #080808 !important;
+}
+
+html.dark-mode .card {
+    background: #111111 !important;
+    border-color: #292929 !important;
+}
+
+html.dark-mode .card h2,
+html.dark-mode .section-title h3,
+html.dark-mode .appearance-info h3 {
+    color: #f5f2ef !important;
+}
+
+html.dark-mode .form-group label {
+    color: #f5f2ef !important;
+}
+
+html.dark-mode .card input,
+html.dark-mode .card select,
+html.dark-mode .card textarea {
+    background: #181818 !important;
+    color: #f5f2ef !important;
+    border-color: #3a3a3a !important;
+}
+
+html.dark-mode .readonly-input {
+    background: #151515 !important;
+    color: #777777 !important;
+}
+
+html.dark-mode .password-checker,
+html.dark-mode .appearance-setting {
+    background: #151515 !important;
+    border-color: #2d2d2d !important;
+}
+
+html.dark-mode .section-icon,
+html.dark-mode .appearance-icon {
+    background: #211017 !important;
+    color: #ff2f78 !important;
+}
+
+html.dark-mode .setting-row {
+    border-bottom-color: #242424 !important;
+}
+
+html.dark-mode .btn-outline {
+    background: #151515 !important;
+    color: #f5f2ef !important;
+    border-color: #3a3a3a !important;
+}
+
+/* =========================================================
+   PREVENT IMAGES / ICONS FROM BEING DARKENED
+   ========================================================= */
+
+html.dark-mode img,
+html.dark-mode svg {
+    opacity: 1;
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    html,
+    body,
+    * {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}
+
+/* =========================================================
+   PATIENT NAVIGATION — DARK MODE
+   ========================================================= */
+
+html.dark-mode nav a,
+html.dark-mode .navbar a {
+    color: #f5f2ef !important;
+    background: transparent !important;
+}
+
+/* Hover = pink, NOT white */
+html.dark-mode nav a:hover,
+html.dark-mode .navbar a:hover {
+    color: #ff2f78 !important;
+    background: transparent !important;
+}
+
+/* Active page */
+html.dark-mode nav a.active,
+html.dark-mode .navbar a.active {
+    color: #ff2f78 !important;
+    background: transparent !important;
+}
+
+/* Remove any white hover background */
+html.dark-mode nav a:hover,
+html.dark-mode .navbar a:hover,
+html.dark-mode nav a:focus,
+html.dark-mode .navbar a:focus {
+    background-color: transparent !important;
+}
+
+/* Navigation buttons */
+html.dark-mode nav button,
+html.dark-mode .navbar button {
+    color: #f5f2ef !important;
+}
+
+
+.settings-report-card {
+    width: 100%;
+    min-height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 12px 14px;
+    margin-top: 10px;
+
+    box-sizing: border-box;
+
+    background: #ffffff;
+    color: #2d2d2d;
+
+    border: 1px solid #e5e5e5;
+    border-radius: 14px;
+
+    font-family: inherit;
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.25s ease,
+        border-color 0.25s ease,
+        color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s ease;
+}
+
+
+/* LEFT SIDE */
+
+.report-card-left {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    min-width: 0;
+}
+
+
+/* ICON */
+
+.report-card-icon {
+    width: 42px;
+    height: 42px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: #fff0f5;
+    color: #ec1d66;
+
+    transition:
+        background-color 0.25s ease,
+        color 0.25s ease;
+}
+
+
+/* TEXT */
+
+.report-card-content {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+
+    min-width: 0;
+}
+
+.report-card-title {
+    display: block;
+
+    font-size: 14px;
+    font-weight: 650;
+
+    line-height: 1.3;
+
+    color: #2d2d2d;
+
+    transition: color 0.25s ease;
+}
+
+.report-card-description {
+    display: block;
+
+    font-size: 12px;
+    font-weight: 400;
+
+    line-height: 1.4;
+
+    color: #777777;
+
+    transition: color 0.25s ease;
+}
+
+
+/* ARROW */
+
+.report-card-arrow {
+    width: 32px;
+    height: 32px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    color: #999999;
+
+    transition:
+        background-color 0.25s ease,
+        color 0.25s ease,
+        transform 0.25s ease;
+}
+
+
+/* =========================================================
+   LIGHT MODE HOVER
+========================================================= */
+
+.settings-report-card:hover {
+    background: #ec1d66 !important;
+    border-color: #ec1d66 !important;
+
+    color: #ffffff !important;
+
+    box-shadow:
+        0 8px 22px rgba(236, 29, 102, 0.22);
+
+    transform: translateY(-2px);
+}
+
+.settings-report-card:hover .report-card-title {
+    color: #ffffff !important;
+}
+
+.settings-report-card:hover .report-card-description {
+    color: rgba(255, 255, 255, 0.88) !important;
+}
+
+.settings-report-card:hover .report-card-icon {
+    background: rgba(255, 255, 255, 0.18) !important;
+    color: #ffffff !important;
+}
+
+.settings-report-card:hover .report-card-arrow {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+
+    transform: translateX(3px);
+}
+
+
+/* =========================================================
+   DARK MODE
+   Your system uses html.dark-mode
+========================================================= */
+
+html.dark-mode .settings-report-card {
+    background: #111111 !important;
+
+    border-color: #2d2d2d !important;
+
+    color: #f5f2ef !important;
+}
+
+html.dark-mode .report-card-title {
+    color: #f5f2ef !important;
+}
+
+html.dark-mode .report-card-description {
+    color: #a1a1a1 !important;
+}
+
+html.dark-mode .report-card-icon {
+    background: #211017 !important;
+    color: #ff2f78 !important;
+}
+
+html.dark-mode .report-card-arrow {
+    color: #777777 !important;
+}
+
+
+/* DARK MODE HOVER */
+
+html.dark-mode .settings-report-card:hover {
+    background: #ec1d66 !important;
+    border-color: #ec1d66 !important;
+
+    color: #ffffff !important;
+
+    box-shadow:
+        0 8px 24px rgba(236, 29, 102, 0.30);
+}
+
+html.dark-mode .settings-report-card:hover .report-card-title {
+    color: #ffffff !important;
+}
+
+html.dark-mode .settings-report-card:hover .report-card-description {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+html.dark-mode .settings-report-card:hover .report-card-icon {
+    background: rgba(255, 255, 255, 0.18) !important;
+    color: #ffffff !important;
+}
+
+html.dark-mode .settings-report-card:hover .report-card-arrow {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+
+    transform: translateX(3px);
+}
+
+
+/* =========================================================
+   ACTIVE
+========================================================= */
+
+.settings-report-card:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .settings-report-card {
+        min-height: 68px;
+        padding: 11px 12px;
+    }
+
+    .report-card-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .report-card-title {
+        font-size: 13px;
+    }
+
+    .report-card-description {
+        font-size: 11px;
+    }
+}
+/* =========================================================
+   REPORT ISSUE BUTTONS
+   ========================================================= */
+
+/* CANCEL - RED */
+.report-btn.report-btn-cancel {
+    background: #dc2626 !important;
+    background-color: #dc2626 !important;
+    color: #ffffff !important;
+    border: 1px solid #dc2626 !important;
+    border-radius: 8px !important;
+    padding: 10px 18px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.report-btn.report-btn-cancel:hover {
+    background: #b91c1c !important;
+    background-color: #b91c1c !important;
+    border-color: #b91c1c !important;
+    transform: translateY(-1px);
+}
+
+.report-btn.report-btn-cancel:active {
+    background: #991b1b !important;
+    transform: translateY(0);
+}
+
+
+/* SUBMIT - GREEN */
+.report-btn.report-btn-submit {
+    background: #22c55e !important;
+    background-color: #22c55e !important;
+    color: #ffffff !important;
+    border: 1px solid #22c55e !important;
+    border-radius: 8px !important;
+    padding: 10px 18px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.report-btn.report-btn-submit:hover {
+    background: #16a34a !important;
+    background-color: #16a34a !important;
+    border-color: #16a34a !important;
+    transform: translateY(-1px);
+}
+
+.report-btn.report-btn-submit:active {
+    background: #15803d !important;
+    background-color: #15803d !important;
+    transform: translateY(0);
+}
+
+.report-btn.report-btn-submit:disabled {
+    background: #86efac !important;
+    background-color: #86efac !important;
+    border-color: #86efac !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+
+@media (max-width: 768px) {
+    .sidebar nav {
+        position: static !important;
+        top: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        left: auto !important;
+
+        width: 100% !important;
+        max-width: none !important;
+
+        min-height: 0 !important;
+
+        padding: 0 !important;
+
+        z-index: auto !important;
+
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 6px !important;
+
+        box-sizing: border-box !important;
+    }
+
+    .sidebar nav .sidebar-link {
+        position: static !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+
+        padding: 12px 13px !important;
+
+        box-sizing: border-box !important;
+    }
+}

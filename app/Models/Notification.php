@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\DatabaseNotification as BaseNotification;
 
-class Notification extends Model
+class Notification extends BaseNotification
 {
-    protected $fillable = [
-        'user_id',
-        'title',
-        'message',
-        'is_read',
+    protected $table = 'notifications';
+
+    protected $casts = [
+        'data' => 'array',
+        'read_at' => 'datetime',
     ];
 }

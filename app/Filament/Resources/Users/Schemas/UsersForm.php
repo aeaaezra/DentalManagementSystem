@@ -26,20 +26,23 @@ class UsersForm
                     ->label('Password')
                     ->password()
                     ->required()
-                    ->dehydrateStateUsing(fn ($state) => bcrypt($state)),
+                    // IMPORTANT:
+                    // Do NOT use bcrypt() here.
+                    // The User model's 'hashed' cast
+                    // handles the hashing automatically.
+                    ,
 
                 Select::make('role')
                     ->label('Role')
                     ->options([
-                        'Admin' => 'Admin',
-                        'Staff' => 'Staff',
-                        'Dentist' => 'Dentist',
-                        'Patient' => 'Patient',
-                        'Customer' => 'Customer',
-                        'Cashier' => 'Cashier',
-
+                        'admin' => 'Admin',
+                        'staff' => 'Staff',
+                        'dentist' => 'Dentist',
+                        'patient' => 'Patient',
+                        'customer' => 'Customer',
+                        'cashier' => 'Cashier',
+                        'receptionist' => 'Receptionist',
                     ])
-
                     ->required()
                     ->native(false),
             ]);

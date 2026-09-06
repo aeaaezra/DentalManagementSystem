@@ -3,237 +3,627 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shine & Smile Dental | Creating Healthy, Beautiful Smiles</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Shine & Smile Dental | Your Smile. Our Technology.</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-    <link href="{{ asset('css/appointment.css') }}" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    {{-- New, self-contained assets for this page only. --}}
+    <link rel="stylesheet" href="{{ asset('css/welcome.css') }}">
+
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
 </head>
-<body class="bg-white text-[#2D2D2D]">
+<body class="ss-body">
 
-<nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md shadow-sm">
-    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+@if(session('success'))
+    <div class="ss-alert ss-alert--success">{{ session('success') }}</div>
+@endif
 
-        <!-- Logo -->
-        <div class="text-2xl font-bold text-[#E91E63]">
-            Shine & Smile
+@if(session('error'))
+    <div class="ss-alert ss-alert--error">{{ session('error') }}</div>
+@endif
+
+<nav id="ssNav" class="ss-nav">
+    <div class="ss-container ss-nav-row">
+
+        <a href="#home" class="ss-nav-logo">Shine & Smile</a>
+
+        <div class="ss-nav-links">
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#services">Services</a>
+            <a href="#doctors">Doctors</a>
+            <a href="#contact">Contact</a>
         </div>
 
-        <!-- Navigation Links -->
-        <div class="hidden md:flex space-x-8 font-medium">
-            <a href="#home" class="hover:text-[#E91E63] transition">Home</a>
-            <a href="#services" class="hover:text-[#E91E63] transition">Services</a>
-            <a href="#about" class="hover:text-[#E91E63] transition">About Us</a>
-            <a href="#testimonials" class="hover:text-[#E91E63] transition">Testimonials</a>
-            <a href="#FAQs" class="hover:text-[#E91E63] transition">FAQs</a>
-            <a href="#location" class="hover:text-[#E91E63] transition">Location</a>
-            <a href="#contact" class="hover:text-[#E91E63] transition">Contact</a>
-        </div>
+        <div class="ss-nav-actions">
+            <a href="{{ route('appointments.login') }}" class="ss-btn ss-btn--ghost ss-btn--sm">Login</a>
 
-        <!-- Login & Sign Up -->
-        <div class="flex items-center gap-3">
-            <a href="{{ route('login') }}"
-            class="bg-[#E91E63] border-2 border-[#E91E63] text-white px-5 py-2 rounded-full font-medium hover:bg-[#D81B60] hover:border-[#D81B60] transition">
-                Login
-            </a>
-
+            <button
+                id="ssBurger"
+                type="button"
+                class="ss-burger"
+                aria-label="Open menu"
+                aria-expanded="false"
+                aria-controls="ssMobilePanel"
+            >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
         </div>
 
     </div>
 </nav>
 
-    <section id = "home"class= "pt-32 pb-20 bg-pink-gradient">
-        <div class="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
-            <div>
-                <h1 class="text-5xl md:text-6xl font-bold leading-tight mb-6">Creating Healthy, Beautiful Smiles Every Day</h1>
-                <p class="text-lg mb-8 text-gray-600">Experience exceptional dental care with a team dedicated to your comfort, confidence, and oral health.</p>
-                <div class="flex flex-wrap gap-4">
-                    <a href="#contact" class="bg-[#E91E63] text-white px-8 py-4 rounded-full font-semibold hover:shadow-lg transition">Book a Consultation</a>
-                    <a href="#contact" class="border-2 border-[#E91E63] text-[#E91E63] px-8 py-4 rounded-full font-semibold hover:bg-[#FCE4EC] transition">Contact Us</a>
-                </div>
-            </div>
-            <div class="relative">
-                <img src="{{asset ('images/FriendlyDentists.jpg') }}" alt="Dentist" class="rounded-3xl shadow-2xl">
-                <div class="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl hidden md:block">
-                    <p class="font-bold text-[#E91E63]">✓ 15+ Years Experience</p>
-                </div>
-            </div>
+{{-- Mobile fullscreen menu --}}
+<div id="ssMobilePanel" class="ss-mobile-panel">
+    <button id="ssMobileClose" type="button" class="ss-btn ss-btn--ghost ss-btn--sm" style="align-self:flex-end;" aria-label="Close menu">Close</button>
+    <a href="#home">Home</a>
+    <a href="#about">About</a>
+    <a href="#services">Services</a>
+    <a href="#doctors">Doctors</a>
+    <a href="#contact">Contact</a>
+    <a href="{{ route('appointments.login') }}">Login</a>
+</div>
+
+{{-- ==========================================================
+     HERO
+========================================================== --}}
+
+<section id="home" class="ss-hero">
+    <div class="ss-hero-media">
+        <img src="{{ asset('images/FriendlyDentists.jpg') }}" alt="A dentist at Shine & Smile treating a patient in a modern clinic">
+    </div>
+
+    <div class="ss-hero-content">
+        <span class="ss-hero-eyebrow">Shine & Smile Dental Clinic</span>
+
+        <h1 class="ss-hero-title">
+            <span>Your Smile.</span>
+            <span class="is-accent">Our Technology.</span>
+        </h1>
+
+        <p class="ss-hero-sub">
+            Experience smarter, simpler, and more connected dental care — from booking to treatment, all in one place.
+        </p>
+
+        <div class="ss-hero-actions">
+            <a href="{{ route('appointments.create') }}" class="ss-btn ss-btn--solid">Book an Appointment</a>
+            <a href="{{ route('appointments.login') }}" class="ss-btn ss-btn--ghost">Login</a>
         </div>
-    </section>
+    </div>
 
-    <section id="services" class="py-20">
-        <div class="container mx-auto px-6">
-            <h2 class="text-4xl text-center mb-16">Our Premium Services</h2>
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Service Cards -->
-                <div class="p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transition border border-gray-100">
-                    <div class="w-12 h-12 bg-[#FCE4EC] rounded-full flex items-center justify-center mb-4 text-[#E91E63]">🦷</div>
-                    <h3 class="text-xl mb-2"> Cosmetic Surgery</h3>
-                    <p class="text-sm text-gray-500">Enhance the appearance of your smile with advanced cosmetic dental procedures designed for confidence and aesthetics.</p>
-                </div>
-                <div class="p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transition border border-gray-100">
-                    <div class="w-12 h-12 bg-[#FCE4EC] rounded-full flex items-center justify-center mb-4 text-[#E91E63]">✨</div>
-                    <h3 class="text-xl mb-2">Endodontics</h3>
-                    <p class="text-sm text-gray-500">Specialized treatment for the inner parts of your teeth.</p>
-                </div>
-                <div class="p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transition border border-gray-100">
-                    <div class="w-12 h-12 bg-[#FCE4EC] rounded-full flex items-center justify-center mb-4 text-[#E91E63]">✨</div>
-                    <h3 class="text-xl mb-2">Esthetics</h3>
-                    <p class="text-sm text-gray-500">Achieve a brighter and more attractive smile through veneers, whitening, bonding, and other aesthetic treatments.
-                    </p>
-                </div>
-                <div class="p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transition border border-gray-100">
-                    <div class="w-12 h-12 bg-[#FCE4EC] rounded-full flex items-center justify-center mb-4 text-[#E91E63]">💎</div>
-                    <h3 class="text-xl mb-2">Oral Surgery</h3>
-                    <p class="text-sm text-gray-500">Expert surgical procedures including tooth extractions, wisdom tooth removal, and treatment of oral conditions.</p>
-                </div>
+    <div class="ss-scroll-cue" aria-hidden="true">
+        <span>Scroll to Explore</span>
+        <div class="ss-scroll-line"></div>
+    </div>
+</section>
 
-                <div class="p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transition border border-gray-100">
-                    <div class="w-12 h-12 bg-[#FCE4EC] rounded-full flex items-center justify-center mb-4 text-[#E91E63]">🪥</div>
-                    <h3 class="text-xl mb-2">Orthodontics</h3>
-                    <p class="text-sm text-gray-500">Straighten teeth and improve bite alignment with modern braces and orthodontic treatment solutions.
-    </p>
-                </div>
-                <div class="p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transition border border-gray-100">
-                    <div class="w-12 h-12 bg-[#FCE4EC] rounded-full flex items-center justify-center mb-4 text-[#E91E63]">🦷</div>
-                    <h3 class="text-xl mb-2">Prosthodontics</h3>
-                    <p class="text-sm text-gray-500">Restore missing or damaged teeth with crowns, bridges, dentures, and dental implants for a complete smile.</p>
-                </div>
-            </div>
+{{-- ==========================================================
+     ABOUT
+========================================================== --}}
+
+<section id="about" class="ss-section ss-section--void">
+    <div class="ss-container ss-about-grid">
+
+        <div class="ss-about-media ss-reveal ss-reveal--scale">
+            <img src="{{ asset('images/clinic.jpg') }}" alt="Interior of the Shine & Smile dental clinic">
         </div>
-    </section>
 
-    <section id="about" class="py-20 bg-[#FCE4EC]">
-        <div class="container mx-auto px-6">
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <div>
-                    <h2 class="text-4xl mb-6">Why Shine & Smile?</h2>
-                    <p class="text-gray-700 mb-6 leading-relaxed">At Shine & Smile Dental, we are committed to delivering exceptional dental care in a warm and welcoming environment. Our experienced team combines advanced technology with personalized treatment to help every patient achieve a healthy, confident smile.</p>
-                    <ul class="space-y-4">
-                        <li class="flex items-center gap-3">✅ <span class="font-medium">Experienced Dental Team</span></li>
-                        <li class="flex items-center gap-3">✅ <span class="font-medium">Advanced Dental Technology</span></li>
-                        <li class="flex items-center gap-3">✅ <span class="font-medium">Personalized Treatment Plans</span></li>
-                    </ul>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <img src="{{asset('images/clinic.jpg')}}" class="rounded-2xl" alt="Clinic Interior">
-                    <img src="{{asset('images/whyus.jpg')}}" class="rounded-2xl mt-8" alt="Team">
-                </div>
+        <div class="ss-about-text">
+            <div class="ss-eyebrow-row ss-reveal">
+                <span class="ss-rule"></span>
+                <span class="ss-label">01 / About</span>
             </div>
-        </div>
-    </section>
 
-<section id="testimonials" class="py-20 bg-[#FFF5F8]">
+            <h2 class="ss-heading ss-section-heading ss-reveal">The Future of Dental Care</h2>
 
-    <div class="container mx-auto px-6">
-
-        <!-- Section Header -->
-        <div class="text-center mb-16">
-            <p class="text-[#E91E63] font-semibold uppercase tracking-wider mb-2">
-                Testimonials
+            <p class="ss-reveal">
+                Shine & Smile Dental Management System brings patients, dentists, and clinic staff together
+                through one intelligent platform — replacing paper charts and phone-tag scheduling with a
+                connected experience built around your care.
             </p>
 
-            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                What Our Patients Say
+            <p class="ss-reveal">
+                From the moment you book to the moment you leave the chair, every step is tracked, recorded,
+                and ready when you need it.
+            </p>
+        </div>
+
+    </div>
+</section>
+
+{{-- ==========================================================
+     SERVICES
+========================================================== --}}
+
+<section id="services" class="ss-section ss-section--charcoal">
+    <div class="ss-container">
+
+        <div class="ss-eyebrow-row ss-reveal">
+            <span class="ss-rule"></span>
+            <span class="ss-label">02 / Services</span>
+        </div>
+
+        <h2 class="ss-heading ss-section-heading ss-reveal">Our Services</h2>
+
+        <div class="ss-services-grid">
+            @php
+                $services = [
+                    ['01', 'General Dentistry', 'Routine exams, cleanings, and preventive care to keep every visit simple.'],
+                    ['02', 'Orthodontics', 'Braces and alignment plans built around your bite and your timeline.'],
+                    ['03', 'Dental Cleaning', 'Professional cleaning that clears plaque and tartar beyond daily brushing.'],
+                    ['04', 'Restorative Dentistry', 'Fillings, crowns, and repairs that bring damaged teeth back to full function.'],
+                    ['05', 'Endodontics', 'Root canal therapy focused on saving teeth and easing pain fast.'],
+                    ['06', 'Prosthodontics', 'Bridges, dentures, and implants for a complete, confident smile.'],
+                    ['07', 'Oral Surgery', 'Extractions and surgical care handled with precision and comfort in mind.'],
+                    ['08', 'Cosmetic Dentistry', 'Whitening, veneers, and bonding designed around how you want to smile.'],
+                ];
+            @endphp
+
+            @foreach($services as $service)
+                <div class="ss-service-card ss-reveal" tabindex="0">
+                    <span class="ss-service-num">{{ $service[0] }}</span>
+                    <div>
+                        <h3 class="ss-service-name">{{ $service[1] }}</h3>
+                        <p class="ss-service-desc">{{ $service[2] }}</p>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- ==========================================================
+     APPOINTMENT CTA BAND
+========================================================== --}}
+
+<section class="ss-cta-band">
+    <div class="ss-cta-media">
+        <img src="{{ asset('images/whyus.jpg') }}" alt="Shine & Smile dental team">
+    </div>
+
+    <div class="ss-container ss-cta-content">
+        <h2 class="ss-heading ss-cta-title ss-reveal">
+            <span>Ready to</span>
+            <span class="is-accent">Shine?</span>
+        </h2>
+        <p class="ss-reveal">Book your dental appointment in just a few steps.</p>
+        <a href="{{ route('appointments.create') }}" class="ss-btn ss-btn--solid ss-reveal">Book an Appointment</a>
+    </div>
+</section>
+
+{{-- ==========================================================
+     HOW IT WORKS
+========================================================== --}}
+
+<section class="ss-section ss-section--void">
+    <div class="ss-container">
+
+        <div class="ss-eyebrow-row ss-reveal">
+            <span class="ss-rule"></span>
+            <span class="ss-label">03 / How It Works</span>
+        </div>
+
+        <h2 class="ss-heading ss-section-heading ss-reveal">
+            <span>Your Visit.</span>
+            <span>Made Simple.</span>
+        </h2>
+
+        <div class="ss-timeline">
+            @php
+                $steps = [
+                    'Choose Your Service',
+                    'Choose Your Schedule',
+                    'Confirm Your Appointment',
+                    'Visit the Clinic',
+                ];
+            @endphp
+
+            @foreach($steps as $i => $step)
+                <div class="ss-timeline-step ss-reveal">
+                    <span class="ss-timeline-num">{{ sprintf('%02d', $i + 1) }}</span>
+                    <span class="ss-timeline-label">{{ $step }}</span>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- ==========================================================
+     DOCTORS
+
+     NOTE FOR DEVELOPER: this welcome route does not currently
+     receive dentist data. To show real dentists here, pass a
+     $dentists collection from the controller serving this view,
+     e.g. return view('welcome', ['dentists' => User::where('role','dentist')->get()]);
+     using whatever fields already exist on your dentist/user model
+     (name, specialization, bio, photo). Until then, this section
+     renders clearly-labeled placeholder cards below.
+========================================================== --}}
+
+<section id="doctors" class="ss-section ss-section--charcoal">
+    <div class="ss-container">
+
+        <div class="ss-eyebrow-row ss-reveal">
+            <span class="ss-rule"></span>
+            <span class="ss-label">04 / Our Team</span>
+        </div>
+
+        <h2 class="ss-heading ss-section-heading ss-reveal">Meet Our Dentists</h2>
+
+        <div class="ss-doctors-grid">
+            @if(isset($dentists) && count($dentists))
+                @foreach($dentists as $dentist)
+                    <div class="ss-doctor-card ss-reveal">
+                        @if(!empty($dentist->profile_picture))
+                            <img src="{{ asset('storage/' . $dentist->profile_picture) }}" alt="{{ $dentist->name }}" class="ss-doctor-avatar" style="object-fit:cover;">
+                        @else
+                            <div class="ss-doctor-avatar">{{ strtoupper(substr($dentist->name ?? 'D', 0, 1)) }}</div>
+                        @endif
+                        <h3>{{ $dentist->name ?? 'Dentist' }}</h3>
+                        <p class="ss-doctor-spec">{{ $dentist->specialization ?? 'General Dentistry' }}</p>
+                        @if(!empty($dentist->bio))
+                            <p class="ss-doctor-bio">{{ $dentist->bio }}</p>
+                        @endif
+                    </div>
+                @endforeach
+            @else
+                @foreach(['Dr. Reyes' => 'General Dentistry', 'Dr. Santos' => 'Orthodontics', 'Dr. Dela Cruz' => 'Cosmetic Dentistry'] as $name => $spec)
+                    <div class="ss-doctor-card ss-reveal">
+                        <div class="ss-doctor-avatar">{{ substr($name, 4, 1) }}</div>
+                        <h3>{{ $name }}</h3>
+                        <p class="ss-doctor-spec">{{ $spec }}</p>
+                        <p class="ss-doctor-bio">Profile details will appear here once dentist records are connected to this page.</p>
+                    </div>
+                @endforeach
+            @endif
+        </div>
+
+        @if(!isset($dentists))
+            <p class="ss-doctors-note ss-reveal">
+                Showing placeholder profiles — connect dentist data to this view to display your real team.
+            </p>
+        @endif
+
+        <div style="margin-top:2.5rem;">
+            <a href="{{ route('appointments.dentists') }}" class="ss-btn ss-btn--ghost ss-reveal">View All Dentists</a>
+        </div>
+    </div>
+</section>
+
+{{-- ==========================================================
+     TECHNOLOGY
+========================================================== --}}
+
+<section class="ss-section ss-tech">
+    <div class="ss-container ss-tech-grid">
+
+        <div>
+            <div class="ss-eyebrow-row ss-reveal">
+                <span class="ss-rule"></span>
+                <span class="ss-label">05 / Technology</span>
+            </div>
+
+            <h2 class="ss-heading ss-section-heading ss-reveal">
+                <span>Dentistry.</span>
+                <span>Reimagined.</span>
             </h2>
 
-            <p class="text-gray-500 max-w-2xl mx-auto">
-                We are proud to provide exceptional dental care and create beautiful smiles for our patients.
-            </p>
+            <div class="ss-tech-list">
+                @foreach([
+                    'Online appointment booking',
+                    'Digital dental records',
+                    'Interactive odontogram',
+                    'Real-time appointment notifications',
+                    'Dentist scheduling',
+                    'Patient management dashboard',
+                    'Secure account access',
+                ] as $item)
+                    <div class="ss-tech-item ss-reveal">
+                        <span class="ss-tech-dot"></span>
+                        <span>{{ $item }}</span>
+                    </div>
+                @endforeach
+            </div>
         </div>
 
-        <!-- Testimonial Cards -->
-        <div class="grid md:grid-cols-3 gap-8">
+        <div class="ss-tech-visual ss-reveal ss-reveal--scale" aria-hidden="true">
+            <div class="ss-tech-crosshair">Odontogram · Records · Scheduling</div>
+        </div>
 
-            <!-- Testimonial 1 -->
-            <div class="bg-white p-8 rounded-3xl shadow-lg hover:shadow-2xl transition">
-                <div class="flex text-yellow-400 mb-4">
-                    ⭐⭐⭐⭐⭐
-                </div>
+    </div>
+</section>
 
-                <p class="text-gray-600 mb-6 italic">
-                    "The staff were incredibly friendly and professional. My dental cleaning was painless and comfortable. Highly recommended!"
-                </p>
+{{-- ==========================================================
+     STATISTICS
+========================================================== --}}
 
-                <div class="flex items-center gap-4">
-                    <img src="{{asset('images/testimonialimg.jpg')}}"
-                         class="w-14 h-14 rounded-full"
-                         alt="Patient">
+<section class="ss-section ss-section--void">
+    <div class="ss-container">
+        <div class="ss-stats">
+            <div class="ss-reveal">
+                <div class="ss-stat-num">24/7</div>
+                <div class="ss-stat-label">Online Booking</div>
+            </div>
+            <div class="ss-reveal">
+                <div class="ss-stat-num">01</div>
+                <div class="ss-stat-label">Connected System</div>
+            </div>
+            <div class="ss-reveal">
+                <div class="ss-stat-num">100%</div>
+                <div class="ss-stat-label">Patient Focused</div>
+            </div>
+        </div>
+    </div>
+</section>
 
-                    <div>
-                        <h4 class="font-bold">Anna Santos</h4>
-                        <p class="text-sm text-gray-500">Patient</p>
+{{-- ==========================================================
+     FAQ
+========================================================== --}}
+
+<section class="ss-section ss-section--charcoal">
+    <div class="ss-container" style="max-width:820px;">
+
+        <div class="ss-eyebrow-row ss-reveal">
+            <span class="ss-rule"></span>
+            <span class="ss-label">Frequently Asked</span>
+        </div>
+
+        <h2 class="ss-heading ss-section-heading ss-reveal">Questions & Answers</h2>
+
+        <div style="margin-top:2.5rem;">
+            @php
+                $faqs = [
+                    ['How often should I visit the dentist?', 'We recommend visiting the dentist every six months for regular check-ups and professional cleaning.'],
+                    ['Is teeth whitening safe?', 'Yes, professional teeth whitening is safe and effective when performed by qualified dental professionals.'],
+                    ['Do you treat children?', 'Yes, we provide gentle and friendly dental care for children of all ages.'],
+                    ['Can I book an appointment online?', 'Yes, our online appointment system lets you schedule a visit anytime, at your convenience.'],
+                    ['What payment methods do you accept?', 'We accept cash, debit cards, credit cards, and selected digital payment methods.'],
+                    ['What should I do during a dental emergency?', 'Contact our clinic immediately so we can provide guidance and arrange urgent treatment if needed.'],
+                ];
+            @endphp
+
+            @foreach($faqs as $faq)
+                <div class="ss-faq-item ss-reveal">
+                    <button type="button" class="ss-faq-q" aria-expanded="false">
+                        <span>{{ $faq[0] }}</span>
+                        <span class="ss-faq-icon" aria-hidden="true"></span>
+                    </button>
+                    <div class="ss-faq-a">
+                        <p>{{ $faq[1] }}</p>
                     </div>
                 </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- ==========================================================
+     FINAL CTA
+========================================================== --}}
+
+<section class="ss-final-cta">
+    <div class="ss-container">
+        <h2 class="ss-heading ss-hero-title ss-reveal">
+            <span>Your Smile</span>
+            <span class="is-accent">Starts Here.</span>
+        </h2>
+        <p class="ss-reveal" style="margin-top:1.5rem;color:var(--c-silver);max-width:36ch;">
+            Take the first step toward better dental care.
+        </p>
+        <div class="ss-final-cta-actions">
+            <a href="{{ route('appointments.create') }}" class="ss-btn ss-btn--solid ss-reveal">Book an Appointment</a>
+            <a href="{{ route('appointments.login') }}" class="ss-btn ss-btn--ghost ss-reveal">Login</a>
+        </div>
+    </div>
+</section>
+
+{{-- ==========================================================
+     LOCATION (kept from existing page — working map + address)
+========================================================== --}}
+
+<section id="location" class="ss-section ss-section--charcoal">
+    <div class="ss-container">
+
+        <div class="ss-eyebrow-row ss-reveal">
+            <span class="ss-rule"></span>
+            <span class="ss-label">Our Flagship Clinic</span>
+        </div>
+
+        <h2 class="ss-heading ss-section-heading ss-reveal">Visit Us in Koronadal</h2>
+
+        <div class="ss-contact-grid">
+
+            <div class="ss-reveal">
+                <div class="ss-contact-info-item">
+                    <div>
+                        <span class="ss-label">Headquarters</span>
+                        <p>
+                            Door 5, MDFI Bldg,<br>
+                            Rafael Alunan Ave,<br>
+                            Brgy. Zone III,<br>
+                            Koronadal, South Cotabato (9506)
+                        </p>
+                    </div>
+                </div>
+
+                <div class="ss-contact-info-item">
+                    <div>
+                        <span class="ss-label">Hours</span>
+                        <p>Mon – Fri: 8AM – 6PM<br>Saturday: 9AM – 2PM</p>
+                    </div>
+                </div>
+
+                <a
+                    href="https://www.google.com/maps/dir/?api=1&destination=Door+5+MDFI+Bldg+Rafael+Alunan+Ave+Koronadal+South+Cotabato+9506"
+                    target="_blank"
+                    rel="noopener"
+                    class="ss-btn ss-btn--solid"
+                    style="margin-top:1.5rem;"
+                >
+                    Get Directions
+                </a>
             </div>
 
-            <!-- Testimonial 2 -->
-            <div class="bg-white p-8 rounded-3xl shadow-lg hover:shadow-2xl transition">
-                <div class="flex text-yellow-400 mb-4">
-                    ⭐⭐⭐⭐⭐
-                </div>
-
-                <p class="text-gray-600 mb-6 italic">
-                    "I had my teeth whitening done here and the results were amazing. The clinic is modern, clean, and welcoming."
-                </p>
-
-                <div class="flex items-center gap-4">
-                    <img src="{{asset('images/test2.jpg')}}"
-                         class="w-14 h-14 rounded-full"
-                         alt="Patient">
-
-                    <div>
-                        <h4 class="font-bold">Mark Reyes</h4>
-                        <p class="text-sm text-gray-500">Patient</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Testimonial 3 -->
-            <div class="bg-white p-8 rounded-3xl shadow-lg hover:shadow-2xl transition">
-                <div class="flex text-yellow-400 mb-4">
-                    ⭐⭐⭐⭐⭐
-                </div>
-
-                <p class="text-gray-600 mb-6 italic">
-                    "Excellent service and caring dentists. They explained every procedure clearly and made me feel at ease."
-                </p>
-
-                <div class="flex items-center gap-4">
-                    <img src="{{asset('images/test3.jpg')}}"
-                         class="w-14 h-14 rounded-full"
-                         alt="Patient">
-
-                    <div>
-                        <h4 class="font-bold">John Dela Cruz</h4>
-                        <p class="text-sm text-gray-500">Patient</p>
-                    </div>
-                </div>
+            <div class="ss-reveal ss-reveal--scale" style="min-height:380px;border:1px solid rgba(255,255,255,0.08);overflow:hidden;">
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d256354.9240519452!2d124.58331667902091!3d6.489816879239853!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x32f818eb3b42365f%3A0xdeeaa89b952730b5!2sShine%20%26%20Smile%20Dental%20Clinic!5e1!3m2!1sen!2sph!4v1780745828224!5m2!1sen!2sph"
+                    width="100%"
+                    height="100%"
+                    style="border:0;min-height:380px;filter:grayscale(60%) invert(92%) contrast(85%);"
+                    allowfullscreen
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    title="Shine & Smile Dental Clinic location"
+                ></iframe>
             </div>
 
         </div>
+    </div>
+</section>
 
-        <!-- Stats -->
-        <div class="grid md:grid-cols-4 gap-6 mt-16">
+<section id="contact" class="ss-section ss-section--void">
 
-            <div class="bg-white p-6 rounded-2xl text-center shadow">
-                <h3 class="text-3xl font-bold text-[#E91E63]">5000+</h3>
-                <p class="text-gray-500">Happy Patients</p>
+    <div class="ss-container">
+
+        <div class="ss-eyebrow-row ss-reveal">
+            <span class="ss-rule"></span>
+            <span class="ss-label">Get In Touch</span>
+        </div>
+
+        <h2 class="ss-heading ss-section-heading ss-reveal">
+            Contact Shine & Smile
+        </h2>
+
+        <div class="ss-contact-grid">
+
+            <div class="ss-reveal">
+
+                <div class="ss-contact-info-item">
+                    <div>
+                        <span class="ss-label">Phone</span>
+                        <p>Contact the clinic</p>
+                    </div>
+                </div>
+
+                <div class="ss-contact-info-item">
+                    <div>
+                        <span class="ss-label">Email</span>
+                        <p>Send us an email</p>
+                    </div>
+                </div>
+
+                <div class="ss-contact-info-item">
+                    <div>
+                        <span class="ss-label">Clinic Address</span>
+                        <p>
+                            Door 5, MDFI Bldg, Rafael Alunan Ave,
+                            Brgy. Zone III, Koronadal, South Cotabato
+                        </p>
+                    </div>
+                </div>
+
             </div>
 
-            <div class="bg-white p-6 rounded-2xl text-center shadow">
-                <h3 class="text-3xl font-bold text-[#E91E63]">15+</h3>
-                <p class="text-gray-500">Years Experience</p>
-            </div>
+            <div class="ss-reveal">
 
-            <div class="bg-white p-6 rounded-2xl text-center shadow">
-                <h3 class="text-3xl font-bold text-[#E91E63]">98%</h3>
-                <p class="text-gray-500">Patient Satisfaction</p>
-            </div>
+                <form
+                    action="{{ route('contact.send') }}"
+                    method="POST"
+                >
+                    @csrf
 
-            <div class="bg-white p-6 rounded-2xl text-center shadow">
-                <h3 class="text-3xl font-bold text-[#E91E63]">100+</h3>
-                <p class="text-gray-500">Monthly Appointments</p>
+                    <div class="ss-field">
+                        <label for="contact-name">
+                            Full Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="contact-name"
+                            name="name"
+                            placeholder="Enter your full name"
+                            value="{{ old('name') }}"
+                            maxlength="255"
+                            required
+                        >
+                    </div>
+
+                    <div class="ss-field">
+                        <label for="contact-email">
+                            Email Address
+                        </label>
+
+                        <input
+                            type="email"
+                            id="contact-email"
+                            name="email"
+                            placeholder="Enter your email"
+                            value="{{ old('email') }}"
+                            maxlength="255"
+                            required
+                        >
+                    </div>
+
+                    <div class="ss-field">
+                        <label for="contact-phone">
+                            Phone Number
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="contact-phone"
+                            name="phone"
+                            placeholder="Enter your phone number"
+                            maxlength="50"
+                        >
+                    </div>
+
+                    <div class="ss-field">
+                        <label for="contact-subject">
+                            Subject
+                        </label>
+
+                        <input
+                            type="text"
+                            id="contact-subject"
+                            name="subject"
+                            placeholder="What can we help you with?"
+                            value="{{ old('subject') }}"
+                            maxlength="255"
+                            required
+                        >
+                    </div>
+
+                    <div class="ss-field">
+                        <label for="contact-message">
+                            Message
+                        </label>
+
+                        <textarea
+                            id="contact-message"
+                            name="message"
+                            placeholder="Write your message here..."
+                            maxlength="1000"
+                            required
+                        >{{ old('message') }}</textarea>
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="ss-btn ss-btn--solid"
+                        style="width:100%;"
+                    >
+                        Send Message
+                    </button>
+
+                </form>
+
             </div>
 
         </div>
@@ -241,169 +631,46 @@
     </div>
 
 </section>
+{{-- ==========================================================
+     FOOTER
+========================================================== --}}
 
-<section id ="FAQs" class="py-20">
-        <div class="container mx-auto px-6 max-w-3xl">
-            <h2 class="text-4xl text-center mb-12">Frequently Asked Questions</h2>
-            <div class="space-y-4">
+<footer class="ss-footer">
+    <div class="ss-container">
+        <div class="ss-footer-grid">
 
-                <div class="border rounded-xl">
-    <button onclick="toggleFaq(this)" class="w-full text-left p-6 font-semibold flex justify-between">
-        How often should I visit the dentist?
-        <span>+</span>
-    </button>
-    <div class="hidden p-6 pt-0 text-gray-600">
-        We recommend visiting the dentist every six months for regular check-ups and professional cleaning.
-    </div>
-</div>
-
-<div class="border rounded-xl">
-    <button onclick="toggleFaq(this)" class="w-full text-left p-6 font-semibold flex justify-between">
-        Is teeth whitening safe?
-        <span>+</span>
-    </button>
-    <div class="hidden p-6 pt-0 text-gray-600">
-        Yes, professional teeth whitening is safe and effective when performed by qualified dental professionals.
-    </div>
-</div>
-
-<div class="border rounded-xl">
-    <button onclick="toggleFaq(this)" class="w-full text-left p-6 font-semibold flex justify-between">
-        Do you treat children?
-        <span>+</span>
-    </button>
-    <div class="hidden p-6 pt-0 text-gray-600">
-        Yes, we provide gentle and friendly dental care for children of all ages.
-    </div>
-</div>
-
-<div class="border rounded-xl">
-    <button onclick="toggleFaq(this)" class="w-full text-left p-6 font-semibold flex justify-between">
-        Can I book an appointment online?
-        <span>+</span>
-    </button>
-    <div class="hidden p-6 pt-0 text-gray-600">
-        Yes, our online appointment system allows you to schedule appointments anytime at your convenience.
-    </div>
-</div>
-
-<div class="border rounded-xl">
-    <button onclick="toggleFaq(this)" class="w-full text-left p-6 font-semibold flex justify-between">
-        What payment methods do you accept?
-        <span>+</span>
-    </button>
-    <div class="hidden p-6 pt-0 text-gray-600">
-        We accept cash, debit cards, credit cards, and selected digital payment methods.
-    </div>
-</div>
-
-<div class="border rounded-xl">
-    <button onclick="toggleFaq(this)" class="w-full text-left p-6 font-semibold flex justify-between">
-        What should I do during a dental emergency?
-        <span>+</span>
-    </button>
-    <div class="hidden p-6 pt-0 text-gray-600">
-        Contact our clinic immediately so we can provide guidance and arrange urgent treatment if needed.
-    </div>
-</div>
-
+            <div>
+                <div class="ss-footer-brand">Shine & Smile</div>
+                <p>Dental Management System</p>
             </div>
+
+            <div>
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4>Account</h4>
+                <ul>
+                    <li><a href="{{ route('appointments.login') }}">Login</a></li>
+                    <li><a href="{{ route('appointments.create') }}">Book Appointment</a></li>
+                </ul>
+            </div>
+
         </div>
-    </section>
 
-<section id="location" class="py-24 bg-white">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-pink-600 font-bold tracking-widest uppercase text-xs mb-4">Our Flagship Clinic</h2>
-                <h2 class="text-4xl lg:text-5xl font-extrabold text-slate-900 mb-4">Visit us in the Crown City of the South</h2>
-                <p class="text-slate-500 max-w-2xl mx-auto">Experience the future of dentistry at our showcase facility where we test every new platform feature.</p>
-            </div>
-
-            <div class="grid lg:grid-cols-3 gap-8 items-start">
-                <div class="lg:col-span-1 space-y-6">
-                    <div class="bg-slate-50 p-8 rounded-2xl border border-slate-100">
-                        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
-                            <i data-lucide="map-pin" class="text-pink-600"></i> Headquarters
-                        </h3>
-                        <p class="text-slate-600 leading-relaxed mb-6">
-                            Door 5, MDFI Bldg,<br>
-                            Rafael Alunan Ave, <br>
-                            Brgy. Zone III,<br>
-                            Koronadal, South Cotabato (9506)<br>
-                        </p>
-
-                        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
-                            <i data-lucide="clock" class="text-pink-600"></i> Hours
-                        </h3>
-                        <ul class="text-slate-600 space-y-2 mb-6">
-                            <li class="flex justify-between"><span>Mon - Fri</span> <span class="font-semibold text-slate-900">8AM - 6PM</span></li>
-                            <li class="flex justify-between"><span>Saturday</span> <span class="font-semibold text-slate-900">9AM - 2PM</span></li>
-                        </ul>
-
-                        <a href="https://www.google.com/maps/dir/?api=1&destination=Door+5+MDFI+Bldg+Rafael+Alunan+Ave+Koronadal+South+Cotabato+9506"
-                        target="_blank"
-                        class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-slate-800 transition-all flex items-center justify-center gap-2">
-                            Get Directions
-                            <i data-lucide="corner-up-right" class="w-4 h-4"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="lg:col-span-2 rounded-3xl overflow-hidden shadow-2xl border border-slate-200 map-container h-[500px]">
-                    <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d256354.9240519452!2d124.58331667902091!3d6.489816879239853!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x32f818eb3b42365f%3A0xdeeaa89b952730b5!2sShine%20%26%20Smile%20Dental%20Clinic!5e1!3m2!1sen!2sph!4v1780745828224!5m2!1sen!2sph"
-                    width="100%"
-                    height="100%"
-                    style="border:0;"
-                    allowfullscreen
-                    loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
-                </div>
-            </div>
+        <div class="ss-footer-bottom">
+            &copy; 2026 Shine & Smile Dental Management System. All Rights Reserved.
         </div>
-    </section>
+    </div>
+</footer>
 
+<script src="{{ asset('js/welcome.js') }}"></script>
 
-    <footer class="bg-slate-50 pt-24 pb-12 border-t border-slate-200">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="grid lg:grid-cols-4 gap-12 mb-20">
-                <div class="col-span-2">
-                    <div class="flex items-center gap-3 mb-8">
-                        <svg width="24" height="24" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M20 2L2 10V20C2 28.5 8.5 36.2 20 38C31.5 36.2 38 28.5 38 20V10L20 2Z" fill="#DB2777" />
-                            <path d="M20 38C26 36.5 31 32 34.5 26.5L20 20V38Z" fill="#BE185D" />
-                            <path d="M20 8L21.5 14.5L28 16L21.5 17.5L20 24L18.5 17.5L12 16L18.5 14.5L20 8Z" fill="white" />
-                        </svg>
-                        <span class="text-xl font-extrabold tracking-tight text-slate-900">Shine & Smile</span>
-                    </div>
-                    <p class="text-slate-500 max-w-sm mb-8 leading-relaxed">
-                        Redefining dental practice management with a focus on clinician efficiency and patient outcomes.
-                    </p>
-                </div>
-                <div>
-                    <h4 class="font-bold text-slate-900 mb-6 uppercase text-xs tracking-widest">Platform</h4>
-                    <ul class="space-y-4 text-slate-500 text-sm font-medium">
-                        <li><a href="#" class="hover:text-pink-600 transition-colors">Clinical Records</a></li>
-                        <li><a href="#" class="hover:text-pink-600 transition-colors">Billing Engine</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold text-slate-900 mb-6 uppercase text-xs tracking-widest">Company</h4>
-                    <ul class="space-y-4 text-slate-500 text-sm font-medium">
-                        <li><a href="#" class="hover:text-pink-600 transition-colors">Our Mission</a></li>
-                        <li><a href="#" class="hover:text-pink-600 transition-colors">Privacy</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="pt-8 border-t border-slate-200 text-center text-slate-400 text-xs">
-                © 2025 Shine & Smile Systems Inc. | All Rights Reserved.
-            </div>
-        </div>
-    </footer>
-
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script>lucide.createIcons();</script>
-    <script src="{{ asset('js/appointment.js') }}"></script>
 </body>
 </html>
