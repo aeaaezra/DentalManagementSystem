@@ -1834,7 +1834,7 @@
     };
 </script>
 
-<script src="{{ asset('js/dentist-odontogram.js') }}"></script>
+<script src="{{ asset('js/dentist/dentist-odontogram.js') }}"></script>
 
 </body>
 </html>

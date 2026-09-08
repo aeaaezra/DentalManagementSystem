@@ -73,10 +73,6 @@
 <body>
 
 
-    {{-- =========================================================
-         BACKGROUND DECORATIONS
-         ========================================================= --}}
-
     <div class="background-decoration decoration-left"></div>
 
     <div class="background-decoration decoration-right"></div>
@@ -86,9 +82,6 @@
     <div class="pink-circle circle-two"></div>
 
 
-    {{-- =========================================================
-         LEFT DOT PATTERN
-         ========================================================= --}}
 
     <div class="dot-pattern dots-left">
 

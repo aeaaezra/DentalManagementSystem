@@ -919,7 +919,7 @@
     </div>
 
 
-    <script src="{{ asset('js/contact.js') }}"></script>
+    <script src="{{ asset('js/appointment/contact.js') }}"></script>
 
 </body>
 

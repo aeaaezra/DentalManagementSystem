@@ -2570,7 +2570,7 @@
 </script>
 
 <script
-    src="{{ asset('js/dentist-patientrecords.js') }}"
+    src="{{ asset('js/dentist/dentist-patientrecords.js') }}"
     defer
 ></script>
 

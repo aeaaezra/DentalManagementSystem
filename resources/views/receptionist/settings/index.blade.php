@@ -1680,7 +1680,7 @@
 </div>
 
 
-<script src="{{ asset('js/receptionist-settings.js') }}"></script>
+<script src="{{ asset('js/receptionist/receptionist-settings.js') }}"></script>
 
 </body>
 </html>

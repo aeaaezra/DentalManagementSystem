@@ -448,7 +448,7 @@
 
 
     <script
-        src="{{ asset('js/dentist-landingpage.js') }}"
+        src="{{ asset('js/dentist/dentist-landingpage.js') }}"
         defer
     ></script>
 

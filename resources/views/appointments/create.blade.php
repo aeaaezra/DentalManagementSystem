@@ -1682,6 +1682,6 @@
 
 </div>
 
-    <script src="{{ asset('js/booking.js') }}"></script>
+    <script src="{{ asset('js/appointment/booking.js') }}"></script>
     </body>
     </html>

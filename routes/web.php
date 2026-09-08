@@ -51,8 +51,10 @@ use Illuminate\Http\RedirectResponse;
 |--------------------------------------------------------------------------
 */
 
-//ADMIN ISSUE REPORT ROUTES
 
+Route::get('/', function () {
+    return view('welcome');
+});
 /*
 |--------------------------------------------------------------------------
 | APPOINTMENT WELCOME
@@ -908,43 +910,44 @@ Route::middleware([
 | POS / CASHIER MODULE
 |--------------------------------------------------------------------------
 */
+Route::get('/pos', function () {
+    return view('pos.landingpage');
+})->name('pos.landingpage');
 
-Route::middleware([
-    'auth',
-    'role:cashier,customer,admin',
-])
-->prefix('pos')
-->name('pos.')
-->group(function () {
+Route::prefix('pos')
+    ->name('pos.')
+    ->group(function () {
 
-    Route::get(
-        '/homepage',
-        [
-            POSController::class,
-            'homepage'
-        ]
-    )->name('homepage');
+        Route::get(
+            '/homepage',
+            [
+                POSController::class,
+                'homepage'
+            ]
+        )->middleware(['auth', 'role:cashier'])
+         ->name('homepage');
 
-    Route::post(
-        '/checkout',
-        [
-            POSController::class,
-            'checkout'
-        ]
-    )->name('checkout');
+        Route::post(
+            '/checkout',
+            [
+                POSController::class,
+                'checkout'
+            ]
+        )->middleware(['auth', 'role:cashier'])
+         ->name('checkout');
 
-    Route::view(
-        '/profile',
-        'pos.profile'
-    )->name('profile');
+        Route::view(
+            '/profile',
+            'pos.profile'
+        )->middleware(['auth', 'role:cashier'])
+         ->name('profile');
 
-    Route::view(
-        '/settings',
-        'pos.settings'
-    )->name('settings');
-
-});
-
+        Route::view(
+            '/settings',
+            'pos.settings'
+        )->middleware(['auth', 'role:cashier'])
+         ->name('settings');
+    });
 
 /*
 |--------------------------------------------------------------------------

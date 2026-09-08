@@ -3220,7 +3220,7 @@
 {{-- Separate JavaScript --}}
 
 <script
-    src="{{ asset('js/dentist-appointments.js') }}"
+    src="{{ asset('js/dentist/dentist-appointments.js') }}"
     defer
 ></script>
 

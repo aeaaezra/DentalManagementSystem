@@ -1615,7 +1615,7 @@
 </script>
 
 
-<script src="{{ asset('js/history.js') }}"></script>
+<script src="{{ asset('js/appointment/history.js') }}"></script>
 
 
 </body>

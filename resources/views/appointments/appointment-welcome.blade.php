@@ -670,7 +670,7 @@
     </div>
 </footer>
 
-<script src="{{ asset('js/welcome.js') }}"></script>
+<script src="{{ asset('js/appointment/welcome.js') }}"></script>
 
 </body>
 </html>

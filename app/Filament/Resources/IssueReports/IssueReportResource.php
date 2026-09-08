@@ -20,11 +20,6 @@ class IssueReportResource extends Resource
 {
     protected static ?string $model = IssueReport::class;
 
-    /*
-    |--------------------------------------------------------------------------
-    | Navigation
-    |--------------------------------------------------------------------------
-    */
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBugAnt;
 
@@ -37,47 +32,22 @@ class IssueReportResource extends Resource
     protected static ?string $recordTitleAttribute = 'IssueReport';
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Form
-    |--------------------------------------------------------------------------
-    */
-
     public static function form(Schema $schema): Schema
     {
         return IssueReportForm::configure($schema);
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | View / Infolist
-    |--------------------------------------------------------------------------
-    */
-
     public static function infolist(Schema $schema): Schema
     {
         return IssueReportInfolist::configure($schema);
     }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Table
-    |--------------------------------------------------------------------------
-    */
 
     public static function table(Table $table): Table
     {
         return IssueReportsTable::configure($table);
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Relations
-    |--------------------------------------------------------------------------
-    */
 
     public static function getRelations(): array
     {
@@ -87,21 +57,12 @@ class IssueReportResource extends Resource
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Pages
-    |--------------------------------------------------------------------------
-    */
-
     public static function getPages(): array
     {
         return [
             'index' => ListIssueReports::route('/'),
-
             'create' => CreateIssueReport::route('/create'),
-
             'view' => ViewIssueReport::route('/{record}'),
-
             'edit' => EditIssueReport::route('/{record}/edit'),
         ];
     }

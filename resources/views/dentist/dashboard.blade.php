@@ -1921,7 +1921,7 @@
 
 
 <script
-    src="{{ asset('js/dentist-dashboard.js') }}"
+    src="{{ asset('js/dentist/dentist-dashboard.js') }}"
     defer
 ></script>
 

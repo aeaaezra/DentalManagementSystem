@@ -1773,9 +1773,9 @@ window.DENTIST_SETTINGS = {
 };
 </script>
 
-<script src="{{ asset('js/dentist-settings.js') }}"></script>
+<script src="{{ asset('js/dentist/dentist-settings.js') }}"></script>
 
-<script src="{{ asset('js/dentist-settings-2fa.js') }}"></script>
+<script src="{{ asset('js/dentist/dentist-settings-2fa.js') }}"></script>
 
 
 </body>

@@ -1425,7 +1425,7 @@
 </div>
 
 
-<script src="{{ asset('js/receptionist-patients.js') }}"></script>
+<script src="{{ asset('js/receptionist/receptionist-patients.js') }}"></script>
 
 </main>
 

@@ -2524,7 +2524,7 @@
 
 
 <script
-    src="{{ asset('js/dentist-treatments.js') }}"
+    src="{{ asset('js/dentist/dentist-treatments.js') }}"
 ></script>
 
 </body>

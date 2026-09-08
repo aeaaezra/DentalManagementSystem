@@ -1713,6 +1713,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
-<script src="{{ asset('js/settings.js') }}"></script>
+<script src="{{ asset('js/appointment/settings.js') }}"></script>
 </body>
 </html>

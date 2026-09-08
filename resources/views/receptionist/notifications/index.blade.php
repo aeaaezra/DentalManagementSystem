@@ -1425,7 +1425,7 @@
 @endif
 
 
-<script src="{{ asset('js/receptionist-notifications.js') }}"></script>
+<script src="{{ asset('js/receptionist/receptionist-notifications.js') }}"></script>
 
 
 </body>

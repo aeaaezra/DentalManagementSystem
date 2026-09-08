@@ -760,7 +760,7 @@
 
     <!-- FAQ JAVASCRIPT -->
 
-    <script src="{{ asset('js/faq.js') }}"></script>
+    <script src="{{ asset('js/appointment/faq.js') }}"></script>
 
 </body>
 

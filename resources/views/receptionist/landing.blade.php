@@ -1145,7 +1145,7 @@
 
 
     <script
-        src="{{ asset('js/receptionist-landing.js') }}"
+        src="{{ asset('js/receptionist/receptionist-landing.js') }}"
     ></script>
 
 </body>

@@ -250,7 +250,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
-<script src="{{ asset('js/receptionist-settings.js') }}"></script>
+<script src="{{ asset('js/receptionist/receptionist-settings.js') }}"></script>
 
 </body>
 
