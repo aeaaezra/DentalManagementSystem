@@ -62,7 +62,7 @@ Route::get('/', function () {
 */
 
 Route::get(
-    '/shine-and-smile/appointments/welcome',
+    '/appointments/welcome',
     function () {
         return view('appointments.appointment-welcome');
     }
@@ -98,14 +98,14 @@ Route::middleware('guest')->group(function () {
 Route::middleware('guest')->group(function () {
 
     Route::get(
-        '/shine-and-smile/appointments/login',
+        '/appointments/login',
         function () {
             return view('auth.appointment-login');
         }
     )->name('appointments.login');
 
     Route::post(
-        '/shine-and-smile/appointments/login',
+        '/appointments/login',
         [AuthenticatedSessionController::class, 'store']
     )->name('appointments.login.store');
 
@@ -296,10 +296,9 @@ Route::middleware([
 
 });
 
-
 /*
 |--------------------------------------------------------------------------
-| APPOINTMENT MODULE
+| APPOINTMENT MODULE (PATIENT)
 |--------------------------------------------------------------------------
 */
 
@@ -308,96 +307,14 @@ Route::middleware([
     'role:patient',
 ])->group(function () {
 
-Route::get(
-    '/shine-and-smile/appointments/settings',
-    [
-        SettingsController::class,
-        'index'
-    ]
-)->name('appointments.settings');
-
-Route::post(
-    '/shine-and-smile/appointments/issue-report',
-    [
-        IssueReportController::class,
-        'store'
-    ]
-)->name('appointments.issue.store');
+    /*
+    |--------------------------------------------------------------------------
+    | APPOINTMENT SETTINGS
+    |--------------------------------------------------------------------------
+    */
 
     Route::get(
-        '/shine-and-smile/appointments/homepage',
-        [
-            AppointmentBookingController::class,
-            'homepage'
-        ]
-    )->name('appointments.homepage');
-
-    Route::get(
-        '/shine-and-smile/appointments/history',
-        [
-            AppointmentBookingController::class,
-            'history'
-        ]
-    )->name('appointments.history');
-
-    Route::get(
-        '/shine-and-smile/appointments/history/print',
-        [
-            AppointmentBookingController::class,
-            'printHistory'
-        ]
-    )->name('appointments.history.print');
-
-    Route::get(
-        '/shine-and-smile/appointments-booking',
-        [
-            AppointmentBookingController::class,
-            'create'
-        ]
-    )->name('appointments.create');
-
-    Route::post(
-        '/shine-and-smile/appointments-booking',
-        [
-            AppointmentBookingController::class,
-            'store'
-        ]
-    )->name('appointments.store');
-
-    Route::post(
-    '/shine-and-smile/odontogram/save',
-    [
-        OdontogramController::class,
-        'store'
-    ]
-)->name('odontogram.store');
-
-    Route::get(
-        '/appointments/{appointment}/thank-you',
-        [
-            AppointmentBookingController::class,
-            'thankYou'
-        ]
-    )->name('appointments.thankyou');
-
-    Route::post(
-        '/shine-and-smile/appointments/{appointment}/cancel',
-        [
-            AppointmentBookingController::class,
-            'cancel'
-        ]
-    )->name('appointments.cancel');
-
-    Route::get(
-        '/shine-and-smile/appointments/aftercare',
-        [
-            AppointmentBookingController::class,
-            'aftercare'
-        ]
-    )->name('appointments.aftercare');
-
-    Route::get(
-        '/shine-and-smile/appointments/settings',
+        '/appointments/settings',
         [
             SettingsController::class,
             'index'
@@ -405,7 +322,7 @@ Route::post(
     )->name('appointments.settings');
 
     Route::put(
-        '/shine-and-smile/appointments/settings/profile',
+        '/appointments/settings/profile',
         [
             ProfileController::class,
             'update'
@@ -413,7 +330,7 @@ Route::post(
     )->name('appointments.settings.profile');
 
     Route::post(
-        '/shine-and-smile/settings/password',
+        '/appointments/settings/password',
         [
             SettingsController::class,
             'updatePassword'
@@ -428,8 +345,136 @@ Route::post(
         ]
     )->name('appointments.settings.notifications');
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | APPOINTMENT HOMEPAGE
+    |--------------------------------------------------------------------------
+    */
+
     Route::get(
-        '/shine-and-smile/appointments/dentists',
+        '/appointments/homepage',
+        [
+            AppointmentBookingController::class,
+            'homepage'
+        ]
+    )->name('appointments.homepage');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | BOOK APPOINTMENT
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get(
+        '/appointments-booking',
+        [
+            AppointmentBookingController::class,
+            'create'
+        ]
+    )->name('appointments.create');
+
+    Route::post(
+        '/appointments-booking',
+        [
+            AppointmentBookingController::class,
+            'store'
+        ]
+    )->name('appointments.store');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | APPOINTMENT HISTORY
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get(
+        '/appointments/history',
+        [
+            AppointmentBookingController::class,
+            'history'
+        ]
+    )->name('appointments.history');
+
+    Route::get(
+        '/appointments/history/print',
+        [
+            AppointmentBookingController::class,
+            'printHistory'
+        ]
+    )->name('appointments.history.print');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | APPOINTMENT THANK YOU
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get(
+        '/appointments/{appointment}/thank-you',
+        [
+            AppointmentBookingController::class,
+            'thankYou'
+        ]
+    )->name('appointments.thankyou');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CANCEL APPOINTMENT
+    |--------------------------------------------------------------------------
+    */
+
+    Route::post(
+        '/appointments/{appointment}/cancel',
+        [
+            AppointmentBookingController::class,
+            'cancel'
+        ]
+    )->name('appointments.cancel');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | AFTERCARE
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get(
+        '/appointments/aftercare',
+        [
+            AppointmentBookingController::class,
+            'aftercare'
+        ]
+    )->name('appointments.aftercare');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ISSUE REPORT
+    |--------------------------------------------------------------------------
+    */
+
+    Route::post(
+        '/appointments/issue-report',
+        [
+            IssueReportController::class,
+            'store'
+        ]
+    )->name('appointments.issue.store');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | DENTISTS
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get(
+        '/appointments/dentists',
         function () {
 
             $doctors = Doctor::all();
@@ -459,17 +504,30 @@ Route::post(
                     'notificationCount'
                 )
             );
-
         }
     )->name('appointments.dentists');
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | ODONTOGRAM
+    |--------------------------------------------------------------------------
+    */
+
     Route::post(
-        '/shine-and-smile/odontogram/save',
+        '/appointments/odontogram/save',
         [
             OdontogramController::class,
             'store'
         ]
     )->name('odontogram.store');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | AVAILABLE APPOINTMENT SLOTS
+    |--------------------------------------------------------------------------
+    */
 
     Route::get(
         '/available-slots',
@@ -480,19 +538,29 @@ Route::post(
     )->name('appointments.available-slots');
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | NOTIFICATIONS
+    |--------------------------------------------------------------------------
+    */
+
     Route::post(
-    '/notifications/{notification}/mark-read',
-    [NotificationController::class, 'markAsRead']
-)->name('notifications.mark-read');
+        '/notifications/{notification}/mark-read',
+        [
+            NotificationController::class,
+            'markAsRead'
+        ]
+    )->name('notifications.mark-read');
 
-Route::post(
-    '/notifications/mark-all-read',
-    [NotificationController::class, 'markAllAsRead']
-)->name('notifications.mark-all-read');
-
+    Route::post(
+        '/notifications/mark-all-read',
+        [
+            NotificationController::class,
+            'markAllAsRead'
+        ]
+    )->name('notifications.mark-all-read');
 
 });
-
 
 /*
 |--------------------------------------------------------------------------
