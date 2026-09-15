@@ -5,10 +5,71 @@
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    // ========================================================
-    // CSRF TOKEN
-    // ========================================================
+// ========================================================
+// PROFILE DROPDOWN
+// ========================================================
 
+const profileBtn = document.getElementById("profileBtn");
+const profileMenu = document.getElementById("profileMenu");
+
+if (profileBtn && profileMenu) {
+
+    // OPEN / CLOSE PROFILE DROPDOWN
+    profileBtn.addEventListener("click", function (event) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const isHidden =
+            profileMenu.classList.contains("hidden");
+
+        // Toggle menu
+        profileMenu.classList.toggle("hidden");
+
+        // Accessibility
+        profileBtn.setAttribute(
+            "aria-expanded",
+            isHidden ? "true" : "false"
+        );
+    });
+
+    // Prevent clicks inside the dropdown
+    // from being treated as outside clicks
+    profileMenu.addEventListener("click", function (event) {
+        event.stopPropagation();
+    });
+
+    // CLOSE WHEN CLICKING OUTSIDE
+    document.addEventListener("click", function (event) {
+
+        if (
+            !profileBtn.contains(event.target) &&
+            !profileMenu.contains(event.target)
+        ) {
+
+            profileMenu.classList.add("hidden");
+
+            profileBtn.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+        }
+    });
+
+    // CLOSE WITH ESCAPE KEY
+    document.addEventListener("keydown", function (event) {
+
+        if (event.key === "Escape") {
+
+            profileMenu.classList.add("hidden");
+
+            profileBtn.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+        }
+    });
+}
     function getCsrfToken() {
         return document
             .querySelector('meta[name="csrf-token"]')
@@ -1273,3 +1334,182 @@ function confirmLogout() {
         "Are you sure you want to logout?"
     );
 }
+/* =========================================================
+   LOGOUT CONFIRMATION MODAL
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const logoutModal =
+        document.getElementById("logoutModal");
+
+    const openLogoutModalButton =
+        document.getElementById("openLogoutModal");
+
+    const cancelLogoutButton =
+        document.getElementById("cancelLogout");
+
+    const confirmLogoutButton =
+        document.getElementById("confirmLogout");
+
+    const logoutModalOverlay =
+        document.getElementById("logoutModalOverlay");
+
+    const logoutForm =
+        document.getElementById("logoutForm");
+
+
+    /* =====================================================
+       CHECK ELEMENTS
+       ===================================================== */
+
+    if (!logoutModal) {
+        console.error(
+            "ERROR: #logoutModal was not found."
+        );
+        return;
+    }
+
+    if (!openLogoutModalButton) {
+        console.error(
+            "ERROR: #openLogoutModal was not found."
+        );
+        return;
+    }
+
+    if (!logoutForm) {
+        console.error(
+            "ERROR: #logoutForm was not found."
+        );
+        return;
+    }
+
+
+    /* =====================================================
+       OPEN LOGOUT MODAL
+       ===================================================== */
+
+    function openLogoutModal() {
+
+        logoutModal.classList.add("active");
+
+        logoutModal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+        document.body.style.overflow = "hidden";
+    }
+
+
+    /* =====================================================
+       CLOSE LOGOUT MODAL
+       ===================================================== */
+
+    function closeLogoutModal() {
+
+        logoutModal.classList.remove("active");
+
+        logoutModal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+        document.body.style.overflow = "";
+    }
+
+
+    /* =====================================================
+       OPEN BUTTON
+       ===================================================== */
+
+    openLogoutModalButton.addEventListener(
+        "click",
+        function () {
+
+            openLogoutModal();
+
+        }
+    );
+
+
+    /* =====================================================
+       CANCEL BUTTON
+       ===================================================== */
+
+    if (cancelLogoutButton) {
+
+        cancelLogoutButton.addEventListener(
+            "click",
+            function () {
+
+                closeLogoutModal();
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       OVERLAY CLICK
+       ===================================================== */
+
+    if (logoutModalOverlay) {
+
+        logoutModalOverlay.addEventListener(
+            "click",
+            function () {
+
+                closeLogoutModal();
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       CONFIRM LOGOUT
+       ===================================================== */
+
+    if (confirmLogoutButton) {
+
+        confirmLogoutButton.addEventListener(
+            "click",
+            function () {
+
+                confirmLogoutButton.disabled = true;
+
+                confirmLogoutButton.textContent =
+                    "Logging out...";
+
+                logoutForm.submit();
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       ESC KEY
+       ===================================================== */
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Escape" &&
+                logoutModal.classList.contains("active")
+            ) {
+
+                closeLogoutModal();
+
+            }
+
+        }
+    );
+
+});

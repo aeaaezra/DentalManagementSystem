@@ -4550,3 +4550,395 @@ html:not(.dark-mode) #reportIssueModal #reportIssueForm input[type="file"] {
         transform: scale(0.97);
     }
 }
+/* =========================================================
+   FIX - REPORT CONFIRMATION & SUCCESS MODALS
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   CONFIRMATION + SUCCESS MODAL CONTAINER
+   --------------------------------------------------------- */
+
+#reportConfirmModal .report-confirm-modal,
+#reportSuccessModal .report-confirm-modal {
+    position: relative !important;
+
+    width: 100% !important;
+    max-width: 430px !important;
+
+    max-height: calc(100vh - 40px) !important;
+
+    margin: 0 auto !important;
+    padding: 32px !important;
+
+    box-sizing: border-box !important;
+
+    background: #ffffff !important;
+
+    color: #111827 !important;
+
+    border: 1px solid #e5e7eb !important;
+
+    border-radius: 20px !important;
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.30) !important;
+
+    text-align: center !important;
+
+    overflow-y: auto !important;
+
+    animation: reportConfirmModalIn 0.2s ease-out !important;
+}
+
+
+/* ---------------------------------------------------------
+   CONFIRMATION / SUCCESS TITLE
+   --------------------------------------------------------- */
+
+#reportConfirmModal .report-confirm-modal h2,
+#reportSuccessModal .report-confirm-modal h2 {
+    margin: 16px 0 10px 0 !important;
+
+    padding: 0 !important;
+
+    color: #111827 !important;
+
+    font-size: 24px !important;
+
+    line-height: 1.25 !important;
+
+    font-weight: 700 !important;
+}
+
+
+/* ---------------------------------------------------------
+   CONFIRMATION / SUCCESS DESCRIPTION
+   --------------------------------------------------------- */
+
+#reportConfirmModal .report-confirm-modal p,
+#reportSuccessModal .report-confirm-modal p {
+    margin: 0 auto 24px auto !important;
+
+    padding: 0 !important;
+
+    max-width: 360px !important;
+
+    color: #6b7280 !important;
+
+    font-size: 15px !important;
+
+    line-height: 1.6 !important;
+}
+
+
+/* ---------------------------------------------------------
+   STATUS ICON
+   --------------------------------------------------------- */
+
+#reportConfirmModal .report-status-icon,
+#reportSuccessModal .report-status-icon {
+    width: 64px !important;
+
+    height: 64px !important;
+
+    margin: 0 auto !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+
+    justify-content: center !important;
+
+    border-radius: 50% !important;
+
+    font-size: 30px !important;
+
+    font-weight: 700 !important;
+
+    line-height: 1 !important;
+}
+
+
+/* ---------------------------------------------------------
+   WARNING ICON
+   --------------------------------------------------------- */
+
+#reportConfirmModal .report-warning-icon {
+    background: #fee2e2 !important;
+
+    color: #dc2626 !important;
+}
+
+
+/* ---------------------------------------------------------
+   SUCCESS ICON
+   --------------------------------------------------------- */
+
+#reportSuccessModal .report-success-icon {
+    background: #dcfce7 !important;
+
+    color: #16a34a !important;
+}
+
+
+/* ---------------------------------------------------------
+   CONFIRMATION BUTTON AREA
+   --------------------------------------------------------- */
+
+#reportConfirmModal .report-confirm-actions {
+    display: flex !important;
+
+    align-items: center !important;
+
+    justify-content: center !important;
+
+    gap: 10px !important;
+
+    width: 100% !important;
+
+    margin-top: 20px !important;
+
+    padding: 0 !important;
+}
+
+
+/* ---------------------------------------------------------
+   BUTTONS
+   --------------------------------------------------------- */
+
+#reportConfirmModal .report-btn,
+#reportSuccessModal .report-btn {
+    min-height: 42px !important;
+
+    padding: 11px 20px !important;
+
+    border: none !important;
+
+    border-radius: 9px !important;
+
+    font-family: inherit !important;
+
+    font-size: 14px !important;
+
+    font-weight: 600 !important;
+
+    line-height: 1 !important;
+
+    cursor: pointer !important;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease !important;
+}
+
+
+/* ---------------------------------------------------------
+   CANCEL BUTTON
+   --------------------------------------------------------- */
+
+#reportConfirmModal .report-btn-cancel {
+    background: #dc2626 !important;
+
+    color: #ffffff !important;
+}
+
+
+#reportConfirmModal .report-btn-cancel:hover {
+    background: #b91c1c !important;
+
+    color: #ffffff !important;
+
+    transform: translateY(-1px) !important;
+
+    box-shadow:
+        0 4px 12px rgba(220, 38, 38, 0.25) !important;
+}
+
+
+/* ---------------------------------------------------------
+   SUBMIT BUTTON
+   --------------------------------------------------------- */
+
+#reportConfirmModal .report-btn-submit,
+#reportSuccessModal .report-btn-submit {
+    background: #16a34a !important;
+
+    color: #ffffff !important;
+}
+
+
+#reportConfirmModal .report-btn-submit:hover,
+#reportSuccessModal .report-btn-submit:hover {
+    background: #15803d !important;
+
+    color: #ffffff !important;
+
+    transform: translateY(-1px) !important;
+
+    box-shadow:
+        0 4px 12px rgba(22, 163, 74, 0.30) !important;
+}
+
+
+/* ---------------------------------------------------------
+   SUBMIT BUTTON DISABLED
+   --------------------------------------------------------- */
+
+#reportConfirmModal .report-btn-submit:disabled {
+    background: #86efac !important;
+
+    color: #ffffff !important;
+
+    cursor: not-allowed !important;
+
+    transform: none !important;
+
+    box-shadow: none !important;
+
+    opacity: 0.8 !important;
+}
+
+
+/* ---------------------------------------------------------
+   SUCCESS DONE BUTTON
+   --------------------------------------------------------- */
+
+#reportSuccessModal .report-btn-submit {
+    margin-top: 5px !important;
+}
+
+
+/* ---------------------------------------------------------
+   MODAL ANIMATION
+   --------------------------------------------------------- */
+
+@keyframes reportConfirmModalIn {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(15px)
+            scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+html.dark-mode #reportConfirmModal .report-confirm-modal,
+html.dark-mode #reportSuccessModal .report-confirm-modal {
+    background: #18181b !important;
+
+    color: #f9fafb !important;
+
+    border-color: #3f3f46 !important;
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.65) !important;
+}
+
+
+/* ---------------------------------------------------------
+   DARK MODE TITLE
+   --------------------------------------------------------- */
+
+html.dark-mode #reportConfirmModal .report-confirm-modal h2,
+html.dark-mode #reportSuccessModal .report-confirm-modal h2 {
+    color: #ffffff !important;
+}
+
+
+/* ---------------------------------------------------------
+   DARK MODE DESCRIPTION
+   --------------------------------------------------------- */
+
+html.dark-mode #reportConfirmModal .report-confirm-modal p,
+html.dark-mode #reportSuccessModal .report-confirm-modal p {
+    color: #a1a1aa !important;
+}
+
+
+/* ---------------------------------------------------------
+   DARK MODE WARNING
+   --------------------------------------------------------- */
+
+html.dark-mode #reportConfirmModal .report-warning-icon {
+    background: rgba(239, 68, 68, 0.15) !important;
+
+    color: #f87171 !important;
+}
+
+
+/* ---------------------------------------------------------
+   DARK MODE SUCCESS
+   --------------------------------------------------------- */
+
+html.dark-mode #reportSuccessModal .report-success-icon {
+    background: rgba(34, 197, 94, 0.15) !important;
+
+    color: #4ade80 !important;
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 600px) {
+
+    #reportConfirmModal,
+    #reportSuccessModal {
+        padding: 12px !important;
+    }
+
+
+    #reportConfirmModal .report-confirm-modal,
+    #reportSuccessModal .report-confirm-modal {
+        max-width: 100% !important;
+
+        max-height: calc(100vh - 24px) !important;
+
+        padding: 24px 20px !important;
+
+        border-radius: 17px !important;
+    }
+
+
+    #reportConfirmModal .report-confirm-modal h2,
+    #reportSuccessModal .report-confirm-modal h2 {
+        font-size: 21px !important;
+    }
+
+
+    #reportConfirmModal .report-confirm-modal p,
+    #reportSuccessModal .report-confirm-modal p {
+        font-size: 14px !important;
+    }
+
+
+    #reportConfirmModal .report-confirm-actions {
+        flex-direction: column !important;
+
+        width: 100% !important;
+    }
+
+
+    #reportConfirmModal .report-btn,
+    #reportSuccessModal .report-btn {
+        width: 100% !important;
+    }
+
+}

@@ -1475,55 +1475,44 @@
 
     </div>
 </div>
-<!-- ==========================================================
-     SUBMIT ISSUE REPORT CONFIRMATION MODAL
-     ========================================================== -->
 
 <div
-    id="reportConfirmModal"
+    id="appointmentApprovedModal"
     class="report-modal-overlay"
     aria-hidden="true"
 >
     <div
-        class="report-confirm-modal"
+        class="report-confirm-modal appointment-approved-modal"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="reportConfirmTitle"
+        aria-labelledby="appointmentApprovedTitle"
     >
 
-        <div class="report-status-icon report-warning-icon">
-            ?
+        <!-- SUCCESS ICON -->
+        <div class="report-status-icon report-success-icon">
+            ✓
         </div>
 
-        <h2 id="reportConfirmTitle">
-            Submit Issue Report?
+        <!-- TITLE -->
+        <h2 id="appointmentApprovedTitle">
+            Appointment Approved!
         </h2>
 
+        <!-- MESSAGE -->
         <p>
-            Are you sure you want to submit this issue report?
-            Our team will review and investigate the problem.
+            Your appointment has been approved successfully.
+            We look forward to seeing you!
         </p>
 
+        <!-- BUTTON -->
         <div class="report-confirm-actions">
-
-            <!-- CANCEL -->
-            <button
-                type="button"
-                class="report-btn report-btn-cancel"
-                onclick="closeReportConfirmModal()"
-            >
-                Cancel
-            </button>
-
-            <!-- ACTUALLY SUBMIT -->
             <button
                 type="button"
                 class="report-btn report-btn-submit"
-                onclick="confirmReportSubmission()"
+                onclick="closeAppointmentApprovedModal()"
             >
-                Submit Report
+                OK
             </button>
-
         </div>
 
     </div>

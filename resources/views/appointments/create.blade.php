@@ -1598,9 +1598,10 @@
 
 </div>
 
-<!-- ============================================================
+<!-- Logout Modal -->
+<!-- =========================================================
      LOGOUT CONFIRMATION MODAL
-     ============================================================ -->
+     ========================================================= -->
 
 <div
     id="logoutModal"
@@ -1608,12 +1609,14 @@
     aria-hidden="true"
 >
 
+    <!-- OVERLAY -->
     <div
         id="logoutModalOverlay"
         class="logout-modal-overlay"
     ></div>
 
 
+    <!-- MODAL CARD -->
     <div
         class="logout-modal-card"
         role="dialog"
@@ -1668,8 +1671,7 @@
 
 
             <button
-                type="submit"
-                form="logoutForm"
+                type="button"
                 id="confirmLogout"
                 class="logout-confirm-btn"
             >

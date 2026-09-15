@@ -2778,5 +2778,215 @@ document.addEventListener(
     }
 );
 
-//Mobile Sidebar Toggle
+/* ============================================================
+   LOGOUT CONFIRMATION MODAL
+   ============================================================ */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const logoutButton =
+        document.getElementById("logoutButton");
+
+    const logoutModal =
+        document.getElementById("logoutModal");
+
+    const logoutModalOverlay =
+        document.getElementById("logoutModalOverlay");
+
+    const cancelLogout =
+        document.getElementById("cancelLogout");
+
+    const confirmLogout =
+        document.getElementById("confirmLogout");
+
+    const logoutForm =
+        document.getElementById("logoutForm");
+
+
+    console.log("Logout modal initialized:", {
+        logoutButton,
+        logoutModal,
+        logoutModalOverlay,
+        cancelLogout,
+        confirmLogout,
+        logoutForm
+    });
+
+
+    /* ========================================================
+       OPEN MODAL
+       ======================================================== */
+
+    if (logoutButton && logoutModal) {
+
+        logoutButton.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                console.log("Logout button clicked.");
+
+                logoutModal.classList.add("show");
+
+                logoutModal.setAttribute(
+                    "aria-hidden",
+                    "false"
+                );
+
+                document.body.classList.add(
+                    "logout-modal-open"
+                );
+
+            }
+        );
+
+    }
+
+
+    /* ========================================================
+       CLOSE MODAL
+       ======================================================== */
+
+    function closeLogoutModal() {
+
+        if (!logoutModal) {
+            return;
+        }
+
+        logoutModal.classList.remove("show");
+
+        logoutModal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+        document.body.classList.remove(
+            "logout-modal-open"
+        );
+
+    }
+
+
+    /* ========================================================
+       CANCEL
+       ======================================================== */
+
+    if (cancelLogout) {
+
+        cancelLogout.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                closeLogoutModal();
+
+            }
+        );
+
+    }
+
+
+    /* ========================================================
+       CLICK OVERLAY
+       ======================================================== */
+
+    if (logoutModalOverlay) {
+
+        logoutModalOverlay.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                closeLogoutModal();
+
+            }
+        );
+
+    }
+
+
+    /* ========================================================
+       CONFIRM LOGOUT
+       ======================================================== */
+
+    if (
+        confirmLogout &&
+        logoutForm
+    ) {
+
+        confirmLogout.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                console.log(
+                    "Logout confirmed."
+                );
+
+                confirmLogout.disabled = true;
+
+                confirmLogout.textContent =
+                    "Logging out...";
+
+                logoutForm.submit();
+
+            }
+        );
+
+    }
+
+
+    /* ========================================================
+       ESCAPE KEY
+       ======================================================== */
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Escape" &&
+                logoutModal &&
+                logoutModal.classList.contains("show")
+            ) {
+
+                closeLogoutModal();
+
+            }
+
+        }
+    );
+
+
+    /* ========================================================
+       PREVENT CARD CLICK FROM CLOSING MODAL
+       ======================================================== */
+
+    if (logoutModal) {
+
+        const modalCard =
+            logoutModal.querySelector(
+                ".logout-modal-card"
+            );
+
+        if (modalCard) {
+
+            modalCard.addEventListener(
+                "click",
+                function (event) {
+
+                    event.stopPropagation();
+
+                }
+            );
+
+        }
+
+    }
+
+});
 

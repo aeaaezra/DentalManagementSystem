@@ -1911,18 +1911,24 @@
 </div>
 
 
+<!-- =========================================================
+     LOGOUT CONFIRMATION MODAL
+     ========================================================= -->
+
 <div
     id="logoutModal"
     class="logout-modal"
     aria-hidden="true"
 >
 
+    <!-- OVERLAY -->
     <div
         id="logoutModalOverlay"
         class="logout-modal-overlay"
     ></div>
 
 
+    <!-- MODAL CARD -->
     <div
         class="logout-modal-card"
         role="dialog"
@@ -1977,8 +1983,7 @@
 
 
             <button
-                type="submit"
-                form="logoutForm"
+                type="button"
                 id="confirmLogout"
                 class="logout-confirm-btn"
             >
@@ -1990,6 +1995,7 @@
     </div>
 
 </div>
+
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>lucide.createIcons();</script>
     <script src="{{ asset('js/appointment/appointment.js') }}"></script>

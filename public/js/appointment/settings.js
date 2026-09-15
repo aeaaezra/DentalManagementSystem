@@ -1,883 +1,892 @@
-    document.addEventListener(
-        "DOMContentLoaded",
-        function () {
+/*
+|--------------------------------------------------------------------------
+| Shine & Smile - Appointment Settings JavaScript
+|--------------------------------------------------------------------------
+| Fixed version
+|
+| Removed:
+| - Old issueReportForm listener
+| - Old settingsMobileMenuBtn listener
+| - Duplicate openReportIssueModal()
+|
+| Uses the IDs from the current Blade file:
+| - reportIssueForm
+| - reportIssueModal
+| - reportConfirmModal
+| - reportSuccessModal
+| - settingsHeaderMenuBtn
+| - settingsMobileSidebar
+| - settingsMobileSidebarOverlay
+|--------------------------------------------------------------------------
+*/
 
 
-            // ========================================================
-            // DARK MODE
-            // ========================================================
+/* =========================================================
+   SETTINGS PAGE
+   ========================================================= */
 
-            const darkModeToggle =
-                document.getElementById("darkModeToggle");
+document.addEventListener("DOMContentLoaded", function () {
 
 
-            function applyDarkMode(enabled) {
+    /* =====================================================
+       DARK MODE
+       ===================================================== */
 
-                if (enabled) {
+    const darkModeToggle =
+        document.getElementById("darkModeToggle");
 
-                    document.documentElement.classList.add(
-                        "dark-mode"
-                    );
 
-                } else {
+    function applyDarkMode(enabled) {
 
-                    document.documentElement.classList.remove(
-                        "dark-mode"
-                    );
+        if (enabled) {
 
-                }
+            document.documentElement.classList.add(
+                "dark-mode"
+            );
+
+        } else {
+
+            document.documentElement.classList.remove(
+                "dark-mode"
+            );
+
+        }
+    }
+
+
+    function saveDarkMode(enabled) {
+
+        try {
+
+            localStorage.setItem(
+                "patientDarkMode",
+                enabled ? "true" : "false"
+            );
+
+        } catch (error) {
+
+            console.warn(
+                "Unable to save theme preference."
+            );
+
+        }
+    }
+
+
+    function getSavedDarkMode() {
+
+        try {
+
+            return (
+                localStorage.getItem(
+                    "patientDarkMode"
+                ) === "true"
+            );
+
+        } catch (error) {
+
+            return false;
+
+        }
+    }
+
+
+    const savedDarkMode =
+        getSavedDarkMode();
+
+
+    applyDarkMode(savedDarkMode);
+
+
+    if (darkModeToggle) {
+
+        darkModeToggle.checked =
+            savedDarkMode;
+
+
+        darkModeToggle.addEventListener(
+            "change",
+            function () {
+
+                const enabled =
+                    darkModeToggle.checked;
+
+
+                applyDarkMode(enabled);
+
+                saveDarkMode(enabled);
+
+            }
+        );
+
+    }
+
+
+
+    /* =====================================================
+       PASSWORD RULES
+       ===================================================== */
+
+    const passwordRules = {
+
+        length: {
+
+            text: "At least 8 characters",
+
+            test: function (value) {
+
+                return value.length >= 8;
 
             }
 
+        },
 
-            function saveDarkMode(enabled) {
+        uppercase: {
 
-                try {
+            text: "One uppercase letter",
 
-                    localStorage.setItem(
-                        "patientDarkMode",
-                        enabled ? "true" : "false"
-                    );
+            test: function (value) {
 
-                } catch (error) {
-
-                    console.warn(
-                        "Unable to save theme preference."
-                    );
-
-                }
+                return /[A-Z]/.test(value);
 
             }
 
+        },
 
-            function getSavedDarkMode() {
+        lowercase: {
 
-                try {
+            text: "One lowercase letter",
 
-                    return (
-                        localStorage.getItem(
-                            "patientDarkMode"
-                        ) === "true"
-                    );
+            test: function (value) {
 
-                } catch (error) {
-
-                    return false;
-
-                }
+                return /[a-z]/.test(value);
 
             }
 
+        },
 
-            // LOAD SAVED THEME
+        number: {
 
-            const savedDarkMode =
-                getSavedDarkMode();
+            text: "One number",
 
+            test: function (value) {
 
-            applyDarkMode(savedDarkMode);
-
-
-            if (darkModeToggle) {
-
-                darkModeToggle.checked =
-                    savedDarkMode;
-
-
-                darkModeToggle.addEventListener(
-                    "change",
-                    function () {
-
-                        const enabled =
-                            darkModeToggle.checked;
-
-
-                        applyDarkMode(enabled);
-
-                        saveDarkMode(enabled);
-
-                    }
-                );
+                return /[0-9]/.test(value);
 
             }
 
+        },
 
+        special: {
 
-            // ========================================================
-            // PASSWORD RULES
-            // ========================================================
+            text: "One special character",
 
-            const passwordRules = {
+            test: function (value) {
 
-                length: {
-
-                    text: "At least 8 characters",
-
-                    test: function (value) {
-
-                        return value.length >= 8;
-
-                    }
-
-                },
-
-
-                uppercase: {
-
-                    text: "One uppercase letter",
-
-                    test: function (value) {
-
-                        return /[A-Z]/.test(value);
-
-                    }
-
-                },
-
-
-                lowercase: {
-
-                    text: "One lowercase letter",
-
-                    test: function (value) {
-
-                        return /[a-z]/.test(value);
-
-                    }
-
-                },
-
-
-                number: {
-
-                    text: "One number",
-
-                    test: function (value) {
-
-                        return /[0-9]/.test(value);
-
-                    }
-
-                },
-
-
-                special: {
-
-                    text: "One special character",
-
-                    test: function (value) {
-
-                        return /[^A-Za-z0-9]/.test(value);
-
-                    }
-
-                }
-
-            };
-
-
-
-            // ========================================================
-            // PASSWORD ELEMENTS
-            // ========================================================
-
-            const newPass =
-                document.getElementById(
-                    "newPass"
-                );
-
-
-            const confPass =
-                document.getElementById(
-                    "confPass"
-                );
-
-
-            const passwordChecker =
-                document.getElementById(
-                    "passwordChecker"
-                );
-
-
-            const strengthText =
-                document.getElementById(
-                    "strengthText"
-                );
-
-
-            const confirmError =
-                document.getElementById(
-                    "confirmError"
-                );
-
-
-
-            // ========================================================
-            // PASSWORD INPUT
-            // ========================================================
-
-            if (newPass) {
-
-                newPass.addEventListener(
-                    "input",
-                    function () {
-
-                        const value =
-                            newPass.value;
-
-
-                        if (
-                            !passwordChecker ||
-                            !strengthText
-                        ) {
-
-                            return;
-
-                        }
-
-
-                        // EMPTY PASSWORD
-
-                        if (
-                            value.trim() === ""
-                        ) {
-
-                            passwordChecker.classList.add(
-                                "hidden"
-                            );
-
-
-                            Object.keys(
-                                passwordRules
-                            ).forEach(
-                                function (ruleName) {
-
-                                    updateRule(
-                                        ruleName,
-                                        false
-                                    );
-
-                                }
-                            );
-
-
-                            strengthText.textContent =
-                                "";
-
-
-                            strengthText.classList.remove(
-                                "weak",
-                                "medium",
-                                "strong"
-                            );
-
-
-                            validateConfirmPassword();
-
-                            return;
-
-                        }
-
-
-                        // SHOW PASSWORD CHECKER
-
-                        passwordChecker.classList.remove(
-                            "hidden"
-                        );
-
-
-                        let score = 0;
-
-
-                        Object.keys(
-                            passwordRules
-                        ).forEach(
-                            function (ruleName) {
-
-                                const rule =
-                                    passwordRules[
-                                        ruleName
-                                    ];
-
-
-                                const valid =
-                                    rule.test(
-                                        value
-                                    );
-
-
-                                if (valid) {
-
-                                    score++;
-
-                                }
-
-
-                                updateRule(
-                                    ruleName,
-                                    valid
-                                );
-
-                            }
-                        );
-
-
-                        // REMOVE OLD STRENGTH CLASSES
-
-                        strengthText.classList.remove(
-                            "weak",
-                            "medium",
-                            "strong"
-                        );
-
-
-                        // PASSWORD STRENGTH
-
-                        if (score <= 2) {
-
-                            strengthText.textContent =
-                                "Weak";
-
-
-                            strengthText.classList.add(
-                                "weak"
-                            );
-
-                        } else if (score <= 4) {
-
-                            strengthText.textContent =
-                                "Medium";
-
-
-                            strengthText.classList.add(
-                                "medium"
-                            );
-
-                        } else {
-
-                            strengthText.textContent =
-                                "Strong";
-
-
-                            strengthText.classList.add(
-                                "strong"
-                            );
-
-                        }
-
-
-                        validateConfirmPassword();
-
-                    }
-                );
+                return /[^A-Za-z0-9]/.test(value);
 
             }
 
+        }
 
-
-            // ========================================================
-            // CONFIRM PASSWORD INPUT
-            // ========================================================
-
-            if (confPass) {
-
-                confPass.addEventListener(
-                    "input",
-                    validateConfirmPassword
-                );
-
-            }
+    };
 
 
 
-            // ========================================================
-            // UPDATE PASSWORD RULE
-            // ========================================================
+    /* =====================================================
+       PASSWORD ELEMENTS
+       ===================================================== */
 
-            function updateRule(
-                id,
-                valid
-            ) {
-
-                const item =
-                    document.getElementById(
-                        id
-                    );
+    const newPass =
+        document.getElementById(
+            "newPass"
+        );
 
 
-                if (
-                    !item ||
-                    !passwordRules[id]
-                ) {
-
-                    return;
-
-                }
+    const confPass =
+        document.getElementById(
+            "confPass"
+        );
 
 
-                const text =
-                    passwordRules[id].text;
+    const passwordChecker =
+        document.getElementById(
+            "passwordChecker"
+        );
 
 
-                if (valid) {
-
-                    item.textContent =
-                        "✓ " + text;
-
-
-                    item.classList.remove(
-                        "invalid"
-                    );
+    const strengthText =
+        document.getElementById(
+            "strengthText"
+        );
 
 
-                    item.classList.add(
-                        "valid"
-                    );
-
-                } else {
-
-                    item.textContent =
-                        "• " + text;
-
-
-                    item.classList.remove(
-                        "valid"
-                    );
-
-
-                    item.classList.add(
-                        "invalid"
-                    );
-
-                }
-
-            }
+    const confirmError =
+        document.getElementById(
+            "confirmError"
+        );
 
 
 
-            // ========================================================
-            // VALIDATE CONFIRM PASSWORD
-            // ========================================================
+    /* =====================================================
+       UPDATE PASSWORD RULE
+       ===================================================== */
 
-            function validateConfirmPassword() {
+    function updateRule(
+        id,
+        valid
+    ) {
 
-                if (
-                    !newPass ||
-                    !confPass ||
-                    !confirmError
-                ) {
-
-                    return;
-
-                }
+        const item =
+            document.getElementById(id);
 
 
-                const newPassword =
+        if (
+            !item ||
+            !passwordRules[id]
+        ) {
+
+            return;
+
+        }
+
+
+        const text =
+            passwordRules[id].text;
+
+
+        if (valid) {
+
+            item.textContent =
+                "✓ " + text;
+
+
+            item.classList.remove(
+                "invalid"
+            );
+
+
+            item.classList.add(
+                "valid"
+            );
+
+        } else {
+
+            item.textContent =
+                "• " + text;
+
+
+            item.classList.remove(
+                "valid"
+            );
+
+
+            item.classList.add(
+                "invalid"
+            );
+
+        }
+    }
+
+
+
+    /* =====================================================
+       VALIDATE CONFIRM PASSWORD
+       ===================================================== */
+
+    function validateConfirmPassword() {
+
+        if (
+            !newPass ||
+            !confPass ||
+            !confirmError
+        ) {
+
+            return;
+
+        }
+
+
+        const newPassword =
+            newPass.value;
+
+
+        const confirmPassword =
+            confPass.value;
+
+
+        confPass.classList.remove(
+            "password-error",
+            "password-success"
+        );
+
+
+        if (
+            confirmPassword === ""
+        ) {
+
+            confirmError.style.display =
+                "none";
+
+            confirmError.textContent =
+                "";
+
+            return;
+
+        }
+
+
+        confirmError.style.display =
+            "block";
+
+
+        if (
+            newPassword ===
+            confirmPassword
+        ) {
+
+            confirmError.textContent =
+                "✓ Passwords match";
+
+
+            confirmError.style.color =
+                "#059669";
+
+
+            confPass.classList.add(
+                "password-success"
+            );
+
+        } else {
+
+            confirmError.textContent =
+                "✕ Passwords do not match";
+
+
+            confirmError.style.color =
+                "#dc2626";
+
+
+            confPass.classList.add(
+                "password-error"
+            );
+
+        }
+
+    }
+
+
+
+    /* =====================================================
+       PASSWORD INPUT
+       ===================================================== */
+
+    if (newPass) {
+
+        newPass.addEventListener(
+            "input",
+            function () {
+
+                const value =
                     newPass.value;
 
 
-                const confirmPassword =
-                    confPass.value;
-
-
-                confPass.classList.remove(
-                    "password-error",
-                    "password-success"
-                );
-
-
-                // EMPTY CONFIRM PASSWORD
-
                 if (
-                    confirmPassword === ""
+                    !passwordChecker ||
+                    !strengthText
                 ) {
-
-                    confirmError.style.display =
-                        "none";
-
-
-                    confirmError.textContent =
-                        "";
-
 
                     return;
 
                 }
 
 
-                confirmError.style.display =
-                    "block";
-
-
-                // PASSWORDS MATCH
+                /* EMPTY PASSWORD */
 
                 if (
-                    newPassword ===
-                    confirmPassword
+                    value.trim() === ""
                 ) {
 
-                    confirmError.textContent =
-                        "✓ Passwords match";
+                    passwordChecker.classList.add(
+                        "hidden"
+                    );
 
 
-                    confirmError.style.color =
-                        "#059669";
+                    Object.keys(
+                        passwordRules
+                    ).forEach(
+                        function (ruleName) {
+
+                            updateRule(
+                                ruleName,
+                                false
+                            );
+
+                        }
+                    );
 
 
-                    confPass.classList.add(
-                        "password-success"
+                    strengthText.textContent =
+                        "";
+
+
+                    strengthText.classList.remove(
+                        "weak",
+                        "medium",
+                        "strong"
+                    );
+
+
+                    validateConfirmPassword();
+
+                    return;
+
+                }
+
+
+                /* SHOW PASSWORD CHECKER */
+
+                passwordChecker.classList.remove(
+                    "hidden"
+                );
+
+
+                let score = 0;
+
+
+                Object.keys(
+                    passwordRules
+                ).forEach(
+                    function (ruleName) {
+
+                        const rule =
+                            passwordRules[
+                                ruleName
+                            ];
+
+
+                        const valid =
+                            rule.test(
+                                value
+                            );
+
+
+                        if (valid) {
+
+                            score++;
+
+                        }
+
+
+                        updateRule(
+                            ruleName,
+                            valid
+                        );
+
+                    }
+                );
+
+
+                strengthText.classList.remove(
+                    "weak",
+                    "medium",
+                    "strong"
+                );
+
+
+                if (score <= 2) {
+
+                    strengthText.textContent =
+                        "Weak";
+
+
+                    strengthText.classList.add(
+                        "weak"
+                    );
+
+                } else if (score <= 4) {
+
+                    strengthText.textContent =
+                        "Medium";
+
+
+                    strengthText.classList.add(
+                        "medium"
                     );
 
                 } else {
 
-                    confirmError.textContent =
-                        "✕ Passwords do not match";
+                    strengthText.textContent =
+                        "Strong";
 
 
-                    confirmError.style.color =
-                        "#dc2626";
+                    strengthText.classList.add(
+                        "strong"
+                    );
+
+                }
+
+
+                validateConfirmPassword();
+
+            }
+        );
+
+    }
+
+
+
+    /* =====================================================
+       CONFIRM PASSWORD INPUT
+       ===================================================== */
+
+    if (confPass) {
+
+        confPass.addEventListener(
+            "input",
+            validateConfirmPassword
+        );
+
+    }
+
+
+
+    /* =====================================================
+       DISABLE 2FA
+       ===================================================== */
+
+    const disable2faForm =
+        document.getElementById(
+            "disable2faForm"
+        );
+
+
+    if (disable2faForm) {
+
+        disable2faForm.addEventListener(
+            "submit",
+            function (event) {
+
+                event.preventDefault();
+
+
+                const confirmed =
+                    confirm(
+                        "Are you sure you want to disable Two-Factor Authentication?"
+                    );
+
+
+                if (!confirmed) {
+
+                    return;
+
+                }
+
+
+                const submitButton =
+                    disable2faForm.querySelector(
+                        'button[type="submit"]'
+                    );
+
+
+                if (submitButton) {
+
+                    submitButton.disabled =
+                        true;
+
+
+                    submitButton.innerHTML =
+                        "<span>Disabling...</span>";
+
+                }
+
+
+                disable2faForm.submit();
+
+            }
+        );
+
+    }
+
+
+
+    /* =====================================================
+       PASSWORD FORM SUBMIT
+       ===================================================== */
+
+    const passwordForm =
+        document.querySelector(
+            'form[action*="password"]'
+        );
+
+
+    if (passwordForm) {
+
+        passwordForm.addEventListener(
+            "submit",
+            function (event) {
+
+                if (
+                    !newPass ||
+                    !confPass
+                ) {
+
+                    return;
+
+                }
+
+
+                if (
+                    newPass.value !==
+                    confPass.value
+                ) {
+
+                    event.preventDefault();
+
+
+                    if (confirmError) {
+
+                        confirmError.style.display =
+                            "block";
+
+
+                        confirmError.style.color =
+                            "#dc2626";
+
+
+                        confirmError.textContent =
+                            "✕ Passwords do not match";
+
+                    }
 
 
                     confPass.classList.add(
                         "password-error"
                     );
 
+
+                    confPass.focus();
+
+
+                    return false;
+
                 }
 
             }
-
-
-
-            // ========================================================
-            // DISABLE 2FA FORM
-            // ========================================================
-
-            const disable2faForm =
-                document.getElementById(
-                    "disable2faForm"
-                );
-
-
-            if (disable2faForm) {
-
-                disable2faForm.addEventListener(
-                    "submit",
-                    function (event) {
-
-                        event.preventDefault();
-
-
-                        const confirmed =
-                            confirm(
-                                "Are you sure you want to disable Two-Factor Authentication?"
-                            );
-
-
-                        if (!confirmed) {
-
-                            return;
-
-                        }
-
-
-                        const submitButton =
-                            disable2faForm.querySelector(
-                                'button[type="submit"]'
-                            );
-
-
-                        if (submitButton) {
-
-                            submitButton.disabled =
-                                true;
-
-
-                            submitButton.innerHTML =
-                                "<span>Disabling...</span>";
-
-                        }
-
-
-                        disable2faForm.submit();
-
-                    }
-                );
-
-            }
-
-
-
-            // ========================================================
-            // PASSWORD FORM SUBMIT
-            // ========================================================
-
-            const passwordForm =
-                document.querySelector(
-                    'form[action*="password"]'
-                );
-
-
-            if (passwordForm) {
-
-                passwordForm.addEventListener(
-                    "submit",
-                    function (event) {
-
-                        if (
-                            !newPass ||
-                            !confPass
-                        ) {
-
-                            return;
-
-                        }
-
-
-                        if (
-                            newPass.value !==
-                            confPass.value
-                        ) {
-
-                            event.preventDefault();
-
-
-                            if (confirmError) {
-
-                                confirmError.style.display =
-                                    "block";
-
-
-                                confirmError.style.color =
-                                    "#dc2626";
-
-
-                                confirmError.textContent =
-                                    "✕ Passwords do not match";
-
-                            }
-
-
-                            confPass.classList.add(
-                                "password-error"
-                            );
-
-
-                            confPass.focus();
-
-
-                            return false;
-
-                        }
-
-                    }
-                );
-
-            }
-
-
-
-            // ========================================================
-            // DOWNLOAD DATA BUTTON
-            // ========================================================
-
-            const downloadDataBtn =
-                document.getElementById(
-                    "downloadDataBtn"
-                );
-
-
-            if (downloadDataBtn) {
-
-                downloadDataBtn.addEventListener(
-                    "click",
-                    function () {
-
-                        alert(
-                            "Your data download request has been received."
-                        );
-
-                    }
-                );
-
-            }
-
-        }
-    );
-
-
-
-    // ========================================================
-    // TOGGLE PASSWORD VISIBILITY
-    // ========================================================
-
-    function togglePass(id) {
-
-        const input =
-            document.getElementById(
-                id
-            );
-
-
-        if (!input) {
-
-            return;
-
-        }
-
-
-        const wrapper =
-            input.closest(
-                ".password-wrapper"
-            );
-
-
-        if (!wrapper) {
-
-            return;
-
-        }
-
-
-        const iconContainer =
-            wrapper.querySelector(
-                ".eye-icon"
-            );
-
-
-        if (
-            input.type ===
-            "password"
-        ) {
-
-            input.type =
-                "text";
-
-
-            if (iconContainer) {
-
-                iconContainer.setAttribute(
-                    "aria-label",
-                    "Hide password"
-                );
-
-            }
-
-        } else {
-
-            input.type =
-                "password";
-
-
-            if (iconContainer) {
-
-                iconContainer.setAttribute(
-                    "aria-label",
-                    "Show password"
-                );
-
-            }
-
-        }
-
-    }
-
-
-
-    // ========================================================
-    // PROFILE IMAGE PREVIEW
-    // ========================================================
-
-    function previewImage(event) {
-
-        const input =
-            event.target;
-
-
-        const preview =
-            document.getElementById(
-                "preview"
-            );
-
-
-        if (
-            !preview ||
-            !input.files ||
-            !input.files[0]
-        ) {
-
-            return;
-
-        }
-
-
-        const file =
-            input.files[0];
-
-
-        // CHECK IF SELECTED FILE IS IMAGE
-
-        if (
-            !file.type.startsWith(
-                "image/"
-            )
-        ) {
-
-            alert(
-                "Please select a valid image file."
-            );
-
-
-            input.value =
-                "";
-
-
-            return;
-
-        }
-
-
-        const objectURL =
-            URL.createObjectURL(
-                file
-            );
-
-
-        preview.src =
-            objectURL;
-
-
-        preview.onload =
-            function () {
-
-                URL.revokeObjectURL(
-                    objectURL
-                );
-
-            };
-
-    }
-
-
-
-    // ========================================================
-    // CONFIRM LOGOUT
-    // ========================================================
-
-    function confirmLogout() {
-
-        return confirm(
-            "Are you sure you want to logout?"
         );
 
     }
-/* ========================================================
+
+
+
+    /* =====================================================
+       DOWNLOAD DATA
+       ===================================================== */
+
+    const downloadDataBtn =
+        document.getElementById(
+            "downloadDataBtn"
+        );
+
+
+    if (downloadDataBtn) {
+
+        downloadDataBtn.addEventListener(
+            "click",
+            function () {
+
+                alert(
+                    "Your data download request has been received."
+                );
+
+            }
+        );
+
+    }
+
+});
+
+
+
+/* =========================================================
+   PASSWORD VISIBILITY
+   ========================================================= */
+
+window.togglePass = function (id) {
+
+    const input =
+        document.getElementById(id);
+
+
+    if (!input) {
+
+        return;
+
+    }
+
+
+    const wrapper =
+        input.closest(
+            ".password-wrapper"
+        );
+
+
+    if (!wrapper) {
+
+        return;
+
+    }
+
+
+    const iconContainer =
+        wrapper.querySelector(
+            ".eye-icon"
+        );
+
+
+    if (
+        input.type ===
+        "password"
+    ) {
+
+        input.type =
+            "text";
+
+
+        if (iconContainer) {
+
+            iconContainer.setAttribute(
+                "aria-label",
+                "Hide password"
+            );
+
+        }
+
+    } else {
+
+        input.type =
+            "password";
+
+
+        if (iconContainer) {
+
+            iconContainer.setAttribute(
+                "aria-label",
+                "Show password"
+            );
+
+        }
+
+    }
+
+};
+
+
+
+/* =========================================================
+   PROFILE IMAGE PREVIEW
+   ========================================================= */
+
+window.previewImage = function (event) {
+
+    const input =
+        event.target;
+
+
+    const preview =
+        document.getElementById(
+            "preview"
+        );
+
+
+    if (
+        !preview ||
+        !input.files ||
+        !input.files[0]
+    ) {
+
+        return;
+
+    }
+
+
+    const file =
+        input.files[0];
+
+
+    if (
+        !file.type.startsWith(
+            "image/"
+        )
+    ) {
+
+        alert(
+            "Please select a valid image file."
+        );
+
+
+        input.value =
+            "";
+
+
+        return;
+
+    }
+
+
+    const objectURL =
+        URL.createObjectURL(
+            file
+        );
+
+
+    preview.src =
+        objectURL;
+
+
+    preview.onload =
+        function () {
+
+            URL.revokeObjectURL(
+                objectURL
+            );
+
+        };
+
+};
+
+
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+window.confirmLogout = function () {
+
+    return confirm(
+        "Are you sure you want to logout?"
+    );
+
+};
+
+
+
+/* =========================================================
    REPORT ISSUE MODALS
-   ======================================================== */
+   ========================================================= */
+
+
+/* =========================================================
+   OPEN REPORT ISSUE MODAL
+   ========================================================= */
 
 window.openReportIssueModal = function () {
 
     const modal =
-        document.getElementById("reportIssueModal");
+        document.getElementById(
+            "reportIssueModal"
+        );
+
 
     if (!modal) {
 
@@ -886,61 +895,86 @@ window.openReportIssueModal = function () {
         );
 
         return;
+
     }
 
-    console.log("Opening Report Issue Modal");
 
-    modal.classList.add("active");
+    console.log(
+        "Opening Report Issue Modal"
+    );
+
+
+    modal.classList.add(
+        "active"
+    );
+
 
     modal.setAttribute(
         "aria-hidden",
         "false"
     );
 
-    document.body.style.overflow = "hidden";
+
+    document.body.style.overflow =
+        "hidden";
+
 };
 
 
-/* ========================================================
-   CLOSE REPORT MODAL
-   ======================================================== */
+
+/* =========================================================
+   CLOSE REPORT ISSUE MODAL
+   ========================================================= */
 
 window.closeReportIssueModal = function () {
 
     const modal =
-        document.getElementById("reportIssueModal");
+        document.getElementById(
+            "reportIssueModal"
+        );
+
 
     if (!modal) {
+
         return;
+
     }
 
-    modal.classList.remove("active");
+
+    modal.classList.remove(
+        "active"
+    );
+
 
     modal.setAttribute(
         "aria-hidden",
         "true"
     );
 
-    document.body.style.overflow = "";
+
+    document.body.style.overflow =
+        "";
+
 };
 
 
-/* ========================================================
-   OPEN CONFIRMATION MODAL
-   ======================================================== */
+
+/* =========================================================
+   OPEN REPORT CONFIRMATION MODAL
+   ========================================================= */
 
 window.openReportConfirmModal = function () {
 
-    /*
-     * IMPORTANT:
-     * This must match the ID in your Blade form.
-     */
-
     const form =
-        document.getElementById("reportIssueForm");
+        document.getElementById(
+            "reportIssueForm"
+        );
+
 
     const confirmModal =
-        document.getElementById("reportConfirmModal");
+        document.getElementById(
+            "reportConfirmModal"
+        );
 
 
     if (!form) {
@@ -950,6 +984,7 @@ window.openReportConfirmModal = function () {
         );
 
         return;
+
     }
 
 
@@ -960,58 +995,69 @@ window.openReportConfirmModal = function () {
         );
 
         return;
+
     }
 
 
-    /*
-     * Validate form
-     */
+    /* VALIDATE FORM */
 
-    if (!form.checkValidity()) {
+    if (
+        !form.checkValidity()
+    ) {
 
         form.reportValidity();
 
         return;
+
     }
 
 
-    /*
-     * Close report modal
-     */
+    /* CLOSE REPORT FORM MODAL */
 
     const reportModal =
-        document.getElementById("reportIssueModal");
+        document.getElementById(
+            "reportIssueModal"
+        );
 
 
     if (reportModal) {
 
-        reportModal.classList.remove("active");
+        reportModal.classList.remove(
+            "active"
+        );
+
 
         reportModal.setAttribute(
             "aria-hidden",
             "true"
         );
+
     }
 
 
-    /*
-     * Open confirmation modal
-     */
+    /* OPEN CONFIRMATION */
 
-    confirmModal.classList.add("active");
+    confirmModal.classList.add(
+        "active"
+    );
+
 
     confirmModal.setAttribute(
         "aria-hidden",
         "false"
     );
 
-    document.body.style.overflow = "hidden";
+
+    document.body.style.overflow =
+        "hidden";
+
 };
 
 
-/* ========================================================
-   CLOSE CONFIRMATION MODAL
-   ======================================================== */
+
+/* =========================================================
+   CLOSE REPORT CONFIRMATION MODAL
+   ========================================================= */
 
 window.closeReportConfirmModal = function () {
 
@@ -1019,6 +1065,7 @@ window.closeReportConfirmModal = function () {
         document.getElementById(
             "reportConfirmModal"
         );
+
 
     const reportModal =
         document.getElementById(
@@ -1028,36 +1075,46 @@ window.closeReportConfirmModal = function () {
 
     if (confirmModal) {
 
-        confirmModal.classList.remove("active");
+        confirmModal.classList.remove(
+            "active"
+        );
+
 
         confirmModal.setAttribute(
             "aria-hidden",
             "true"
         );
+
     }
 
 
-    /*
-     * Return to report form
-     */
+    /* RETURN TO REPORT FORM */
 
     if (reportModal) {
 
-        reportModal.classList.add("active");
+        reportModal.classList.add(
+            "active"
+        );
+
 
         reportModal.setAttribute(
             "aria-hidden",
             "false"
         );
 
-        document.body.style.overflow = "hidden";
+
+        document.body.style.overflow =
+            "hidden";
+
     }
+
 };
 
 
-/* ========================================================
+
+/* =========================================================
    SUBMIT REPORT
-   ======================================================== */
+   ========================================================= */
 
 window.submitIssueReport = function () {
 
@@ -1074,51 +1131,54 @@ window.submitIssueReport = function () {
         );
 
         return;
+
     }
 
 
-    /*
-     * Validate form
-     */
+    /* VALIDATE */
 
-    if (!form.checkValidity()) {
+    if (
+        !form.checkValidity()
+    ) {
 
         form.reportValidity();
 
         return;
+
     }
 
 
-    /*
-     * Disable submit button
-     */
+    /* DISABLE CONFIRM BUTTON */
 
     const submitButton =
         document.querySelector(
-            "#reportConfirmModal .report-submit-btn"
+            "#reportConfirmModal .report-btn-submit"
         );
 
 
     if (submitButton) {
 
-        submitButton.disabled = true;
+        submitButton.disabled =
+            true;
+
 
         submitButton.textContent =
             "Submitting...";
+
     }
 
 
-    /*
-     * Submit form normally
-     */
+    /* SUBMIT FORM */
 
     form.submit();
+
 };
 
 
-/* ========================================================
+
+/* =========================================================
    CLOSE SUCCESS MODAL
-   ======================================================== */
+   ========================================================= */
 
 window.closeReportSuccessModal = function () {
 
@@ -1129,24 +1189,33 @@ window.closeReportSuccessModal = function () {
 
 
     if (!modal) {
+
         return;
+
     }
 
 
-    modal.classList.remove("active");
+    modal.classList.remove(
+        "active"
+    );
+
 
     modal.setAttribute(
         "aria-hidden",
         "true"
     );
 
-    document.body.style.overflow = "";
+
+    document.body.style.overflow =
+        "";
+
 };
 
 
-/* ========================================================
-   CLICK OUTSIDE MODALS
-   ======================================================== */
+
+/* =========================================================
+   CLICK OUTSIDE REPORT MODALS
+   ========================================================= */
 
 document.addEventListener(
     "click",
@@ -1157,10 +1226,12 @@ document.addEventListener(
                 "reportIssueModal"
             );
 
+
         const confirmModal =
             document.getElementById(
                 "reportConfirmModal"
             );
+
 
         const successModal =
             document.getElementById(
@@ -1168,9 +1239,7 @@ document.addEventListener(
             );
 
 
-        /*
-         * Report modal
-         */
+        /* REPORT MODAL */
 
         if (
             reportModal &&
@@ -1180,12 +1249,11 @@ document.addEventListener(
             window.closeReportIssueModal();
 
             return;
+
         }
 
 
-        /*
-         * Confirmation modal
-         */
+        /* CONFIRMATION MODAL */
 
         if (
             confirmModal &&
@@ -1195,12 +1263,11 @@ document.addEventListener(
             window.closeReportConfirmModal();
 
             return;
+
         }
 
 
-        /*
-         * Success modal
-         */
+        /* SUCCESS MODAL */
 
         if (
             successModal &&
@@ -1210,22 +1277,28 @@ document.addEventListener(
             window.closeReportSuccessModal();
 
             return;
+
         }
 
     }
 );
 
 
-/* ========================================================
+
+/* =========================================================
    ESC KEY
-   ======================================================== */
+   ========================================================= */
 
 document.addEventListener(
     "keydown",
     function (event) {
 
-        if (event.key !== "Escape") {
+        if (
+            event.key !== "Escape"
+        ) {
+
             return;
+
         }
 
 
@@ -1234,10 +1307,12 @@ document.addEventListener(
                 "reportConfirmModal"
             );
 
+
         const reportModal =
             document.getElementById(
                 "reportIssueModal"
             );
+
 
         const successModal =
             document.getElementById(
@@ -1245,344 +1320,50 @@ document.addEventListener(
             );
 
 
-        /*
-         * Close confirmation first
-         */
+        /* CLOSE CONFIRMATION FIRST */
 
         if (
             confirmModal &&
-            confirmModal.classList.contains("active")
+            confirmModal.classList.contains(
+                "active"
+            )
         ) {
 
             window.closeReportConfirmModal();
 
             return;
+
         }
 
 
-        /*
-         * Close report modal
-         */
+        /* CLOSE REPORT FORM */
 
         if (
             reportModal &&
-            reportModal.classList.contains("active")
+            reportModal.classList.contains(
+                "active"
+            )
         ) {
 
             window.closeReportIssueModal();
 
             return;
+
         }
 
 
-        /*
-         * Close success modal
-         */
+        /* CLOSE SUCCESS */
 
         if (
             successModal &&
-            successModal.classList.contains("active")
+            successModal.classList.contains(
+                "active"
+            )
         ) {
 
             window.closeReportSuccessModal();
+
         }
 
     }
 );
-window.openReportIssueModal = function () {
-
-    console.log("REPORT BUTTON CLICKED");
-
-    const modal = document.getElementById("reportIssueModal");
-
-    console.log("Modal:", modal);
-
-    if (!modal) {
-        console.error("reportIssueModal NOT FOUND");
-        return;
-    }
-
-    modal.style.display = "flex";
-    modal.classList.add("active");
-
-    modal.setAttribute("aria-hidden", "false");
-
-    document.body.style.overflow = "hidden";
-
-    console.log("REPORT MODAL OPENED");
-};
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    const headerMenuBtn =
-        document.getElementById("settingsHeaderMenuBtn");
-
-    const existingMenuBtn =
-        document.getElementById("settingsMobileMenuBtn");
-
-    if (headerMenuBtn && existingMenuBtn) {
-
-        headerMenuBtn.addEventListener("click", function () {
-            existingMenuBtn.click();
-        });
-
-    }
-
-});
-document.addEventListener("DOMContentLoaded", function () {
-
-    const mobileMenuBtn =
-        document.getElementById("settingsMobileMenuBtn");
-
-    const mobileSidebar =
-        document.getElementById("settingsMobileSidebar");
-
-    const mobileSidebarOverlay =
-        document.getElementById("settingsMobileSidebarOverlay");
-
-    const closeMobileSidebar =
-        document.getElementById("settingsMobileCloseBtn");
-
-
-    if (!mobileMenuBtn || !mobileSidebar) {
-        console.warn("Settings mobile menu elements not found.");
-        return;
-    }
-
-
-    /* =========================================
-       OPEN
-       ========================================= */
-
-    function openMobileSidebar() {
-
-        mobileSidebar.classList.add("active");
-
-        mobileSidebar.setAttribute(
-            "aria-hidden",
-            "false"
-        );
-
-        if (mobileSidebarOverlay) {
-            mobileSidebarOverlay.classList.add("active");
-
-            mobileSidebarOverlay.setAttribute(
-                "aria-hidden",
-                "false"
-            );
-        }
-
-        mobileMenuBtn.setAttribute(
-            "aria-expanded",
-            "true"
-        );
-
-        document.body.style.overflow = "hidden";
-    }
-
-
-    /* =========================================
-       CLOSE
-       ========================================= */
-
-    function closeMobileMenu() {
-
-        mobileSidebar.classList.remove("active");
-
-        mobileSidebar.setAttribute(
-            "aria-hidden",
-            "true"
-        );
-
-        if (mobileSidebarOverlay) {
-            mobileSidebarOverlay.classList.remove("active");
-
-            mobileSidebarOverlay.setAttribute(
-                "aria-hidden",
-                "true"
-            );
-        }
-
-        mobileMenuBtn.setAttribute(
-            "aria-expanded",
-            "false"
-        );
-
-        document.body.style.overflow = "";
-    }
-
-
-    /* =========================================
-       BURGER
-       ========================================= */
-
-    mobileMenuBtn.addEventListener(
-        "click",
-        function (event) {
-
-            event.preventDefault();
-            event.stopPropagation();
-
-            openMobileSidebar();
-        }
-    );
-
-
-    /* =========================================
-       CLOSE BUTTON
-       ========================================= */
-
-    if (closeMobileSidebar) {
-
-        closeMobileSidebar.addEventListener(
-            "click",
-            function (event) {
-
-                event.preventDefault();
-
-                closeMobileMenu();
-            }
-        );
-    }
-
-
-    /* =========================================
-       OVERLAY
-       ========================================= */
-
-    if (mobileSidebarOverlay) {
-
-        mobileSidebarOverlay.addEventListener(
-            "click",
-            function () {
-
-                closeMobileMenu();
-            }
-        );
-    }
-
-
-    /* =========================================
-       NAVIGATION
-       ========================================= */
-
-    mobileSidebar
-        .querySelectorAll(".settings-mobile-link")
-        .forEach(function (link) {
-
-            link.addEventListener(
-                "click",
-                function () {
-
-                    closeMobileMenu();
-                }
-            );
-        });
-
-
-    /* =========================================
-       ESC
-       ========================================= */
-
-    document.addEventListener(
-        "keydown",
-        function (event) {
-
-            if (event.key === "Escape") {
-
-                closeMobileMenu();
-            }
-        }
-    );
-
-});
-
-
-document.addEventListener('DOMContentLoaded', function () {
-
-    const form = document.getElementById('issueReportForm');
-    const openButton = document.getElementById('openReportConfirm');
-    const modal = document.getElementById('reportConfirmModal');
-    const cancelButton = document.getElementById('cancelReportConfirm');
-    const confirmButton = document.getElementById('confirmReportSubmit');
-
-    console.log('Issue Report Modal JS loaded');
-
-    if (!form) {
-        console.error('issueReportForm not found');
-        return;
-    }
-
-    if (!openButton) {
-        console.error('openReportConfirm button not found');
-        return;
-    }
-
-    if (!modal) {
-        console.error('reportConfirmModal not found');
-        return;
-    }
-
-    // OPEN MODAL
-    openButton.addEventListener('click', function () {
-
-        console.log('Submit Report button clicked');
-
-        modal.classList.add('is-open');
-        modal.setAttribute('aria-hidden', 'false');
-
-        document.body.classList.add('report-modal-open');
-    });
-
-
-    // CANCEL
-    cancelButton.addEventListener('click', function () {
-
-        modal.classList.remove('is-open');
-        modal.setAttribute('aria-hidden', 'true');
-
-        document.body.classList.remove('report-modal-open');
-    });
-
-
-    // CONFIRM SUBMIT
-    confirmButton.addEventListener('click', function () {
-
-        console.log('Confirm Submit clicked');
-
-        // Actually submit the form
-        form.submit();
-    });
-
-
-    // CLICK OUTSIDE MODAL
-    modal.addEventListener('click', function (event) {
-
-        if (event.target === modal) {
-
-            modal.classList.remove('is-open');
-            modal.setAttribute('aria-hidden', 'true');
-
-            document.body.classList.remove('report-modal-open');
-        }
-
-    });
-
-
-    // ESC KEY
-    document.addEventListener('keydown', function (event) {
-
-        if (
-            event.key === 'Escape' &&
-            modal.classList.contains('is-open')
-        ) {
-
-            modal.classList.remove('is-open');
-            modal.setAttribute('aria-hidden', 'true');
-
-            document.body.classList.remove('report-modal-open');
-        }
-
-    });
-
-});
