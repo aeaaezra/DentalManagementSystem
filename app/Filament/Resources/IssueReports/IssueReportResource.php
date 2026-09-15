@@ -11,6 +11,7 @@ use App\Filament\Resources\IssueReports\Schemas\IssueReportInfolist;
 use App\Filament\Resources\IssueReports\Tables\IssueReportsTable;
 use App\Models\IssueReport;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -22,7 +23,7 @@ class IssueReportResource extends Resource
 
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBugAnt;
-
+    protected static string|UnitEnum|null $navigationGroup = 'Appointments';
     protected static ?string $navigationLabel = 'Issue Reports';
 
     protected static ?string $modelLabel = 'Issue Report';
