@@ -18,26 +18,92 @@ class CustomerOrderController extends Controller
     |--------------------------------------------------------------------------
     */
 
-    public function products()
-    {
-        $products = Products::query()
-            ->where('is_active', true)
-            ->where('quantity', '>', 0)
-            ->orderBy('product_name', 'asc')
-            ->get();
+public function products(Request $request)
+{
+    $query = Products::query()
+        ->where('is_active', true);
 
-        return view(
-            'customer.products',
-            compact('products')
-        );
+    // SEARCH
+    if ($request->filled('search')) {
+        $search = $request->search;
+
+        $query->where(function ($q) use ($search) {
+            $q->where('product_name', 'like', "%{$search}%")
+                ->orWhere('sku', 'like', "%{$search}%")
+                ->orWhere('brand_name', 'like', "%{$search}%")
+                ->orWhere('category', 'like', "%{$search}%");
+        });
     }
 
+    // CATEGORY
+    if (
+        $request->filled('category') &&
+        $request->category !== 'All Items'
+    ) {
+        $query->where('category', $request->category);
+    }
 
-    /*
-    |--------------------------------------------------------------------------
-    | CART
-    |--------------------------------------------------------------------------
-    */
+    // STOCK
+    if ($request->boolean('in_stock')) {
+        $query->where('quantity', '>', 0);
+    }
+
+    // PRICE
+    switch ($request->price) {
+        case 'under500':
+            $query->where('selling_price', '<', 500);
+            break;
+
+        case '500to2000':
+            $query->whereBetween('selling_price', [500, 2000]);
+            break;
+
+        case 'above2000':
+            $query->where('selling_price', '>', 2000);
+            break;
+    }
+
+    // SORT
+    switch ($request->sort) {
+        case 'low':
+            $query->orderBy('selling_price', 'asc');
+            break;
+
+        case 'high':
+            $query->orderBy('selling_price', 'desc');
+            break;
+
+        case 'name':
+            $query->orderBy('product_name', 'asc');
+            break;
+
+        default:
+            $query->orderBy('id', 'desc');
+            break;
+    }
+
+    // PRODUCTS
+    $products = $query
+        ->paginate(12)
+        ->withQueryString();
+
+    // CATEGORIES
+    $categories = Products::query()
+        ->where('is_active', true)
+        ->whereNotNull('category')
+        ->where('category', '!=', '')
+        ->select('category')
+        ->distinct()
+        ->orderBy('category')
+        ->pluck('category');
+
+    return view('customer.products', compact(
+        'products',
+        'categories'
+    ));
+}
+
+
 
     public function cart()
     {

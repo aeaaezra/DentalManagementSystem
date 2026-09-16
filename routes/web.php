@@ -1017,22 +1017,36 @@ Route::prefix('pos')
          ->name('settings');
     });
 
+
+
+Route::get('/ordering/welcome', function () {  return view('customer.welcome'); })->name('customer.welcome');
 /*
 |--------------------------------------------------------------------------
-| CUSTOMER MODULE
+| Customer Authentication
 |--------------------------------------------------------------------------
 */
+
 Route::middleware('guest')->group(function () {
 
+    // Customer Login Page
     Route::get('/customer/login', function () {
         return view('auth.customer-login');
     })->name('customer.login');
 
+    // Customer Login
     Route::post('/customer/login', [
         AuthenticatedSessionController::class,
         'store'
     ])->name('customer.login.store');
+
 });
+
+
+/*
+|--------------------------------------------------------------------------
+| Customer Routes
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware([
     'auth',
@@ -1042,40 +1056,43 @@ Route::middleware([
 ->name('customer.')
 ->group(function () {
 
-    Route::get('/shop', [
-        CustomerOrderController::class,
-        'products'
-    ])->name('shop');
 
+    // Products
     Route::get('/products', [
         CustomerOrderController::class,
         'products'
     ])->name('products');
 
+    // Cart
     Route::get('/cart', [
         CustomerOrderController::class,
         'cart'
     ])->name('cart');
 
+    // Orders
     Route::get('/orders', [
         CustomerOrderController::class,
         'orders'
     ])->name('orders');
 
+    // Checkout
     Route::get('/checkout', [
         CustomerOrderController::class,
         'checkout'
     ])->name('checkout');
 
+    // Settings
     Route::get('/settings', [
         CustomerOrderController::class,
         'settings'
     ])->name('settings');
 
+    // Profile
     Route::get('/profile', [
         CustomerOrderController::class,
         'profile'
     ])->name('profile');
+
 });
 
 /*

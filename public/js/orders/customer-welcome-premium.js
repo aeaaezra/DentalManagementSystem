@@ -1,96 +1,98 @@
-(function () {
-  'use strict';
+const header = document.getElementById("siteHeader");
+const menuButton = document.getElementById("menuButton");
+const mobileMenu = document.getElementById("mobileMenu");
 
-  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+window.addEventListener("scroll", () => {
+  header.classList.toggle("scrolled", window.scrollY > 8);
+}, { passive: true });
 
-  /* ---------------- Sticky / glass header ---------------- */
-  var header = document.getElementById('mainHeader');
-  if (header) {
-    var updateHeaderState = function () {
-      if (window.scrollY > 24) {
-        header.classList.add('scrolled');
-      } else {
-        header.classList.remove('scrolled');
-      }
-    };
-    document.addEventListener('scroll', updateHeaderState, { passive: true });
-    updateHeaderState();
-  }
+menuButton.addEventListener("click", () => {
+  const open = mobileMenu.classList.toggle("open");
+  menuButton.setAttribute("aria-expanded", open);
+  menuButton.textContent = open ? "✕" : "☰";
+});
 
-  /* ---------------- Scroll reveal ---------------- */
-  var revealSelectors = [
-    '.trust-container',
-    '.cat-card-premium',
-    '.promo-cta-inner',
-    '.why-card',
-    '.how-step',
-    '.experience-copy',
-    '.experience-mockup',
-    '.final-cta-inner'
-  ];
-  var revealEls = document.querySelectorAll(revealSelectors.join(','));
+mobileMenu.querySelectorAll("a").forEach(link => {
+  link.addEventListener("click", () => {
+    mobileMenu.classList.remove("open");
+    menuButton.setAttribute("aria-expanded", "false");
+    menuButton.textContent = "☰";
+  });
+});
 
-  if (reduceMotion || !('IntersectionObserver' in window)) {
-    revealEls.forEach(function (el) { el.classList.add('ss-reveal', 'ss-in'); });
-  } else {
-    revealEls.forEach(function (el) { el.classList.add('ss-reveal'); });
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('ss-in');
-          io.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.15 });
-    revealEls.forEach(function (el) { io.observe(el); });
-  }
-
-  /* ---------------- Animated counters ---------------- */
-  var counters = document.querySelectorAll('.counter[data-count]');
-  var animateCounter = function (el) {
-    var target = parseInt(el.getAttribute('data-count'), 10) || 0;
-    var duration = 1400;
-    var start = null;
-    var step = function (ts) {
-      if (!start) start = ts;
-      var progress = Math.min((ts - start) / duration, 1);
-      el.textContent = Math.floor(progress * target);
-      if (progress < 1) {
-        requestAnimationFrame(step);
-      } else {
-        el.textContent = target;
-      }
-    };
-    requestAnimationFrame(step);
-  };
-
-  if (counters.length) {
-    var trustSection = document.getElementById('trust');
-    if (trustSection && !reduceMotion && 'IntersectionObserver' in window) {
-      var cio = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            counters.forEach(animateCounter);
-            cio.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.4 });
-      cio.observe(trustSection);
-    } else {
-      counters.forEach(function (el) {
-        el.textContent = el.getAttribute('data-count');
-      });
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("visible");
+      observer.unobserve(entry.target);
     }
-  }
+  });
+}, { threshold: 0.12 });
 
-  /* ---------------- Hero glow parallax (subtle, non-essential) ---------------- */
-  var glow = document.querySelector('.hero-cinematic-glow');
-  if (glow && !reduceMotion) {
-    document.addEventListener('scroll', function () {
-      var y = window.scrollY;
-      if (y < window.innerHeight) {
-        glow.style.transform = 'translate(-50%,-50%) translateY(' + (y * 0.15) + 'px)';
-      }
-    }, { passive: true });
-  }
-})();
+document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const counter = entry.target;
+    const target = Number(counter.dataset.target);
+    const duration = 1300;
+    const start = performance.now();
+
+    const tick = (now) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      counter.textContent = Math.floor(target * eased);
+      if (progress < 1) requestAnimationFrame(tick);
+      else counter.textContent = target;
+    };
+    requestAnimationFrame(tick);
+    counterObserver.unobserve(counter);
+  });
+}, { threshold: 0.7 });
+
+document.querySelectorAll(".counter").forEach(el => counterObserver.observe(el));
+
+document.querySelectorAll(".favorite").forEach(button => {
+  button.addEventListener("click", () => {
+    button.classList.toggle("active");
+    button.textContent = button.classList.contains("active") ? "♥" : "♡";
+  });
+});
+
+document.querySelectorAll(".add-cart").forEach(button => {
+  button.addEventListener("click", () => {
+    const original = button.innerHTML;
+    button.innerHTML = "Added to Cart ✓";
+    button.style.background = "#E91E63";
+    button.style.color = "#fff";
+    setTimeout(() => {
+      button.innerHTML = original;
+      button.style.background = "";
+      button.style.color = "";
+    }, 1100);
+  });
+});
+
+document.querySelectorAll(".category-card").forEach(card => {
+  card.addEventListener("click", () => {
+    document.querySelectorAll(".category-card").forEach(c => c.classList.remove("active"));
+    card.classList.add("active");
+  });
+});
+
+// Gentle pointer movement on the hero product composition.
+const heroVisual = document.querySelector(".hero-visual");
+if (heroVisual && window.matchMedia("(pointer:fine)").matches) {
+  heroVisual.addEventListener("pointermove", (event) => {
+    const rect = heroVisual.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+    heroVisual.style.setProperty("--mx", `${x * 12}px`);
+    heroVisual.style.setProperty("--my", `${y * 10}px`);
+  });
+  heroVisual.addEventListener("pointerleave", () => {
+    heroVisual.style.setProperty("--mx", "0px");
+    heroVisual.style.setProperty("--my", "0px");
+  });
+}
