@@ -83,7 +83,7 @@ class AuthenticatedSessionController extends Controller
                     ->onlyInput('email');
             }
 
-            return redirect()->route('customer.shop');
+            return redirect()->route('customer.products');
         }
 
         if ($loginRoute === 'admin.login.store') {
