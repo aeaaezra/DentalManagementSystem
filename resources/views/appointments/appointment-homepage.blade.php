@@ -534,125 +534,138 @@
     </div>
 </div>
 
+<!-- =========================================================
+     PROFILE DROPDOWN
+     ========================================================= -->
 
-<!-- Profile Dropdown -->
+<div class="relative">
 
-                <div class="relative">
+    <details class="profile-dropdown">
 
-                    <button
-                        id="profileBtn"
-                        type="button"
-                        class="flex items-center gap-2 focus:outline-none"
-                    >
+        <!-- PROFILE BUTTON -->
+        <summary
+            class="flex items-center gap-2 cursor-pointer list-none focus:outline-none"
+        >
 
-                        <img
-                            src="{{ Auth::user()->profile_picture
-                                ? asset('storage/' . Auth::user()->profile_picture)
-                                : asset('images/default-profile.png') }}"
-                            alt="Profile"
-                            class="w-10 h-10 rounded-full border-2 border-pink-500 object-cover"
-                        >
+            <!-- PROFILE IMAGE -->
+            <img
+                src="{{ Auth::user()->profile_picture
+                    ? asset('storage/' . Auth::user()->profile_picture)
+                    : asset('images/default-profile.png') }}"
+                alt="Profile"
+                class="w-10 h-10 rounded-full border-2 border-pink-500 object-cover"
+            >
 
-                        <div class="hidden md:block text-left">
+            <!-- USER INFO -->
+            <div class="hidden md:block text-left">
 
-                            <p class="text-sm font-semibold text-gray-800">
-                                {{ Auth::user()->name }}
-                            </p>
+                <p class="text-sm font-semibold text-gray-800">
+                    {{ Auth::user()->name }}
+                </p>
 
-                            <p class="text-xs text-gray-500">
-                                Patient
-                            </p>
+                <p class="text-xs text-gray-500">
+                    Patient
+                </p>
 
-                        </div>
+            </div>
 
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="w-4 h-4 text-gray-500"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M19 9l-7 7-7-7"
-                            />
-                        </svg>
+            <!-- ARROW -->
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4 text-gray-500 profile-arrow"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"
+                />
+            </svg>
 
-                    </button>
+        </summary>
 
-                    <!-- PROFILE DROPDOWN -->
 
-                    <div
-    id="profileMenu"
-    class="absolute right-0 mt-3 w-52 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-[999999]"
-    style="display: none;"
->
+        <!-- =================================================
+             DROPDOWN MENU
+             ================================================= -->
 
-                        <!-- SETTINGS -->
+        <div class="profile-menu">
 
-                        <a
-                            href="{{ route('appointments.settings', ['return' => url()->current()]) }}"
-                            class="flex items-center gap-3 px-3 py-3 text-gray-700 hover:bg-pink-50 hover:text-pink-600 transition"
-                        >
+            <!-- SETTINGS -->
+            <a
+                href="{{ route('appointments.settings', ['return' => url()->current()]) }}"
+                class="profile-menu-item"
+            >
 
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="w-5 h-5"
-                                viewBox="0 0 24 24"
-                                fill="currentColor"
-                            >
-                                <path d="M19.14,12.94a7.49,7.49,0,0,0,.05-.94,7.49,7.49,0,0,0-.05-.94l2.03-1.58a.5.5,0,0,0,.12-.64l-1.92-3.32a.5.5,0,0,0-.6-.22l-2.39.96a7.28,7.28,0,0,0-1.63-.94L14.4,2.81A.5.5,0,0,0,13.91,2H10.09a.5.5,0,0,0-.49.81L9.25,5.32a7.28,7.28,0,0,0-1.63.94l-2.39-.96a.5.5,0,0,0-.6.22L2.71,8.84a.5.5,0,0,0,.12.64L4.86,11.06a7.49,7.49,0,0,0-.05.94,7.49,7.49,0,0,0,.05.94l-2.03,1.58a.5.5,0,0,0-.12.64l1.92,3.32a.5.5,0,0,0,.6.22l2.39-.96a7.28,7.28,0,0,0,1.63.94l.35,2.51a.5.5,0,0,0,.49.41h3.82a.5.5,0,0,0,.49-.41l.35-2.51a7.28,7.28,0,0,0,1.63-.94l2.39.96a.5.5,0,0,0,.6-.22l1.92-3.32a.5.5,0,0,0-.12-.64ZM12,15.5A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/>
-                            </svg>
-
-                            <span>Settings</span>
-
-                        </a>
-
-                        <!-- LOGOUT -->
-
-                    <form
-                    method="POST"
-                    action="{{ route('logout') }}"
-                    id="logoutForm"
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
                 >
-                    @csrf
+                    <path d="M19.14,12.94a7.49,7.49,0,0,0,.05-.94,7.49,7.49,0,0,0-.05-.94l2.03-1.58a.5.5,0,0,0,.12-.64l-1.92-3.32a.5.5,0,0,0-.6-.22l-2.39.96a7.28,7.28,0,0,0-1.63-.94L14.4,2.81A.5.5,0,0,0,13.91,2H10.09a.5.5,0,0,0-.49.41L9.25,5.32a7.28,7.28,0,0,0-1.63.94l-2.39-.96a.5.5,0,0,0-.6.22L2.71,8.84a.5.5,0,0,0,.12.64L4.86,11.06a7.49,7.49,0,0,0-.05.94,7.49,7.49,0,0,0,.05.94l-2.03,1.58a.5.5,0,0,0-.12.64l1.92,3.32a.5.5,0,0,0,.6.22l2.39-.96a7.28,7.28,0,0,0,1.63-.94l.35,2.51a.5.5,0,0,0,.49.41h3.82a.5.5,0,0,0,.49-.41l.35-2.51a7.28,7.28,0,0,0,1.63-.94l2.39.96a.5.5,0,0,0,.6-.22l1.92-3.32a.5.5,0,0,0-.12-.64l-2.03-1.58ZM12,15.5A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/>
+                </svg>
 
-                    <button
-                        type="button"
-                        id="logoutButton"
-                        class="w-full text-left flex items-center gap-3 px-3 py-3 text-red-600 hover:bg-red-50 transition"
+                <span>Settings</span>
+
+            </a>
+
+
+            <!-- LOGOUT -->
+            <form
+                method="POST"
+                action="{{ route('logout') }}"
+                id="logoutForm"
+            >
+
+                @csrf
+
+                <button
+                    type="button"
+                    id="logoutButton"
+                    class="profile-menu-item profile-logout"
+                >
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="w-5 h-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
                     >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="w-5 h-5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M17 16l4-4m0 0l-4-4m4 4H7"
-                            />
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"
+                        />
 
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M3 12h4"
-                            />
-                        </svg>
+                        <polyline
+                            points="16 17 21 12 16 7"
+                        />
 
-                        <span>Logout</span>
-                    </button>
-                </form>
+                        <line
+                            x1="21"
+                            y1="12"
+                            x2="9"
+                            y2="12"
+                        />
+                    </svg>
 
-                    </div>
+                    <span>Logout</span>
 
-                </div>
+                </button>
+
+            </form>
+
+        </div>
+
+    </details>
+
+</div>
 
         </div>
 

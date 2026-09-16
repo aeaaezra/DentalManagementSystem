@@ -888,3 +888,109 @@ html.dark-mode .settings-report-card:hover .report-card-arrow {
         box-sizing: border-box !important;
     }
 }
+/* =========================================================
+   PROFILE DROPDOWN
+   ========================================================= */
+
+.profile-dropdown {
+    position: relative;
+}
+
+/* Remove browser default triangle */
+.profile-dropdown > summary {
+    list-style: none;
+}
+
+.profile-dropdown > summary::-webkit-details-marker {
+    display: none;
+}
+
+
+/* PROFILE MENU */
+
+.profile-menu {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+
+    width: 208px;
+
+    background: #ffffff;
+
+    border: 1px solid #f3f4f6;
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.12);
+
+    overflow: hidden;
+
+    z-index: 999999;
+}
+
+
+/* MENU ITEMS */
+
+.profile-menu-item {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 12px 14px;
+
+    background: transparent;
+
+    border: none;
+
+    text-decoration: none;
+
+    color: #374151;
+
+    font-size: 14px;
+
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+
+/* HOVER */
+
+.profile-menu-item:hover {
+    background: #fdf2f8;
+    color: #db2777;
+}
+
+
+/* LOGOUT */
+
+.profile-logout {
+    color: #dc2626;
+}
+
+.profile-logout:hover {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+
+/* ARROW */
+
+.profile-arrow {
+    transition: transform 0.2s ease;
+}
+
+
+/* ROTATE ARROW WHEN OPEN */
+
+.profile-dropdown[open] .profile-arrow {
+    transform: rotate(180deg);
+}
