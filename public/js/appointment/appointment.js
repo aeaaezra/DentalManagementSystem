@@ -1,17 +1,6 @@
-// ============================================================
-// SHINE & SMILE - APPOINTMENT JAVASCRIPT
-// CLEAN FIXED VERSION
-// ============================================================
 
 document.addEventListener("DOMContentLoaded", function () {
 
-// ========================================================
-// PROFILE DROPDOWN
-// ========================================================
-
-// ========================================================
-// PROFILE DROPDOWN
-// ========================================================
 
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -94,6 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 });
+
     // ========================================================
     // NOTIFICATION ELEMENTS
     // ========================================================

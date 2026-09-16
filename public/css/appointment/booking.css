@@ -6766,15 +6766,94 @@ body.report-modal-open {
 }
 
 /* CLOSED */
-#profileMenu:not(.profile-open) {
+/* =========================================
+   PROFILE DROPDOWN
+========================================= */
+
+#profileMenu {
+    position: absolute !important;
+    top: calc(100% + 12px) !important;
+    right: 0 !important;
+
+    width: 234px !important;
+
+    background: #151515 !important;
+
+    border: 1px solid #bdbdbd !important;
+    border-radius: 14px !important;
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45) !important;
+
+    overflow: hidden !important;
+
+    z-index: 999999 !important;
+}
+
+/* CLOSED */
+#profileMenu.hidden {
     display: none !important;
 }
 
 /* OPEN */
-#profileMenu.profile-open {
+#profileMenu:not(.hidden) {
     display: block !important;
 }
 
+/* MENU ITEMS */
+#profileMenu a,
+#profileMenu button {
+    width: 100% !important;
+    min-height: 52px !important;
+
+    display: flex !important;
+    align-items: center !important;
+
+    gap: 14px !important;
+    padding: 0 16px !important;
+
+    box-sizing: border-box !important;
+
+    background: transparent !important;
+    border: 0 !important;
+
+    color: #e5e5e5 !important;
+
+    font-size: 16px !important;
+    font-weight: 500 !important;
+
+    text-decoration: none !important;
+    cursor: pointer !important;
+    text-align: left !important;
+}
+
+/* SETTINGS HOVER */
+#profileMenu a:hover {
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: #ff1f72 !important;
+}
+
+/* LOGOUT */
+#profileMenu button {
+    color: #e5e5e5 !important;
+}
+
+/* LOGOUT HOVER */
+#profileMenu button:hover {
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: #ff1f72 !important;
+}
+
+/* ICONS */
+#profileMenu svg {
+    width: 22px !important;
+    height: 22px !important;
+    flex-shrink: 0 !important;
+}
+
+/* SEPARATOR */
+#profileMenu a + button {
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
 /* MENU ITEMS */
 #profileMenu a,
 #profileMenu button {
