@@ -534,48 +534,32 @@
     </div>
 </div>
 
-<!-- =========================================================
-     PROFILE DROPDOWN
-     ========================================================= -->
-
 <div class="relative">
-
     <details class="profile-dropdown">
 
-        <!-- PROFILE BUTTON -->
-        <summary
-            class="flex items-center gap-2 cursor-pointer list-none focus:outline-none"
-        >
+        <summary class="flex items-center gap-2 cursor-pointer list-none focus:outline-none">
 
-            <!-- PROFILE IMAGE -->
             <img
-                src="{{ Auth::user()->profile_picture
-                    ? asset('storage/' . Auth::user()->profile_picture)
-                    : asset('images/default-profile.png') }}"
+                src="{{ Auth::user()->profile_photo_url ?? asset('images/default-avatar.png') }}"
                 alt="Profile"
-                class="w-10 h-10 rounded-full border-2 border-pink-500 object-cover"
+                class="w-11 h-11 rounded-full object-cover border-2 border-white"
             >
 
-            <!-- USER INFO -->
             <div class="hidden md:block text-left">
-
-                <p class="text-sm font-semibold text-gray-800">
+                <p class="text-sm font-semibold text-white">
                     {{ Auth::user()->name }}
                 </p>
 
-                <p class="text-xs text-gray-500">
+                <p class="text-xs text-gray-400">
                     Patient
                 </p>
-
             </div>
 
-            <!-- ARROW -->
             <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-4 h-4 text-gray-500 profile-arrow"
+                class="w-4 h-4 text-gray-400 profile-arrow"
                 fill="none"
-                viewBox="0 0 24 24"
                 stroke="currentColor"
+                viewBox="0 0 24 24"
             >
                 <path
                     stroke-linecap="round"
@@ -587,40 +571,21 @@
 
         </summary>
 
-
-        <!-- =================================================
-             DROPDOWN MENU
-             ================================================= -->
-
         <div class="profile-menu">
 
-            <!-- SETTINGS -->
             <a
                 href="{{ route('appointments.settings', ['return' => url()->current()]) }}"
                 class="profile-menu-item"
             >
-
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-5 h-5"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                >
-                    <path d="M19.14,12.94a7.49,7.49,0,0,0,.05-.94,7.49,7.49,0,0,0-.05-.94l2.03-1.58a.5.5,0,0,0,.12-.64l-1.92-3.32a.5.5,0,0,0-.6-.22l-2.39.96a7.28,7.28,0,0,0-1.63-.94L14.4,2.81A.5.5,0,0,0,13.91,2H10.09a.5.5,0,0,0-.49.41L9.25,5.32a7.28,7.28,0,0,0-1.63.94l-2.39-.96a.5.5,0,0,0-.6.22L2.71,8.84a.5.5,0,0,0,.12.64L4.86,11.06a7.49,7.49,0,0,0-.05.94,7.49,7.49,0,0,0,.05.94l-2.03,1.58a.5.5,0,0,0-.12.64l1.92,3.32a.5.5,0,0,0,.6.22l2.39-.96a7.28,7.28,0,0,0,1.63-.94l.35,2.51a.5.5,0,0,0,.49.41h3.82a.5.5,0,0,0,.49-.41l.35-2.51a7.28,7.28,0,0,0,1.63-.94l2.39.96a.5.5,0,0,0,.6-.22l1.92-3.32a.5.5,0,0,0-.12-.64l-2.03-1.58ZM12,15.5A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/>
-                </svg>
-
+                <i data-lucide="settings" class="w-5 h-5"></i>
                 <span>Settings</span>
-
             </a>
 
-
-            <!-- LOGOUT -->
             <form
                 method="POST"
                 action="{{ route('logout') }}"
                 id="logoutForm"
             >
-
                 @csrf
 
                 <button
@@ -628,43 +593,14 @@
                     id="logoutButton"
                     class="profile-menu-item profile-logout"
                 >
-
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="w-5 h-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"
-                        />
-
-                        <polyline
-                            points="16 17 21 12 16 7"
-                        />
-
-                        <line
-                            x1="21"
-                            y1="12"
-                            x2="9"
-                            y2="12"
-                        />
-                    </svg>
-
+                    <i data-lucide="log-out" class="w-5 h-5"></i>
                     <span>Logout</span>
-
                 </button>
-
             </form>
 
         </div>
 
     </details>
-
 </div>
 
         </div>
