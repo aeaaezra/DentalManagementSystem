@@ -44,7 +44,14 @@ class AuthenticatedSessionController extends Controller
             'login_type' => $loginType,
         ]);
 
+        /*
+        |--------------------------------------------------------------------------
+        | APPOINTMENT LOGIN
+        |--------------------------------------------------------------------------
+        */
+
         if ($loginRoute === 'appointments.login.store') {
+
             if (!$user->hasRole('patient')) {
                 Auth::logout();
 
@@ -72,7 +79,14 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('appointments.homepage');
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | CUSTOMER LOGIN
+        |--------------------------------------------------------------------------
+        */
+
         if ($loginRoute === 'customer.login.store') {
+
             if (!$user->hasRole('customer')) {
                 Auth::logout();
 
@@ -83,10 +97,23 @@ class AuthenticatedSessionController extends Controller
                     ->onlyInput('email');
             }
 
+            /*
+            |--------------------------------------------------------------------------
+            | Customer does NOT require 2FA here
+            |--------------------------------------------------------------------------
+            */
+
             return redirect()->route('customer.products');
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | ADMIN LOGIN
+        |--------------------------------------------------------------------------
+        */
+
         if ($loginRoute === 'admin.login.store') {
+
             if (!$user->hasRole('admin')) {
                 Auth::logout();
 
@@ -114,7 +141,14 @@ class AuthenticatedSessionController extends Controller
             return redirect('/admin');
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | DENTIST LOGIN
+        |--------------------------------------------------------------------------
+        */
+
         if ($loginRoute === 'dentist.login.store') {
+
             if (!$user->hasRole('dentist')) {
                 Auth::logout();
 
@@ -142,7 +176,14 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('dentist.dashboard');
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | RECEPTIONIST LOGIN
+        |--------------------------------------------------------------------------
+        */
+
         if ($loginRoute === 'receptionist.login.store') {
+
             if (!$user->hasRole('receptionist')) {
                 Auth::logout();
 
@@ -170,7 +211,14 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('receptionist.dashboard');
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | CASHIER / POS LOGIN
+        |--------------------------------------------------------------------------
+        */
+
         if ($loginRoute === 'pos.login.post') {
+
             if (!$user->hasRole('cashier')) {
                 Auth::logout();
 
@@ -198,7 +246,14 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('pos.homepage');
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | NORMAL LOGIN - PREVENT ADMIN FROM USING NORMAL LOGIN
+        |--------------------------------------------------------------------------
+        */
+
         if ($loginRoute === 'login' && $user->hasRole('admin')) {
+
             Auth::logout();
 
             return back()
@@ -207,6 +262,12 @@ class AuthenticatedSessionController extends Controller
                 ])
                 ->onlyInput('email');
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | NORMAL 2FA
+        |--------------------------------------------------------------------------
+        */
 
         if (
             $user->two_factor_enabled &&
@@ -222,6 +283,12 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('2fa.login');
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | GENERAL ROLE REDIRECTS
+        |--------------------------------------------------------------------------
+        */
+
         if ($user->hasRole('admin')) {
             return redirect('/admin');
         }
@@ -231,7 +298,7 @@ class AuthenticatedSessionController extends Controller
         }
 
         if ($user->hasRole('customer')) {
-            return redirect()->route('customer.shop');
+            return redirect()->route('customer.products');
         }
 
         if ($user->hasRole('dentist')) {
@@ -252,6 +319,13 @@ class AuthenticatedSessionController extends Controller
 
         return redirect()->route('dashboard');
     }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | LOGOUT
+    |--------------------------------------------------------------------------
+    */
 
     public function destroy(Request $request): RedirectResponse
     {

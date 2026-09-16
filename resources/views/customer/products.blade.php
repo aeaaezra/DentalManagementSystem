@@ -1542,117 +1542,264 @@
 >
 </div>
 
+<aside class="sidebar">
 
-<aside
-    class="cart-drawer"
-    id="cartDrawer"
->
+    {{-- =========================================================
+         BRAND
+    ========================================================== --}}
+    <div class="sidebar-brand">
 
-    <div class="drawer-head">
-
-        <div>
-
-            <span class="eyebrow">
-                YOUR BAG
-            </span>
-
-            <h2>
-                My Cart
-            </h2>
-
+        <div class="brand-logo">
+            P
         </div>
 
-        <button
-            type="button"
-            class="close-btn"
-            id="closeCart"
-            aria-label="Close cart"
+        <div class="brand-text">
+            <div class="brand-name">PinkCart</div>
+            <div class="brand-subtitle">Ordering System</div>
+        </div>
+
+    </div>
+
+
+    {{-- =========================================================
+         NAVIGATION
+    ========================================================== --}}
+    <nav class="sidebar-nav">
+
+        {{-- HOME --}}
+        <a
+            href="{{ route('customer.welcome') }}"
+            class="sidebar-link {{ request()->routeIs('customer.welcome') ? 'active' : '' }}"
         >
-            ×
-        </button>
 
-    </div>
+            <span class="nav-icon">
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                >
+                    <path
+                        d="M3 10.5L12 3l9 7.5"
+                    />
 
+                    <path
+                        d="M5.5 9.5V21h13V9.5"
+                    />
 
-    <div
-        class="cart-items"
-        id="cartItems"
-    >
-    </div>
-
-
-    {{-- EMPTY CART --}}
-    <div
-        class="cart-empty"
-        id="cartEmpty"
-    >
-
-        <div>
-
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M3 4h2l2.1 11.1a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 2-1.6L21 8H6"></path>
-                <circle cx="9" cy="20" r="1"></circle>
-                <circle cx="18" cy="20" r="1"></circle>
-            </svg>
-
-        </div>
-
-        <h3>
-            Your cart is empty
-        </h3>
-
-        <p>
-            Add a few products and they'll appear here.
-        </p>
-
-    </div>
-
-
-    {{-- CART FOOTER --}}
-    <div class="cart-footer">
-
-        <div>
-            <span>
-                Subtotal
+                    <path
+                        d="M9.5 21v-6h5v6"
+                    />
+                </svg>
             </span>
 
-            <strong id="cartSubtotal">
-                ₱0.00
-            </strong>
-        </div>
+            <span>Home</span>
+
+        </a>
 
 
-        <div>
-            <span>
-                Delivery
-            </span>
-
-            <strong id="cartDelivery">
-                ₱0.00
-            </strong>
-        </div>
-
-
-        <div class="total">
-
-            <span>
-                Total
-            </span>
-
-            <strong id="cartTotal">
-                ₱0.00
-            </strong>
-
-        </div>
-
-
-        <button
-            type="button"
-            class="pink-btn full"
-            id="checkoutBtn"
+        {{-- PRODUCTS --}}
+        <a
+            href="{{ route('customer.products') }}"
+            class="sidebar-link {{ request()->routeIs('customer.products') ? 'active' : '' }}"
         >
-            Proceed to Checkout
-        </button>
+
+            <span class="nav-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                >
+                    <rect x="4" y="4" width="5" height="5" rx="1"/>
+                    <rect x="15" y="4" width="5" height="5" rx="1"/>
+                    <rect x="4" y="15" width="5" height="5" rx="1"/>
+                    <rect x="15" y="15" width="5" height="5" rx="1"/>
+                </svg>
+
+            </span>
+
+            <span>Products</span>
+
+        </a>
+
+
+        {{-- MY ORDERS --}}
+        <a
+            href="{{ route('customer.orders') }}"
+            class="sidebar-link {{ request()->routeIs('customer.orders') ? 'active' : '' }}"
+        >
+
+            <span class="nav-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                >
+                    <circle cx="12" cy="12" r="8.5"/>
+
+                    <path d="M12 7v5l3 2"/>
+                </svg>
+
+            </span>
+
+            <span>My Orders</span>
+
+        </a>
+
+
+        {{-- FAVORITES --}}
+        <a
+            href="#"
+            class="sidebar-link"
+            onclick="return false;"
+        >
+
+            <span class="nav-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                >
+                    <path
+                        d="M20.8 8.8c0 5.5-8.8 10.2-8.8 10.2S3.2 14.3 3.2 8.8A4.8 4.8 0 018 4c1.7 0 3.2.9 4 2.2C12.8 4.9 14.3 4 16 4a4.8 4.8 0 014.8 4.8z"
+                    />
+                </svg>
+
+            </span>
+
+            <span>Favorites</span>
+
+        </a>
+
+    </nav>
+
+
+    {{-- =========================================================
+         SPACER
+    ========================================================== --}}
+    <div class="sidebar-spacer"></div>
+
+
+    {{-- =========================================================
+         CART CARD
+    ========================================================== --}}
+    <div class="sidebar-cart">
+
+        <div class="cart-title">
+            YOUR CART
+        </div>
+
+        <div class="cart-summary">
+
+            <div class="cart-icon-box">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                >
+                    <path d="M3 4h2l2.2 10.2a2 2 0 002 1.6h7.8a2 2 0 001.9-1.4L21 8H6"/>
+
+                    <circle cx="10" cy="19" r="1.5"/>
+                    <circle cx="18" cy="19" r="1.5"/>
+                </svg>
+
+            </div>
+
+
+            <div class="cart-info">
+
+                <strong>
+                    0 items
+                </strong>
+
+                <span>
+                    ₱0.00
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <a
+            href="{{ route('customer.cart') }}"
+            class="cart-button"
+        >
+            View Cart
+        </a>
+
+    </div>
+
+
+    {{-- =========================================================
+         ACCOUNT
+    ========================================================== --}}
+    <div class="sidebar-account">
+
+        <div class="account-avatar">
+            {{ strtoupper(substr(auth()->user()->name ?? 'MA', 0, 2)) }}
+        </div>
+
+        <div class="account-info">
+
+            <strong>
+                My Account
+            </strong>
+
+            <span>
+                Customer
+            </span>
+
+        </div>
+
+    </div>
+
+
+    {{-- =========================================================
+         LOGOUT
+    ========================================================== --}}
+    <div class="sidebar-logout">
+
+        <form
+            method="POST"
+            action="{{ route('logout') }}"
+            class="logout-form"
+        >
+
+            @csrf
+
+            <button
+                type="submit"
+                class="logout-button"
+            >
+
+                <span class="logout-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        aria-hidden="true"
+                    >
+                        <path d="M10 17l5-5-5-5"/>
+                        <path d="M15 12H3"/>
+
+                        <path
+                            d="M14 4h5a2 2 0 012 2v12a2 2 0 01-2 2h-5"
+                        />
+                    </svg>
+
+                </span>
+
+                <span>
+                    Logout
+                </span>
+
+            </button>
+
+        </form>
 
     </div>
 

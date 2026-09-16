@@ -2279,3 +2279,566 @@ select:focus {
     max-width: 100%;
     max-height: 100%;
 }
+/* =========================================================
+   PINKCART SIDEBAR
+========================================================= */
+
+.sidebar {
+    width: 280px;
+    height: 100vh;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 34px 20px 24px;
+
+    background: #ffffff;
+
+    border-right: 1px solid #eee8ec;
+
+    z-index: 100;
+
+    overflow-y: auto;
+}
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 0 4px;
+
+    margin-bottom: 48px;
+}
+
+.brand-logo {
+    width: 48px;
+    height: 48px;
+
+    flex: 0 0 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+
+    background: linear-gradient(
+        135deg,
+        #ed3f91,
+        #f68abd
+    );
+
+    color: #ffffff;
+
+    font-size: 25px;
+    font-weight: 800;
+
+    box-shadow:
+        0 12px 25px rgba(232, 62, 140, 0.22);
+}
+
+.brand-text {
+    min-width: 0;
+}
+
+.brand-name {
+    color: #17151a;
+
+    font-size: 20px;
+    font-weight: 800;
+
+    line-height: 1.1;
+}
+
+.brand-subtitle {
+    margin-top: 5px;
+
+    color: #8b8490;
+
+    font-size: 12px;
+
+    line-height: 1.2;
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+.sidebar-link {
+    min-height: 58px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 18px;
+
+    padding: 0 18px;
+
+    border-radius: 15px;
+
+    color: #77727c;
+
+    text-decoration: none;
+
+    font-size: 18px;
+    font-weight: 500;
+
+    transition:
+        background .2s ease,
+        color .2s ease,
+        transform .2s ease;
+}
+
+.sidebar-link:hover {
+    background: #fff4f8;
+
+    color: #e83e8c;
+}
+
+.sidebar-link.active {
+    background: #fff0f6;
+
+    color: #e02f7e;
+}
+
+.sidebar-link.active .nav-icon {
+    color: #e02f7e;
+}
+
+
+/* =========================================================
+   NAV ICON
+========================================================= */
+
+.nav-icon {
+    width: 24px;
+    height: 24px;
+
+    flex: 0 0 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #7d7780;
+}
+
+.nav-icon svg {
+    width: 21px !important;
+    height: 21px !important;
+
+    max-width: 21px !important;
+    max-height: 21px !important;
+
+    display: block;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+
+/* =========================================================
+   SPACER
+========================================================= */
+
+.sidebar-spacer {
+    flex: 1;
+    min-height: 30px;
+}
+
+
+/* =========================================================
+   CART
+========================================================= */
+
+.sidebar-cart {
+    padding: 20px;
+
+    margin-bottom: 28px;
+
+    border: 1px solid #f7d7e6;
+
+    border-radius: 20px;
+
+    background: #fff8fb;
+
+    box-shadow:
+        0 8px 25px rgba(80, 30, 55, .03);
+}
+
+.cart-title {
+    margin-bottom: 16px;
+
+    color: #e63182;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    letter-spacing: 1.3px;
+}
+
+.cart-summary {
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    margin-bottom: 18px;
+}
+
+.cart-icon-box {
+    width: 46px;
+    height: 46px;
+
+    flex: 0 0 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 13px;
+
+    background: #ffffff;
+}
+
+.cart-icon-box svg {
+    width: 24px;
+    height: 24px;
+
+    fill: none;
+
+    stroke: #262228;
+
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.cart-info {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+.cart-info strong {
+    color: #1d1920;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.cart-info span {
+    color: #8b8490;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   VIEW CART BUTTON
+========================================================= */
+
+.cart-button {
+    width: 100%;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    background: #e93588;
+
+    color: #ffffff;
+
+    text-decoration: none;
+
+    font-size: 15px;
+    font-weight: 800;
+
+    box-shadow:
+        0 10px 22px rgba(233, 53, 136, .20);
+
+    transition:
+        background .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+.cart-button:hover {
+    background: #d92b79;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 13px 25px rgba(233, 53, 136, .25);
+}
+
+
+/* =========================================================
+   ACCOUNT
+========================================================= */
+
+.sidebar-account {
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 0 12px;
+
+    margin-bottom: 20px;
+}
+
+.account-avatar {
+    width: 42px;
+    height: 42px;
+
+    flex: 0 0 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #f9d5e4;
+
+    color: #d52f78;
+
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.account-info {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+.account-info strong {
+    color: #1e1a20;
+
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.account-info span {
+    color: #8a838d;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+.sidebar-logout {
+    width: 100%;
+}
+
+.logout-form {
+    width: 100%;
+    margin: 0;
+}
+
+.logout-button {
+    width: 100%;
+    min-height: 54px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 17px;
+
+    padding: 0 18px;
+
+    border: 0;
+
+    border-radius: 16px;
+
+    background: #fff0f6;
+
+    color: #d92f7c;
+
+    font-size: 17px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        color .2s ease,
+        transform .2s ease;
+}
+
+.logout-button:hover {
+    background: #ffe3ef;
+
+    color: #c7266d;
+
+    transform: translateY(-1px);
+}
+
+.logout-icon {
+    width: 24px;
+    height: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logout-icon svg {
+    width: 22px !important;
+    height: 22px !important;
+
+    max-width: 22px !important;
+    max-height: 22px !important;
+
+    display: block;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.9;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
+.main {
+    width: 100%;
+    min-width: 0;
+
+    margin-left: 280px;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .sidebar {
+        width: 240px;
+    }
+
+    .main {
+        margin-left: 240px;
+    }
+
+    .sidebar-link {
+        font-size: 16px;
+    }
+
+}
+
+@media (max-width: 700px) {
+
+    .sidebar {
+        width: 76px;
+
+        padding: 24px 10px;
+    }
+
+    .sidebar-brand {
+        justify-content: center;
+
+        margin-bottom: 30px;
+    }
+
+    .brand-text {
+        display: none;
+    }
+
+    .sidebar-link {
+        justify-content: center;
+
+        padding: 0;
+
+        gap: 0;
+    }
+
+    .sidebar-link > span:last-child {
+        display: none;
+    }
+
+    .sidebar-cart {
+        padding: 10px;
+
+        border-radius: 15px;
+    }
+
+    .cart-title,
+    .cart-summary,
+    .cart-button {
+        display: none;
+    }
+
+    .sidebar-account {
+        justify-content: center;
+
+        padding: 0;
+
+        margin-bottom: 15px;
+    }
+
+    .account-info {
+        display: none;
+    }
+
+    .logout-button {
+        justify-content: center;
+
+        padding: 0;
+    }
+
+    .logout-button > span:last-child {
+        display: none;
+    }
+
+    .main {
+        margin-left: 76px;
+    }
+
+}
