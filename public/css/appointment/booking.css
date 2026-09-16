@@ -6741,56 +6741,98 @@ body.report-modal-open {
 
 }
 
-/* ==========================================
+/* =========================================
    PROFILE DROPDOWN
-========================================== */
+========================================= */
 
 #profileMenu {
     position: absolute !important;
+
     top: calc(100% + 12px) !important;
     right: 0 !important;
 
-    width: 208px !important;
+    width: 234px !important;
 
-    background: #ffffff !important;
-    border: 1px solid #e5e7eb !important;
+    background: #151515 !important;
+
+    border: 1px solid #bdbdbd !important;
     border-radius: 14px !important;
 
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.18) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45) !important;
 
     overflow: hidden !important;
 
-    z-index: 2147483647 !important;
+    z-index: 999999 !important;
 }
 
+/* CLOSED */
 #profileMenu:not(.profile-open) {
     display: none !important;
 }
 
+/* OPEN */
 #profileMenu.profile-open {
     display: block !important;
 }
 
+/* MENU ITEMS */
 #profileMenu a,
 #profileMenu button {
+    width: 100% !important;
+
+    min-height: 52px !important;
+
     display: flex !important;
     align-items: center !important;
-    gap: 12px !important;
 
-    width: 100% !important;
-    padding: 13px 16px !important;
+    gap: 14px !important;
+
+    padding: 0 16px !important;
 
     box-sizing: border-box !important;
 
+    background: transparent !important;
+
+    border: 0 !important;
+
+    color: #e5e5e5 !important;
+
+    font-size: 16px !important;
+    font-weight: 500 !important;
+
     text-decoration: none !important;
+
     cursor: pointer !important;
+
+    text-align: left !important;
 }
 
+/* SETTINGS HOVER */
 #profileMenu a:hover {
-    background: #fdf2f8 !important;
-    color: #db2777 !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: #ff1f72 !important;
 }
 
+/* LOGOUT */
+#profileMenu button {
+    color: #e5e5e5 !important;
+}
+
+/* LOGOUT HOVER */
 #profileMenu button:hover {
-    background: #fef2f2 !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: #ff1f72 !important;
+}
+
+/* ICONS */
+#profileMenu svg {
+    width: 22px !important;
+    height: 22px !important;
+
+    flex-shrink: 0 !important;
+}
+
+/* SEPARATOR */
+#profileMenu a + button {
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
 }

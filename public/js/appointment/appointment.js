@@ -23,41 +23,42 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    // Start closed
-    profileMenu.style.display = "none";
-    profileBtn.setAttribute("aria-expanded", "false");
-
     profileBtn.addEventListener("click", function (event) {
 
         event.preventDefault();
         event.stopPropagation();
 
-        const isOpen = profileMenu.classList.contains("profile-open");
+        const isOpen =
+            profileMenu.classList.contains("profile-open");
 
         if (isOpen) {
 
-            // CLOSE
             profileMenu.classList.remove("profile-open");
             profileMenu.style.display = "none";
-            profileBtn.setAttribute("aria-expanded", "false");
+
+            profileBtn.setAttribute(
+                "aria-expanded",
+                "false"
+            );
 
         } else {
 
-            // OPEN
             profileMenu.classList.add("profile-open");
             profileMenu.style.display = "block";
-            profileBtn.setAttribute("aria-expanded", "true");
 
+            profileBtn.setAttribute(
+                "aria-expanded",
+                "true"
+            );
         }
-
     });
 
-    // Don't close when clicking inside menu
+
     profileMenu.addEventListener("click", function (event) {
         event.stopPropagation();
     });
 
-    // Close when clicking outside
+
     document.addEventListener("click", function (event) {
 
         if (
@@ -66,24 +67,30 @@ document.addEventListener("DOMContentLoaded", function () {
         ) {
 
             profileMenu.classList.remove("profile-open");
+
             profileMenu.style.display = "none";
-            profileBtn.setAttribute("aria-expanded", "false");
 
+            profileBtn.setAttribute(
+                "aria-expanded",
+                "false"
+            );
         }
-
     });
 
-    // Close with ESC
+
     document.addEventListener("keydown", function (event) {
 
         if (event.key === "Escape") {
 
             profileMenu.classList.remove("profile-open");
+
             profileMenu.style.display = "none";
-            profileBtn.setAttribute("aria-expanded", "false");
 
+            profileBtn.setAttribute(
+                "aria-expanded",
+                "false"
+            );
         }
-
     });
 
 });
