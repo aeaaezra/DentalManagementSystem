@@ -9,73 +9,70 @@ document.addEventListener("DOMContentLoaded", function () {
 // PROFILE DROPDOWN
 // ========================================================
 
-const profileBtn = document.getElementById("profileBtn");
-const profileMenu = document.getElementById("profileMenu");
+// ========================================================
+// PROFILE DROPDOWN
+// ========================================================
 
-if (profileBtn && profileMenu) {
+document.addEventListener("DOMContentLoaded", function () {
 
-    // OPEN / CLOSE PROFILE DROPDOWN
+    const profileBtn = document.getElementById("profileBtn");
+    const profileMenu = document.getElementById("profileMenu");
+
+    if (!profileBtn || !profileMenu) {
+        console.error("Profile dropdown elements not found.");
+        return;
+    }
+
     profileBtn.addEventListener("click", function (event) {
-
         event.preventDefault();
         event.stopPropagation();
 
-        const isHidden =
-            profileMenu.classList.contains("hidden");
+        const isOpen = profileMenu.classList.contains("profile-open");
 
-        // Toggle menu
-        profileMenu.classList.toggle("hidden");
-
-        // Accessibility
-        profileBtn.setAttribute(
-            "aria-expanded",
-            isHidden ? "true" : "false"
-        );
+        if (isOpen) {
+            // CLOSE
+            profileMenu.classList.remove("profile-open");
+            profileMenu.style.display = "none";
+            profileBtn.setAttribute("aria-expanded", "false");
+        } else {
+            // OPEN
+            profileMenu.classList.add("profile-open");
+            profileMenu.style.display = "block";
+            profileBtn.setAttribute("aria-expanded", "true");
+        }
     });
 
-    // Prevent clicks inside the dropdown
-    // from being treated as outside clicks
+    // Don't close when clicking inside menu
     profileMenu.addEventListener("click", function (event) {
         event.stopPropagation();
     });
 
-    // CLOSE WHEN CLICKING OUTSIDE
+    // Close when clicking outside
     document.addEventListener("click", function (event) {
 
         if (
             !profileBtn.contains(event.target) &&
             !profileMenu.contains(event.target)
         ) {
-
-            profileMenu.classList.add("hidden");
-
-            profileBtn.setAttribute(
-                "aria-expanded",
-                "false"
-            );
+            profileMenu.classList.remove("profile-open");
+            profileMenu.style.display = "none";
+            profileBtn.setAttribute("aria-expanded", "false");
         }
+
     });
 
-    // CLOSE WITH ESCAPE KEY
+    // Close with ESC
     document.addEventListener("keydown", function (event) {
 
         if (event.key === "Escape") {
-
-            profileMenu.classList.add("hidden");
-
-            profileBtn.setAttribute(
-                "aria-expanded",
-                "false"
-            );
+            profileMenu.classList.remove("profile-open");
+            profileMenu.style.display = "none";
+            profileBtn.setAttribute("aria-expanded", "false");
         }
-    });
-}
-    function getCsrfToken() {
-        return document
-            .querySelector('meta[name="csrf-token"]')
-            ?.getAttribute("content");
-    }
 
+    });
+
+});
 
     // ========================================================
     // NOTIFICATION ELEMENTS
@@ -1492,9 +1489,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /* =====================================================
-       ESC KEY
-       ===================================================== */
 
     document.addEventListener(
         "keydown",

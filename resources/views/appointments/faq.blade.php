@@ -762,6 +762,7 @@
 
     <script src="{{ asset('js/appointment/faq.js') }}"></script>
         <script src="{{ asset('js/appointment/patient-theme.js') }}"></script>
+
 </body>
 
 </html>

@@ -585,9 +585,10 @@
                     <!-- PROFILE DROPDOWN -->
 
                     <div
-                        id="profileMenu"
-                        class="hidden absolute right-0 mt-3 w-52 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-[9999]"
-                    >
+    id="profileMenu"
+    class="absolute right-0 mt-3 w-52 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-[999999]"
+    style="display: none;"
+>
 
                         <!-- SETTINGS -->
 
