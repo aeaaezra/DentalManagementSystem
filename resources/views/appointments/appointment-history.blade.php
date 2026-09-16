@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"  >
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <link  rel="stylesheet" href="{{ asset('css/appointment/history.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/appointment/patient-theme.css') }}">
+    <link  rel="stylesheet"   href="{{ asset('css/appointment/patient-theme.css') }}" >
     <script src="{{ asset('js/patient-theme.js') }}"></script>
 
 </head>
@@ -1620,7 +1620,7 @@
 
 
 <script src="{{ asset('js/appointment/history.js') }}"></script>
-
+    <script src="{{ asset('js/appointment/patient-theme.js') }}"></script>
 
 </body>
 

@@ -1685,5 +1685,6 @@
 </div>
 
     <script src="{{ asset('js/appointment/booking.js') }}"></script>
+    <script src="{{ asset('js/appointment/patient-theme.js') }}"></script>
     </body>
     </html>

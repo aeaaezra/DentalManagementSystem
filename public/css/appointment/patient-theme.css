@@ -16,9 +16,6 @@ html.dark-mode body.text-\[\#2D2D2D\] {
     color: #f5f2ef !important;
 }
 
-/* =========================================================
-   COMMON WHITE ELEMENTS
-   ========================================================= */
 
 html.dark-mode .bg-white {
     background-color: #111111 !important;
@@ -32,9 +29,6 @@ html.dark-mode .bg-white\/95 {
     background-color: rgba(13, 13, 13, .96) !important;
 }
 
-/* =========================================================
-   COMMON TEXT
-   ========================================================= */
 
 html.dark-mode .text-\[\#2D2D2D\] {
     color: #f5f2ef !important;
@@ -52,19 +46,12 @@ html.dark-mode .text-gray-400 {
     color: #a1a1a1 !important;
 }
 
-/* =========================================================
-   COMMON BORDERS
-   ========================================================= */
-
 html.dark-mode .border-gray-100,
 html.dark-mode .border-gray-200,
 html.dark-mode .border-gray-300 {
     border-color: #2d2d2d !important;
 }
 
-/* =========================================================
-   HOME PAGE
-   ========================================================= */
 
 html.dark-mode #home {
     background:
@@ -157,10 +144,6 @@ html.dark-mode nav.fixed a:hover {
     color: #ff2f78 !important;
 }
 
-/* =========================================================
-   APPOINTMENT / BOOKING PAGE
-   ========================================================= */
-
 html.dark-mode .booking-container {
     background: #111111 !important;
     border-color: #292929 !important;
@@ -235,9 +218,6 @@ html.dark-mode nav.fixed.top-0 a:hover {
     color: #ff2f78 !important;
 }
 
-/* =========================================================
-   HISTORY PAGE
-   ========================================================= */
 
 html.dark-mode .print-summary .summary-card,
 html.dark-mode #historySummary > div {
@@ -335,9 +315,6 @@ html.dark-mode .notification-footer {
     border-color: #292929 !important;
 }
 
-/* =========================================================
-   FAQ PAGE
-   ========================================================= */
 
 html.dark-mode .faq-page {
     background:
@@ -454,9 +431,6 @@ html.dark-mode .faq-footer {
     color: #777777 !important;
 }
 
-/* =========================================================
-   SETTINGS PAGE
-   ========================================================= */
 
 html.dark-mode .sidebar {
     background: #0d0d0d !important;
@@ -517,18 +491,12 @@ html.dark-mode .btn-outline {
     border-color: #3a3a3a !important;
 }
 
-/* =========================================================
-   PREVENT IMAGES / ICONS FROM BEING DARKENED
-   ========================================================= */
 
 html.dark-mode img,
 html.dark-mode svg {
     opacity: 1;
 }
 
-/* =========================================================
-   REDUCED MOTION
-   ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
     html,
@@ -540,9 +508,6 @@ html.dark-mode svg {
     }
 }
 
-/* =========================================================
-   PATIENT NAVIGATION — DARK MODE
-   ========================================================= */
 
 html.dark-mode nav a,
 html.dark-mode .navbar a {
@@ -707,9 +672,6 @@ html.dark-mode .navbar button {
 }
 
 
-/* =========================================================
-   LIGHT MODE HOVER
-========================================================= */
 
 .settings-report-card:hover {
     background: #ec1d66 !important;
@@ -744,10 +706,6 @@ html.dark-mode .navbar button {
 }
 
 
-/* =========================================================
-   DARK MODE
-   Your system uses html.dark-mode
-========================================================= */
 
 html.dark-mode .settings-report-card {
     background: #111111 !important;
@@ -808,19 +766,10 @@ html.dark-mode .settings-report-card:hover .report-card-arrow {
 }
 
 
-/* =========================================================
-   ACTIVE
-========================================================= */
-
 .settings-report-card:active {
     transform: translateY(0);
     box-shadow: none;
 }
-
-
-/* =========================================================
-   MOBILE
-========================================================= */
 
 @media (max-width: 600px) {
 
@@ -842,9 +791,7 @@ html.dark-mode .settings-report-card:hover .report-card-arrow {
         font-size: 11px;
     }
 }
-/* =========================================================
-   REPORT ISSUE BUTTONS
-   ========================================================= */
+
 
 /* CANCEL - RED */
 .report-btn.report-btn-cancel {

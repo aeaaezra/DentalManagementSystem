@@ -438,6 +438,6 @@ document.getElementById('addCalendar')?.addEventListener('click', function () {
     window.open(url, '_blank', 'noopener,noreferrer');
 });
 </script>
-
+    <script src="{{ asset('js/appointment/patient-theme.js') }}"></script>
 </body>
 </html>

@@ -1703,5 +1703,6 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 
 <script src="{{ asset('js/appointment/settings.js') }}"></script>
+<script src="{{ asset('js/appointment/patient-theme.js') }}"></script>
 </body>
 </html>
