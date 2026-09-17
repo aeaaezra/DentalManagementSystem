@@ -2965,28 +2965,21 @@ document.addEventListener("DOMContentLoaded", function () {
     /* ========================================================
        PREVENT CARD CLICK FROM CLOSING MODAL
        ======================================================== */
+if (logoutButton && logoutModal) {
+    logoutButton.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
 
-    if (logoutModal) {
-
-        const modalCard =
-            logoutModal.querySelector(
-                ".logout-modal-card"
-            );
-
-        if (modalCard) {
-
-            modalCard.addEventListener(
-                "click",
-                function (event) {
-
-                    event.stopPropagation();
-
-                }
-            );
-
+        // Close profile dropdown
+        if (profileMenu) {
+            profileMenu.classList.add("hidden");
         }
 
-    }
+        // Open logout modal
+        logoutModal.classList.add("show");
+        logoutModal.setAttribute("aria-hidden", "false");
 
-});
+        document.body.classList.add("logout-modal-open");
+    });
+}
 

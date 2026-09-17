@@ -6105,6 +6105,9 @@ html.dark-mode .main-navbar .main-nav-link.active {
 /* ============================================================
    PATIENT LOGOUT MODAL
    ============================================================ */
+/* ============================================================
+   LOGOUT CONFIRMATION MODAL
+   ============================================================ */
 
 .logout-modal {
     position: fixed !important;
@@ -6114,7 +6117,10 @@ html.dark-mode .main-navbar .main-nav-link.active {
     align-items: center !important;
     justify-content: center !important;
 
-    padding: 20px !important;
+    width: 100%;
+    height: 100%;
+
+    padding: 20px;
 
     opacity: 0;
     visibility: hidden;
@@ -6127,6 +6133,7 @@ html.dark-mode .main-navbar .main-nav-link.active {
     z-index: 9999999 !important;
 }
 
+/* OPEN STATE */
 .logout-modal.show {
     opacity: 1;
     visibility: visible;
@@ -6134,23 +6141,33 @@ html.dark-mode .main-navbar .main-nav-link.active {
 }
 
 
-/* BACKDROP */
+/* ============================================================
+   BACKDROP
+   ============================================================ */
 
 .logout-modal-overlay {
     position: absolute !important;
     inset: 0 !important;
 
+    width: 100%;
+    height: 100%;
+
     background: rgba(0, 0, 0, 0.68);
 
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
+
+    cursor: default;
 }
 
 
-/* MODAL CARD */
+/* ============================================================
+   MODAL CARD
+   ============================================================ */
 
 .logout-modal-card {
     position: relative !important;
+
     z-index: 2 !important;
 
     width: min(100%, 420px);
@@ -6170,15 +6187,19 @@ html.dark-mode .main-navbar .main-nav-link.active {
 
     transform: translateY(15px) scale(0.96);
 
-    transition: transform 0.2s ease;
+    transition:
+        transform 0.2s ease;
 }
 
+/* CARD ANIMATION WHEN OPEN */
 .logout-modal.show .logout-modal-card {
     transform: translateY(0) scale(1);
 }
 
 
-/* ICON */
+/* ============================================================
+   ICON
+   ============================================================ */
 
 .logout-modal-icon {
     width: 64px;
@@ -6193,12 +6214,13 @@ html.dark-mode .main-navbar .main-nav-link.active {
     border-radius: 50%;
 
     background: #fff1f7;
-
     color: #ec1d66;
 }
 
 
-/* TITLE */
+/* ============================================================
+   TITLE
+   ============================================================ */
 
 .logout-modal-card h2 {
     margin: 0;
@@ -6210,7 +6232,9 @@ html.dark-mode .main-navbar .main-nav-link.active {
 }
 
 
-/* MESSAGE */
+/* ============================================================
+   MESSAGE
+   ============================================================ */
 
 .logout-modal-card p {
     margin: 10px auto 25px;
@@ -6220,16 +6244,20 @@ html.dark-mode .main-navbar .main-nav-link.active {
     color: #6b7280;
 
     font-size: 14px;
-
     line-height: 1.6;
 }
 
 
-/* BUTTONS */
+/* ============================================================
+   BUTTONS
+   ============================================================ */
 
 .logout-modal-actions {
     display: flex;
+
     gap: 12px;
+
+    width: 100%;
 }
 
 .logout-cancel-btn,
@@ -6253,7 +6281,9 @@ html.dark-mode .main-navbar .main-nav-link.active {
 }
 
 
-/* CANCEL */
+/* ============================================================
+   CANCEL BUTTON
+   ============================================================ */
 
 .logout-cancel-btn {
     background: #f5f5f5;
@@ -6267,8 +6297,14 @@ html.dark-mode .main-navbar .main-nav-link.active {
     background: #e5e7eb;
 }
 
+.logout-cancel-btn:active {
+    transform: scale(0.97);
+}
 
-/* LOGOUT */
+
+/* ============================================================
+   LOGOUT BUTTON
+   ============================================================ */
 
 .logout-confirm-btn {
     background: #ec1d66;
@@ -6284,7 +6320,79 @@ html.dark-mode .main-navbar .main-nav-link.active {
     border-color: #d91459;
 }
 
+.logout-confirm-btn:active {
+    transform: scale(0.97);
+}
 
+
+/* ============================================================
+   DISABLED LOGOUT BUTTON
+   ============================================================ */
+
+.logout-confirm-btn:disabled {
+    opacity: 0.7;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+
+/* ============================================================
+   BODY LOCK WHILE MODAL IS OPEN
+   ============================================================ */
+
+body.logout-modal-open {
+    overflow: hidden;
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 480px) {
+
+    .logout-modal {
+        padding: 16px;
+    }
+
+    .logout-modal-card {
+        width: 100%;
+
+        padding: 26px 20px;
+
+        border-radius: 18px;
+    }
+
+    .logout-modal-icon {
+        width: 58px;
+        height: 58px;
+
+        margin-bottom: 15px;
+    }
+
+    .logout-modal-card h2 {
+        font-size: 21px;
+    }
+
+    .logout-modal-card p {
+        font-size: 13px;
+
+        margin-bottom: 22px;
+    }
+
+    .logout-modal-actions {
+        gap: 10px;
+    }
+
+    .logout-cancel-btn,
+    .logout-confirm-btn {
+        min-height: 44px;
+
+        font-size: 13px;
+    }
+}
 /* ============================================================
    DARK MODE
    ============================================================ */
