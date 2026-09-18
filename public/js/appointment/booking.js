@@ -2777,7 +2777,6 @@ document.addEventListener(
 
     }
 );
-
 /* ============================================================
    LOGOUT CONFIRMATION MODAL
    ============================================================ */
@@ -2803,14 +2802,13 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("logoutForm");
 
 
-    console.log("Logout modal initialized:", {
-        logoutButton,
-        logoutModal,
-        logoutModalOverlay,
-        cancelLogout,
-        confirmLogout,
-        logoutForm
-    });
+    console.log("=== LOGOUT SYSTEM ===");
+    console.log("logoutButton:", logoutButton);
+    console.log("logoutModal:", logoutModal);
+    console.log("logoutModalOverlay:", logoutModalOverlay);
+    console.log("cancelLogout:", cancelLogout);
+    console.log("confirmLogout:", confirmLogout);
+    console.log("logoutForm:", logoutForm);
 
 
     /* ========================================================
@@ -2819,26 +2817,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (logoutButton && logoutModal) {
 
-        logoutButton.addEventListener(
-            "click",
-            function (event) {
+        logoutButton.addEventListener("click", function (event) {
 
-                event.preventDefault();
+            event.preventDefault();
+            event.stopPropagation();
 
-                console.log("Logout button clicked.");
+            console.log("Logout button clicked.");
 
-                logoutModal.classList.add("show");
+            logoutModal.classList.add("show");
 
-                logoutModal.setAttribute(
-                    "aria-hidden",
-                    "false"
-                );
+            logoutModal.setAttribute(
+                "aria-hidden",
+                "false"
+            );
 
-                document.body.classList.add(
-                    "logout-modal-open"
-                );
+            document.body.classList.add(
+                "logout-modal-open"
+            );
 
-            }
+        });
+
+    } else {
+
+        console.error(
+            "ERROR: logoutButton or logoutModal was not found."
         );
 
     }
@@ -2879,6 +2881,9 @@ document.addEventListener("DOMContentLoaded", function () {
             function (event) {
 
                 event.preventDefault();
+                event.stopPropagation();
+
+                console.log("Logout cancelled.");
 
                 closeLogoutModal();
 
@@ -2899,6 +2904,9 @@ document.addEventListener("DOMContentLoaded", function () {
             function (event) {
 
                 event.preventDefault();
+                event.stopPropagation();
+
+                console.log("Logout modal overlay clicked.");
 
                 closeLogoutModal();
 
@@ -2912,20 +2920,16 @@ document.addEventListener("DOMContentLoaded", function () {
        CONFIRM LOGOUT
        ======================================================== */
 
-    if (
-        confirmLogout &&
-        logoutForm
-    ) {
+    if (confirmLogout && logoutForm) {
 
         confirmLogout.addEventListener(
             "click",
             function (event) {
 
                 event.preventDefault();
+                event.stopPropagation();
 
-                console.log(
-                    "Logout confirmed."
-                );
+                console.log("Logout confirmed.");
 
                 confirmLogout.disabled = true;
 
@@ -2935,6 +2939,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 logoutForm.submit();
 
             }
+        );
+
+    } else {
+
+        console.error(
+            "ERROR: confirmLogout or logoutForm was not found."
         );
 
     }
@@ -2961,25 +2971,31 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     );
 
-/* ============================================================
-   PREVENT CARD CLICK FROM CLOSING MODAL
-   ============================================================ */
 
-if (logoutModal) {
+    /* ========================================================
+       PREVENT CARD CLICK FROM CLOSING MODAL
+       ======================================================== */
 
-    const modalCard =
-        logoutModal.querySelector(".logout-modal-card");
+    if (logoutModal) {
 
-    if (modalCard) {
+        const modalCard =
+            logoutModal.querySelector(
+                ".logout-modal-card"
+            );
 
-        modalCard.addEventListener(
-            "click",
-            function (event) {
-                event.stopPropagation();
-            }
-        );
+        if (modalCard) {
+
+            modalCard.addEventListener(
+                "click",
+                function (event) {
+
+                    event.stopPropagation();
+
+                }
+            );
+
+        }
 
     }
-}
 
 });

@@ -564,8 +564,9 @@
             <span>Settings</span>
         </a>
 
-        <!-- Logout -->
-       <form
+
+
+    <form
     method="POST"
     action="{{ route('logout') }}"
     id="logoutForm"
@@ -1602,63 +1603,34 @@
 <!-- =========================================================
      LOGOUT CONFIRMATION MODAL
      ========================================================= -->
-
 <div
     id="logoutModal"
     class="logout-modal"
     aria-hidden="true"
 >
-
-    <!-- OVERLAY -->
     <div
         id="logoutModalOverlay"
         class="logout-modal-overlay"
     ></div>
 
-
-    <!-- MODAL CARD -->
     <div
         class="logout-modal-card"
         role="dialog"
         aria-modal="true"
         aria-labelledby="logoutModalTitle"
     >
-
-        <!-- ICON -->
         <div class="logout-modal-icon">
-
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="28"
-                height="28"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-            >
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                <polyline points="16 17 21 12 16 7"/>
-                <line x1="21" y1="12" x2="9" y2="12"/>
-            </svg>
-
+            <!-- your SVG -->
         </div>
 
-
-        <!-- TITLE -->
         <h2 id="logoutModalTitle">
             Logout?
         </h2>
 
-
-        <!-- MESSAGE -->
         <p>
             Are you sure you want to log out of your account?
         </p>
 
-
-        <!-- BUTTONS -->
         <div class="logout-modal-actions">
 
             <button
@@ -1669,7 +1641,6 @@
                 Cancel
             </button>
 
-
             <button
                 type="button"
                 id="confirmLogout"
@@ -1679,9 +1650,7 @@
             </button>
 
         </div>
-
     </div>
-
 </div>
 
     <script src="{{ asset('js/appointment/booking.js') }}"></script>
