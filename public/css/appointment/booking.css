@@ -7023,3 +7023,191 @@ body.report-modal-open {
 #profileMenu a + button {
     border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
+
+
+/* =========================================================
+   PROFILE DROPDOWN
+   ========================================================= */
+
+#profileWrapper {
+    position: relative !important;
+}
+
+/* Profile button */
+#profileBtn {
+    position: relative !important;
+
+    display: flex !important;
+    align-items: center !important;
+
+    gap: 8px !important;
+
+    cursor: pointer !important;
+
+    z-index: 1000000 !important;
+}
+
+/* Profile image */
+#profileBtn img {
+    width: 44px !important;
+    height: 44px !important;
+
+    min-width: 44px !important;
+    min-height: 44px !important;
+
+    max-width: 44px !important;
+    max-height: 44px !important;
+
+    border-radius: 50% !important;
+
+    object-fit: cover !important;
+}
+
+/* Dropdown */
+#profileMenu {
+    position: absolute !important;
+
+    top: calc(100% + 12px) !important;
+    right: 0 !important;
+
+    width: 234px !important;
+
+    background: #151515 !important;
+
+    border: 1px solid #3a3a3a !important;
+
+    border-radius: 14px !important;
+
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.55) !important;
+
+    overflow: hidden !important;
+
+    z-index: 9999999 !important;
+}
+
+/* Closed */
+#profileMenu.hidden {
+    display: none !important;
+}
+
+/* Open */
+#profileMenu:not(.hidden) {
+    display: block !important;
+}
+
+/* Settings + Logout */
+#profileMenu a,
+#profileMenu button {
+    width: 100% !important;
+
+    min-height: 52px !important;
+
+    display: flex !important;
+    align-items: center !important;
+
+    gap: 14px !important;
+
+    padding: 0 16px !important;
+
+    margin: 0 !important;
+
+    box-sizing: border-box !important;
+
+    background: transparent !important;
+
+    border: 0 !important;
+
+    color: #e5e5e5 !important;
+
+    font-family: inherit !important;
+
+    font-size: 15px !important;
+
+    font-weight: 500 !important;
+
+    line-height: 1 !important;
+
+    text-decoration: none !important;
+
+    text-align: left !important;
+
+    cursor: pointer !important;
+}
+
+/* Icons */
+#profileMenu a svg,
+#profileMenu button svg {
+    width: 21px !important;
+    height: 21px !important;
+
+    min-width: 21px !important;
+    min-height: 21px !important;
+
+    max-width: 21px !important;
+    max-height: 21px !important;
+
+    flex: 0 0 21px !important;
+
+    display: block !important;
+}
+
+/* Icon wrapper if used */
+#profileMenu a i,
+#profileMenu button i {
+    width: 21px !important;
+    height: 21px !important;
+
+    min-width: 21px !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Hover */
+#profileMenu a:hover,
+#profileMenu button:hover {
+    background: rgba(255, 255, 255, 0.06) !important;
+
+    color: #ff1f72 !important;
+}
+
+/* Divider */
+#profileMenu a + button {
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+
+    #profileMenu {
+        width: 210px !important;
+
+        top: calc(100% + 10px) !important;
+    }
+
+    #profileMenu a,
+    #profileMenu button {
+        min-height: 48px !important;
+
+        padding: 0 14px !important;
+
+        font-size: 14px !important;
+    }
+
+    #profileMenu a svg,
+    #profileMenu button svg {
+        width: 20px !important;
+        height: 20px !important;
+
+        min-width: 20px !important;
+        min-height: 20px !important;
+
+        max-width: 20px !important;
+        max-height: 20px !important;
+
+        flex-basis: 20px !important;
+    }
+}

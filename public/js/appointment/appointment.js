@@ -1,7 +1,3 @@
-
-document.addEventListener("DOMContentLoaded", function () {
-
-
 document.addEventListener("DOMContentLoaded", function () {
 
     const profileBtn = document.getElementById("profileBtn");

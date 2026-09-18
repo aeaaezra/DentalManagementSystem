@@ -2961,25 +2961,25 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     );
 
+/* ============================================================
+   PREVENT CARD CLICK FROM CLOSING MODAL
+   ============================================================ */
 
-    /* ========================================================
-       PREVENT CARD CLICK FROM CLOSING MODAL
-       ======================================================== */
-if (logoutButton && logoutModal) {
-    logoutButton.addEventListener("click", function (event) {
-        event.preventDefault();
-        event.stopPropagation();
+if (logoutModal) {
 
-        // Close profile dropdown
-        if (profileMenu) {
-            profileMenu.classList.add("hidden");
-        }
+    const modalCard =
+        logoutModal.querySelector(".logout-modal-card");
 
-        // Open logout modal
-        logoutModal.classList.add("show");
-        logoutModal.setAttribute("aria-hidden", "false");
+    if (modalCard) {
 
-        document.body.classList.add("logout-modal-open");
-    });
+        modalCard.addEventListener(
+            "click",
+            function (event) {
+                event.stopPropagation();
+            }
+        );
+
+    }
 }
 
+});
