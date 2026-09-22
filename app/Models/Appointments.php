@@ -34,6 +34,8 @@ class Appointments extends Model
         'checked_in_at',
         'treatment_started_at',
         'checked_out_at',
+        'cancellation_reason',
+        'cancellation_details',
     ];
 
     protected $casts = [

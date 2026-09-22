@@ -563,6 +563,7 @@ $patient = PatientRecords::create([
 
 
 public function cancel(
+    Request $request,
     Appointments $appointment
 ) {
 
@@ -573,8 +574,19 @@ public function cancel(
         abort(403);
     }
 
+    $request->validate([
+        'cancellation_reason' => [
+            'required',
+            'string',
+            'max:100',
+        ],
 
-
+        'cancellation_details' => [
+            'nullable',
+            'string',
+            'max:1000',
+        ],
+    ]);
 
     if (
         in_array(
@@ -594,8 +606,6 @@ public function cancel(
     }
 
 
-
-
     $startOfMonth = Carbon::now()->startOfMonth();
 
     $endOfMonth = Carbon::now()->endOfMonth();
@@ -605,10 +615,12 @@ public function cancel(
         ->whereHas(
             'patient',
             function ($query) {
+
                 $query->where(
                     'user_id',
                     Auth::id()
                 );
+
             }
         )
         ->whereIn(
@@ -628,8 +640,6 @@ public function cancel(
         ->count();
 
 
-
-
     if ($monthlyCancellationCount >= 3) {
         return back()
             ->with(
@@ -638,14 +648,15 @@ public function cancel(
             );
     }
 
-
-
-
     $appointment->update([
         'status' => 'cancellation_requested',
+
+        'cancellation_reason' =>
+            $request->input('cancellation_reason'),
+
+        'cancellation_details' =>
+            $request->input('cancellation_details'),
     ]);
-
-
 
 
     return redirect()
@@ -654,7 +665,7 @@ public function cancel(
         )
         ->with(
             'success',
-            'Cancellation request submitted. Please wait for the clinic to review it.'
+            'Your appointment cancellation has been sent! Please wait for the clinic to review and approve your cancellation request.'
         );
 }
 

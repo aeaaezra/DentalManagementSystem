@@ -1340,10 +1340,23 @@ window.openCancelModal = function () {
     });
 };
 
+
 document.addEventListener('DOMContentLoaded', function () {
+
+    console.log('Cancel modal script loaded');
 
     const modal = document.getElementById('cancelModal');
     const content = document.getElementById('cancelModalContent');
+
+    if (!modal) {
+        console.error('ERROR: #cancelModal was not found.');
+        return;
+    }
+
+    if (!content) {
+        console.error('ERROR: #cancelModalContent was not found.');
+        return;
+    }
 
     document.querySelectorAll('.open-cancel-modal').forEach(function (button) {
 
@@ -1351,12 +1364,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
             console.log('Cancel button clicked');
 
+            window.selectedCancelForm = this.closest('form');
+
             modal.classList.remove('hidden');
             modal.classList.add('flex');
 
             requestAnimationFrame(function () {
-                content.classList.remove('scale-95', 'opacity-0');
-                content.classList.add('scale-100', 'opacity-100');
+
+                content.classList.remove(
+                    'scale-95',
+                    'opacity-0'
+                );
+
+                content.classList.add(
+                    'scale-100',
+                    'opacity-100'
+                );
+
             });
 
         });

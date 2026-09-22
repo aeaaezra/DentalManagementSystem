@@ -383,7 +383,86 @@ if ($request->filled('patient_signature')) {
             compact('appointments')
         );
     }
+// ============================================================
+// CONFIRM CANCELLATION REQUEST
+// ============================================================
 
+public function confirmCancellation($id)
+{
+    $appointment = Appointments::query()
+        ->with([
+            'patient.user',
+            'service',
+        ])
+        ->findOrFail($id);
+
+    if ($appointment->status !== 'cancellation_requested') {
+        return back()->with(
+            'error',
+            'This appointment does not have a pending cancellation request.'
+        );
+    }
+
+    $appointment->update([
+        'status' => 'cancelled',
+    ]);
+
+    // Notify patient that cancellation was approved
+    if (
+        $appointment->patient &&
+        $appointment->patient->user
+    ) {
+        $appointment->patient->user->notify(
+            new AppointmentCancelled($appointment)
+        );
+    }
+
+    return back()->with(
+        'success',
+        'The appointment cancellation has been confirmed.'
+    );
+}
+
+
+// ============================================================
+// REJECT CANCELLATION REQUEST
+// ============================================================
+
+public function rejectCancellation($id)
+{
+    $appointment = Appointments::query()
+        ->with([
+            'patient.user',
+            'service',
+        ])
+        ->findOrFail($id);
+
+    if ($appointment->status !== 'cancellation_requested') {
+        return back()->with(
+            'error',
+            'This appointment does not have a pending cancellation request.'
+        );
+    }
+
+    $appointment->update([
+        'status' => 'confirmed',
+    ]);
+
+    // Notify patient that cancellation was rejected
+    if (
+        $appointment->patient &&
+        $appointment->patient->user
+    ) {
+        $appointment->patient->user->notify(
+            new AppointmentApproved($appointment)
+        );
+    }
+
+    return back()->with(
+        'success',
+        'The cancellation request has been rejected. The appointment remains confirmed.'
+    );
+}
     // ============================================================
     // PATIENT APPOINTMENT HOMEPAGE
     // ============================================================
