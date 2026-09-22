@@ -1438,17 +1438,17 @@
                     >
                         @csrf
 
-                        <button
-                            type="button"
-                            class="open-cancel-modal px-4 py-2 rounded-lg font-medium
-                                bg-pink-500 text-white
-                                hover:bg-pink-600
-                                dark:bg-pink-600
-                                dark:hover:bg-pink-500
-                                transition duration-200"
-                        >
-                            Cancel
-                        </button>
+<button
+    type="button"
+    class="open-cancel-modal px-4 py-2 rounded-lg font-medium
+        bg-pink-500 text-white
+        hover:bg-pink-600
+        dark:bg-pink-600
+        dark:hover:bg-pink-500
+        transition duration-200"
+>
+    Cancel
+</button>
                     </form>
 
 

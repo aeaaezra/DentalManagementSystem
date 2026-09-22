@@ -959,9 +959,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    // ========================================================
-    // SETTINGS MOBILE BACK BUTTON
-    // ========================================================
 
     document
         .querySelectorAll(
@@ -1343,44 +1340,27 @@ window.openCancelModal = function () {
     });
 };
 
-window.closeCancelModal = function () {
-    const modal = document.getElementById('cancelModal');
-    const content = document.getElementById('cancelModalContent');
-
-    if (!modal || !content) {
-        console.error('Cancel modal or cancel modal content not found.');
-        return;
-    }
-
-    content.classList.remove('scale-100', 'opacity-100');
-    content.classList.add('scale-95', 'opacity-0');
-
-    setTimeout(function () {
-        modal.classList.remove('flex');
-        modal.classList.add('hidden');
-    }, 200);
-};
-
-window.confirmCancel = function () {
-    window.history.back();
-};
-
 document.addEventListener('DOMContentLoaded', function () {
 
     const modal = document.getElementById('cancelModal');
+    const content = document.getElementById('cancelModalContent');
 
-    if (modal) {
-        modal.addEventListener('click', function (event) {
-            if (event.target === modal) {
-                window.closeCancelModal();
-            }
+    document.querySelectorAll('.open-cancel-modal').forEach(function (button) {
+
+        button.addEventListener('click', function () {
+
+            console.log('Cancel button clicked');
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            requestAnimationFrame(function () {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            });
+
         });
-    }
 
-    document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') {
-            window.closeCancelModal();
-        }
     });
 
 });
