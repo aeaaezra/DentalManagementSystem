@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
@@ -1450,13 +1451,18 @@
                                     @csrf
 
 
-                                    <button
-                                        type="button"
-                                        onclick="openCancelModal()"
-                                        class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition"
-                                    >
-                                        Cancel
-                                    </button>
+                                <button
+                                    type="button"
+                                    onclick="openCancelModal()"
+                                    class="px-4 py-2 rounded-lg font-medium
+                                        bg-pink-500 text-white
+                                        hover:bg-pink-600
+                                        dark:bg-pink-600 dark:text-white
+                                        dark:hover:bg-pink-500
+                                        transition duration-200"
+                                >
+                                    Cancel
+                                </button>
 
                                 </form>
 
@@ -1986,19 +1992,36 @@
 <!-- Cancel Confirmation Modal -->
 <div
     id="cancelModal"
-    class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4"
+    class="fixed inset-0 z-[9999] hidden items-center justify-center
+           bg-black/50 dark:bg-black/70 backdrop-blur-sm px-4"
 >
     <div
         id="cancelModalContent"
-        class="w-full max-w-md rounded-2xl bg-white shadow-2xl transform scale-95 opacity-0 transition-all duration-200"
+        class="w-full max-w-md rounded-2xl
+               bg-white dark:bg-[#251C22]
+               shadow-2xl
+               border border-transparent dark:border-gray-700
+               transform scale-95 opacity-0
+               transition-all duration-200"
     >
+
         <!-- Header -->
-        <div class="flex items-center justify-between border-b border-gray-100 px-6 py-5">
+        <div
+            class="flex items-center justify-between
+                   border-b border-gray-100 dark:border-gray-700
+                   px-6 py-5"
+        >
             <div class="flex items-center gap-3">
-                <div class="flex h-11 w-11 items-center justify-center rounded-full bg-pink-100">
+
+                <!-- Icon -->
+                <div
+                    class="flex h-11 w-11 items-center justify-center
+                           rounded-full
+                           bg-pink-100 dark:bg-pink-900/40"
+                >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6 text-pink-600"
+                        class="h-6 w-6 text-pink-600 dark:text-pink-400"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -2012,16 +2035,25 @@
                     </svg>
                 </div>
 
-                <h3 class="text-lg font-semibold text-gray-900">
+                <!-- Title -->
+                <h3
+                    class="text-lg font-semibold
+                           text-gray-900 dark:text-white"
+                >
                     Cancel Action
                 </h3>
+
             </div>
 
             <!-- Close button -->
             <button
                 type="button"
                 onclick="closeCancelModal()"
-                class="text-gray-400 hover:text-gray-600 transition"
+                class="text-gray-400
+                       hover:text-gray-600
+                       dark:text-gray-500
+                       dark:hover:text-gray-300
+                       transition"
                 aria-label="Close modal"
             >
                 <svg
@@ -2039,37 +2071,73 @@
                     />
                 </svg>
             </button>
+
         </div>
+
 
         <!-- Body -->
         <div class="px-6 py-6">
-            <p class="text-gray-600 leading-relaxed">
+
+            <p
+                class="text-gray-600 dark:text-gray-300
+                       leading-relaxed"
+            >
                 Are you sure you want to cancel?
             </p>
 
-            <p class="mt-2 text-sm text-gray-500">
+            <p
+                class="mt-2 text-sm
+                       text-gray-500 dark:text-gray-400"
+            >
                 Any unsaved changes may be lost.
             </p>
+
         </div>
 
+
         <!-- Footer -->
-        <div class="flex justify-end gap-3 border-t border-gray-100 px-6 py-4">
+        <div
+            class="flex justify-end gap-3
+                   border-t border-gray-100 dark:border-gray-700
+                   px-6 py-4"
+        >
+
+            <!-- No, Keep It -->
             <button
                 type="button"
                 onclick="closeCancelModal()"
-                class="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+                class="rounded-lg
+                       border border-gray-300 dark:border-gray-600
+                       bg-white dark:bg-[#30252B]
+                       px-5 py-2.5
+                       text-sm font-medium
+                       text-gray-700 dark:text-gray-200
+                       transition
+                       hover:bg-gray-50
+                       dark:hover:bg-[#3A2D34]"
             >
                 No, Keep It
             </button>
 
+
+            <!-- Yes, Cancel -->
             <button
                 type="button"
                 onclick="confirmCancel()"
-                class="rounded-lg bg-pink-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-pink-700"
+                class="rounded-lg
+                       bg-pink-600
+                       px-5 py-2.5
+                       text-sm font-medium text-white
+                       transition
+                       hover:bg-pink-700
+                       dark:bg-pink-600
+                       dark:hover:bg-pink-500"
             >
                 Yes, Cancel
             </button>
+
         </div>
+
     </div>
 </div>
     <script src="https://unpkg.com/lucide@latest"></script>

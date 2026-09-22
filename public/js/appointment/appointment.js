@@ -1325,25 +1325,32 @@ window.addEventListener(
 
     }
 );
-
-
-    function openCancelModal() {
+  window.openCancelModal = function () {
         const modal = document.getElementById('cancelModal');
         const content = document.getElementById('cancelModalContent');
+
+        if (!modal || !content) {
+            console.error('Cancel modal or cancel modal content not found.');
+            return;
+        }
 
         modal.classList.remove('hidden');
         modal.classList.add('flex');
 
-        // Allow the browser to render before animation
         requestAnimationFrame(() => {
             content.classList.remove('scale-95', 'opacity-0');
             content.classList.add('scale-100', 'opacity-100');
         });
-    }
+    };
 
-    function closeCancelModal() {
+    window.closeCancelModal = function () {
         const modal = document.getElementById('cancelModal');
         const content = document.getElementById('cancelModalContent');
+
+        if (!modal || !content) {
+            console.error('Cancel modal or cancel modal content not found.');
+            return;
+        }
 
         content.classList.remove('scale-100', 'opacity-100');
         content.classList.add('scale-95', 'opacity-0');
@@ -1352,29 +1359,32 @@ window.addEventListener(
             modal.classList.remove('flex');
             modal.classList.add('hidden');
         }, 200);
-    }
+    };
 
-    function confirmCancel() {
-        // Put your cancel action here.
-
-        // Example:
+    window.confirmCancel = function () {
         window.history.back();
+    };
 
-        // Or if you have a specific URL:
-        // window.location.href = "{{ route('customer.homepage') }}";
-    }
 
-    // Close when clicking outside the modal
-    document.getElementById('cancelModal').addEventListener('click', function(event) {
-        if (event.target === this) {
-            closeCancelModal();
+    // Wait until the page is loaded before attaching events
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const modal = document.getElementById('cancelModal');
+
+        // Close when clicking outside the modal
+        if (modal) {
+            modal.addEventListener('click', function (event) {
+                if (event.target === modal) {
+                    window.closeCancelModal();
+                }
+            });
         }
-    });
 
-    // Close with ESC key
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            closeCancelModal();
-        }
-    });
+        // Close with ESC key
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                window.closeCancelModal();
+            }
+        });
 
+    });
