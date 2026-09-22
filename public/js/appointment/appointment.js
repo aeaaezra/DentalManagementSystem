@@ -1322,72 +1322,6 @@ window.addEventListener(
 
     }
 );
-window.openCancelModal = function () {
-    const modal = document.getElementById('cancelModal');
-    const content = document.getElementById('cancelModalContent');
-
-    if (!modal || !content) {
-        console.error('Cancel modal or cancel modal content not found.');
-        return;
-    }
-
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-
-    requestAnimationFrame(function () {
-        content.classList.remove('scale-95', 'opacity-0');
-        content.classList.add('scale-100', 'opacity-100');
-    });
-};
-
-
-document.addEventListener('DOMContentLoaded', function () {
-
-    console.log('Cancel modal script loaded');
-
-    const modal = document.getElementById('cancelModal');
-    const content = document.getElementById('cancelModalContent');
-
-    if (!modal) {
-        console.error('ERROR: #cancelModal was not found.');
-        return;
-    }
-
-    if (!content) {
-        console.error('ERROR: #cancelModalContent was not found.');
-        return;
-    }
-
-    document.querySelectorAll('.open-cancel-modal').forEach(function (button) {
-
-        button.addEventListener('click', function () {
-
-            console.log('Cancel button clicked');
-
-            window.selectedCancelForm = this.closest('form');
-
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-
-            requestAnimationFrame(function () {
-
-                content.classList.remove(
-                    'scale-95',
-                    'opacity-0'
-                );
-
-                content.classList.add(
-                    'scale-100',
-                    'opacity-100'
-                );
-
-            });
-
-        });
-
-    });
-
-});
 
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -1401,6 +1335,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const closeSuccessButton =
         document.getElementById('closeCancellationSuccessModal');
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Check Required Elements
+    |--------------------------------------------------------------------------
+    */
 
     if (
         !successModal ||
@@ -1420,6 +1360,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function openCancellationSuccessModal() {
 
         successModal.classList.remove('hidden');
+
         successModal.classList.add('flex');
 
         requestAnimationFrame(function () {
@@ -1459,6 +1400,7 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(function () {
 
             successModal.classList.remove('flex');
+
             successModal.classList.add('hidden');
 
         }, 200);
@@ -1479,14 +1421,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Click Outside
+    | Click Outside Modal
     |--------------------------------------------------------------------------
     */
 
     successModal.addEventListener('click', function (event) {
 
         if (event.target === successModal) {
+
             closeCancellationSuccessModal();
+
         }
 
     });
@@ -1504,7 +1448,9 @@ document.addEventListener('DOMContentLoaded', function () {
             event.key === 'Escape' &&
             !successModal.classList.contains('hidden')
         ) {
+
             closeCancellationSuccessModal();
+
         }
 
     });
@@ -1512,23 +1458,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Laravel Success Message
+    | Laravel Cancellation Success
     |--------------------------------------------------------------------------
     */
 
-    @if(session('success'))
+    @if(session('cancellation_success'))
 
-        const successMessage =
-            @json(session('success'));
-
-        if (
-            successMessage.includes(
-                'appointment cancellation'
-            )
-        ) {
-            openCancellationSuccessModal();
-        }
+        openCancellationSuccessModal();
 
     @endif
 
 });
+
