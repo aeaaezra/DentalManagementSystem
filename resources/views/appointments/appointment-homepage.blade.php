@@ -1450,19 +1450,18 @@
 
                                     @csrf
 
-
-                                <button
-                                    type="button"
-                                    onclick="openCancelModal()"
-                                    class="px-4 py-2 rounded-lg font-medium
-                                        bg-pink-500 text-white
-                                        hover:bg-pink-600
-                                        dark:bg-pink-600 dark:text-white
-                                        dark:hover:bg-pink-500
-                                        transition duration-200"
-                                >
-                                    Cancel
-                                </button>
+                                    <button
+                                        type="button"
+                                        onclick="window.openCancelModal()"
+                                        class="px-4 py-2 rounded-lg font-medium
+                                            bg-pink-500 text-white
+                                            hover:bg-pink-600
+                                            dark:bg-pink-600
+                                            dark:hover:bg-pink-500
+                                            transition duration-200"
+                                    >
+                                        Cancel
+                                    </button>
 
                                 </form>
 
@@ -2105,36 +2104,36 @@
             <!-- No, Keep It -->
             <button
                 type="button"
-                onclick="closeCancelModal()"
+                onclick="window.closeCancelModal()"
                 class="rounded-lg
-                       border border-gray-300 dark:border-gray-600
-                       bg-white dark:bg-[#30252B]
-                       px-5 py-2.5
-                       text-sm font-medium
-                       text-gray-700 dark:text-gray-200
-                       transition
-                       hover:bg-gray-50
-                       dark:hover:bg-[#3A2D34]"
+                    border border-gray-300 dark:border-gray-600
+                    bg-white dark:bg-[#30252B]
+                    px-5 py-2.5
+                    text-sm font-medium
+                    text-gray-700 dark:text-gray-200
+                    transition
+                    hover:bg-gray-50
+                    dark:hover:bg-[#3A2D34]"
             >
                 No, Keep It
             </button>
 
 
             <!-- Yes, Cancel -->
-            <button
-                type="button"
-                onclick="confirmCancel()"
-                class="rounded-lg
-                       bg-pink-600
-                       px-5 py-2.5
-                       text-sm font-medium text-white
-                       transition
-                       hover:bg-pink-700
-                       dark:bg-pink-600
-                       dark:hover:bg-pink-500"
-            >
-                Yes, Cancel
-            </button>
+        <button
+            type="button"
+            onclick="window.confirmCancel()"
+            class="rounded-lg
+                bg-pink-600
+                px-5 py-2.5
+                text-sm font-medium text-white
+                transition
+                hover:bg-pink-700
+                dark:bg-pink-600
+                dark:hover:bg-pink-500"
+        >
+            Yes, Cancel
+        </button>
 
         </div>
 

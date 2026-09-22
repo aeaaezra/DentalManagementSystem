@@ -1325,66 +1325,62 @@ window.addEventListener(
 
     }
 );
-  window.openCancelModal = function () {
-        const modal = document.getElementById('cancelModal');
-        const content = document.getElementById('cancelModalContent');
+window.openCancelModal = function () {
+    const modal = document.getElementById('cancelModal');
+    const content = document.getElementById('cancelModalContent');
 
-        if (!modal || !content) {
-            console.error('Cancel modal or cancel modal content not found.');
-            return;
-        }
+    if (!modal || !content) {
+        console.error('Cancel modal or cancel modal content not found.');
+        return;
+    }
 
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
 
-        requestAnimationFrame(() => {
-            content.classList.remove('scale-95', 'opacity-0');
-            content.classList.add('scale-100', 'opacity-100');
-        });
-    };
+    requestAnimationFrame(function () {
+        content.classList.remove('scale-95', 'opacity-0');
+        content.classList.add('scale-100', 'opacity-100');
+    });
+};
 
-    window.closeCancelModal = function () {
-        const modal = document.getElementById('cancelModal');
-        const content = document.getElementById('cancelModalContent');
+window.closeCancelModal = function () {
+    const modal = document.getElementById('cancelModal');
+    const content = document.getElementById('cancelModalContent');
 
-        if (!modal || !content) {
-            console.error('Cancel modal or cancel modal content not found.');
-            return;
-        }
+    if (!modal || !content) {
+        console.error('Cancel modal or cancel modal content not found.');
+        return;
+    }
 
-        content.classList.remove('scale-100', 'opacity-100');
-        content.classList.add('scale-95', 'opacity-0');
+    content.classList.remove('scale-100', 'opacity-100');
+    content.classList.add('scale-95', 'opacity-0');
 
-        setTimeout(() => {
-            modal.classList.remove('flex');
-            modal.classList.add('hidden');
-        }, 200);
-    };
+    setTimeout(function () {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+    }, 200);
+};
 
-    window.confirmCancel = function () {
-        window.history.back();
-    };
+window.confirmCancel = function () {
+    window.history.back();
+};
 
+document.addEventListener('DOMContentLoaded', function () {
 
-    // Wait until the page is loaded before attaching events
-    document.addEventListener('DOMContentLoaded', function () {
+    const modal = document.getElementById('cancelModal');
 
-        const modal = document.getElementById('cancelModal');
-
-        // Close when clicking outside the modal
-        if (modal) {
-            modal.addEventListener('click', function (event) {
-                if (event.target === modal) {
-                    window.closeCancelModal();
-                }
-            });
-        }
-
-        // Close with ESC key
-        document.addEventListener('keydown', function (event) {
-            if (event.key === 'Escape') {
+    if (modal) {
+        modal.addEventListener('click', function (event) {
+            if (event.target === modal) {
                 window.closeCancelModal();
             }
         });
+    }
 
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            window.closeCancelModal();
+        }
     });
+
+});
