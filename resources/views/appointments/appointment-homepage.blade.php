@@ -1959,23 +1959,28 @@
 
 </div>
 
+{{-- =========================================================
+     CANCEL APPOINTMENT MODAL
+     ========================================================= --}}
 
 <div
     id="cancelModal"
     class="fixed inset-0 z-[9999] hidden items-center justify-center
-           bg-black/50 dark:bg-black/70 backdrop-blur-sm px-4"
+           bg-black/50 dark:bg-black/70
+           backdrop-blur-sm px-4"
 >
     <div
         id="cancelModalContent"
-        class="w-full max-w-md rounded-2xl
+        class="w-full max-w-md
+               rounded-2xl
                bg-white dark:bg-[#251C22]
+               border border-gray-200 dark:border-gray-700
                shadow-2xl
-               border border-transparent dark:border-gray-700
                transform scale-95 opacity-0
                transition-all duration-200"
     >
 
-        <!-- Header -->
+        {{-- HEADER --}}
         <div
             class="flex items-center justify-between
                    border-b border-gray-100 dark:border-gray-700
@@ -1984,7 +1989,7 @@
 
             <div class="flex items-center gap-3">
 
-                <!-- Icon -->
+                {{-- Icon --}}
                 <div
                     class="flex h-11 w-11 items-center justify-center
                            rounded-full
@@ -1992,7 +1997,8 @@
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6 text-pink-600 dark:text-pink-400"
+                        class="h-6 w-6
+                               text-pink-600 dark:text-pink-400"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -2006,24 +2012,35 @@
                     </svg>
                 </div>
 
-                <!-- Title -->
-                <h3
-                    class="text-lg font-semibold
-                           text-gray-900 dark:text-white"
-                >
-                    Cancel Appointment
-                </h3>
+                <div>
+                    <h3
+                        class="text-lg font-semibold
+                               text-gray-900 dark:text-white"
+                    >
+                        Cancel Appointment
+                    </h3>
+
+                    <p
+                        class="mt-1 text-xs
+                               text-gray-500 dark:text-gray-400"
+                    >
+                        Cancellation request
+                    </p>
+                </div>
 
             </div>
 
-            <!-- Close button -->
+
+            {{-- CLOSE BUTTON --}}
             <button
                 type="button"
-                onclick="closeCancelModal()"
-                class="text-gray-400
-                       hover:text-gray-600
-                       dark:text-gray-500
-                       dark:hover:text-gray-300
+                id="closeCancelModal"
+                class="rounded-lg p-2
+                       text-gray-400
+                       hover:bg-gray-100
+                       hover:text-gray-700
+                       dark:hover:bg-[#30252B]
+                       dark:hover:text-gray-200
                        transition"
                 aria-label="Close modal"
             >
@@ -2046,35 +2063,42 @@
         </div>
 
 
-        <!-- Form -->
+        {{-- FORM --}}
         <form
             id="cancelAppointmentForm"
             method="POST"
+            action=""
         >
+
             @csrf
 
-            <!-- Body -->
+
+            {{-- BODY --}}
             <div class="px-6 py-6 space-y-5">
 
-                <!-- Description -->
+                {{-- DESCRIPTION --}}
                 <div>
+
                     <p
                         class="text-gray-700 dark:text-gray-200
                                leading-relaxed"
                     >
-                        Please tell us why you want to cancel your appointment.
+                        Please tell us why you want to cancel
+                        your appointment.
                     </p>
 
                     <p
                         class="mt-1 text-sm
                                text-gray-500 dark:text-gray-400"
                     >
-                        Your cancellation request will be reviewed by the clinic.
+                        Your cancellation request will be reviewed
+                        by the clinic.
                     </p>
+
                 </div>
 
 
-                <!-- Cancellation Reason -->
+                {{-- CANCELLATION REASON --}}
                 <div>
 
                     <label
@@ -2099,8 +2123,10 @@
                                text-gray-700 dark:text-gray-200
                                focus:border-pink-500
                                focus:ring-2 focus:ring-pink-500/20
-                               outline-none transition"
+                               outline-none
+                               transition"
                     >
+
                         <option value="">
                             Select a reason
                         </option>
@@ -2132,12 +2158,13 @@
                         <option value="Other">
                             Other
                         </option>
+
                     </select>
 
                 </div>
 
 
-                <!-- Additional Details -->
+                {{-- ADDITIONAL DETAILS --}}
                 <div>
 
                     <label
@@ -2146,6 +2173,7 @@
                                text-gray-700 dark:text-gray-200"
                     >
                         Additional details
+
                         <span
                             class="font-normal text-gray-400"
                         >
@@ -2169,12 +2197,14 @@
                                placeholder-gray-400
                                focus:border-pink-500
                                focus:ring-2 focus:ring-pink-500/20
-                               outline-none transition
+                               outline-none
+                               transition
                                resize-none"
                     ></textarea>
 
                     <div
-                        class="mt-1 text-xs text-gray-400"
+                        class="mt-1 text-xs
+                               text-gray-400"
                     >
                         Maximum 1000 characters.
                     </div>
@@ -2184,19 +2214,20 @@
             </div>
 
 
-            <!-- Footer -->
+            {{-- FOOTER --}}
             <div
                 class="flex justify-end gap-3
                        border-t border-gray-100 dark:border-gray-700
                        px-6 py-4"
             >
 
-                <!-- No, Keep It -->
+                {{-- KEEP APPOINTMENT --}}
                 <button
                     type="button"
-                    onclick="closeCancelModal()"
+                    id="cancelModalKeepButton"
                     class="rounded-lg
-                           border border-gray-300 dark:border-gray-600
+                           border border-gray-300
+                           dark:border-gray-600
                            bg-white dark:bg-[#30252B]
                            px-5 py-2.5
                            text-sm font-medium
@@ -2209,17 +2240,18 @@
                 </button>
 
 
-                <!-- Submit Cancellation -->
+                {{-- SUBMIT --}}
                 <button
                     type="submit"
                     class="rounded-lg
                            bg-pink-600
-                           px-5 py-2.5
-                           text-sm font-medium text-white
-                           transition
                            hover:bg-pink-700
                            dark:bg-pink-600
-                           dark:hover:bg-pink-500"
+                           dark:hover:bg-pink-500
+                           px-5 py-2.5
+                           text-sm font-medium
+                           text-white
+                           transition"
                 >
                     Submit Cancellation
                 </button>
@@ -2230,36 +2262,46 @@
 
     </div>
 </div>
-<!-- Cancellation Request Success Modal -->
+
+
+
+{{-- =========================================================
+     CANCELLATION REQUEST SUCCESS MODAL
+     ========================================================= --}}
+
 <div
     id="cancellationSuccessModal"
     class="fixed inset-0 z-[10000] hidden items-center justify-center
-           bg-black/50 dark:bg-black/70 backdrop-blur-sm px-4"
+           bg-black/50 dark:bg-black/70
+           backdrop-blur-sm px-4"
 >
     <div
         id="cancellationSuccessModalContent"
-        class="w-full max-w-md rounded-2xl
+        class="w-full max-w-md
+               rounded-2xl
                bg-white dark:bg-[#251C22]
+               border border-gray-200 dark:border-gray-700
                shadow-2xl
-               border border-transparent dark:border-gray-700
                transform scale-95 opacity-0
                transition-all duration-200"
     >
 
-        <!-- Header -->
-        <div
-            class="px-6 pt-7 pb-4 text-center"
-        >
+        {{-- HEADER --}}
+        <div class="px-6 pt-7 pb-4 text-center">
 
-            <!-- Success Icon -->
+            {{-- SUCCESS ICON --}}
             <div
-                class="mx-auto flex h-14 w-14 items-center justify-center
+                class="mx-auto flex h-14 w-14
+                       items-center justify-center
                        rounded-full
-                       bg-green-100 dark:bg-green-900/30"
+                       bg-green-100
+                       dark:bg-green-900/30"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="h-8 w-8 text-green-600 dark:text-green-400"
+                    class="h-8 w-8
+                           text-green-600
+                           dark:text-green-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -2273,6 +2315,7 @@
                 </svg>
             </div>
 
+
             <h3
                 class="mt-4 text-xl font-semibold
                        text-gray-900 dark:text-white"
@@ -2283,14 +2326,16 @@
         </div>
 
 
-        <!-- Body -->
+        {{-- BODY --}}
         <div class="px-6 pb-6 text-center">
 
             <p
-                class="text-gray-600 dark:text-gray-300
+                class="text-gray-600
+                       dark:text-gray-300
                        leading-relaxed"
             >
-                Your appointment cancellation has been sent successfully.
+                Your appointment cancellation has been sent
+                successfully.
             </p>
 
             <p
@@ -2298,16 +2343,17 @@
                        text-gray-500 dark:text-gray-400"
             >
                 Please wait while the clinic reviews your request.
-                Your appointment will remain pending cancellation
-                until the clinic makes a decision.
+                Your appointment will remain scheduled until the
+                clinic makes a decision.
             </p>
 
         </div>
 
 
-        <!-- Footer -->
+        {{-- FOOTER --}}
         <div
-            class="border-t border-gray-100 dark:border-gray-700
+            class="border-t border-gray-100
+                   dark:border-gray-700
                    px-6 py-4"
         >
 
@@ -2316,12 +2362,13 @@
                 id="closeCancellationSuccessModal"
                 class="w-full rounded-lg
                        bg-pink-600
-                       px-5 py-2.5
-                       text-sm font-medium text-white
-                       transition
                        hover:bg-pink-700
                        dark:bg-pink-600
-                       dark:hover:bg-pink-500"
+                       dark:hover:bg-pink-500
+                       px-5 py-2.5
+                       text-sm font-medium
+                       text-white
+                       transition"
             >
                 OK, Got It
             </button>
@@ -2330,22 +2377,19 @@
 
     </div>
 </div>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script>lucide.createIcons();</script>
-    <script src="{{ asset('js/appointment/appointment.js') }}"></script>
-    <script src="{{ asset('js/appointment/patient-theme.js') }}"></script>
 
-<script>
 
-</script>
+
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
     console.log('Cancellation modal script loaded.');
 
+
     /*
     |--------------------------------------------------------------------------
-    | Cancellation Modal
+    | CANCEL MODAL ELEMENTS
     |--------------------------------------------------------------------------
     */
 
@@ -2358,60 +2402,80 @@ document.addEventListener('DOMContentLoaded', function () {
     const cancelAppointmentForm =
         document.getElementById('cancelAppointmentForm');
 
+    const closeCancelButton =
+        document.getElementById('closeCancelModal');
+
+    const keepCancelButton =
+        document.getElementById('cancelModalKeepButton');
+
     const cancelButtons =
         document.querySelectorAll('.open-cancel-modal');
 
 
-    console.log('Cancel modal:', cancelModal);
-    console.log('Cancel buttons found:', cancelButtons.length);
+    console.log(
+        'Cancel buttons found:',
+        cancelButtons.length
+    );
 
 
     /*
     |--------------------------------------------------------------------------
-    | Open Cancellation Modal
+    | OPEN CANCEL MODAL
     |--------------------------------------------------------------------------
     */
 
     function openCancelModal(originalForm) {
 
-        console.log('Opening cancellation modal...');
-
         if (!cancelModal) {
-            console.error('ERROR: #cancelModal was not found.');
+            console.error(
+                'ERROR: #cancelModal not found.'
+            );
             return;
         }
 
         if (!cancelModalContent) {
-            console.error('ERROR: #cancelModalContent was not found.');
+            console.error(
+                'ERROR: #cancelModalContent not found.'
+            );
             return;
         }
 
         if (!cancelAppointmentForm) {
             console.error(
-                'ERROR: #cancelAppointmentForm was not found.'
+                'ERROR: #cancelAppointmentForm not found.'
             );
             return;
         }
 
 
         /*
-        | Copy the original appointment form action
+        | Get the correct appointment URL
         */
 
         if (originalForm) {
 
-            cancelAppointmentForm.action =
+            const action =
                 originalForm.getAttribute('action');
 
-            console.log(
-                'Cancellation action:',
-                cancelAppointmentForm.action
-            );
+            if (action) {
+
+                cancelAppointmentForm.setAttribute(
+                    'action',
+                    action
+                );
+
+                console.log(
+                    'Cancellation action:',
+                    action
+                );
+
+            }
+
         }
 
 
         /*
-        | Reset form
+        | Reset fields
         */
 
         cancelAppointmentForm.reset();
@@ -2422,13 +2486,16 @@ document.addEventListener('DOMContentLoaded', function () {
         */
 
         cancelModal.classList.remove('hidden');
+
         cancelModal.classList.add('flex');
 
-        document.body.classList.add('overflow-hidden');
+        document.body.classList.add(
+            'overflow-hidden'
+        );
 
 
         /*
-        | Animate modal
+        | Animate
         */
 
         requestAnimationFrame(function () {
@@ -2450,15 +2517,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Close Cancellation Modal
+    | CLOSE CANCEL MODAL
     |--------------------------------------------------------------------------
     */
 
-    window.closeCancelModal = function () {
+    function closeCancelModal() {
 
-        if (!cancelModal || !cancelModalContent) {
+        if (
+            !cancelModal ||
+            !cancelModalContent
+        ) {
             return;
         }
+
 
         cancelModalContent.classList.remove(
             'scale-100',
@@ -2474,6 +2545,7 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(function () {
 
             cancelModal.classList.remove('flex');
+
             cancelModal.classList.add('hidden');
 
             document.body.classList.remove(
@@ -2482,47 +2554,99 @@ document.addEventListener('DOMContentLoaded', function () {
 
         }, 200);
 
-    };
+    }
 
 
     /*
     |--------------------------------------------------------------------------
-    | Cancel Buttons
+    | MAKE FUNCTION AVAILABLE TO HTML
+    |--------------------------------------------------------------------------
+    */
+
+    window.closeCancelModal =
+        closeCancelModal;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CANCEL BUTTONS
     |--------------------------------------------------------------------------
     */
 
     cancelButtons.forEach(function (button) {
 
-        button.addEventListener('click', function (event) {
+        button.addEventListener(
+            'click',
+            function (event) {
 
-            event.preventDefault();
+                event.preventDefault();
 
-            console.log('CANCEL BUTTON CLICKED');
-
-            const originalForm =
-                button.closest('.cancel-appointment-form');
-
-
-            if (!originalForm) {
-
-                console.error(
-                    'ERROR: .cancel-appointment-form not found.'
+                console.log(
+                    'CANCEL BUTTON CLICKED'
                 );
 
-                return;
+
+                const originalForm =
+                    button.closest(
+                        '.cancel-appointment-form'
+                    );
+
+
+                if (!originalForm) {
+
+                    console.error(
+                        'ERROR: .cancel-appointment-form not found.'
+                    );
+
+                    return;
+                }
+
+
+                openCancelModal(
+                    originalForm
+                );
+
             }
-
-
-            openCancelModal(originalForm);
-
-        });
+        );
 
     });
 
 
     /*
     |--------------------------------------------------------------------------
-    | Click Outside Cancellation Modal
+    | CLOSE BUTTON
+    |--------------------------------------------------------------------------
+    */
+
+    if (closeCancelButton) {
+
+        closeCancelButton.addEventListener(
+            'click',
+            closeCancelModal
+        );
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | KEEP APPOINTMENT BUTTON
+    |--------------------------------------------------------------------------
+    */
+
+    if (keepCancelButton) {
+
+        keepCancelButton.addEventListener(
+            'click',
+            closeCancelModal
+        );
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CLICK OUTSIDE CANCEL MODAL
     |--------------------------------------------------------------------------
     */
 
@@ -2532,9 +2656,11 @@ document.addEventListener('DOMContentLoaded', function () {
             'click',
             function (event) {
 
-                if (event.target === cancelModal) {
+                if (
+                    event.target === cancelModal
+                ) {
 
-                    window.closeCancelModal();
+                    closeCancelModal();
 
                 }
 
@@ -2546,31 +2672,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Escape Key
-    |--------------------------------------------------------------------------
-    */
-
-    document.addEventListener(
-        'keydown',
-        function (event) {
-
-            if (
-                event.key === 'Escape' &&
-                cancelModal &&
-                !cancelModal.classList.contains('hidden')
-            ) {
-
-                window.closeCancelModal();
-
-            }
-
-        }
-    );
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Cancellation Success Modal
+    | SUCCESS MODAL
     |--------------------------------------------------------------------------
     */
 
@@ -2592,20 +2694,35 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Open Success Modal
+    | OPEN SUCCESS MODAL
     |--------------------------------------------------------------------------
     */
 
     function openCancellationSuccessModal() {
 
-        if (!successModal || !successContent) {
+        if (
+            !successModal ||
+            !successContent
+        ) {
+            console.error(
+                'ERROR: Success modal elements not found.'
+            );
+
             return;
         }
 
-        successModal.classList.remove('hidden');
-        successModal.classList.add('flex');
 
-        document.body.classList.add('overflow-hidden');
+        successModal.classList.remove(
+            'hidden'
+        );
+
+        successModal.classList.add(
+            'flex'
+        );
+
+        document.body.classList.add(
+            'overflow-hidden'
+        );
 
 
         requestAnimationFrame(function () {
@@ -2627,15 +2744,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Close Success Modal
+    | CLOSE SUCCESS MODAL
     |--------------------------------------------------------------------------
     */
 
     function closeCancellationSuccessModal() {
 
-        if (!successModal || !successContent) {
+        if (
+            !successModal ||
+            !successContent
+        ) {
             return;
         }
+
 
         successContent.classList.remove(
             'scale-100',
@@ -2650,8 +2771,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         setTimeout(function () {
 
-            successModal.classList.remove('flex');
-            successModal.classList.add('hidden');
+            successModal.classList.remove(
+                'flex'
+            );
+
+            successModal.classList.add(
+                'hidden'
+            );
 
             document.body.classList.remove(
                 'overflow-hidden'
@@ -2664,7 +2790,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Success Close Button
+    | SUCCESS CLOSE BUTTON
     |--------------------------------------------------------------------------
     */
 
@@ -2680,7 +2806,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Click Outside Success Modal
+    | CLICK OUTSIDE SUCCESS MODAL
     |--------------------------------------------------------------------------
     */
 
@@ -2690,7 +2816,9 @@ document.addEventListener('DOMContentLoaded', function () {
             'click',
             function (event) {
 
-                if (event.target === successModal) {
+                if (
+                    event.target === successModal
+                ) {
 
                     closeCancellationSuccessModal();
 
@@ -2704,7 +2832,49 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Laravel Success
+    | ESCAPE KEY
+    |--------------------------------------------------------------------------
+    */
+
+    document.addEventListener(
+        'keydown',
+        function (event) {
+
+            if (event.key !== 'Escape') {
+                return;
+            }
+
+
+            if (
+                cancelModal &&
+                !cancelModal.classList.contains(
+                    'hidden'
+                )
+            ) {
+
+                closeCancelModal();
+
+            }
+
+
+            if (
+                successModal &&
+                !successModal.classList.contains(
+                    'hidden'
+                )
+            ) {
+
+                closeCancellationSuccessModal();
+
+            }
+
+        }
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | LARAVEL CANCELLATION SUCCESS
     |--------------------------------------------------------------------------
     */
 
@@ -2715,6 +2885,16 @@ document.addEventListener('DOMContentLoaded', function () {
     @endif
 
 });
+</script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>lucide.createIcons();</script>
+    <script src="{{ asset('js/appointment/appointment.js') }}"></script>
+    <script src="{{ asset('js/appointment/patient-theme.js') }}"></script>
+
+<script>
+
+</script>
+
 </script>
 </body>
 </html>
