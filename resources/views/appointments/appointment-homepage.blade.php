@@ -2885,75 +2885,87 @@ document.addEventListener('DOMContentLoaded', function () {
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-    const successModal = document.getElementById('cancellationSuccessModal');
-    const successContent = document.getElementById('cancellationSuccessModalContent');
-    const closeButton = document.getElementById('closeCancellationSuccessModal');
+    const modal = document.getElementById('cancellationSuccessModal');
+    const content = document.getElementById('cancellationSuccessModalContent');
+    const closeBtn = document.getElementById('closeCancellationSuccessModal');
 
-    if (!successModal || !successContent) {
-        console.error('Cancellation success modal elements not found.');
+    console.log('SUCCESS MODAL TEST');
+    console.log('Modal:', modal);
+    console.log('Content:', content);
+    console.log('Close button:', closeBtn);
+
+    if (!modal) {
+        console.error('❌ cancellationSuccessModal NOT FOUND');
         return;
     }
 
-    function openSuccessModal() {
-        successModal.classList.remove('hidden');
-        successModal.classList.add('flex');
-
-        document.body.classList.add('overflow-hidden');
-
-        // Start animation
-        requestAnimationFrame(() => {
-            successContent.classList.remove('scale-95', 'opacity-0');
-            successContent.classList.add('scale-100', 'opacity-100');
-        });
-
-        console.log('Cancellation success modal opened.');
+    if (!content) {
+        console.error('❌ cancellationSuccessModalContent NOT FOUND');
+        return;
     }
 
-    function closeSuccessModal() {
-        successContent.classList.remove('scale-100', 'opacity-100');
-        successContent.classList.add('scale-95', 'opacity-0');
+    // FORCE OPEN FOR TESTING
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
 
-        setTimeout(() => {
-            successModal.classList.remove('flex');
-            successModal.classList.add('hidden');
+    document.body.classList.add('overflow-hidden');
 
-            document.body.classList.remove('overflow-hidden');
-        }, 200);
-    }
+    requestAnimationFrame(function () {
 
-    // Done button
-    if (closeButton) {
-        closeButton.addEventListener('click', function () {
-            closeSuccessModal();
-        });
-    }
+        content.classList.remove(
+            'scale-95',
+            'opacity-0'
+        );
 
-    // Click outside modal
-    successModal.addEventListener('click', function (event) {
-        if (event.target === successModal) {
-            closeSuccessModal();
-        }
+        content.classList.add(
+            'scale-100',
+            'opacity-100'
+        );
+
     });
 
-    // ESC key
-    document.addEventListener('keydown', function (event) {
-        if (
-            event.key === 'Escape' &&
-            !successModal.classList.contains('hidden')
-        ) {
-            closeSuccessModal();
+    console.log('✅ SUCCESS MODAL SHOULD NOW BE VISIBLE');
+
+
+    // CLOSE BUTTON
+    if (closeBtn) {
+
+        closeBtn.addEventListener('click', function () {
+
+            content.classList.remove(
+                'scale-100',
+                'opacity-100'
+            );
+
+            content.classList.add(
+                'scale-95',
+                'opacity-0'
+            );
+
+            setTimeout(function () {
+
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+
+                document.body.classList.remove(
+                    'overflow-hidden'
+                );
+
+            }, 200);
+
+        });
+
+    }
+
+
+    // CLICK OUTSIDE
+    modal.addEventListener('click', function (event) {
+
+        if (event.target === modal && closeBtn) {
+            closeBtn.click();
         }
+
     });
-
-    /*
-    |--------------------------------------------------------------------------
-    | OPEN AFTER SUCCESSFUL CANCELLATION
-    |--------------------------------------------------------------------------
-    */
-
-    @if(session('cancellation_success'))
-        openSuccessModal();
-    @endif
 
 });
 </script>
