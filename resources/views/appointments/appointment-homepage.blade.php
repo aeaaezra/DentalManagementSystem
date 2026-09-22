@@ -1438,17 +1438,17 @@
                     >
                         @csrf
 
-<button
-    type="button"
-    class="open-cancel-modal px-4 py-2 rounded-lg font-medium
-        bg-pink-500 text-white
-        hover:bg-pink-600
-        dark:bg-pink-600
-        dark:hover:bg-pink-500
-        transition duration-200"
->
-    Cancel
-</button>
+                        <button
+                            type="button"
+                            class="open-cancel-modal px-4 py-2 rounded-lg font-medium
+                                bg-pink-500 text-white
+                                hover:bg-pink-600
+                                dark:bg-pink-600
+                                dark:hover:bg-pink-500
+                                transition duration-200"
+                        >
+                            Cancel
+                        </button>
                     </form>
 
 
@@ -2130,6 +2130,54 @@
     <script src="{{ asset('js/appointment/appointment.js') }}"></script>
     <script src="{{ asset('js/appointment/patient-theme.js') }}"></script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
+    console.log('Cancel modal script loaded');
+
+    const modal = document.getElementById('cancelModal');
+    const content = document.getElementById('cancelModalContent');
+
+    if (!modal) {
+        console.error('ERROR: #cancelModal was not found.');
+        return;
+    }
+
+    if (!content) {
+        console.error('ERROR: #cancelModalContent was not found.');
+        return;
+    }
+
+    document.querySelectorAll('.open-cancel-modal').forEach(function (button) {
+
+        button.addEventListener('click', function () {
+
+            console.log('Cancel button clicked');
+
+            window.selectedCancelForm = this.closest('form');
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            requestAnimationFrame(function () {
+
+                content.classList.remove(
+                    'scale-95',
+                    'opacity-0'
+                );
+
+                content.classList.add(
+                    'scale-100',
+                    'opacity-100'
+                );
+
+            });
+
+        });
+
+    });
+
+});
+</script>
 </body>
 </html>
