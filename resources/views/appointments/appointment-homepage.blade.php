@@ -1426,25 +1426,25 @@
                                 )
                             )
 
-                    <form
-                        action="{{ route('appointments.cancel', $appointment->id) }}"
-                        method="POST"
-                        class="inline cancel-appointment-form"
-                    >
-                        @csrf
-
-                        <button
-                            type="button"
-                            class="open-cancel-modal px-4 py-2 rounded-lg font-medium
-                                bg-pink-500 text-white
-                                hover:bg-pink-600
-                                dark:bg-pink-600
-                                dark:hover:bg-pink-500
-                                transition duration-200"
+                        <form
+                            action="{{ route('appointments.cancel', $appointment->id) }}"
+                            method="POST"
+                            class="inline cancel-appointment-form"
                         >
-                            Cancel
-                        </button>
-                    </form>
+                            @csrf
+
+                            <button
+                                type="button"
+                                class="open-cancel-modal px-4 py-2 rounded-lg font-medium
+                                    bg-pink-500 text-white
+                                    hover:bg-pink-600
+                                    dark:bg-pink-600
+                                    dark:hover:bg-pink-500
+                                    transition duration-200"
+                            >
+                                Cancel
+                            </button>
+                        </form>
 
                             @else
 
@@ -1607,9 +1607,6 @@
                         @endforeach
 
                     </div>
-
-
-                    {{-- NEXT --}}
 
                     <div>
 
