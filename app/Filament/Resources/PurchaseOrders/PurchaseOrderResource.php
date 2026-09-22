@@ -23,7 +23,7 @@ class PurchaseOrderResource extends Resource
 {
     protected static ?string $model = PurchaseOrder::class;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-S-document-arrow-down';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-document-arrow-down';
     protected static string|UnitEnum|null $navigationGroup = 'Ordering';
     protected static ?string $navigationLabel = 'Purchase Orders';
     protected static ?string $recordTitleAttribute = 'po_number';
