@@ -7211,15 +7211,157 @@ body.report-modal-open {
         flex-basis: 20px !important;
     }
 }
-button[onclick="openCancelModal()"] {
-    background-color: #E91E63 !important;
-    color: #ffffff !important;
-    border: none !important;
-    opacity: 1 !important;
-    box-shadow: none !important;
+/* =========================================================
+   CANCEL APPOINTMENT MODAL
+   ========================================================= */
+
+#cancelModal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    padding: 1rem;
+
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
 }
 
-button[onclick="openCancelModal()"]:hover {
-    background-color: #C2185B !important;
-    color: #ffffff !important;
+#cancelModal.flex {
+    display: flex;
+}
+
+#cancelModalContent {
+    width: 100%;
+    max-width: 28rem;
+
+    background: #ffffff;
+
+    border-radius: 1rem;
+
+    box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+    border: 1px solid transparent;
+
+    transform: scale(0.95);
+    opacity: 0;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+
+    overflow: hidden;
+}
+
+#cancelModalContent.scale-100 {
+    transform: scale(1);
+}
+
+#cancelModalContent.opacity-100 {
+    opacity: 1;
+}
+
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+.dark #cancelModal {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.dark #cancelModalContent {
+    background: #251C22;
+    border-color: #374151;
+}
+
+
+/* =========================================================
+   SUCCESS MODAL
+   ========================================================= */
+
+#cancellationSuccessModal {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    padding: 1rem;
+
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+#cancellationSuccessModal.flex {
+    display: flex;
+}
+
+#cancellationSuccessModalContent {
+    width: 100%;
+    max-width: 28rem;
+
+    background: #ffffff;
+
+    border-radius: 1rem;
+
+    box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+    transform: scale(0.95);
+    opacity: 0;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+
+    overflow: hidden;
+}
+
+#cancellationSuccessModalContent.scale-100 {
+    transform: scale(1);
+}
+
+#cancellationSuccessModalContent.opacity-100 {
+    opacity: 1;
+}
+
+
+/* =========================================================
+   DARK MODE - SUCCESS MODAL
+   ========================================================= */
+
+.dark #cancellationSuccessModal {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.dark #cancellationSuccessModalContent {
+    background: #251C22;
+    border: 1px solid #374151;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+    #cancelModal,
+    #cancellationSuccessModal {
+        padding: 0.75rem;
+    }
+
+    #cancelModalContent,
+    #cancellationSuccessModalContent {
+        max-width: 100%;
+        border-radius: 1rem;
+    }
+
 }

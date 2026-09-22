@@ -1323,32 +1323,228 @@ window.addEventListener(
     }
 );
 
-
 document.addEventListener('DOMContentLoaded', function () {
 
-    const successModal =
-        document.getElementById('cancellationSuccessModal');
+    /*
+    |--------------------------------------------------------------------------
+    | CANCEL APPOINTMENT MODAL
+    |--------------------------------------------------------------------------
+    */
 
-    const successContent =
-        document.getElementById('cancellationSuccessModalContent');
+    const cancelModal =
+        document.getElementById('cancelModal');
 
-    const closeSuccessButton =
-        document.getElementById('closeCancellationSuccessModal');
+    const cancelModalContent =
+        document.getElementById('cancelModalContent');
+
+    const cancelForm =
+        document.getElementById('cancelAppointmentForm');
+
+    const closeCancelButton =
+        document.getElementById('closeCancelModal');
+
+    const keepCancelButton =
+        document.getElementById('cancelModalKeepButton');
 
 
     /*
     |--------------------------------------------------------------------------
-    | Check Required Elements
+    | Open Cancellation Modal
     |--------------------------------------------------------------------------
     */
 
-    if (
-        !successModal ||
-        !successContent ||
-        !closeSuccessButton
-    ) {
-        return;
+    function openCancelModal(originalForm) {
+
+        if (!cancelModal || !cancelModalContent || !cancelForm) {
+            console.error('Cancellation modal elements are missing.');
+            return;
+        }
+
+        /*
+        | Copy the appointment cancellation URL
+        */
+
+        if (originalForm) {
+            cancelForm.action = originalForm.action;
+        }
+
+        /*
+        | Reset the form
+        */
+
+        cancelForm.reset();
+
+        /*
+        | Show modal
+        */
+
+        cancelModal.classList.remove('hidden');
+        cancelModal.classList.add('flex');
+
+        document.body.classList.add('overflow-hidden');
+
+        /*
+        | Animation
+        */
+
+        requestAnimationFrame(function () {
+
+            cancelModalContent.classList.remove(
+                'scale-95',
+                'opacity-0'
+            );
+
+            cancelModalContent.classList.add(
+                'scale-100',
+                'opacity-100'
+            );
+
+        });
     }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Close Cancellation Modal
+    |--------------------------------------------------------------------------
+    */
+
+    function closeCancelModal() {
+
+        if (!cancelModal || !cancelModalContent) {
+            return;
+        }
+
+        cancelModalContent.classList.remove(
+            'scale-100',
+            'opacity-100'
+        );
+
+        cancelModalContent.classList.add(
+            'scale-95',
+            'opacity-0'
+        );
+
+        setTimeout(function () {
+
+            cancelModal.classList.remove('flex');
+            cancelModal.classList.add('hidden');
+
+            document.body.classList.remove('overflow-hidden');
+
+        }, 200);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cancel Buttons
+    |--------------------------------------------------------------------------
+    */
+
+    document
+        .querySelectorAll('.open-cancel-modal')
+        .forEach(function (button) {
+
+            button.addEventListener('click', function (event) {
+
+                event.preventDefault();
+
+                console.log('Cancel button clicked.');
+
+                const originalForm =
+                    button.closest('.cancel-appointment-form');
+
+                if (!originalForm) {
+
+                    console.error(
+                        'Could not find .cancel-appointment-form'
+                    );
+
+                    return;
+                }
+
+                openCancelModal(originalForm);
+
+            });
+
+        });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Close Button
+    |--------------------------------------------------------------------------
+    */
+
+    if (closeCancelButton) {
+
+        closeCancelButton.addEventListener(
+            'click',
+            closeCancelModal
+        );
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Keep Appointment Button
+    |--------------------------------------------------------------------------
+    */
+
+    if (keepCancelButton) {
+
+        keepCancelButton.addEventListener(
+            'click',
+            closeCancelModal
+        );
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Click Outside Cancellation Modal
+    |--------------------------------------------------------------------------
+    */
+
+    if (cancelModal) {
+
+        cancelModal.addEventListener(
+            'click',
+            function (event) {
+
+                if (event.target === cancelModal) {
+                    closeCancelModal();
+                }
+
+            }
+        );
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SUCCESS MODAL
+    |--------------------------------------------------------------------------
+    */
+
+    const successModal =
+        document.getElementById(
+            'cancellationSuccessModal'
+        );
+
+    const successContent =
+        document.getElementById(
+            'cancellationSuccessModalContent'
+        );
+
+    const closeSuccessButton =
+        document.getElementById(
+            'closeCancellationSuccessModal'
+        );
 
 
     /*
@@ -1359,9 +1555,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function openCancellationSuccessModal() {
 
+        if (
+            !successModal ||
+            !successContent
+        ) {
+            console.error(
+                'Cancellation success modal elements are missing.'
+            );
+
+            return;
+        }
+
         successModal.classList.remove('hidden');
 
         successModal.classList.add('flex');
+
+        document.body.classList.add('overflow-hidden');
 
         requestAnimationFrame(function () {
 
@@ -1387,6 +1596,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function closeCancellationSuccessModal() {
 
+        if (
+            !successModal ||
+            !successContent
+        ) {
+            return;
+        }
+
         successContent.classList.remove(
             'scale-100',
             'opacity-100'
@@ -1403,37 +1619,48 @@ document.addEventListener('DOMContentLoaded', function () {
 
             successModal.classList.add('hidden');
 
+            document.body.classList.remove('overflow-hidden');
+
         }, 200);
     }
 
 
     /*
     |--------------------------------------------------------------------------
-    | Close Button
+    | Success Modal Close Button
     |--------------------------------------------------------------------------
     */
 
-    closeSuccessButton.addEventListener(
-        'click',
-        closeCancellationSuccessModal
-    );
+    if (closeSuccessButton) {
+
+        closeSuccessButton.addEventListener(
+            'click',
+            closeCancellationSuccessModal
+        );
+
+    }
 
 
     /*
     |--------------------------------------------------------------------------
-    | Click Outside Modal
+    | Click Outside Success Modal
     |--------------------------------------------------------------------------
     */
 
-    successModal.addEventListener('click', function (event) {
+    if (successModal) {
 
-        if (event.target === successModal) {
+        successModal.addEventListener(
+            'click',
+            function (event) {
 
-            closeCancellationSuccessModal();
+                if (event.target === successModal) {
+                    closeCancellationSuccessModal();
+                }
 
-        }
+            }
+        );
 
-    });
+    }
 
 
     /*
@@ -1442,18 +1669,34 @@ document.addEventListener('DOMContentLoaded', function () {
     |--------------------------------------------------------------------------
     */
 
-    document.addEventListener('keydown', function (event) {
+    document.addEventListener(
+        'keydown',
+        function (event) {
 
-        if (
-            event.key === 'Escape' &&
-            !successModal.classList.contains('hidden')
-        ) {
+            if (event.key !== 'Escape') {
+                return;
+            }
 
-            closeCancellationSuccessModal();
+            if (
+                cancelModal &&
+                !cancelModal.classList.contains('hidden')
+            ) {
+
+                closeCancelModal();
+
+            }
+
+            if (
+                successModal &&
+                !successModal.classList.contains('hidden')
+            ) {
+
+                closeCancellationSuccessModal();
+
+            }
 
         }
-
-    });
+    );
 
 
     /*
@@ -1469,4 +1712,3 @@ document.addEventListener('DOMContentLoaded', function () {
     @endif
 
 });
-
