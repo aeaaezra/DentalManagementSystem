@@ -7211,3 +7211,15 @@ body.report-modal-open {
         flex-basis: 20px !important;
     }
 }
+button[onclick="openCancelModal()"] {
+    background-color: #E91E63 !important;
+    color: #ffffff !important;
+    border: none !important;
+    opacity: 1 !important;
+    box-shadow: none !important;
+}
+
+button[onclick="openCancelModal()"]:hover {
+    background-color: #C2185B !important;
+    color: #ffffff !important;
+}

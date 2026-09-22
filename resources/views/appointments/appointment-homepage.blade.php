@@ -1450,13 +1450,13 @@
                                     @csrf
 
 
-                                    <button
-                                        type="button"
-                                        onclick="openCancelModal()"
-                                        class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition"
-                                    >
-                                        Cancel
-                                    </button>
+                        <button
+                            type="button"
+                            onclick="openCancelModal()"
+                            class="px-4 py-2 rounded-lg bg-pink-500 text-white font-medium hover:bg-pink-600 transition duration-200"
+                        >
+                            Cancel
+                        </button>
 
                                 </form>
 
