@@ -1400,8 +1400,6 @@
                                 </span>
 
 
-                            {{-- UNKNOWN --}}
-
                             @else
 
                                 <span class="text-gray-400 text-xs">
@@ -1417,9 +1415,6 @@
 
 
                         <td class="py-5 text-right">
-
-
-                            {{-- CANCEL --}}
 
                             @if(
                                 in_array(
@@ -1451,9 +1446,6 @@
                         </button>
                     </form>
 
-
-                            {{-- NO ACTION --}}
-
                             @else
 
                                 <span class="text-xs text-gray-300">
@@ -1470,11 +1462,6 @@
 
 
                 @empty
-
-
-                    {{-- =================================================
-                        NO APPOINTMENTS
-                    ================================================== --}}
 
                     <tr>
 
@@ -1974,7 +1961,7 @@
     </div>
 
 </div>
-<!-- Cancel Confirmation Modal -->
+<!-- Cancel Appointment Modal -->
 <div
     id="cancelModal"
     class="fixed inset-0 z-[9999] hidden items-center justify-center
@@ -1996,6 +1983,7 @@
                    border-b border-gray-100 dark:border-gray-700
                    px-6 py-5"
         >
+
             <div class="flex items-center gap-3">
 
                 <!-- Icon -->
@@ -2025,7 +2013,7 @@
                     class="text-lg font-semibold
                            text-gray-900 dark:text-white"
                 >
-                    Cancel Action
+                    Cancel Appointment
                 </h3>
 
             </div>
@@ -2060,21 +2048,260 @@
         </div>
 
 
+        <!-- Form -->
+        <form
+            id="cancelAppointmentForm"
+            method="POST"
+        >
+            @csrf
+
+            <!-- Body -->
+            <div class="px-6 py-6 space-y-5">
+
+                <!-- Description -->
+                <div>
+                    <p
+                        class="text-gray-700 dark:text-gray-200
+                               leading-relaxed"
+                    >
+                        Please tell us why you want to cancel your appointment.
+                    </p>
+
+                    <p
+                        class="mt-1 text-sm
+                               text-gray-500 dark:text-gray-400"
+                    >
+                        Your cancellation request will be reviewed by the clinic.
+                    </p>
+                </div>
+
+
+                <!-- Cancellation Reason -->
+                <div>
+
+                    <label
+                        for="cancellation_reason"
+                        class="block mb-2 text-sm font-medium
+                               text-gray-700 dark:text-gray-200"
+                    >
+                        Reason for cancellation
+                        <span class="text-pink-600">*</span>
+                    </label>
+
+                    <select
+                        id="cancellation_reason"
+                        name="cancellation_reason"
+                        required
+                        class="w-full rounded-lg
+                               border border-gray-300
+                               dark:border-gray-600
+                               bg-white dark:bg-[#30252B]
+                               px-4 py-2.5
+                               text-sm
+                               text-gray-700 dark:text-gray-200
+                               focus:border-pink-500
+                               focus:ring-2 focus:ring-pink-500/20
+                               outline-none transition"
+                    >
+                        <option value="">
+                            Select a reason
+                        </option>
+
+                        <option value="Schedule conflict">
+                            Schedule conflict
+                        </option>
+
+                        <option value="Feeling unwell">
+                            Feeling unwell
+                        </option>
+
+                        <option value="Financial reasons">
+                            Financial reasons
+                        </option>
+
+                        <option value="Transportation problem">
+                            Transportation problem
+                        </option>
+
+                        <option value="Personal or family matter">
+                            Personal or family matter
+                        </option>
+
+                        <option value="Emergency">
+                            Emergency
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+                    </select>
+
+                </div>
+
+
+                <!-- Additional Details -->
+                <div>
+
+                    <label
+                        for="cancellation_details"
+                        class="block mb-2 text-sm font-medium
+                               text-gray-700 dark:text-gray-200"
+                    >
+                        Additional details
+                        <span
+                            class="font-normal text-gray-400"
+                        >
+                            (Optional)
+                        </span>
+                    </label>
+
+                    <textarea
+                        id="cancellation_details"
+                        name="cancellation_details"
+                        rows="4"
+                        maxlength="1000"
+                        placeholder="Please provide additional details..."
+                        class="w-full rounded-lg
+                               border border-gray-300
+                               dark:border-gray-600
+                               bg-white dark:bg-[#30252B]
+                               px-4 py-3
+                               text-sm
+                               text-gray-700 dark:text-gray-200
+                               placeholder-gray-400
+                               focus:border-pink-500
+                               focus:ring-2 focus:ring-pink-500/20
+                               outline-none transition
+                               resize-none"
+                    ></textarea>
+
+                    <div
+                        class="mt-1 text-xs text-gray-400"
+                    >
+                        Maximum 1000 characters.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Footer -->
+            <div
+                class="flex justify-end gap-3
+                       border-t border-gray-100 dark:border-gray-700
+                       px-6 py-4"
+            >
+
+                <!-- No, Keep It -->
+                <button
+                    type="button"
+                    onclick="closeCancelModal()"
+                    class="rounded-lg
+                           border border-gray-300 dark:border-gray-600
+                           bg-white dark:bg-[#30252B]
+                           px-5 py-2.5
+                           text-sm font-medium
+                           text-gray-700 dark:text-gray-200
+                           transition
+                           hover:bg-gray-50
+                           dark:hover:bg-[#3A2D34]"
+                >
+                    No, Keep It
+                </button>
+
+
+                <!-- Submit Cancellation -->
+                <button
+                    type="submit"
+                    class="rounded-lg
+                           bg-pink-600
+                           px-5 py-2.5
+                           text-sm font-medium text-white
+                           transition
+                           hover:bg-pink-700
+                           dark:bg-pink-600
+                           dark:hover:bg-pink-500"
+                >
+                    Submit Cancellation
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+<!-- Cancellation Request Success Modal -->
+<div
+    id="cancellationSuccessModal"
+    class="fixed inset-0 z-[10000] hidden items-center justify-center
+           bg-black/50 dark:bg-black/70 backdrop-blur-sm px-4"
+>
+    <div
+        id="cancellationSuccessModalContent"
+        class="w-full max-w-md rounded-2xl
+               bg-white dark:bg-[#251C22]
+               shadow-2xl
+               border border-transparent dark:border-gray-700
+               transform scale-95 opacity-0
+               transition-all duration-200"
+    >
+
+        <!-- Header -->
+        <div
+            class="px-6 pt-7 pb-4 text-center"
+        >
+
+            <!-- Success Icon -->
+            <div
+                class="mx-auto flex h-14 w-14 items-center justify-center
+                       rounded-full
+                       bg-green-100 dark:bg-green-900/30"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-8 w-8 text-green-600 dark:text-green-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M5 13l4 4L19 7"
+                    />
+                </svg>
+            </div>
+
+            <h3
+                class="mt-4 text-xl font-semibold
+                       text-gray-900 dark:text-white"
+            >
+                Cancellation Request Sent
+            </h3>
+
+        </div>
+
+
         <!-- Body -->
-        <div class="px-6 py-6">
+        <div class="px-6 pb-6 text-center">
 
             <p
                 class="text-gray-600 dark:text-gray-300
                        leading-relaxed"
             >
-                Are you sure you want to cancel?
+                Your appointment cancellation has been sent successfully.
             </p>
 
             <p
                 class="mt-2 text-sm
                        text-gray-500 dark:text-gray-400"
             >
-                Any unsaved changes may be lost.
+                Please wait while the clinic reviews your request.
+                Your appointment will remain pending cancellation
+                until the clinic makes a decision.
             </p>
 
         </div>
@@ -2082,44 +2309,24 @@
 
         <!-- Footer -->
         <div
-            class="flex justify-end gap-3
-                   border-t border-gray-100 dark:border-gray-700
+            class="border-t border-gray-100 dark:border-gray-700
                    px-6 py-4"
         >
 
-            <!-- No, Keep It -->
             <button
                 type="button"
-                onclick="window.closeCancelModal()"
-                class="rounded-lg
-                    border border-gray-300 dark:border-gray-600
-                    bg-white dark:bg-[#30252B]
-                    px-5 py-2.5
-                    text-sm font-medium
-                    text-gray-700 dark:text-gray-200
-                    transition
-                    hover:bg-gray-50
-                    dark:hover:bg-[#3A2D34]"
+                id="closeCancellationSuccessModal"
+                class="w-full rounded-lg
+                       bg-pink-600
+                       px-5 py-2.5
+                       text-sm font-medium text-white
+                       transition
+                       hover:bg-pink-700
+                       dark:bg-pink-600
+                       dark:hover:bg-pink-500"
             >
-                No, Keep It
+                OK, Got It
             </button>
-
-
-            <!-- Yes, Cancel -->
-        <button
-            type="button"
-            onclick="window.confirmCancel()"
-            class="rounded-lg
-                bg-pink-600
-                px-5 py-2.5
-                text-sm font-medium text-white
-                transition
-                hover:bg-pink-700
-                dark:bg-pink-600
-                dark:hover:bg-pink-500"
-        >
-            Yes, Cancel
-        </button>
 
         </div>
 
@@ -2131,53 +2338,7 @@
     <script src="{{ asset('js/appointment/patient-theme.js') }}"></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
 
-    console.log('Cancel modal script loaded');
-
-    const modal = document.getElementById('cancelModal');
-    const content = document.getElementById('cancelModalContent');
-
-    if (!modal) {
-        console.error('ERROR: #cancelModal was not found.');
-        return;
-    }
-
-    if (!content) {
-        console.error('ERROR: #cancelModalContent was not found.');
-        return;
-    }
-
-    document.querySelectorAll('.open-cancel-modal').forEach(function (button) {
-
-        button.addEventListener('click', function () {
-
-            console.log('Cancel button clicked');
-
-            window.selectedCancelForm = this.closest('form');
-
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-
-            requestAnimationFrame(function () {
-
-                content.classList.remove(
-                    'scale-95',
-                    'opacity-0'
-                );
-
-                content.classList.add(
-                    'scale-100',
-                    'opacity-100'
-                );
-
-            });
-
-        });
-
-    });
-
-});
 </script>
 </body>
 </html>

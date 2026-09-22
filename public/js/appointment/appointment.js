@@ -1388,3 +1388,147 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 });
+
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    const successModal =
+        document.getElementById('cancellationSuccessModal');
+
+    const successContent =
+        document.getElementById('cancellationSuccessModalContent');
+
+    const closeSuccessButton =
+        document.getElementById('closeCancellationSuccessModal');
+
+
+    if (
+        !successModal ||
+        !successContent ||
+        !closeSuccessButton
+    ) {
+        return;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Open Success Modal
+    |--------------------------------------------------------------------------
+    */
+
+    function openCancellationSuccessModal() {
+
+        successModal.classList.remove('hidden');
+        successModal.classList.add('flex');
+
+        requestAnimationFrame(function () {
+
+            successContent.classList.remove(
+                'scale-95',
+                'opacity-0'
+            );
+
+            successContent.classList.add(
+                'scale-100',
+                'opacity-100'
+            );
+
+        });
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Close Success Modal
+    |--------------------------------------------------------------------------
+    */
+
+    function closeCancellationSuccessModal() {
+
+        successContent.classList.remove(
+            'scale-100',
+            'opacity-100'
+        );
+
+        successContent.classList.add(
+            'scale-95',
+            'opacity-0'
+        );
+
+        setTimeout(function () {
+
+            successModal.classList.remove('flex');
+            successModal.classList.add('hidden');
+
+        }, 200);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Close Button
+    |--------------------------------------------------------------------------
+    */
+
+    closeSuccessButton.addEventListener(
+        'click',
+        closeCancellationSuccessModal
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Click Outside
+    |--------------------------------------------------------------------------
+    */
+
+    successModal.addEventListener('click', function (event) {
+
+        if (event.target === successModal) {
+            closeCancellationSuccessModal();
+        }
+
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Escape Key
+    |--------------------------------------------------------------------------
+    */
+
+    document.addEventListener('keydown', function (event) {
+
+        if (
+            event.key === 'Escape' &&
+            !successModal.classList.contains('hidden')
+        ) {
+            closeCancellationSuccessModal();
+        }
+
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Laravel Success Message
+    |--------------------------------------------------------------------------
+    */
+
+    @if(session('success'))
+
+        const successMessage =
+            @json(session('success'));
+
+        if (
+            successMessage.includes(
+                'appointment cancellation'
+            )
+        ) {
+            openCancellationSuccessModal();
+        }
+
+    @endif
+
+});
