@@ -997,9 +997,6 @@
         <!-- Left Column: Appointments -->
 <section class="mb-12 bg-white p-8 rounded-2xl shadow-sm border border-gray-100 max-w-5xl mx-auto">
 
-    {{-- =========================================================
-        HEADER
-    ========================================================== --}}
 
     <div class="flex justify-between items-center mb-8">
 
@@ -1018,9 +1015,6 @@
     </div>
 
 
-    {{-- =========================================================
-        APPOINTMENT TABLE
-    ========================================================== --}}
 
     <div class="overflow-x-auto">
 
@@ -1437,33 +1431,25 @@
                                 )
                             )
 
-                                <form
-                                    action="{{
-                                        route(
-                                            'appointments.cancel',
-                                            $appointment->id
-                                        )
-                                    }}"
-                                    method="POST"
-                                    class="inline"
-                                >
+                    <form
+                        action="{{ route('appointments.cancel', $appointment->id) }}"
+                        method="POST"
+                        class="inline cancel-appointment-form"
+                    >
+                        @csrf
 
-                                    @csrf
-
-                                    <button
-                                        type="button"
-                                        onclick="window.openCancelModal()"
-                                        class="px-4 py-2 rounded-lg font-medium
-                                            bg-pink-500 text-white
-                                            hover:bg-pink-600
-                                            dark:bg-pink-600
-                                            dark:hover:bg-pink-500
-                                            transition duration-200"
-                                    >
-                                        Cancel
-                                    </button>
-
-                                </form>
+                        <button
+                            type="button"
+                            class="open-cancel-modal px-4 py-2 rounded-lg font-medium
+                                bg-pink-500 text-white
+                                hover:bg-pink-600
+                                dark:bg-pink-600
+                                dark:hover:bg-pink-500
+                                transition duration-200"
+                        >
+                            Cancel
+                        </button>
+                    </form>
 
 
                             {{-- NO ACTION --}}
