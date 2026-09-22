@@ -1326,3 +1326,53 @@ window.addEventListener(
     }
 );
 
+
+  function openCancelModal() {
+        const modal = document.getElementById('cancelModal');
+        const content = document.getElementById('cancelModalContent');
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+
+
+        requestAnimationFrame(() => {
+            content.classList.remove('scale-95', 'opacity-0');
+            content.classList.add('scale-100', 'opacity-100');
+        });
+    }
+
+    function closeCancelModal() {
+        const modal = document.getElementById('cancelModal');
+        const content = document.getElementById('cancelModalContent');
+
+        content.classList.remove('scale-100', 'opacity-100');
+        content.classList.add('scale-95', 'opacity-0');
+
+        setTimeout(() => {
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }, 200);
+    }
+
+    function confirmCancel() {
+
+
+
+        window.history.back();
+
+
+    }
+
+
+    document.getElementById('cancelModal').addEventListener('click', function(event) {
+        if (event.target === this) {
+            closeCancelModal();
+        }
+    });
+
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeCancelModal();
+        }
+    });

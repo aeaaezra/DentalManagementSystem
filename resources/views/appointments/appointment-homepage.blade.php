@@ -1420,9 +1420,6 @@
                         </td>
 
 
-                        {{-- =================================================
-                            ACTION
-                        ================================================== --}}
 
                         <td class="py-5 text-right">
 
@@ -1454,13 +1451,11 @@
 
 
                                     <button
-                                        type="submit"
-                                        onclick="return confirm('Cancel this appointment?')"
-                                        class="text-red-500 hover:text-red-700 hover:underline text-sm font-medium"
+                                        type="button"
+                                        onclick="openCancelModal()"
+                                        class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition"
                                     >
-
                                         Cancel
-
                                     </button>
 
                                 </form>
@@ -1988,7 +1983,95 @@
     </div>
 
 </div>
+<!-- Cancel Confirmation Modal -->
+<div
+    id="cancelModal"
+    class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black/50 backdrop-blur-sm px-4"
+>
+    <div
+        id="cancelModalContent"
+        class="w-full max-w-md rounded-2xl bg-white shadow-2xl transform scale-95 opacity-0 transition-all duration-200"
+    >
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-gray-100 px-6 py-5">
+            <div class="flex items-center gap-3">
+                <div class="flex h-11 w-11 items-center justify-center rounded-full bg-pink-100">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-6 w-6 text-pink-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M6 18L18 6M6 6l12 12"
+                        />
+                    </svg>
+                </div>
 
+                <h3 class="text-lg font-semibold text-gray-900">
+                    Cancel Action
+                </h3>
+            </div>
+
+            <!-- Close button -->
+            <button
+                type="button"
+                onclick="closeCancelModal()"
+                class="text-gray-400 hover:text-gray-600 transition"
+                aria-label="Close modal"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                    />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="px-6 py-6">
+            <p class="text-gray-600 leading-relaxed">
+                Are you sure you want to cancel?
+            </p>
+
+            <p class="mt-2 text-sm text-gray-500">
+                Any unsaved changes may be lost.
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <div class="flex justify-end gap-3 border-t border-gray-100 px-6 py-4">
+            <button
+                type="button"
+                onclick="closeCancelModal()"
+                class="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+            >
+                No, Keep It
+            </button>
+
+            <button
+                type="button"
+                onclick="confirmCancel()"
+                class="rounded-lg bg-pink-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-pink-700"
+            >
+                Yes, Cancel
+            </button>
+        </div>
+    </div>
+</div>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>lucide.createIcons();</script>
     <script src="{{ asset('js/appointment/appointment.js') }}"></script>
