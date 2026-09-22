@@ -1327,14 +1327,14 @@ window.addEventListener(
 );
 
 
-  function openCancelModal() {
+    function openCancelModal() {
         const modal = document.getElementById('cancelModal');
         const content = document.getElementById('cancelModalContent');
 
         modal.classList.remove('hidden');
         modal.classList.add('flex');
 
-
+        // Allow the browser to render before animation
         requestAnimationFrame(() => {
             content.classList.remove('scale-95', 'opacity-0');
             content.classList.add('scale-100', 'opacity-100');
@@ -1355,24 +1355,26 @@ window.addEventListener(
     }
 
     function confirmCancel() {
+        // Put your cancel action here.
 
-
-
+        // Example:
         window.history.back();
 
-
+        // Or if you have a specific URL:
+        // window.location.href = "{{ route('customer.homepage') }}";
     }
 
-
+    // Close when clicking outside the modal
     document.getElementById('cancelModal').addEventListener('click', function(event) {
         if (event.target === this) {
             closeCancelModal();
         }
     });
 
-
+    // Close with ESC key
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             closeCancelModal();
         }
     });
+
