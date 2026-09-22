@@ -1959,9 +1959,6 @@
 
 </div>
 
-{{-- =========================================================
-     CANCEL APPOINTMENT MODAL
-     ========================================================= --}}
 
 <div
     id="cancelModal"
@@ -1980,7 +1977,7 @@
                transition-all duration-200"
     >
 
-        {{-- HEADER --}}
+
         <div
             class="flex items-center justify-between
                    border-b border-gray-100 dark:border-gray-700
@@ -1989,7 +1986,7 @@
 
             <div class="flex items-center gap-3">
 
-                {{-- Icon --}}
+
                 <div
                     class="flex h-11 w-11 items-center justify-center
                            rounded-full
@@ -2030,8 +2027,6 @@
 
             </div>
 
-
-            {{-- CLOSE BUTTON --}}
             <button
                 type="button"
                 id="closeCancelModal"
@@ -2062,8 +2057,6 @@
 
         </div>
 
-
-        {{-- FORM --}}
         <form
             id="cancelAppointmentForm"
             method="POST"
@@ -2072,11 +2065,8 @@
 
             @csrf
 
-
-            {{-- BODY --}}
             <div class="px-6 py-6 space-y-5">
 
-                {{-- DESCRIPTION --}}
                 <div>
 
                     <p
@@ -2097,8 +2087,6 @@
 
                 </div>
 
-
-                {{-- CANCELLATION REASON --}}
                 <div>
 
                     <label
@@ -2164,7 +2152,7 @@
                 </div>
 
 
-                {{-- ADDITIONAL DETAILS --}}
+
                 <div>
 
                     <label
@@ -2214,14 +2202,13 @@
             </div>
 
 
-            {{-- FOOTER --}}
             <div
                 class="flex justify-end gap-3
                        border-t border-gray-100 dark:border-gray-700
                        px-6 py-4"
             >
 
-                {{-- KEEP APPOINTMENT --}}
+
                 <button
                     type="button"
                     id="cancelModalKeepButton"
@@ -2240,18 +2227,19 @@
                 </button>
 
 
-                {{-- SUBMIT --}}
+
                 <button
-                    type="submit"
+                    type="button"
+                    id="openCancellationConfirmButton"
                     class="rounded-lg
-                           bg-pink-600
-                           hover:bg-pink-700
-                           dark:bg-pink-600
-                           dark:hover:bg-pink-500
-                           px-5 py-2.5
-                           text-sm font-medium
-                           text-white
-                           transition"
+                        bg-pink-600
+                        hover:bg-pink-700
+                        dark:bg-pink-600
+                        dark:hover:bg-pink-500
+                        px-5 py-2.5
+                        text-sm font-medium
+                        text-white
+                        transition"
                 >
                     Submit Cancellation
                 </button>
@@ -2265,9 +2253,9 @@
 
 
 
-{{-- =========================================================
-     CANCELLATION REQUEST SUCCESS MODAL
-     ========================================================= --}}
+<!-- =========================================================
+     CANCELLATION SUCCESS MODAL
+     ========================================================= -->
 
 <div
     id="cancellationSuccessModal"
@@ -2282,26 +2270,25 @@
                bg-white dark:bg-[#251C22]
                border border-gray-200 dark:border-gray-700
                shadow-2xl
+               overflow-hidden
                transform scale-95 opacity-0
                transition-all duration-200"
     >
 
-        {{-- HEADER --}}
+        <!-- Success Header -->
         <div class="px-6 pt-7 pb-4 text-center">
 
-            {{-- SUCCESS ICON --}}
+            <!-- Success Icon -->
             <div
                 class="mx-auto flex h-14 w-14
                        items-center justify-center
                        rounded-full
-                       bg-green-100
-                       dark:bg-green-900/30"
+                       bg-green-100 dark:bg-green-900/30"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="h-8 w-8
-                           text-green-600
-                           dark:text-green-400"
+                           text-green-600 dark:text-green-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -2315,32 +2302,41 @@
                 </svg>
             </div>
 
-
+            <!-- Title -->
             <h3
                 class="mt-4 text-xl font-semibold
                        text-gray-900 dark:text-white"
             >
-                Cancellation Request Sent
+                Cancellation Request Submitted
             </h3>
 
         </div>
 
 
-        {{-- BODY --}}
+        <!-- Success Message -->
         <div class="px-6 pb-6 text-center">
 
             <p
-                class="text-gray-600
-                       dark:text-gray-300
+                class="text-gray-700 dark:text-gray-200
                        leading-relaxed"
             >
-                Your appointment cancellation has been sent
-                successfully.
+                Thank you for submitting your cancellation
+                request.
             </p>
 
             <p
-                class="mt-2 text-sm
-                       text-gray-500 dark:text-gray-400"
+                class="mt-3 text-sm
+                       text-gray-500 dark:text-gray-400
+                       leading-relaxed"
+            >
+                Your cancellation request has been sent to
+                the clinic for review.
+            </p>
+
+            <p
+                class="mt-3 text-sm
+                       text-gray-500 dark:text-gray-400
+                       leading-relaxed"
             >
                 Please wait while the clinic reviews your request.
                 Your appointment will remain scheduled until the
@@ -2350,7 +2346,7 @@
         </div>
 
 
-        {{-- FOOTER --}}
+        <!-- Footer -->
         <div
             class="border-t border-gray-100
                    dark:border-gray-700
@@ -2365,365 +2361,87 @@
                        hover:bg-pink-700
                        dark:bg-pink-600
                        dark:hover:bg-pink-500
-                       px-5 py-2.5
-                       text-sm font-medium
+                       px-5 py-3
+                       text-sm font-semibold
                        text-white
-                       transition"
+                       transition duration-200"
             >
-                OK, Got It
+                Done
             </button>
 
         </div>
 
     </div>
 </div>
-
-
-
-
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-    console.log('Cancellation modal script loaded.');
-
-
     /*
     |--------------------------------------------------------------------------
-    | CANCEL MODAL ELEMENTS
-    |--------------------------------------------------------------------------
-    */
-
-    const cancelModal =
-        document.getElementById('cancelModal');
-
-    const cancelModalContent =
-        document.getElementById('cancelModalContent');
-
-    const cancelAppointmentForm =
-        document.getElementById('cancelAppointmentForm');
-
-    const closeCancelButton =
-        document.getElementById('closeCancelModal');
-
-    const keepCancelButton =
-        document.getElementById('cancelModalKeepButton');
-
-    const cancelButtons =
-        document.querySelectorAll('.open-cancel-modal');
-
-
-    console.log(
-        'Cancel buttons found:',
-        cancelButtons.length
-    );
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | OPEN CANCEL MODAL
-    |--------------------------------------------------------------------------
-    */
-
-    function openCancelModal(originalForm) {
-
-        if (!cancelModal) {
-            console.error(
-                'ERROR: #cancelModal not found.'
-            );
-            return;
-        }
-
-        if (!cancelModalContent) {
-            console.error(
-                'ERROR: #cancelModalContent not found.'
-            );
-            return;
-        }
-
-        if (!cancelAppointmentForm) {
-            console.error(
-                'ERROR: #cancelAppointmentForm not found.'
-            );
-            return;
-        }
-
-
-        /*
-        | Get the correct appointment URL
-        */
-
-        if (originalForm) {
-
-            const action =
-                originalForm.getAttribute('action');
-
-            if (action) {
-
-                cancelAppointmentForm.setAttribute(
-                    'action',
-                    action
-                );
-
-                console.log(
-                    'Cancellation action:',
-                    action
-                );
-
-            }
-
-        }
-
-
-        /*
-        | Reset fields
-        */
-
-        cancelAppointmentForm.reset();
-
-
-        /*
-        | Show modal
-        */
-
-        cancelModal.classList.remove('hidden');
-
-        cancelModal.classList.add('flex');
-
-        document.body.classList.add(
-            'overflow-hidden'
-        );
-
-
-        /*
-        | Animate
-        */
-
-        requestAnimationFrame(function () {
-
-            cancelModalContent.classList.remove(
-                'scale-95',
-                'opacity-0'
-            );
-
-            cancelModalContent.classList.add(
-                'scale-100',
-                'opacity-100'
-            );
-
-        });
-
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | CLOSE CANCEL MODAL
-    |--------------------------------------------------------------------------
-    */
-
-    function closeCancelModal() {
-
-        if (
-            !cancelModal ||
-            !cancelModalContent
-        ) {
-            return;
-        }
-
-
-        cancelModalContent.classList.remove(
-            'scale-100',
-            'opacity-100'
-        );
-
-        cancelModalContent.classList.add(
-            'scale-95',
-            'opacity-0'
-        );
-
-
-        setTimeout(function () {
-
-            cancelModal.classList.remove('flex');
-
-            cancelModal.classList.add('hidden');
-
-            document.body.classList.remove(
-                'overflow-hidden'
-            );
-
-        }, 200);
-
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | MAKE FUNCTION AVAILABLE TO HTML
-    |--------------------------------------------------------------------------
-    */
-
-    window.closeCancelModal =
-        closeCancelModal;
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | CANCEL BUTTONS
-    |--------------------------------------------------------------------------
-    */
-
-    cancelButtons.forEach(function (button) {
-
-        button.addEventListener(
-            'click',
-            function (event) {
-
-                event.preventDefault();
-
-                console.log(
-                    'CANCEL BUTTON CLICKED'
-                );
-
-
-                const originalForm =
-                    button.closest(
-                        '.cancel-appointment-form'
-                    );
-
-
-                if (!originalForm) {
-
-                    console.error(
-                        'ERROR: .cancel-appointment-form not found.'
-                    );
-
-                    return;
-                }
-
-
-                openCancelModal(
-                    originalForm
-                );
-
-            }
-        );
-
-    });
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | CLOSE BUTTON
-    |--------------------------------------------------------------------------
-    */
-
-    if (closeCancelButton) {
-
-        closeCancelButton.addEventListener(
-            'click',
-            closeCancelModal
-        );
-
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | KEEP APPOINTMENT BUTTON
-    |--------------------------------------------------------------------------
-    */
-
-    if (keepCancelButton) {
-
-        keepCancelButton.addEventListener(
-            'click',
-            closeCancelModal
-        );
-
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | CLICK OUTSIDE CANCEL MODAL
-    |--------------------------------------------------------------------------
-    */
-
-    if (cancelModal) {
-
-        cancelModal.addEventListener(
-            'click',
-            function (event) {
-
-                if (
-                    event.target === cancelModal
-                ) {
-
-                    closeCancelModal();
-
-                }
-
-            }
-        );
-
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | SUCCESS MODAL
+    | Cancellation Success Modal
     |--------------------------------------------------------------------------
     */
 
     const successModal =
-        document.getElementById(
-            'cancellationSuccessModal'
-        );
+        document.getElementById('cancellationSuccessModal');
 
     const successContent =
-        document.getElementById(
-            'cancellationSuccessModalContent'
-        );
+        document.getElementById('cancellationSuccessModalContent');
 
     const closeSuccessButton =
-        document.getElementById(
-            'closeCancellationSuccessModal'
-        );
+        document.getElementById('closeCancellationSuccessModal');
 
 
     /*
     |--------------------------------------------------------------------------
-    | OPEN SUCCESS MODAL
+    | Check Elements
+    |--------------------------------------------------------------------------
+    */
+
+    if (!successModal) {
+        console.error(
+            'ERROR: #cancellationSuccessModal was not found.'
+        );
+        return;
+    }
+
+    if (!successContent) {
+        console.error(
+            'ERROR: #cancellationSuccessModalContent was not found.'
+        );
+        return;
+    }
+
+    if (!closeSuccessButton) {
+        console.error(
+            'ERROR: #closeCancellationSuccessModal was not found.'
+        );
+        return;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Open Success Modal
     |--------------------------------------------------------------------------
     */
 
     function openCancellationSuccessModal() {
 
-        if (
-            !successModal ||
-            !successContent
-        ) {
-            console.error(
-                'ERROR: Success modal elements not found.'
-            );
-
-            return;
-        }
-
-
-        successModal.classList.remove(
-            'hidden'
+        console.log(
+            'Opening cancellation success modal...'
         );
 
-        successModal.classList.add(
-            'flex'
-        );
+        successModal.classList.remove('hidden');
 
-        document.body.classList.add(
-            'overflow-hidden'
-        );
+        successModal.classList.add('flex');
 
+        document.body.classList.add('overflow-hidden');
+
+
+        /*
+        | Start animation
+        */
 
         requestAnimationFrame(function () {
 
@@ -2738,24 +2456,20 @@ document.addEventListener('DOMContentLoaded', function () {
             );
 
         });
-
     }
 
 
     /*
     |--------------------------------------------------------------------------
-    | CLOSE SUCCESS MODAL
+    | Close Success Modal
     |--------------------------------------------------------------------------
     */
 
     function closeCancellationSuccessModal() {
 
-        if (
-            !successModal ||
-            !successContent
-        ) {
-            return;
-        }
+        console.log(
+            'Closing cancellation success modal...'
+        );
 
 
         successContent.classList.remove(
@@ -2771,68 +2485,57 @@ document.addEventListener('DOMContentLoaded', function () {
 
         setTimeout(function () {
 
-            successModal.classList.remove(
-                'flex'
-            );
+            successModal.classList.remove('flex');
 
-            successModal.classList.add(
-                'hidden'
-            );
+            successModal.classList.add('hidden');
 
             document.body.classList.remove(
                 'overflow-hidden'
             );
 
         }, 200);
-
     }
 
 
     /*
     |--------------------------------------------------------------------------
-    | SUCCESS CLOSE BUTTON
+    | Done Button
     |--------------------------------------------------------------------------
     */
 
-    if (closeSuccessButton) {
+    closeSuccessButton.addEventListener(
+        'click',
+        function () {
 
-        closeSuccessButton.addEventListener(
-            'click',
-            closeCancellationSuccessModal
-        );
+            closeCancellationSuccessModal();
 
-    }
+        }
+    );
 
 
     /*
     |--------------------------------------------------------------------------
-    | CLICK OUTSIDE SUCCESS MODAL
+    | Click Outside Modal
     |--------------------------------------------------------------------------
     */
 
-    if (successModal) {
+    successModal.addEventListener(
+        'click',
+        function (event) {
 
-        successModal.addEventListener(
-            'click',
-            function (event) {
+            if (event.target === successModal) {
 
-                if (
-                    event.target === successModal
-                ) {
-
-                    closeCancellationSuccessModal();
-
-                }
+                closeCancellationSuccessModal();
 
             }
-        );
 
-    }
+        }
+    );
 
 
     /*
     |--------------------------------------------------------------------------
-    | ESCAPE KEY
+    | Escape Key
     |--------------------------------------------------------------------------
     */
 
@@ -2840,28 +2543,9 @@ document.addEventListener('DOMContentLoaded', function () {
         'keydown',
         function (event) {
 
-            if (event.key !== 'Escape') {
-                return;
-            }
-
-
             if (
-                cancelModal &&
-                !cancelModal.classList.contains(
-                    'hidden'
-                )
-            ) {
-
-                closeCancelModal();
-
-            }
-
-
-            if (
-                successModal &&
-                !successModal.classList.contains(
-                    'hidden'
-                )
+                event.key === 'Escape' &&
+                !successModal.classList.contains('hidden')
             ) {
 
                 closeCancellationSuccessModal();
@@ -2874,7 +2558,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /*
     |--------------------------------------------------------------------------
-    | LARAVEL CANCELLATION SUCCESS
+    | Laravel Cancellation Success
     |--------------------------------------------------------------------------
     */
 
@@ -2886,6 +2570,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 </script>
+
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>lucide.createIcons();</script>
     <script src="{{ asset('js/appointment/appointment.js') }}"></script>
