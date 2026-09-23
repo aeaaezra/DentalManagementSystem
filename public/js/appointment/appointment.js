@@ -80,906 +80,139 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
-    // ========================================================
-    // NOTIFICATION ELEMENTS
-    // ========================================================
+// =========================================================
+// LOGOUT MODAL
+// =========================================================
+document.addEventListener('DOMContentLoaded', function () {
 
-    const notificationBtn =
-        document.getElementById("notificationBtn");
+    const logoutBtn = document.getElementById('logoutBtn');
+    const logoutModal = document.getElementById('logoutModal');
+    const logoutModalOverlay =
+        document.getElementById('logoutModalOverlay');
+    const cancelLogout =
+        document.getElementById('cancelLogout');
+    const confirmLogout =
+        document.getElementById('confirmLogout');
 
-    const notificationDropdown =
-        document.getElementById("notificationDropdown");
-
-    const notificationFilters =
-        document.querySelectorAll(".notification-filter");
-
-    const clearAllNotifications =
-        document.getElementById("clearAllNotifications");
-
-    const confirmClearNotifications =
-        document.getElementById("confirmClearNotifications");
-
-    const cancelClearNotifications =
-        document.getElementById("cancelClearNotifications");
-
-    const clearConfirmModal =
-        document.getElementById("clearNotificationsConfirmModal");
-
-    const clearSuccessModal =
-        document.getElementById("clearNotificationsSuccessModal");
-
-    const closeClearNotificationsSuccess =
-        document.getElementById("closeClearNotificationsSuccess");
-
-
-    // ========================================================
-    // NOTIFICATION DROPDOWN
-    // ========================================================
-
-    if (notificationBtn && notificationDropdown) {
-
-        notificationBtn.addEventListener(
-            "click",
-            async function (event) {
-
-                event.preventDefault();
-                event.stopPropagation();
-
-                const wasHidden =
-                    notificationDropdown.classList.contains("hidden");
-
-                notificationDropdown.classList.toggle("hidden");
-
-                if (wasHidden) {
-                    await markNotificationsAsRead();
-                }
-            }
-        );
+    if (
+        !logoutBtn ||
+        !logoutModal ||
+        !cancelLogout ||
+        !confirmLogout
+    ) {
+        console.warn('Logout modal elements not found.');
+        return;
     }
 
+    // ==========================================
+    // OPEN MODAL
+    // ==========================================
+    logoutBtn.addEventListener('click', function (event) {
 
-    // ========================================================
-    // MARK NOTIFICATIONS AS READ
-    // ========================================================
+        event.preventDefault();
+        event.stopPropagation();
 
-    async function markNotificationsAsRead() {
+        logoutModal.classList.add('show');
+        logoutModal.setAttribute('aria-hidden', 'false');
 
-        const csrfToken = getCsrfToken();
+        document.body.classList.add('logout-modal-open');
 
-        if (!csrfToken) {
-            console.error("CSRF token not found.");
-            return false;
-        }
-
-        const readAllUrl =
-            window.notificationRoutes?.readAll ||
-            new URL(
-                "../notifications/read-all",
-                window.location.href
-            ).href;
-
-        try {
-
-            const response = await fetch(
-                readAllUrl,
-                {
-                    method: "POST",
-
-                    credentials: "same-origin",
-
-                    headers: {
-                        "X-CSRF-TOKEN": csrfToken,
-                        "Accept": "application/json",
-                        "X-Requested-With": "XMLHttpRequest"
-                    }
-                }
-            );
-
-            if (!response.ok) {
-
-                console.error(
-                    "Failed to mark notifications as read:",
-                    response.status
-                );
-
-                return false;
-            }
-
-            let data = {};
-
-            try {
-                data = await response.json();
-            } catch (error) {
-                data = {};
-            }
-
-            if (data.success === false) {
-                return false;
-            }
-
-            document
-                .querySelectorAll(".notification-item")
-                .forEach(function (item) {
-
-                    item.dataset.notificationStatus = "read";
-
-                });
-
-            document
-                .querySelectorAll(".notification-badge")
-                .forEach(function (badge) {
-
-                    badge.remove();
-
-                });
-
-            updateNotificationFilterCounts();
-
-            return true;
-
-        } catch (error) {
-
-            console.error(
-                "Mark notifications as read error:",
-                error
-            );
-
-            return false;
-        }
-    }
-
-
-    // ========================================================
-    // NOTIFICATION FILTERS
-    // ========================================================
-
-    notificationFilters.forEach(function (button) {
-
-        button.addEventListener(
-            "click",
-            function (event) {
-
-                event.preventDefault();
-                event.stopPropagation();
-
-                const filter =
-                    button.dataset.filter || "all";
-
-                applyNotificationFilter(filter);
-            }
-        );
     });
 
 
-    // ========================================================
-    // APPLY NOTIFICATION FILTER
-    // ========================================================
+    // ==========================================
+    // CLOSE MODAL
+    // ==========================================
+    function closeLogoutModal() {
 
-    function applyNotificationFilter(filter) {
+        logoutModal.classList.remove('show');
+        logoutModal.setAttribute('aria-hidden', 'true');
 
-        const notificationItems =
-            document.querySelectorAll(
-                ".notification-item"
-            );
+        document.body.classList.remove('logout-modal-open');
 
-        notificationItems.forEach(function (item) {
+    }
 
-            const status =
-                item.dataset.notificationStatus || "read";
 
-            if (filter === "all") {
+    // ==========================================
+    // CANCEL BUTTON
+    // ==========================================
+    cancelLogout.addEventListener('click', function () {
 
-                item.style.display = "";
+        closeLogoutModal();
 
-            } else if (filter === "unread") {
+    });
 
-                item.style.display =
-                    status === "unread"
-                        ? ""
-                        : "none";
 
-            } else if (filter === "read") {
+    // ==========================================
+    // CLICK OVERLAY
+    // ==========================================
+    if (logoutModalOverlay) {
 
-                item.style.display =
-                    status === "read"
-                        ? ""
-                        : "none";
+        logoutModalOverlay.addEventListener('click', function () {
 
-            }
+            closeLogoutModal();
 
         });
 
-
-        notificationFilters.forEach(function (button) {
-
-            button.classList.toggle(
-                "active",
-                button.dataset.filter === filter
-            );
-
-        });
-
-
-        showFilteredEmptyMessage(filter);
     }
 
 
-    // ========================================================
-    // UPDATE NOTIFICATION COUNTS
-    // ========================================================
+    // ==========================================
+    // CONFIRM LOGOUT
+    // ==========================================
+    confirmLogout.addEventListener('click', function () {
 
-    function updateNotificationFilterCounts() {
+        const form = document.createElement('form');
 
-        const items =
-            Array.from(
-                document.querySelectorAll(
-                    ".notification-item"
-                )
-            );
+        form.method = 'POST';
+        form.action = '/logout';
 
-        const unreadCount =
-            items.filter(function (item) {
-
-                return (
-                    item.dataset.notificationStatus ===
-                    "unread"
-                );
-
-            }).length;
-
-        const readCount =
-            items.filter(function (item) {
-
-                return (
-                    item.dataset.notificationStatus ===
-                    "read"
-                );
-
-            }).length;
-
-        const allCount =
-            items.length;
-
-
-        notificationFilters.forEach(function (button) {
-
-            const filter =
-                button.dataset.filter;
-
-            let count = 0;
-
-            if (filter === "all") {
-                count = allCount;
-            }
-
-            if (filter === "unread") {
-                count = unreadCount;
-            }
-
-            if (filter === "read") {
-                count = readCount;
-            }
-
-            const countElement =
-                button.querySelector(
-                    ".notification-filter-count"
-                );
-
-            if (countElement) {
-                countElement.textContent = count;
-            }
-
-        });
-    }
-
-
-    // ========================================================
-    // CLEAR ALL NOTIFICATIONS - OPEN MODAL
-    // ========================================================
-
-    if (clearAllNotifications) {
-
-        clearAllNotifications.addEventListener(
-            "click",
-            function (event) {
-
-                event.preventDefault();
-                event.stopPropagation();
-
-                const items =
-                    document.querySelectorAll(
-                        ".notification-item"
-                    );
-
-                if (items.length === 0) {
-                    return;
-                }
-
-                clearConfirmModal?.classList.remove(
-                    "hidden"
-                );
-            }
+        const csrfToken = document.querySelector(
+            'meta[name="csrf-token"]'
         );
-    }
 
+        if (csrfToken) {
 
-    // ========================================================
-    // CANCEL CLEAR ALL
-    // ========================================================
+            const input = document.createElement('input');
 
-    if (cancelClearNotifications) {
+            input.type = 'hidden';
+            input.name = '_token';
+            input.value = csrfToken.getAttribute('content');
 
-        cancelClearNotifications.addEventListener(
-            "click",
-            function (event) {
-
-                event.preventDefault();
-
-                clearConfirmModal?.classList.add(
-                    "hidden"
-                );
-            }
-        );
-    }
-
-
-    // ========================================================
-    // CLOSE CLEAR MODAL BY BACKDROP
-    // ========================================================
-
-    document
-        .querySelectorAll("[data-close-clear-modal]")
-        .forEach(function (backdrop) {
-
-            backdrop.addEventListener(
-                "click",
-                function () {
-
-                    clearConfirmModal?.classList.add(
-                        "hidden"
-                    );
-                }
-            );
-
-        });
-
-
-    // ========================================================
-    // CONFIRM CLEAR ALL
-    // ========================================================
-
-    if (confirmClearNotifications) {
-
-        confirmClearNotifications.addEventListener(
-            "click",
-            async function (event) {
-
-                event.preventDefault();
-                event.stopPropagation();
-
-                const csrfToken =
-                    getCsrfToken();
-
-                if (!csrfToken) {
-
-                    console.error(
-                        "CSRF token not found."
-                    );
-
-                    return;
-                }
-
-                const clearAllUrl =
-                    window.notificationRoutes?.clearAll ||
-                    clearAllNotifications?.dataset.clearUrl ||
-                    "/notifications";
-
-
-                try {
-
-                    confirmClearNotifications.disabled =
-                        true;
-
-                    confirmClearNotifications.textContent =
-                        "Clearing...";
-
-
-                    const response =
-                        await fetch(
-                            clearAllUrl,
-                            {
-                                method: "DELETE",
-
-                                credentials:
-                                    "same-origin",
-
-                                headers: {
-                                    "X-CSRF-TOKEN":
-                                        csrfToken,
-
-                                    "Accept":
-                                        "application/json",
-
-                                    "X-Requested-With":
-                                        "XMLHttpRequest"
-                                }
-                            }
-                        );
-
-
-                    if (!response.ok) {
-
-                        throw new Error(
-                            "Failed to clear notifications."
-                        );
-                    }
-
-
-                    let data = {};
-
-                    try {
-
-                        data =
-                            await response.json();
-
-                    } catch (error) {
-
-                        data = {};
-
-                    }
-
-
-                    if (
-                        data.success === false
-                    ) {
-
-                        throw new Error(
-                            "Server failed to clear notifications."
-                        );
-                    }
-
-
-                    // Remove notification items
-                    document
-                        .querySelectorAll(
-                            ".notification-item"
-                        )
-                        .forEach(function (item) {
-
-                            item.remove();
-
-                        });
-
-
-                    // Remove notification badges
-                    document
-                        .querySelectorAll(
-                            ".notification-badge"
-                        )
-                        .forEach(function (badge) {
-
-                            badge.remove();
-
-                        });
-
-
-                    updateNotificationFilterCounts();
-
-
-                    // Close confirmation
-                    clearConfirmModal?.classList.add(
-                        "hidden"
-                    );
-
-
-                    // Show success
-                    clearSuccessModal?.classList.remove(
-                        "hidden"
-                    );
-
-
-                    showEmptyNotificationMessage();
-
-
-                } catch (error) {
-
-                    console.error(
-                        "Clear notifications error:",
-                        error
-                    );
-
-                    alert(
-                        "Unable to clear notifications. Please try again."
-                    );
-
-                } finally {
-
-                    confirmClearNotifications.disabled =
-                        false;
-
-                    confirmClearNotifications.textContent =
-                        "Yes, clear all";
-                }
-
-            }
-        );
-    }
-
-
-    // ========================================================
-    // CLOSE SUCCESS MODAL
-    // ========================================================
-
-    if (closeClearNotificationsSuccess) {
-
-        closeClearNotificationsSuccess.addEventListener(
-            "click",
-            function () {
-
-                clearSuccessModal?.classList.add(
-                    "hidden"
-                );
-
-            }
-        );
-    }
-
-
-    // ========================================================
-    // DELETE ONE NOTIFICATION
-    // ========================================================
-
-    document.addEventListener(
-        "click",
-        async function (event) {
-
-            const deleteButton =
-                event.target.closest(
-                    ".delete-notification"
-                );
-
-            if (!deleteButton) {
-                return;
-            }
-
-            event.preventDefault();
-            event.stopPropagation();
-
-            const notificationId =
-                deleteButton.dataset.notificationId;
-
-            const csrfToken =
-                getCsrfToken();
-
-            if (!notificationId) {
-
-                console.error(
-                    "Notification ID not found."
-                );
-
-                return;
-            }
-
-            if (!csrfToken) {
-
-                console.error(
-                    "CSRF token not found."
-                );
-
-                return;
-            }
-
-
-            try {
-
-                deleteButton.disabled = true;
-
-
-                const response =
-                    await fetch(
-                        `/notifications/${notificationId}`,
-                        {
-                            method: "DELETE",
-
-                            credentials:
-                                "same-origin",
-
-                            headers: {
-                                "X-CSRF-TOKEN":
-                                    csrfToken,
-
-                                "Accept":
-                                    "application/json",
-
-                                "X-Requested-With":
-                                    "XMLHttpRequest"
-                            }
-                        }
-                    );
-
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        "Failed to delete notification."
-                    );
-                }
-
-
-                const notificationItem =
-                    deleteButton.closest(
-                        ".notification-item"
-                    );
-
-
-                notificationItem?.remove();
-
-
-                updateNotificationFilterCounts();
-
-                showEmptyNotificationMessage();
-
-            } catch (error) {
-
-                console.error(
-                    "Delete notification error:",
-                    error
-                );
-
-                deleteButton.disabled = false;
-            }
-
-        }
-    );
-
-
-    // ========================================================
-    // EMPTY NOTIFICATION MESSAGE
-    // ========================================================
-
-    function showEmptyNotificationMessage() {
-
-        if (!notificationDropdown) {
-            return;
-        }
-
-        const notificationItems =
-            notificationDropdown.querySelectorAll(
-                ".notification-item"
-            );
-
-        const existingMessage =
-            document.getElementById(
-                "noNotificationsMessage"
-            );
-
-
-        if (notificationItems.length === 0) {
-
-            if (!existingMessage) {
-
-                const message =
-                    document.createElement("div");
-
-                message.id =
-                    "noNotificationsMessage";
-
-                message.className =
-                    "p-6 text-center text-sm text-gray-500";
-
-                message.textContent =
-                    "No notifications.";
-
-                notificationDropdown.appendChild(
-                    message
-                );
-            }
+            form.appendChild(input);
 
         } else {
 
-            existingMessage?.remove();
+            console.error('CSRF token not found.');
+
+            return;
+
         }
-    }
+
+        document.body.appendChild(form);
+
+        form.submit();
+
+    });
 
 
-    // ========================================================
-    // FILTERED EMPTY MESSAGE
-    // ========================================================
-
-    function showFilteredEmptyMessage(filter) {
-
-        const items =
-            Array.from(
-                document.querySelectorAll(
-                    ".notification-item"
-                )
-            );
-
-
-        const visibleItems =
-            items.filter(function (item) {
-
-                return (
-                    item.style.display !== "none"
-                );
-
-            });
-
-
-        const existingMessage =
-            document.getElementById(
-                "noFilteredNotificationsMessage"
-            );
-
+    // ==========================================
+    // ESC KEY
+    // ==========================================
+    document.addEventListener('keydown', function (event) {
 
         if (
-            visibleItems.length === 0 &&
-            items.length > 0
+            event.key === 'Escape' &&
+            logoutModal.classList.contains('show')
         ) {
 
-            if (!existingMessage) {
-
-                const message =
-                    document.createElement("div");
-
-                message.id =
-                    "noFilteredNotificationsMessage";
-
-                message.className =
-                    "p-6 text-center text-sm text-gray-500";
-
-
-                if (filter === "unread") {
-
-                    message.textContent =
-                        "No unread notifications.";
-
-                } else if (filter === "read") {
-
-                    message.textContent =
-                        "No read notifications.";
-
-                } else {
-
-                    message.textContent =
-                        "No notifications.";
-                }
-
-
-                notificationDropdown?.appendChild(
-                    message
-                );
-            }
-
-        } else {
-
-            existingMessage?.remove();
-        }
-    }
-
-
-    // ========================================================
-    // CLOSE NOTIFICATION DROPDOWN WHEN CLICKING OUTSIDE
-    // ========================================================
-
-    document.addEventListener(
-        "click",
-        function (event) {
-
-            if (
-                notificationBtn &&
-                notificationDropdown &&
-                !notificationBtn.contains(
-                    event.target
-                ) &&
-                !notificationDropdown.contains(
-                    event.target
-                )
-            ) {
-
-                notificationDropdown.classList.add(
-                    "hidden"
-                );
-            }
+            closeLogoutModal();
 
         }
-    );
 
+    });
 
-    // ========================================================
-    // LOGOUT CONFIRMATION MODAL
-    // ========================================================
-
-    const logoutButton =
-        document.getElementById("logoutButton");
-
-    const logoutModal =
-        document.getElementById("logoutModal");
-
-    const cancelLogout =
-        document.getElementById("cancelLogout");
-
-    const logoutModalOverlay =
-        document.getElementById(
-            "logoutModalOverlay"
-        );
-
-
-    if (logoutButton && logoutModal) {
-
-        logoutButton.addEventListener(
-            "click",
-            function (event) {
-
-                event.preventDefault();
-                event.stopPropagation();
-
-                logoutModal.classList.add(
-                    "show"
-                );
-
-                logoutModal.setAttribute(
-                    "aria-hidden",
-                    "false"
-                );
-            }
-        );
-
-
-        cancelLogout?.addEventListener(
-            "click",
-            function () {
-
-                logoutModal.classList.remove(
-                    "show"
-                );
-
-                logoutModal.setAttribute(
-                    "aria-hidden",
-                    "true"
-                );
-            }
-        );
-
-
-        logoutModalOverlay?.addEventListener(
-            "click",
-            function () {
-
-                logoutModal.classList.remove(
-                    "show"
-                );
-
-                logoutModal.setAttribute(
-                    "aria-hidden",
-                    "true"
-                );
-            }
-        );
-    }
-
-
-
-    document
-        .querySelectorAll(
-            ".mobile-settings-back"
-        )
-        .forEach(function (button) {
-
-            button.addEventListener(
-                "click",
-                function (event) {
-
-                    event.preventDefault();
-
-                    window.history.back();
-
-                }
-            );
-
-        });
-
-
+});
     // ========================================================
     // MOBILE SIDEBAR / BURGER MENU
     // ========================================================
@@ -1323,13 +556,11 @@ window.addEventListener(
     }
 );
 
-document.addEventListener('DOMContentLoaded', function () {
+// ============================================================
+// CANCELLATION SUCCESS MODAL
+// ============================================================
 
-    /*
-    |--------------------------------------------------------------------------
-    | Cancellation Success Modal
-    |--------------------------------------------------------------------------
-    */
+document.addEventListener('DOMContentLoaded', function () {
 
     const successModal =
         document.getElementById('cancellationSuccessModal');
@@ -1340,57 +571,31 @@ document.addEventListener('DOMContentLoaded', function () {
     const closeSuccessButton =
         document.getElementById('closeCancellationSuccessModal');
 
+    // ========================================================
+    // CHECK REQUIRED ELEMENTS
+    // ========================================================
 
-    /*
-    |--------------------------------------------------------------------------
-    | Check Elements
-    |--------------------------------------------------------------------------
-    */
-
-    if (!successModal) {
-        console.error(
-            'ERROR: #cancellationSuccessModal was not found.'
+    if (
+        !successModal ||
+        !successContent ||
+        !closeSuccessButton
+    ) {
+        console.warn(
+            'Cancellation success modal elements not found.'
         );
+
         return;
     }
 
-    if (!successContent) {
-        console.error(
-            'ERROR: #cancellationSuccessModalContent was not found.'
-        );
-        return;
-    }
-
-    if (!closeSuccessButton) {
-        console.error(
-            'ERROR: #closeCancellationSuccessModal was not found.'
-        );
-        return;
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Open Success Modal
-    |--------------------------------------------------------------------------
-    */
+    // ========================================================
+    // OPEN SUCCESS MODAL
+    // ========================================================
 
     function openCancellationSuccessModal() {
-
-        console.log(
-            'Opening cancellation success modal...'
-        );
 
         successModal.classList.remove('hidden');
 
         successModal.classList.add('flex');
-
-        document.body.classList.add('overflow-hidden');
-
-
-        /*
-        | Start animation
-        */
 
         requestAnimationFrame(function () {
 
@@ -1407,19 +612,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Close Success Modal
-    |--------------------------------------------------------------------------
-    */
+    // ========================================================
+    // CLOSE SUCCESS MODAL
+    // ========================================================
 
     function closeCancellationSuccessModal() {
-
-        console.log(
-            'Closing cancellation success modal...'
-        );
-
 
         successContent.classList.remove(
             'scale-100',
@@ -1431,42 +628,35 @@ document.addEventListener('DOMContentLoaded', function () {
             'opacity-0'
         );
 
-
         setTimeout(function () {
 
             successModal.classList.remove('flex');
 
             successModal.classList.add('hidden');
 
-            document.body.classList.remove(
-                'overflow-hidden'
-            );
-
         }, 200);
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Done Button
-    |--------------------------------------------------------------------------
-    */
+    // ========================================================
+    // CLOSE BUTTON
+    // ========================================================
 
     closeSuccessButton.addEventListener(
         'click',
-        function () {
+        function (event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
 
             closeCancellationSuccessModal();
 
         }
     );
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Click Outside Modal
-    |--------------------------------------------------------------------------
-    */
+    // ========================================================
+    // CLICK OUTSIDE MODAL
+    // ========================================================
 
     successModal.addEventListener(
         'click',
@@ -1481,12 +671,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     );
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Escape Key
-    |--------------------------------------------------------------------------
-    */
+    // ========================================================
+    // ESCAPE KEY
+    // ========================================================
 
     document.addEventListener(
         'keydown',
@@ -1504,17 +691,1452 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     );
 
+});// ============================================================
+// CANCELLATION MODAL
+// ============================================================
 
-    /*
-    |--------------------------------------------------------------------------
-    | Laravel Cancellation Success
-    |--------------------------------------------------------------------------
-    */
+document.addEventListener('DOMContentLoaded', function () {
 
-    @if(session('cancellation_success'))
+    const cancelButtons =
+        document.querySelectorAll('.open-cancel-modal');
 
-        openCancellationSuccessModal();
+    const cancelModal =
+        document.getElementById('cancelModal');
 
-    @endif
+    const cancelModalContent =
+        document.getElementById('cancelModalContent');
+
+    const closeCancelModal =
+        document.getElementById('closeCancelModal');
+
+    const cancelModalKeepButton =
+        document.getElementById('cancelModalKeepButton');
+
+    const cancelAppointmentForm =
+        document.getElementById('cancelAppointmentForm');
+
+    console.log(
+        'Cancellation buttons found:',
+        cancelButtons.length
+    );
+
+    // ----------------------------------------------------------
+    // CHECK MODAL
+    // ----------------------------------------------------------
+
+    if (!cancelModal) {
+        console.error('cancelModal not found.');
+        return;
+    }
+
+    // Do NOT stop the entire script if buttons aren't present.
+    // This allows the rest of appointment.js to continue working.
+    if (cancelButtons.length === 0) {
+        console.warn(
+            '.open-cancel-modal buttons not found.'
+        );
+        return;
+    }
+
+    // ----------------------------------------------------------
+    // OPEN MODAL
+    // ----------------------------------------------------------
+
+    cancelButtons.forEach(function (button) {
+
+        button.addEventListener('click', function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            const originalForm =
+                button.closest('.cancel-appointment-form');
+
+            if (!originalForm) {
+                console.error(
+                    'cancel-appointment-form not found.'
+                );
+                return;
+            }
+
+            const action =
+                originalForm.getAttribute('action');
+
+            if (cancelAppointmentForm && action) {
+
+                cancelAppointmentForm.setAttribute(
+                    'action',
+                    action
+                );
+
+            }
+
+            cancelModal._originalForm = originalForm;
+
+            cancelModal.classList.remove('hidden');
+            cancelModal.classList.add('flex');
+
+            document.body.style.overflow = 'hidden';
+
+            if (cancelModalContent) {
+
+                requestAnimationFrame(function () {
+
+                    cancelModalContent.classList.remove(
+                        'scale-95',
+                        'opacity-0'
+                    );
+
+                    cancelModalContent.classList.add(
+                        'scale-100',
+                        'opacity-100'
+                    );
+
+                });
+
+            }
+
+        });
+
+    });
+
+    // ----------------------------------------------------------
+    // CLOSE MODAL
+    // ----------------------------------------------------------
+
+    function closeCancellationModal() {
+
+        if (cancelModalContent) {
+
+            cancelModalContent.classList.remove(
+                'scale-100',
+                'opacity-100'
+            );
+
+            cancelModalContent.classList.add(
+                'scale-95',
+                'opacity-0'
+            );
+
+        }
+
+        setTimeout(function () {
+
+            cancelModal.classList.remove('flex');
+            cancelModal.classList.add('hidden');
+
+            document.body.style.overflow = '';
+
+        }, 200);
+
+    }
+
+    // ----------------------------------------------------------
+    // CLOSE X BUTTON
+    // ----------------------------------------------------------
+
+    if (closeCancelModal) {
+
+        closeCancelModal.addEventListener(
+            'click',
+            function (event) {
+
+                event.preventDefault();
+
+                closeCancellationModal();
+
+            }
+        );
+
+    }
+
+    // ----------------------------------------------------------
+    // NO, KEEP IT
+    // ----------------------------------------------------------
+
+    if (cancelModalKeepButton) {
+
+        cancelModalKeepButton.addEventListener(
+            'click',
+            function (event) {
+
+                event.preventDefault();
+
+                closeCancellationModal();
+
+            }
+        );
+
+    }
+
+    // ----------------------------------------------------------
+    // CLICK OUTSIDE
+    // ----------------------------------------------------------
+
+    cancelModal.addEventListener(
+        'click',
+        function (event) {
+
+            if (event.target === cancelModal) {
+
+                closeCancellationModal();
+
+            }
+
+        }
+    );
+
+    // ----------------------------------------------------------
+    // ESCAPE
+    // ----------------------------------------------------------
+
+    document.addEventListener(
+        'keydown',
+        function (event) {
+
+            if (
+                event.key === 'Escape' &&
+                !cancelModal.classList.contains('hidden')
+            ) {
+
+                closeCancellationModal();
+
+            }
+
+        }
+    );
 
 });
+// ============================================================
+// PROFILE DROPDOWN
+// ============================================================
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    const profileBtn = document.getElementById('profileBtn');
+    const profileMenu = document.getElementById('profileMenu');
+
+    console.log('Profile button:', profileBtn);
+    console.log('Profile menu:', profileMenu);
+
+    if (!profileBtn || !profileMenu) {
+        console.error('Profile dropdown elements not found.');
+        return;
+    }
+
+    profileBtn.addEventListener('click', function (event) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        console.log('Profile button clicked');
+
+        profileMenu.classList.toggle('hidden');
+
+    });
+
+    // Close when clicking outside
+    document.addEventListener('click', function (event) {
+
+        if (
+            !profileBtn.contains(event.target) &&
+            !profileMenu.contains(event.target)
+        ) {
+            profileMenu.classList.add('hidden');
+        }
+
+    });
+
+});
+/* =========================================================
+   SHINE & SMILE
+   NOTIFICATION SYSTEM
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* =====================================================
+       ELEMENTS
+       ===================================================== */
+
+    const notificationBtn =
+        document.getElementById(
+            "notificationBtn"
+        );
+
+    const notificationDropdown =
+        document.getElementById(
+            "notificationDropdown"
+        );
+
+    const closeNotificationBtn =
+        document.getElementById(
+            "closeNotificationBtn"
+        );
+
+    const notificationFilters =
+        document.querySelectorAll(
+            ".notification-filter"
+        );
+
+    const notificationList =
+        document.getElementById(
+            "notificationList"
+        );
+
+    const notificationFilterEmpty =
+        document.getElementById(
+            "notificationFilterEmpty"
+        );
+
+    const notificationFilterEmptyTitle =
+        document.getElementById(
+            "notificationFilterEmptyTitle"
+        );
+
+    const notificationFilterEmptyMessage =
+        document.getElementById(
+            "notificationFilterEmptyMessage"
+        );
+
+
+    /* =====================================================
+       MODAL
+       ===================================================== */
+
+    const notificationModal =
+        document.getElementById(
+            "notificationModal"
+        );
+
+    const notificationModalOverlay =
+        document.getElementById(
+            "notificationModalOverlay"
+        );
+
+    const closeNotificationModalBtn =
+        document.getElementById(
+            "closeNotificationModal"
+        );
+
+    const notificationModalDone =
+        document.getElementById(
+            "notificationModalDone"
+        );
+
+    const notificationModalTitle =
+        document.getElementById(
+            "notificationModalTitle"
+        );
+
+    const notificationModalMessage =
+        document.getElementById(
+            "notificationModalMessage"
+        );
+
+    const notificationModalTime =
+        document.getElementById(
+            "notificationModalTime"
+        );
+
+
+    /* =====================================================
+       STATE
+       ===================================================== */
+
+    let currentNotificationFilter =
+        "all";
+
+
+    /* =====================================================
+       GET NOTIFICATION ITEMS
+       ===================================================== */
+
+    function getNotificationItems() {
+
+        if (!notificationList) {
+            return [];
+        }
+
+        return Array.from(
+            notificationList.querySelectorAll(
+                ".notification-item"
+            )
+        );
+
+    }
+
+
+    /* =====================================================
+       CSRF TOKEN
+       ===================================================== */
+
+    function getCsrfToken() {
+
+        const meta =
+            document.querySelector(
+                'meta[name="csrf-token"]'
+            );
+
+        if (!meta) {
+
+            console.error(
+                "CSRF token meta tag not found."
+            );
+
+            return null;
+        }
+
+        return meta.getAttribute(
+            "content"
+        );
+
+    }
+
+
+    /* =====================================================
+       UPDATE COUNTERS
+       ===================================================== */
+
+    function updateNotificationCounters() {
+
+        const items =
+            getNotificationItems();
+
+
+        let unreadCount = 0;
+
+        let readCount = 0;
+
+
+        items.forEach(function (item) {
+
+            const status =
+                item.dataset.notificationStatus;
+
+
+            if (status === "unread") {
+
+                unreadCount++;
+
+            }
+
+            else if (status === "read") {
+
+                readCount++;
+
+            }
+
+        });
+
+
+        const allCount =
+            items.length;
+
+
+        /* -----------------------------------------------
+           All
+           ----------------------------------------------- */
+
+        const allButton =
+            document.querySelector(
+                '.notification-filter[data-filter="all"]'
+            );
+
+        if (allButton) {
+
+            const count =
+            allButton.querySelector(".notification-filter-count");
+
+            if (count) {
+
+                count.textContent =
+                    allCount;
+
+            }
+
+        }
+
+
+        /* -----------------------------------------------
+           Unread
+           ----------------------------------------------- */
+
+        const unreadButton =
+            document.querySelector(
+                '.notification-filter[data-filter="unread"]'
+            );
+
+        if (unreadButton) {
+
+            const count =
+            allButton.querySelector(".notification-filter-count");
+
+            if (count) {
+
+                count.textContent =
+                    unreadCount;
+
+            }
+
+        }
+
+
+        /* -----------------------------------------------
+           Read
+           ----------------------------------------------- */
+
+        const readButton =
+            document.querySelector(
+                '.notification-filter[data-filter="read"]'
+            );
+
+        if (readButton) {
+
+            const count =
+            allButton.querySelector(".notification-filter-count");
+
+            if (count) {
+
+                count.textContent =
+                    readCount;
+
+            }
+
+        }
+
+
+        /* -----------------------------------------------
+           Notification badge
+           ----------------------------------------------- */
+
+        const badge =
+            document.getElementById(
+                "notificationBadge"
+            );
+
+
+        if (unreadCount > 0) {
+
+            if (badge) {
+
+                badge.textContent =
+                    unreadCount > 99
+                        ? "99+"
+                        : unreadCount;
+
+                badge.style.display =
+                    "flex";
+
+            }
+
+        }
+
+        else {
+
+            if (badge) {
+
+                badge.style.display =
+                    "none";
+
+            }
+
+        }
+
+
+        console.log(
+            `Notifications | All: ${allCount} | Unread: ${unreadCount} | Read: ${readCount}`
+        );
+
+    }
+
+
+    /* =====================================================
+       UPDATE EMPTY STATE
+       ===================================================== */
+
+    function updateEmptyState(
+        filter,
+        visibleCount
+    ) {
+
+        if (!notificationFilterEmpty) {
+            return;
+        }
+
+
+        if (visibleCount === 0) {
+
+            notificationFilterEmpty.classList.remove(
+                "hidden"
+            );
+
+
+            if (notificationFilterEmptyTitle) {
+
+                if (filter === "unread") {
+
+                    notificationFilterEmptyTitle.textContent =
+                        "No unread notifications";
+
+                }
+
+                else if (filter === "read") {
+
+                    notificationFilterEmptyTitle.textContent =
+                        "No read notifications";
+
+                }
+
+                else {
+
+                    notificationFilterEmptyTitle.textContent =
+                        "No notifications";
+
+                }
+
+            }
+
+
+            if (notificationFilterEmptyMessage) {
+
+                if (filter === "unread") {
+
+                    notificationFilterEmptyMessage.textContent =
+                        "You're all caught up.";
+
+                }
+
+                else if (filter === "read") {
+
+                    notificationFilterEmptyMessage.textContent =
+                        "There are no read notifications.";
+
+                }
+
+                else {
+
+                    notificationFilterEmptyMessage.textContent =
+                        "There are no notifications in this category.";
+
+                }
+
+            }
+
+        }
+
+        else {
+
+            notificationFilterEmpty.classList.add(
+                "hidden"
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       APPLY FILTER
+       ===================================================== */
+
+    function applyNotificationFilter(
+        filter
+    ) {
+
+        currentNotificationFilter =
+            filter;
+
+
+        const items =
+            getNotificationItems();
+
+
+        let visibleCount = 0;
+
+
+        items.forEach(function (item) {
+
+            const status =
+                item.dataset.notificationStatus ||
+                "read";
+
+
+            let showItem =
+                false;
+
+
+            /* -------------------------------------------
+               ALL
+               ------------------------------------------- */
+
+            if (filter === "all") {
+
+                showItem =
+                    true;
+
+            }
+
+
+            /* -------------------------------------------
+               UNREAD
+               ------------------------------------------- */
+
+            else if (filter === "unread") {
+
+                showItem =
+                    status === "unread";
+
+            }
+
+
+            /* -------------------------------------------
+               READ
+               ------------------------------------------- */
+
+            else if (filter === "read") {
+
+                showItem =
+                    status === "read";
+
+            }
+
+
+            /* -------------------------------------------
+               IMPORTANT:
+               Use CSS class instead of
+               item.style.display.
+               ------------------------------------------- */
+
+            if (showItem) {
+
+                item.classList.remove(
+                    "notification-hidden"
+                );
+
+                visibleCount++;
+
+            }
+
+            else {
+
+                item.classList.add(
+                    "notification-hidden"
+                );
+
+            }
+
+        });
+
+
+        /* =================================================
+           ACTIVE TAB
+           ================================================= */
+
+        notificationFilters.forEach(
+            function (button) {
+
+                const isActive =
+                    button.dataset.filter ===
+                    filter;
+
+
+                button.classList.toggle(
+                    "active",
+                    isActive
+                );
+
+
+                button.setAttribute(
+                    "aria-selected",
+                    isActive
+                        ? "true"
+                        : "false"
+                );
+
+            }
+        );
+
+
+        /* =================================================
+           EMPTY STATE
+           ================================================= */
+
+        updateEmptyState(
+            filter,
+            visibleCount
+        );
+
+    }
+
+
+    /* =====================================================
+       OPEN NOTIFICATION DROPDOWN
+       ===================================================== */
+
+    function openNotificationDropdown() {
+
+        if (!notificationDropdown) {
+            return;
+        }
+
+
+        notificationDropdown.classList.remove(
+            "hidden"
+        );
+
+
+        notificationDropdown.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+
+        if (notificationBtn) {
+
+            notificationBtn.setAttribute(
+                "aria-expanded",
+                "true"
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       CLOSE NOTIFICATION DROPDOWN
+       ===================================================== */
+
+    function closeNotificationDropdown() {
+
+        if (!notificationDropdown) {
+            return;
+        }
+
+
+        notificationDropdown.classList.add(
+            "hidden"
+        );
+
+
+        notificationDropdown.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+
+        if (notificationBtn) {
+
+            notificationBtn.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       TOGGLE DROPDOWN
+       ===================================================== */
+
+    notificationBtn?.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+
+            if (
+                notificationDropdown.classList.contains(
+                    "hidden"
+                )
+            ) {
+
+                openNotificationDropdown();
+
+            }
+
+            else {
+
+                closeNotificationDropdown();
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       CLOSE DROPDOWN BUTTON
+       ===================================================== */
+
+    closeNotificationBtn?.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+            closeNotificationDropdown();
+
+        }
+    );
+
+
+    /* =====================================================
+       FILTER BUTTONS
+       ===================================================== */
+
+    notificationFilters.forEach(
+        function (button) {
+
+            button.addEventListener(
+                "click",
+                function (event) {
+
+                    event.preventDefault();
+
+                    event.stopPropagation();
+
+
+                    const filter =
+                        button.dataset.filter ||
+                        "all";
+
+
+                    applyNotificationFilter(
+                        filter
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       MARK ONE NOTIFICATION AS READ
+       ===================================================== */
+
+    async function markNotificationAsRead(
+        notification
+    ) {
+
+        const notificationId =
+            notification.dataset.notificationId;
+
+
+        if (!notificationId) {
+
+            console.error(
+                "Notification ID is missing."
+            );
+
+            return false;
+
+        }
+
+
+        /*
+         * Already read.
+         */
+
+        if (
+            notification.dataset.notificationStatus ===
+            "read"
+        ) {
+
+            return true;
+
+        }
+
+
+        const csrfToken =
+            getCsrfToken();
+
+
+        if (!csrfToken) {
+
+            return false;
+
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `/notifications/${notificationId}/read`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "X-CSRF-TOKEN":
+                                csrfToken,
+
+                            "Accept":
+                                "application/json",
+
+                            "Content-Type":
+                                "application/json"
+                        }
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                throw new Error(
+                    data.message ||
+                    "Unable to mark notification as read."
+                );
+
+            }
+
+
+            /*
+             * Change UNREAD → READ.
+             */
+
+            notification.dataset.notificationStatus =
+                "read";
+
+
+            /*
+             * Remove unread dot.
+             */
+
+            const unreadDot =
+                notification.querySelector(
+                    ".notification-unread-dot"
+                );
+
+
+            if (unreadDot) {
+
+                unreadDot.remove();
+
+            }
+
+
+            /*
+             * Update counters.
+             */
+
+            updateNotificationCounters();
+
+
+            /*
+             * IMPORTANT:
+             * Re-apply the current filter.
+             *
+             * If currently on UNREAD,
+             * this notification disappears.
+             */
+
+            applyNotificationFilter(
+                currentNotificationFilter
+            );
+
+
+            console.log(
+                `Notification ${notificationId} marked as read.`
+            );
+
+
+            return true;
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Unable to mark notification as read:",
+                error
+            );
+
+
+            return false;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       OPEN MODAL
+       ===================================================== */
+
+    function openNotificationModal(
+        notification
+    ) {
+
+        if (!notificationModal) {
+            return;
+        }
+
+
+        const titleElement =
+            notification.querySelector(
+                ".notification-title"
+            );
+
+
+        const messageElement =
+            notification.querySelector(
+                ".notification-message"
+            );
+
+
+        const timeElement =
+            notification.querySelector(
+                ".notification-time"
+            );
+
+
+        const title =
+            titleElement
+                ? titleElement.textContent.trim()
+                : "Notification";
+
+
+        const message =
+            messageElement
+                ? messageElement.textContent.trim()
+                : "";
+
+
+        const time =
+            timeElement
+                ? timeElement.textContent.trim()
+                : "";
+
+
+        if (notificationModalTitle) {
+
+            notificationModalTitle.textContent =
+                title;
+
+        }
+
+
+        if (notificationModalMessage) {
+
+            notificationModalMessage.textContent =
+                message;
+
+        }
+
+
+        if (notificationModalTime) {
+
+            notificationModalTime.textContent =
+                time;
+
+        }
+
+
+        /*
+         * Close dropdown.
+         */
+
+        closeNotificationDropdown();
+
+
+        /*
+         * Open modal.
+         */
+
+        notificationModal.classList.add(
+            "show"
+        );
+
+
+        notificationModal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+
+        document.body.style.overflow =
+            "hidden";
+
+    }
+
+
+    /* =====================================================
+       CLOSE MODAL
+       ===================================================== */
+
+    function closeNotificationModal() {
+
+        if (!notificationModal) {
+            return;
+        }
+
+
+        notificationModal.classList.remove(
+            "show"
+        );
+
+
+        notificationModal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+
+        document.body.style.overflow =
+            "";
+
+    }
+
+
+    /* =====================================================
+       NOTIFICATION CLICK EVENTS
+       ===================================================== */
+
+    function attachNotificationClicks() {
+
+        const items =
+            getNotificationItems();
+
+
+        items.forEach(
+            function (notification) {
+
+                if (
+                    notification.dataset.clickAttached ===
+                    "true"
+                ) {
+
+                    return;
+
+                }
+
+
+                notification.dataset.clickAttached =
+                    "true";
+
+
+                notification.addEventListener(
+                    "click",
+                    async function (event) {
+
+                        /*
+                         * Ignore buttons/links if
+                         * you add them later.
+                         */
+
+                        if (
+                            event.target.closest(
+                                "button"
+                            ) ||
+                            event.target.closest(
+                                "a"
+                            )
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        /*
+                         * Mark as read first.
+                         */
+
+                        await markNotificationAsRead(
+                            notification
+                        );
+
+
+                        /*
+                         * Then open full notification.
+                         */
+
+                        openNotificationModal(
+                            notification
+                        );
+
+                    }
+                );
+
+
+                /*
+                 * Keyboard accessibility.
+                 */
+
+                notification.addEventListener(
+                    "keydown",
+                    function (event) {
+
+                        if (
+                            event.key === "Enter" ||
+                            event.key === " "
+                        ) {
+
+                            event.preventDefault();
+
+                            notification.click();
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       MODAL BUTTONS
+       ===================================================== */
+
+    closeNotificationModalBtn?.addEventListener(
+        "click",
+        function () {
+
+            closeNotificationModal();
+
+        }
+    );
+
+
+    notificationModalDone?.addEventListener(
+        "click",
+        function () {
+
+            closeNotificationModal();
+
+        }
+    );
+
+
+    notificationModalOverlay?.addEventListener(
+        "click",
+        function () {
+
+            closeNotificationModal();
+
+        }
+    );
+
+
+    /* =====================================================
+       ESCAPE KEY
+       ===================================================== */
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Escape"
+            ) {
+
+                if (
+                    notificationModal &&
+                    notificationModal.classList.contains(
+                        "show"
+                    )
+                ) {
+
+                    closeNotificationModal();
+
+                }
+
+                else if (
+                    notificationDropdown &&
+                    !notificationDropdown.classList.contains(
+                        "hidden"
+                    )
+                ) {
+
+                    closeNotificationDropdown();
+
+                }
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       CLICK OUTSIDE DROPDOWN
+       ===================================================== */
+
+    document.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                notificationDropdown &&
+                notificationBtn &&
+                !notificationDropdown.contains(
+                    event.target
+                ) &&
+                !notificationBtn.contains(
+                    event.target
+                )
+            ) {
+
+                closeNotificationDropdown();
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       INITIALIZE
+       ===================================================== */
+
+    updateNotificationCounters();
+
+    attachNotificationClicks();
+
+    applyNotificationFilter(
+        "all"
+    );
+
+});
+function getCsrfToken() {
+    const meta = document.querySelector(
+        'meta[name="csrf-token"]'
+    );
+
+    if (meta) {
+        return meta.getAttribute('content');
+    }
+
+    const input = document.querySelector(
+        'input[name="_token"]'
+    );
+
+    if (input) {
+        return input.value;
+    }
+
+    console.error('CSRF token could not be found.');
+
+    return null;
+}

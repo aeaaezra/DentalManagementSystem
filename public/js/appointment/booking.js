@@ -1016,6 +1016,7 @@ function getCsrfToken() {
 }
 
 function updateNotificationCount() {
+
     if (!notificationBtn) {
         return;
     }
@@ -1027,56 +1028,126 @@ function updateNotificationCount() {
     let readCount = 0;
 
     notificationItems.forEach(function (item) {
-        if (
-            item.dataset.notificationStatus === "unread"
-        ) {
+
+        const status =
+            item.dataset.notificationStatus || "read";
+
+        if (status === "unread") {
             unreadCount++;
         }
 
-        if (
-            item.dataset.notificationStatus === "read"
-        ) {
+        if (status === "read") {
             readCount++;
         }
+
     });
 
     const totalCount =
         unreadCount + readCount;
+
+
+    // ==========================================
+    // UPDATE BELL BADGE
+    // ==========================================
 
     const badge =
         notificationBtn.querySelector(
             ".notification-badge"
         );
 
-    if (unreadCount > 0) {
-        if (badge) {
-            badge.textContent = unreadCount;
+    if (badge) {
+
+        if (unreadCount > 0) {
+
+            badge.textContent =
+                unreadCount > 99
+                    ? "99+"
+                    : unreadCount;
+
+            badge.style.display = "flex";
+
+        } else {
+
+            badge.textContent = "";
+            badge.style.display = "none";
+
         }
-    } else if (badge) {
-        badge.remove();
+
     }
 
-    notificationFilters.forEach(
-        function (button) {
-            const filter =
-                button.dataset.filter;
 
-            if (filter === "all") {
-                button.textContent =
-                    `All ${totalCount}`;
-            }
+    // ==========================================
+    // UPDATE FILTER COUNTS
+    // ==========================================
 
-            if (filter === "unread") {
-                button.textContent =
-                    `Unread ${unreadCount}`;
-            }
+    const allButton =
+        document.querySelector(
+            '.notification-filter[data-filter="all"]'
+        );
 
-            if (filter === "read") {
-                button.textContent =
-                    `Read ${readCount}`;
-            }
+    const unreadButton =
+        document.querySelector(
+            '.notification-filter[data-filter="unread"]'
+        );
+
+    const readButton =
+        document.querySelector(
+            '.notification-filter[data-filter="read"]'
+        );
+
+
+    // ALL
+    if (allButton) {
+
+        const countElement =
+            allButton.querySelector(
+                ".notification-filter-count"
+            );
+
+        if (countElement) {
+            countElement.textContent =
+                totalCount;
         }
+
+    }
+
+
+    // UNREAD
+    if (unreadButton) {
+
+        const countElement =
+            unreadButton.querySelector(
+                ".notification-filter-count"
+            );
+
+        if (countElement) {
+            countElement.textContent =
+                unreadCount;
+        }
+
+    }
+
+
+    // READ
+    if (readButton) {
+
+        const countElement =
+            readButton.querySelector(
+                ".notification-filter-count"
+            );
+
+        if (countElement) {
+            countElement.textContent =
+                readCount;
+        }
+
+    }
+
+
+    console.log(
+        `Notifications | All: ${totalCount} | Unread: ${unreadCount} | Read: ${readCount}`
     );
+
 }
 async function markNotificationAsRead(notificationItem) {
     if (!notificationItem) {
@@ -1143,53 +1214,109 @@ async function markNotificationAsRead(notificationItem) {
         );
     }
 }
+// ============================================================
+// NOTIFICATION FILTERS
+// ============================================================
 
-async function deleteNotification(deleteButton) {
-    if (!deleteButton) {
-        return;
-    }
+const notificationFilters =
+    document.querySelectorAll(
+        ".notification-filter"
+    );
 
-    const deleteUrl =
-        deleteButton.dataset.deleteUrl;
 
-    if (!deleteUrl) {
-        return;
-    }
+function applyNotificationFilter(filter) {
 
-    const notificationItem =
-        deleteButton.closest(".notification-item");
+    // Update active button
+    notificationFilters.forEach(
+        function (button) {
 
-    try {
-        const response = await fetch(
-            deleteUrl,
-            {
-                method: "DELETE",
-                headers: {
-                    "X-CSRF-TOKEN": getCsrfToken(),
-                    "Accept": "application/json"
-                }
+            button.classList.remove("active");
+
+            if (
+                button.dataset.filter === filter
+            ) {
+                button.classList.add("active");
+            }
+
+        }
+    );
+
+
+    // Get notification items
+    const notificationItems =
+        document.querySelectorAll(
+            ".notification-item"
+        );
+
+
+    // Filter notifications
+    notificationItems.forEach(
+        function (item) {
+
+            const status =
+                item.dataset.notificationStatus ||
+                "read";
+
+
+            if (filter === "all") {
+
+                item.hidden = false;
+
+            }
+
+            else if (filter === "unread") {
+
+                item.hidden =
+                    status !== "unread";
+
+            }
+
+            else if (filter === "read") {
+
+                item.hidden =
+                    status !== "read";
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// FILTER BUTTON CLICK
+// ============================================================
+
+notificationFilters.forEach(
+    function (button) {
+
+        button.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                const filter =
+                    button.dataset.filter;
+
+                applyNotificationFilter(
+                    filter
+                );
+
             }
         );
 
-        if (!response.ok) {
-            throw new Error(
-                `HTTP error: ${response.status}`
-            );
-        }
-
-        if (notificationItem) {
-            notificationItem.remove();
-        }
-
-        updateNotificationCount();
-
-    } catch (error) {
-        console.error(
-            "Failed to delete notification:",
-            error
-        );
     }
-}
+);
+
+
+// ============================================================
+// DEFAULT FILTER
+// ============================================================
+
+applyNotificationFilter("all");
 
 if (
     notificationBtn &&
@@ -1216,6 +1343,60 @@ if (
         }
     );
 }
+
+if (
+    closeNotificationBtn &&
+    notificationDropdown
+) {
+    closeNotificationBtn.addEventListener(
+        "click",
+        function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            notificationDropdown.classList.add(
+                "hidden"
+            );
+
+            if (notificationBtn) {
+                notificationBtn.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+            }
+        }
+    );
+}
+
+// ============================================================
+// NOTIFICATION ITEM CLICK
+// ============================================================
+
+if (notificationList) {
+
+    notificationList.addEventListener(
+        "click",
+        function (event) {
+
+            const notificationItem =
+                event.target.closest(
+                    ".notification-item"
+                );
+
+            if (!notificationItem) {
+                return;
+            }
+
+            markNotificationAsRead(
+                notificationItem
+            );
+
+        }
+    );
+
+}
+
+
 
 if (
     closeNotificationBtn &&
@@ -2776,226 +2957,137 @@ document.addEventListener(
         );
 
     }
-);
-/* ============================================================
-   LOGOUT CONFIRMATION MODAL
-   ============================================================ */
+);// =========================================================
+// LOGOUT MODAL
+// =========================================================
+document.addEventListener('DOMContentLoaded', function () {
 
-document.addEventListener("DOMContentLoaded", function () {
-
-    const logoutButton =
-        document.getElementById("logoutButton");
-
-    const logoutModal =
-        document.getElementById("logoutModal");
-
+    const logoutBtn = document.getElementById('logoutBtn');
+    const logoutModal = document.getElementById('logoutModal');
     const logoutModalOverlay =
-        document.getElementById("logoutModalOverlay");
-
+        document.getElementById('logoutModalOverlay');
     const cancelLogout =
-        document.getElementById("cancelLogout");
-
+        document.getElementById('cancelLogout');
     const confirmLogout =
-        document.getElementById("confirmLogout");
+        document.getElementById('confirmLogout');
 
-    const logoutForm =
-        document.getElementById("logoutForm");
+    if (
+        !logoutBtn ||
+        !logoutModal ||
+        !cancelLogout ||
+        !confirmLogout
+    ) {
+        console.warn('Logout modal elements not found.');
+        return;
+    }
+
+    // ==========================================
+    // OPEN MODAL
+    // ==========================================
+    logoutBtn.addEventListener('click', function (event) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        logoutModal.classList.add('show');
+        logoutModal.setAttribute('aria-hidden', 'false');
+
+        document.body.classList.add('logout-modal-open');
+
+    });
 
 
-    console.log("=== LOGOUT SYSTEM ===");
-    console.log("logoutButton:", logoutButton);
-    console.log("logoutModal:", logoutModal);
-    console.log("logoutModalOverlay:", logoutModalOverlay);
-    console.log("cancelLogout:", cancelLogout);
-    console.log("confirmLogout:", confirmLogout);
-    console.log("logoutForm:", logoutForm);
+    // ==========================================
+    // CLOSE MODAL
+    // ==========================================
+    function closeLogoutModal() {
+
+        logoutModal.classList.remove('show');
+        logoutModal.setAttribute('aria-hidden', 'true');
+
+        document.body.classList.remove('logout-modal-open');
+
+    }
 
 
-    /* ========================================================
-       OPEN MODAL
-       ======================================================== */
+    // ==========================================
+    // CANCEL BUTTON
+    // ==========================================
+    cancelLogout.addEventListener('click', function () {
 
-    if (logoutButton && logoutModal) {
+        closeLogoutModal();
 
-        logoutButton.addEventListener("click", function (event) {
+    });
 
-            event.preventDefault();
-            event.stopPropagation();
 
-            console.log("Logout button clicked.");
+    // ==========================================
+    // CLICK OVERLAY
+    // ==========================================
+    if (logoutModalOverlay) {
 
-            logoutModal.classList.add("show");
+        logoutModalOverlay.addEventListener('click', function () {
 
-            logoutModal.setAttribute(
-                "aria-hidden",
-                "false"
-            );
-
-            document.body.classList.add(
-                "logout-modal-open"
-            );
+            closeLogoutModal();
 
         });
 
-    } else {
-
-        console.error(
-            "ERROR: logoutButton or logoutModal was not found."
-        );
-
     }
 
 
-    /* ========================================================
-       CLOSE MODAL
-       ======================================================== */
+    // ==========================================
+    // CONFIRM LOGOUT
+    // ==========================================
+    confirmLogout.addEventListener('click', function () {
 
-    function closeLogoutModal() {
+        const form = document.createElement('form');
 
-        if (!logoutModal) {
+        form.method = 'POST';
+        form.action = '/logout';
+
+        const csrfToken = document.querySelector(
+            'meta[name="csrf-token"]'
+        );
+
+        if (csrfToken) {
+
+            const input = document.createElement('input');
+
+            input.type = 'hidden';
+            input.name = '_token';
+            input.value = csrfToken.getAttribute('content');
+
+            form.appendChild(input);
+
+        } else {
+
+            console.error('CSRF token not found.');
+
             return;
-        }
-
-        logoutModal.classList.remove("show");
-
-        logoutModal.setAttribute(
-            "aria-hidden",
-            "true"
-        );
-
-        document.body.classList.remove(
-            "logout-modal-open"
-        );
-
-    }
-
-
-    /* ========================================================
-       CANCEL
-       ======================================================== */
-
-    if (cancelLogout) {
-
-        cancelLogout.addEventListener(
-            "click",
-            function (event) {
-
-                event.preventDefault();
-                event.stopPropagation();
-
-                console.log("Logout cancelled.");
-
-                closeLogoutModal();
-
-            }
-        );
-
-    }
-
-
-    /* ========================================================
-       CLICK OVERLAY
-       ======================================================== */
-
-    if (logoutModalOverlay) {
-
-        logoutModalOverlay.addEventListener(
-            "click",
-            function (event) {
-
-                event.preventDefault();
-                event.stopPropagation();
-
-                console.log("Logout modal overlay clicked.");
-
-                closeLogoutModal();
-
-            }
-        );
-
-    }
-
-
-    /* ========================================================
-       CONFIRM LOGOUT
-       ======================================================== */
-
-    if (confirmLogout && logoutForm) {
-
-        confirmLogout.addEventListener(
-            "click",
-            function (event) {
-
-                event.preventDefault();
-                event.stopPropagation();
-
-                console.log("Logout confirmed.");
-
-                confirmLogout.disabled = true;
-
-                confirmLogout.textContent =
-                    "Logging out...";
-
-                logoutForm.submit();
-
-            }
-        );
-
-    } else {
-
-        console.error(
-            "ERROR: confirmLogout or logoutForm was not found."
-        );
-
-    }
-
-
-    /* ========================================================
-       ESCAPE KEY
-       ======================================================== */
-
-    document.addEventListener(
-        "keydown",
-        function (event) {
-
-            if (
-                event.key === "Escape" &&
-                logoutModal &&
-                logoutModal.classList.contains("show")
-            ) {
-
-                closeLogoutModal();
-
-            }
-
-        }
-    );
-
-
-    /* ========================================================
-       PREVENT CARD CLICK FROM CLOSING MODAL
-       ======================================================== */
-
-    if (logoutModal) {
-
-        const modalCard =
-            logoutModal.querySelector(
-                ".logout-modal-card"
-            );
-
-        if (modalCard) {
-
-            modalCard.addEventListener(
-                "click",
-                function (event) {
-
-                    event.stopPropagation();
-
-                }
-            );
 
         }
 
-    }
+        document.body.appendChild(form);
+
+        form.submit();
+
+    });
+
+
+    // ==========================================
+    // ESC KEY
+    // ==========================================
+    document.addEventListener('keydown', function (event) {
+
+        if (
+            event.key === 'Escape' &&
+            logoutModal.classList.contains('show')
+        ) {
+
+            closeLogoutModal();
+
+        }
+
+    });
 
 });
+

@@ -172,131 +172,372 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
+// ==================================================
+// NOTIFICATION DROPDOWN
+// ==================================================
 
-    // ==================================================
-    // NOTIFICATION DROPDOWN
-    // ==================================================
+const notificationBtn =
+    document.getElementById("notificationBtn");
 
-    const notificationBtn =
-        document.getElementById("notificationBtn");
+const notificationDropdown =
+    document.getElementById("notificationDropdown");
 
-    const notificationDropdown =
-        document.getElementById("notificationDropdown");
+const closeNotificationBtn =
+    document.getElementById("closeNotificationBtn");
+
+const notificationFilters =
+    document.querySelectorAll(".notification-filter");
+
+const notificationItems =
+    document.querySelectorAll(".notification-item");
+
+const notificationFilterEmpty =
+    document.getElementById("notificationFilterEmpty");
+
+const notificationFilterEmptyTitle =
+    document.getElementById("notificationFilterEmptyTitle");
 
 
-    if (notificationBtn && notificationDropdown) {
 
-        notificationBtn.addEventListener("click", function (e) {
+if (notificationBtn && notificationDropdown) {
+
+    notificationBtn.addEventListener("click", function (e) {
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const isHidden =
+            notificationDropdown.classList.contains("hidden");
+
+
+        if (isHidden) {
+
+            // OPEN
+            notificationDropdown.classList.remove("hidden");
+
+            notificationBtn.setAttribute(
+                "aria-expanded",
+                "true"
+            );
+
+            notificationDropdown.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+
+        } else {
+
+            // CLOSE
+            notificationDropdown.classList.add("hidden");
+
+            notificationBtn.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+            notificationDropdown.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+        }
+
+
+    });
+
+}
+
+
+// ==================================================
+// CLOSE NOTIFICATION BUTTON
+// ==================================================
+
+if (
+    closeNotificationBtn &&
+    notificationDropdown
+) {
+
+    closeNotificationBtn.addEventListener(
+        "click",
+        function (e) {
 
             e.preventDefault();
-
             e.stopPropagation();
 
+            notificationDropdown.classList.add(
+                "hidden"
+            );
 
-            notificationDropdown.classList.toggle("hidden");
+            if (notificationBtn) {
 
-
-            // ==========================================
-            // CSRF TOKEN
-            // ==========================================
-
-            const csrfMeta =
-                document.querySelector('meta[name="csrf-token"]');
-
-
-            /*
-             * IMPORTANT:
-             *
-             * Previously you had:
-             *
-             * document.querySelector(
-             *     'meta[name="csrf-token"]'
-             * ).content
-             *
-             * If the meta tag doesn't exist,
-             * querySelector() returns null.
-             *
-             * We now check it first.
-             */
-
-            if (!csrfMeta) {
-
-                console.warn(
-                    "CSRF token meta tag was not found."
+                notificationBtn.setAttribute(
+                    "aria-expanded",
+                    "false"
                 );
-
-                return;
 
             }
 
+            notificationDropdown.setAttribute(
+                "aria-hidden",
+                "true"
+            );
 
-            const csrfToken =
-                csrfMeta.getAttribute("content");
+        }
+    );
+
+}
 
 
-            if (!csrfToken) {
+// ==================================================
+// NOTIFICATION FILTERS
+// ==================================================
 
-                console.warn(
-                    "CSRF token is empty."
-                );
+notificationFilters.forEach(function (button) {
 
-                return;
+    button.addEventListener(
+        "click",
+        function (e) {
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            const filter =
+                button.dataset.filter || "all";
+
+            applyNotificationFilter(filter);
+
+        }
+    );
+
+});
+
+
+// ==================================================
+// APPLY NOTIFICATION FILTER
+// ==================================================
+
+function applyNotificationFilter(filter) {
+
+    let visibleCount = 0;
+
+
+    notificationItems.forEach(function (item) {
+
+        const status =
+            item.dataset.notificationStatus || "read";
+
+        let showItem = false;
+
+
+        // ==================================================
+        // SHOW ALL
+        // ==================================================
+
+        if (filter === "all") {
+
+            showItem = true;
+
+        }
+
+
+        // ==================================================
+        // SHOW UNREAD ONLY
+        // ==================================================
+
+        else if (filter === "unread") {
+
+            showItem =
+                status === "unread";
+
+        }
+
+
+        // ==================================================
+        // SHOW READ ONLY
+        // ==================================================
+
+        else if (filter === "read") {
+
+            showItem =
+                status === "read";
+
+        }
+
+
+        // ==================================================
+        // DISPLAY ITEM
+        // ==================================================
+
+        if (showItem) {
+
+            item.classList.remove(
+                "notification-hidden"
+            );
+
+            visibleCount++;
+
+        } else {
+
+            item.classList.add(
+                "notification-hidden"
+            );
+
+        }
+
+    });
+
+
+    // ==================================================
+    // UPDATE ACTIVE FILTER
+    // ==================================================
+
+    notificationFilters.forEach(function (button) {
+
+        const isActive =
+            button.dataset.filter === filter;
+
+
+        button.classList.toggle(
+            "active",
+            isActive
+        );
+
+
+        button.setAttribute(
+            "aria-selected",
+            isActive
+                ? "true"
+                : "false"
+        );
+
+    });
+
+
+    // ==================================================
+    // FILTER EMPTY STATE
+    // ==================================================
+
+    if (notificationFilterEmpty) {
+
+        if (
+            notificationItems.length > 0 &&
+            visibleCount === 0
+        ) {
+
+            notificationFilterEmpty.classList.remove(
+                "hidden"
+            );
+
+
+            if (notificationFilterEmptyTitle) {
+
+                if (filter === "unread") {
+
+                    notificationFilterEmptyTitle.textContent =
+                        "No unread notifications";
+
+                }
+
+                else if (filter === "read") {
+
+                    notificationFilterEmptyTitle.textContent =
+                        "No read notifications";
+
+                }
+
+                else {
+
+                    notificationFilterEmptyTitle.textContent =
+                        "No notifications";
+
+                }
 
             }
 
+        }
 
-            // ==========================================
-            // MARK NOTIFICATIONS AS READ
-            // ==========================================
+        else {
 
-            fetch("/notifications/read-all", {
+            notificationFilterEmpty.classList.add(
+                "hidden"
+            );
 
-                method: "POST",
-
-                headers: {
-
-                    "X-CSRF-TOKEN": csrfToken,
-
-                    "Accept": "application/json",
-
-                    "Content-Type": "application/json"
-
-                }
-
-            })
-            .then(response => {
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        "Failed to mark notifications as read."
-                    );
-
-                }
-
-                return response.json().catch(() => ({}));
-
-            })
-            .then(data => {
-
-                console.log(
-                    "Notifications marked as read.",
-                    data
-                );
-
-            })
-            .catch(error => {
-
-                console.error(
-                    "Notification error:",
-                    error
-                );
-
-            });
-
-        });
+        }
 
     }
+
+}
+
+
+// ==================================================
+// INITIAL FILTER
+// ==================================================
+
+if (notificationItems.length > 0) {
+
+    applyNotificationFilter("all");
+
+}
+
+
+// ==================================================
+// CLOSE DROPDOWNS WHEN CLICKING OUTSIDE
+// ==================================================
+
+document.addEventListener(
+    "click",
+    function (e) {
+
+
+        // ==================================================
+        // PROFILE
+        // ==================================================
+
+        if (
+            profileBtn &&
+            profileMenu &&
+            !profileBtn.contains(e.target) &&
+            !profileMenu.contains(e.target)
+        ) {
+
+            profileMenu.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+        // ==================================================
+        // NOTIFICATIONS
+        // ==================================================
+
+        if (
+            notificationBtn &&
+            notificationDropdown &&
+            !notificationBtn.contains(e.target) &&
+            !notificationDropdown.contains(e.target)
+        ) {
+
+            notificationDropdown.classList.add(
+                "hidden"
+            );
+
+
+            notificationBtn.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+
+            notificationDropdown.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+        }
+
+    }
+);
 
 
 
@@ -951,5 +1192,423 @@ document.addEventListener("DOMContentLoaded", function () {
 
         }
     );
+
+});
+document.addEventListener('DOMContentLoaded', function () {
+
+    const modal = document.getElementById('notificationModal');
+    const overlay = document.getElementById('notificationModalOverlay');
+    const closeButton = document.getElementById('closeNotificationModal');
+    const doneButton = document.getElementById('notificationModalDone');
+
+    const modalTitle = document.getElementById('notificationModalTitle');
+    const modalMessage = document.getElementById('notificationModalMessage');
+    const modalTime = document.getElementById('notificationModalTime');
+
+    const notificationDropdown =
+        document.getElementById('notificationDropdown');
+
+    if (!modal) {
+        console.warn('Notification modal not found.');
+        return;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Open notification modal
+    |--------------------------------------------------------------------------
+    */
+    function openNotificationModal(notification) {
+
+        /*
+         * Get the content directly from the notification card.
+         * This avoids relying on data-title/data-message.
+         */
+        const titleElement =
+            notification.querySelector('.notification-title');
+
+        const messageElement =
+            notification.querySelector('.notification-message');
+
+        const timeElement =
+            notification.querySelector('.notification-time');
+
+
+        const title = titleElement
+            ? titleElement.textContent.trim()
+            : 'Notification';
+
+
+        const message = messageElement
+            ? messageElement.textContent.trim()
+            : '';
+
+
+        const time = timeElement
+            ? timeElement.textContent.trim()
+            : '';
+
+
+        /*
+         * Put the notification information into the modal.
+         */
+        modalTitle.textContent = title;
+
+        modalMessage.textContent = message;
+
+        modalTime.textContent = time;
+
+
+        /*
+         * Close notification dropdown.
+         */
+        if (notificationDropdown) {
+            notificationDropdown.classList.add('hidden');
+        }
+
+
+        /*
+         * Open modal.
+         */
+        modal.classList.add('show');
+
+        modal.setAttribute(
+            'aria-hidden',
+            'false'
+        );
+
+        document.body.classList.add('notification-modal-open');
+
+        document.body.style.overflow = 'hidden';
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Close notification modal
+    |--------------------------------------------------------------------------
+    */
+    function closeNotificationModal() {
+
+        modal.classList.remove('show');
+
+        modal.setAttribute(
+            'aria-hidden',
+            'true'
+        );
+
+        document.body.classList.remove(
+            'notification-modal-open'
+        );
+
+        document.body.style.overflow = '';
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Make notification cards clickable
+    |--------------------------------------------------------------------------
+    */function attachNotificationClicks() {
+
+    const notifications =
+        document.querySelectorAll(
+            '#notificationList .notification-item'
+        );
+
+    notifications.forEach(function (notification) {
+
+        if (
+            notification.dataset.modalAttached === 'true'
+        ) {
+            return;
+        }
+
+        notification.dataset.modalAttached = 'true';
+
+        notification.style.cursor = 'pointer';
+
+        notification.addEventListener(
+            'click',
+            async function (event) {
+
+                if (
+                    event.target.closest('button') ||
+                    event.target.closest('a')
+                ) {
+                    return;
+                }
+
+                /*
+                 * MARK THIS NOTIFICATION AS READ
+                 */
+
+                const notificationId =
+                    notification.dataset.notificationId;
+
+                const csrfMeta =
+                    document.querySelector(
+                        'meta[name="csrf-token"]'
+                    );
+
+                if (notificationId && csrfMeta) {
+
+                    try {
+
+                        const response =
+                            await fetch(
+                                `/notifications/${notificationId}/read`,
+                                {
+                                    method: 'POST',
+
+                                    headers: {
+                                        'X-CSRF-TOKEN':
+                                            csrfMeta.getAttribute('content'),
+
+                                        'Accept':
+                                            'application/json',
+
+                                        'Content-Type':
+                                            'application/json'
+                                    }
+                                }
+                            );
+
+                        const data =
+                            await response.json();
+
+if (response.ok && data.success) {
+
+    // Change this notification from unread to read.
+    notification.dataset.notificationStatus = 'read';
+
+    // Remove unread dot.
+    const unreadDot =
+        notification.querySelector('[title="Unread"]');
+
+    if (unreadDot) {
+        unreadDot.remove();
+    }
+
+    // Update counters.
+    updateNotificationCounters();
+
+    // Re-apply active filter.
+    // This removes the notification
+    // from the Unread tab immediately.
+    const activeFilter =
+        document.querySelector(
+            '.notification-filter.active'
+        );
+
+    if (activeFilter) {
+
+        const currentFilter =
+            activeFilter.dataset.filter || 'all';
+
+        applyNotificationFilter(currentFilter);
+    }
+}
+                    } catch (error) {
+
+                        console.error(
+                            'Unable to mark notification as read:',
+                            error
+                        );
+
+                    }
+
+                }
+
+                /*
+                 * THEN open the modal.
+                 */
+
+                openNotificationModal(notification);
+
+            }
+        );
+
+
+        /*
+         * Keyboard accessibility
+         */
+
+        notification.addEventListener(
+            'keydown',
+            async function (event) {
+
+                if (
+                    event.key === 'Enter' ||
+                    event.key === ' '
+                ) {
+
+                    event.preventDefault();
+
+                    notification.click();
+
+                }
+
+            }
+        );
+
+    });
+
+}
+function updateNotificationCounters() {
+
+    const notifications =
+        document.querySelectorAll(
+            '#notificationList .notification-item'
+        );
+
+    let unreadCount = 0;
+    let readCount = 0;
+
+
+    notifications.forEach(function (notification) {
+
+        const status =
+            notification.dataset.notificationStatus;
+
+        if (status === 'unread') {
+            unreadCount++;
+        }
+
+        if (status === 'read') {
+            readCount++;
+        }
+
+    });
+
+
+    const allButton =
+        document.querySelector(
+            '.notification-filter[data-filter="all"]'
+        );
+
+    const unreadButton =
+        document.querySelector(
+            '.notification-filter[data-filter="unread"]'
+        );
+
+    const readButton =
+        document.querySelector(
+            '.notification-filter[data-filter="read"]'
+        );
+
+
+    if (allButton) {
+        allButton.textContent =
+            `All ${notifications.length}`;
+    }
+
+    if (unreadButton) {
+        unreadButton.textContent =
+            `Unread ${unreadCount}`;
+    }
+
+    if (readButton) {
+        readButton.textContent =
+            `Read ${readCount}`;
+    }
+
+
+    /*
+     * Update notification badge.
+     */
+
+    const badge =
+        document.querySelector(
+            '.notification-badge'
+        );
+
+    if (badge) {
+
+        if (unreadCount > 0) {
+
+            badge.textContent = unreadCount;
+            badge.style.display = 'flex';
+
+        } else {
+
+            badge.textContent = '';
+            badge.style.display = 'none';
+
+        }
+
+    }
+
+}
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Close buttons
+    |--------------------------------------------------------------------------
+    */
+
+    if (closeButton) {
+        closeButton.addEventListener(
+            'click',
+            closeNotificationModal
+        );
+    }
+
+
+    if (doneButton) {
+        doneButton.addEventListener(
+            'click',
+            closeNotificationModal
+        );
+    }
+
+
+    if (overlay) {
+        overlay.addEventListener(
+            'click',
+            closeNotificationModal
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Escape key
+    |--------------------------------------------------------------------------
+    */
+
+    document.addEventListener(
+        'keydown',
+        function (event) {
+
+            if (
+                event.key === 'Escape' &&
+                modal.classList.contains('show')
+            ) {
+                closeNotificationModal();
+            }
+
+        }
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Initial notification events
+    |--------------------------------------------------------------------------
+    */
+
+    attachNotificationClicks();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Make available globally
+    |--------------------------------------------------------------------------
+    */
+
+    window.attachNotificationClicks =
+        attachNotificationClicks;
 
 });

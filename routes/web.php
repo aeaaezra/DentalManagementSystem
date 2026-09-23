@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
+use Illuminate\Support\Facades\DB;
+
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\MessageController;
@@ -313,13 +315,10 @@ Route::middleware([
     |--------------------------------------------------------------------------
     */
 
-    Route::get(
-        '/appointments/settings',
-        [
-            SettingsController::class,
-            'index'
-        ]
-    )->name('appointments.settings');
+Route::get('/appointments/settings', [
+    AppointmentBookingController::class,
+    'settings'
+])->name('appointments.settings');
 
     Route::put(
         '/appointments/settings/profile',
@@ -1382,5 +1381,42 @@ Route::post(
 )
     ->middleware('throttle:5,1')
     ->name('contact.send');
+
+Route::post('/notifications/{notification}/read', function ($notificationId) {
+
+    $notification = DB::table('notifications')
+        ->where('id', $notificationId)
+        ->first();
+
+    if (!$notification) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Notification not found.'
+        ], 404);
+    }
+
+    if (
+        $notification->notifiable_type !== get_class(Auth::user()) ||
+        (int) $notification->notifiable_id !== (int) Auth::id()
+    ) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Unauthorized.'
+        ], 403);
+    }
+
+    DB::table('notifications')
+        ->where('id', $notificationId)
+        ->update([
+            'read_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Notification marked as read.',
+    ]);
+
+})->middleware('auth')->name('notifications.read');
 
 require __DIR__ . '/auth.php';

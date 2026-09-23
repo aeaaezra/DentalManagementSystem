@@ -659,14 +659,9 @@ public function cancel(
     ]);
 
 
-    return redirect()
-        ->route(
-            'appointments.homepage'
-        )
-        ->with(
-            'success',
-            'Your appointment cancellation has been sent! Please wait for the clinic to review and approve your cancellation request.'
-        );
+return redirect()
+    ->route('appointments.homepage')
+    ->with('cancellation_success', true);
 }
 
 

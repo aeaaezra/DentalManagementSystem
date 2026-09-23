@@ -54,10 +54,9 @@
     </a>
 
 </div>
+<div class="flex items-center gap-4 relative">
 
-  <!-- Notification + Profile -->
-        <div class="flex items-center relative">
- <div class="notification-wrapper">
+    <div class="notification-wrapper">
 
         <!-- NOTIFICATION BUTTON -->
         <button
@@ -93,78 +92,277 @@
         </button>
 
         @php
-            $totalNotifications = $notifications->count();
+                $totalNotifications = $notifications->count();
 
-            $unreadNotifications = $notifications
-                ->where('is_read', false)
-                ->count();
+                $unreadNotifications = $notifications
+                    ->whereNull('read_at')
+                    ->count();
 
-            $readNotifications = $notifications
-                ->where('is_read', true)
-                ->count();
-        @endphp
+                $readNotifications = $notifications
+                    ->whereNotNull('read_at')
+                    ->count();
+            @endphp
 
         <!-- NOTIFICATION DROPDOWN -->
-        <div
-            id="notificationDropdown"
-            class="hidden absolute right-0 mt-3 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-pink-100 overflow-hidden z-[999999] origin-top-right"
+{{-- ============================================================
+     NOTIFICATION DROPDOWN
+     ============================================================ --}}
+
+@php
+    /*
+    |--------------------------------------------------------------------------
+    | Notification Counts
+    |--------------------------------------------------------------------------
+    | Use read_at consistently throughout the notification system.
+    */
+
+    $totalNotifications = $notifications->count();
+
+    $unreadNotifications = $notifications
+        ->filter(fn ($notification) => is_null($notification->read_at))
+        ->count();
+
+    $readNotifications = $notifications
+        ->filter(fn ($notification) => !is_null($notification->read_at))
+        ->count();
+@endphp
+
+
+<div
+    id="notificationDropdown"
+    class="hidden notification-dropdown"
+    aria-hidden="true"
+>
+
+    {{-- ============================================================
+         HEADER
+         ============================================================ --}}
+
+    <div class="notification-dropdown-header">
+
+        <div class="notification-header-content">
+
+            {{-- Bell Icon --}}
+            <div class="notification-header-icon">
+
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    aria-hidden="true"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                    />
+                </svg>
+
+            </div>
+
+
+            {{-- Header Text --}}
+            <div class="notification-header-text">
+
+                <div class="notification-header-title-row">
+
+                    <h3 class="notification-header-title">
+                        Notifications
+                    </h3>
+
+                    <span class="notification-new-count">
+                        {{ $unreadNotifications }} New
+                    </span>
+
+                </div>
+
+                <p class="notification-header-subtitle">
+                    Stay updated with your appointments
+                </p>
+
+            </div>
+
+        </div>
+
+
+        {{-- Close Button --}}
+        <button
+            id="closeNotificationBtn"
+            type="button"
+            class="notification-close-btn"
+            aria-label="Close notifications"
         >
 
-            <!-- HEADER -->
-            <div class="p-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                />
+            </svg>
 
-                <div class="flex items-center justify-between gap-3">
+        </button>
 
-                    <div class="flex items-center gap-3 min-w-0">
+    </div>
 
-                        <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="w-5 h-5"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                stroke-width="2"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                                />
-                            </svg>
-                        </div>
 
-                        <div class="min-w-0">
-                            <div class="flex items-center gap-2">
-                                <h3 class="font-bold text-lg truncate">
-                                    Notifications
-                                </h3>
+    {{-- ============================================================
+         FILTER BAR
+         ============================================================ --}}
 
-                                <span class="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full font-semibold whitespace-nowrap">
-                                    {{ $unreadNotifications }} New
-                                </span>
-                            </div>
+    <div
+        class="notification-filter-bar"
+        role="tablist"
+        aria-label="Notification filters"
+    >
 
-                            <p class="text-xs text-pink-100 mt-0.5">
-                                Stay updated with your appointments
-                            </p>
-                        </div>
+        {{-- ALL --}}
+        <button
+            type="button"
+            class="notification-filter active"
+            data-filter="all"
+            role="tab"
+            aria-selected="true"
+        >
+            <span>All</span>
+            <span class="notification-filter-count">
+                {{ $totalNotifications }}
+            </span>
+        </button>
 
-                    </div>
 
-                    <button
-                        id="closeNotificationBtn"
-                        type="button"
-                        aria-label="Close notifications"
-                        class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/20 transition flex-shrink-0"
-                    >
+        {{-- UNREAD --}}
+        <button
+            type="button"
+            class="notification-filter"
+            data-filter="unread"
+            role="tab"
+            aria-selected="false"
+        >
+            <span>Unread</span>
+            <span class="notification-filter-count">
+                {{ $unreadNotifications }}
+            </span>
+        </button>
+
+
+        {{-- READ --}}
+        <button
+            type="button"
+            class="notification-filter"
+            data-filter="read"
+            role="tab"
+            aria-selected="false"
+        >
+            <span>Read</span>
+            <span class="notification-filter-count">
+                {{ $readNotifications }}
+            </span>
+        </button>
+
+    </div>
+
+
+    {{-- ============================================================
+         NOTIFICATION LIST
+         ============================================================ --}}
+
+    <div
+        id="notificationList"
+        class="notification-list"
+    >
+
+        @forelse($notifications as $notification)
+
+            @php
+                /*
+                |--------------------------------------------------------------------------
+                | Notification Data
+                |--------------------------------------------------------------------------
+                */
+
+                $isUnread = is_null($notification->read_at);
+
+                $title = $notification->data['title']
+                    ?? 'Notification';
+
+                $message = $notification->data['message']
+                    ?? 'No message available.';
+
+                $lowerTitle = strtolower($title);
+
+                $notificationTime = $notification->created_at
+                    ->diffForHumans();
+            @endphp
+
+
+            {{-- ====================================================
+                 NOTIFICATION ITEM
+                 ==================================================== --}}
+
+            <div
+                class="notification-item"
+                data-notification-id="{{ $notification->id }}"
+                data-notification-status="{{ $isUnread ? 'unread' : 'read' }}"
+                data-notification-title="{{ $title }}"
+                data-notification-message="{{ $message }}"
+                data-notification-time="{{ $notificationTime }}"
+                role="button"
+                tabindex="0"
+                aria-label="View notification"
+            >
+
+                {{-- UNREAD DOT --}}
+                @if($isUnread)
+
+                    <span
+                        class="notification-unread-dot"
+                        title="Unread"
+                        aria-label="Unread notification"
+                    ></span>
+
+                @endif
+
+
+                {{-- ====================================================
+                     NOTIFICATION ICON
+                     ==================================================== --}}
+
+                <div
+                    class="notification-icon
+                    @if(str_contains($lowerTitle, 'cancel'))
+                        notification-icon-cancel
+                    @elseif(
+                        str_contains($lowerTitle, 'confirm') ||
+                        str_contains($lowerTitle, 'approved')
+                    )
+                        notification-icon-success
+                    @elseif(str_contains($lowerTitle, 'payment'))
+                        notification-icon-payment
+                    @else
+                        notification-icon-default
+                    @endif"
+                >
+
+                    {{-- CANCEL --}}
+                    @if(str_contains($lowerTitle, 'cancel'))
+
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            class="w-5 h-5"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
                             stroke-width="2"
+                            aria-hidden="true"
                         >
                             <path
                                 stroke-linecap="round"
@@ -172,345 +370,344 @@
                                 d="M6 18L18 6M6 6l12 12"
                             />
                         </svg>
-                    </button>
 
-                </div>
-            </div>
 
-            <!-- FILTER BAR -->
-            <div class="flex border-b border-pink-100 bg-pink-50/50 px-3 pt-2 text-xs font-medium text-gray-500">
+                    {{-- CONFIRMED / APPROVED --}}
+                    @elseif(
+                        str_contains($lowerTitle, 'confirm') ||
+                        str_contains($lowerTitle, 'approved')
+                    )
 
-                <button
-                    type="button"
-                    class="notification-filter active pb-2 px-3 border-b-2 border-pink-500 text-pink-600 font-semibold transition-all"
-                    data-filter="all"
-                >
-                    All {{ $totalNotifications }}
-                </button>
-
-                <button
-                    type="button"
-                    class="notification-filter pb-2 px-3 border-b-2 border-transparent hover:text-pink-600 transition-all"
-                    data-filter="unread"
-                >
-                    Unread {{ $unreadNotifications }}
-                </button>
-
-                <button
-                    type="button"
-                    class="notification-filter pb-2 px-3 border-b-2 border-transparent hover:text-pink-600 transition-all"
-                    data-filter="read"
-                >
-                    Read {{ $readNotifications }}
-                </button>
-
-                @if($totalNotifications > 0)
-                    <button
-                        id="clearAllNotifications"
-                        type="button"
-                        class="ml-auto pb-2 px-3 text-red-500 hover:text-red-600 transition-colors whitespace-nowrap"
-                        title="Delete all notifications"
-                         data-clear-url="{{ route('notifications.clearAll') }}"
-                    >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            class="w-3.5 h-3.5 inline-block mr-1"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
                             stroke-width="2"
+                            aria-hidden="true"
                         >
                             <path
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 01-1-1h-4a1 1 0 01-1 1v3m-4 0h14"
+                                d="M5 13l4 4L19 7"
                             />
                         </svg>
-                        Clear all
-                    </button>
-                @endif
-            </div>
 
-            <!-- NOTIFICATION LIST -->
-            <div
-                id="notificationList"
-                class="notification-scroll max-h-[360px] overflow-y-auto divide-y divide-pink-50"
-            >
 
-                @forelse($notifications as $notification)
-
-                    @php
-                        $isUnread = !$notification->is_read;
-                        $title = $notification->data['title'] ?? 'Notification';
-                        $message = $notification->data['message'] ?? 'No message available.';
-                        $lowerTitle = strtolower($title);
-                    @endphp
-
-                    <div
-                        class="notification-item p-4 transition-colors hover:bg-pink-50/40 flex items-start gap-3 relative group {{ $isUnread ? 'bg-pink-50/30' : 'bg-white' }}"
-                        data-notification-id="{{ $notification->id }}"
-                        data-notification-status="{{ $isUnread ? 'unread' : 'read' }}"
-                    >
-
-                        @if($isUnread)
-                            <span
-                                class="absolute left-2 top-5 w-2 h-2 rounded-full bg-pink-500 ring-2 ring-white"
-                                title="Unread"
-                            ></span>
-                        @endif
-
-                        <!-- ICON -->
-                        <div
-                            class="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center shadow-sm
-                            @if(str_contains($lowerTitle, 'cancel'))
-                                bg-red-100 text-red-500
-                            @elseif(str_contains($lowerTitle, 'confirm') || str_contains($lowerTitle, 'approved'))
-                                bg-blue-100 text-blue-600
-                            @elseif(str_contains($lowerTitle, 'payment'))
-                                bg-emerald-100 text-emerald-600
-                            @else
-                                bg-pink-100 text-pink-600
-                            @endif"
-                        >
-
-                            @if(str_contains($lowerTitle, 'cancel'))
-
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-
-                            @elseif(str_contains($lowerTitle, 'confirm') || str_contains($lowerTitle, 'approved'))
-
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-
-                            @elseif(str_contains($lowerTitle, 'payment'))
-
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-
-                            @else
-
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                                </svg>
-
-                            @endif
-                        </div>
-
-                        <!-- CONTENT -->
-                        <div class="flex-1 min-w-0 pr-7">
-
-                            <h4 class="text-xs font-semibold text-gray-800 truncate">
-                                {{ $title }}
-                            </h4>
-
-                            <p class="text-xs text-gray-500 mt-1 leading-relaxed">
-                                {{ $message }}
-                            </p>
-
-                            <div class="flex items-center gap-1.5 mt-2 text-[10px] text-gray-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-
-                                <span>
-                                    {{ $notification->created_at->diffForHumans() }}
-                                </span>
-                            </div>
-
-                        </div>
-
-                        <!-- DELETE -->
-                        <button
-                            type="button"
-                            class="delete-notification absolute right-3 top-4 opacity-70 group-hover:opacity-100 w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all duration-200"
-                            data-notification-id="{{ $notification->id }}"
-                            data-delete-url="{{ route('notifications.destroy', $notification->id) }}"
-                            title="Delete notification"
-                            aria-label="Delete notification"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 01-1-1h-4a1 1 0 01-1 1v3m-4 0h14" />
-                            </svg>
-                        </button>
-
-                    </div>
-
-                @empty
-
-                    <div
-                        id="noNotificationsMessage"
-                        class="py-12 px-4 text-center"
-                    >
-                        <div class="w-12 h-12 bg-pink-50 text-pink-400 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                            </svg>
-                        </div>
-
-                        <p class="text-sm font-medium text-gray-600">
-                            No notifications found
-                        </p>
-
-                        <p class="text-xs text-gray-400 mt-0.5">
-                            You're all caught up for now!
-                        </p>
-                    </div>
-
-                @endforelse
-
-            </div>
-
-            <!-- FOOTER -->
-            @if($totalNotifications > 0)
-                <div class="p-3 bg-pink-50/50 border-t border-pink-100 text-center">
-
-                    <a
-                        href="{{ route('appointments.history') }}"
-                        class="text-xs font-semibold text-pink-600 hover:text-pink-700 hover:underline py-1 px-3 rounded-lg transition-colors"
-                    >
-                        View appointment history
+                    {{-- PAYMENT --}}
+                    @elseif(str_contains($lowerTitle, 'payment'))
 
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            class="w-3 h-3 inline-block ml-1"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
                             stroke-width="2"
+                            aria-hidden="true"
                         >
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
                         </svg>
-                    </a>
+
+
+                    {{-- DEFAULT APPOINTMENT --}}
+                    @else
+
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                            />
+                        </svg>
+
+                    @endif
 
                 </div>
-            @endif
 
 
-        <!-- ============================================================
-             CLEAR ALL CONFIRMATION MODAL
-             ============================================================ -->
-        <div
-            id="clearNotificationsConfirmModal"
-            class="notification-modal hidden"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="clearNotificationsConfirmTitle"
-        >
+                {{-- ====================================================
+                     NOTIFICATION CONTENT
+                     ==================================================== --}}
+
+                <div class="notification-content">
+
+                    <h4 class="notification-title">
+                        {{ $title }}
+                    </h4>
+
+
+                    <p class="notification-message">
+                        {{ $message }}
+                    </p>
+
+
+                    <div class="notification-time">
+
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                        </svg>
+
+                        <span>
+                            {{ $notificationTime }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        @empty
+
+
+            {{-- ====================================================
+                 EMPTY STATE
+                 ==================================================== --}}
+
             <div
-                class="notification-modal-backdrop"
-                data-close-clear-modal
-            ></div>
+                id="noNotificationsMessage"
+                class="notification-empty"
+            >
 
-            <div class="notification-modal-card">
+                <div class="notification-empty-icon">
 
-                <div class="notification-modal-icon warning">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        class="w-6 h-6"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
-                        stroke-width="2"
+                        stroke-width="1.7"
+                        aria-hidden="true"
                     >
                         <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            d="M12 9v4m0 4h.01M10.29 3.86l-7.82 13a2 2 0 001.71 3h15.64a2 2 0 001.71-3l-7.82-13a2 2 0 00-3.42 0z"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5"
                         />
                     </svg>
+
                 </div>
 
-                <h3 id="clearNotificationsConfirmTitle">
-                    Clear all notifications?
-                </h3>
 
-                <p>
-                    Are you sure you want to clear all notifications?
-                    This action cannot be undone.
+                <p class="notification-empty-title">
+                    No notifications found
                 </p>
 
-                <div class="notification-modal-actions">
 
-                    <button
-                        type="button"
-                        id="cancelClearNotifications"
-                        class="notification-modal-btn cancel"
-                    >
-                        Cancel
-                    </button>
+                <p class="notification-empty-text">
+                    You're all caught up for now!
+                </p>
 
-                    <button
-                        type="button"
-                        id="confirmClearNotifications"
-                        class="notification-modal-btn danger"
-                    >
-                        Yes, clear all
-                    </button>
-
-                </div>
             </div>
-        </div>
+
+        @endforelse
 
 
-        <!-- ============================================================
-             CLEAR ALL SUCCESS MODAL
-             ============================================================ -->
+        {{-- ========================================================
+             FILTER EMPTY STATE
+             ======================================================== --}}
+
         <div
-            id="clearNotificationsSuccessModal"
-            class="notification-modal hidden"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="clearNotificationsSuccessTitle"
+            id="notificationFilterEmpty"
+            class="notification-empty hidden"
         >
-            <div class="notification-modal-backdrop"></div>
 
-            <div class="notification-modal-card success-card">
+            <div class="notification-empty-icon">
 
-                <div class="notification-modal-icon success">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="w-7 h-7"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        stroke-width="2"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M5 13l4 4L19 7"
-                        />
-                    </svg>
-                </div>
-
-                <h3 id="clearNotificationsSuccessTitle">
-                    Notifications cleared
-                </h3>
-
-                <p>
-                    All of your notifications have been successfully cleared.
-                </p>
-
-                <button
-                    type="button"
-                    id="closeClearNotificationsSuccess"
-                    class="notification-modal-btn success"
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    aria-hidden="true"
                 >
-                    Done
-                </button>
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5"
+                    />
+                </svg>
 
             </div>
+
+
+            <p
+                id="notificationFilterEmptyTitle"
+                class="notification-empty-title"
+            >
+                No notifications
+            </p>
+
+
+            <p class="notification-empty-text">
+                There are no notifications in this category.
+            </p>
+
         </div>
+
+    </div>
+
+
+    {{-- ============================================================
+         FOOTER
+         ============================================================ --}}
+
+    @if($totalNotifications > 0)
+
+        <div class="notification-footer">
+
+            <a
+                href="{{ route('appointments.history') }}"
+                class="notification-history-link"
+            >
+
+                <span>
+                    View appointment history
+                </span>
+
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    aria-hidden="true"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 5l7 7-7 7"
+                    />
+                </svg>
+
+            </a>
+
+        </div>
+
+    @endif
+
+</div>
+
+    </div>
+</div>
+
+<!-- ============================================================
+     NOTIFICATION DETAILS MODAL
+     ============================================================ -->
+<div
+    id="notificationModal"
+    class="notification-details-modal hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="notificationModalTitle"
+>
+    <div
+        id="notificationModalBackdrop"
+        class="notification-details-backdrop"
+    ></div>
+
+    <div class="notification-details-card">
+
+        <!-- HEADER -->
+        <div class="notification-details-header">
+
+            <div class="notification-details-icon">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-6 h-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                    />
+                </svg>
+            </div>
+
+            <div>
+                <h2 id="notificationModalTitle">
+                    Notification
+                </h2>
+
+                <p id="notificationModalTime">
+                    Just now
+                </p>
+            </div>
+
+            <button
+                type="button"
+                id="closeNotificationModal"
+                class="notification-details-close"
+                aria-label="Close notification"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                    />
+                </svg>
+            </button>
+
+        </div>
+
+        <!-- MESSAGE -->
+        <div class="notification-details-body">
+
+            <p id="notificationModalMessage"></p>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="notification-details-footer">
+
+            <button
+                type="button"
+                id="doneNotificationModal"
+                class="notification-details-done"
+            >
+                Done
+            </button>
 
         </div>
 
     </div>
 </div>
-
     <!-- Profile Dropdown -->
     <div class="relative">
 
@@ -564,9 +761,7 @@
             <span>Settings</span>
         </a>
 
-
-
-    <form
+<form
     method="POST"
     action="{{ route('logout') }}"
     id="logoutForm"
@@ -575,7 +770,7 @@
 
     <button
         type="button"
-        id="logoutButton"
+        id="logoutBtn"
         class="w-full text-left flex items-center gap-3 px-3 py-3 text-red-600 hover:bg-red-50 transition"
     >
         <svg
@@ -1598,39 +1793,66 @@
     </div>
 
 </div>
-
-<!-- Logout Modal -->
 <!-- =========================================================
      LOGOUT CONFIRMATION MODAL
      ========================================================= -->
+
 <div
     id="logoutModal"
     class="logout-modal"
     aria-hidden="true"
 >
+
+    <!-- OVERLAY -->
     <div
         id="logoutModalOverlay"
         class="logout-modal-overlay"
     ></div>
 
+
+    <!-- MODAL CARD -->
     <div
         class="logout-modal-card"
         role="dialog"
         aria-modal="true"
         aria-labelledby="logoutModalTitle"
     >
+
+        <!-- ICON -->
         <div class="logout-modal-icon">
-            <!-- your SVG -->
+
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+
         </div>
 
+
+        <!-- TITLE -->
         <h2 id="logoutModalTitle">
             Logout?
         </h2>
 
+
+        <!-- MESSAGE -->
         <p>
             Are you sure you want to log out of your account?
         </p>
 
+
+        <!-- BUTTONS -->
         <div class="logout-modal-actions">
 
             <button
@@ -1641,6 +1863,7 @@
                 Cancel
             </button>
 
+
             <button
                 type="button"
                 id="confirmLogout"
@@ -1650,8 +1873,12 @@
             </button>
 
         </div>
+
     </div>
+
 </div>
+
+
 
     <script src="{{ asset('js/appointment/booking.js') }}"></script>
     <script src="{{ asset('js/appointment/patient-theme.js') }}"></script>
