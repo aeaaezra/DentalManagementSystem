@@ -15,8 +15,6 @@
     </title>
 
 
-    {{-- Tailwind CDN --}}
-
     <script src="https://cdn.tailwindcss.com"></script>
 
 
@@ -2222,7 +2220,7 @@
 <script>window.appointmentActionError={message:@json(session('error'))};</script>
 @endif
 
-<script src="{{ asset('js/receptionist.js') }}"></script>
+<script src="{{ asset('js/receptionist/receptionist.js') }}"></script>
 
 
 
