@@ -77,7 +77,7 @@ class ReceptionistSettingsController extends Controller
             $path = $request
                 ->file('profile_picture')
                 ->store(
-                    'profile-pictures',
+                    'profile_pictures',
                     'public'
                 );
 
