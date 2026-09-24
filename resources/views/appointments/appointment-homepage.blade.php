@@ -2633,7 +2633,7 @@
 
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>lucide.createIcons();</script>
-    <script src="{{ asset('js/appointment/appointment.js') }}"></script>
+<script src="{{ asset('js/appointment/appointment.js') }}?v={{ time() }}"></script>
     <script src="{{ asset('js/appointment/patient-theme.js') }}"></script>
 
 <script>
