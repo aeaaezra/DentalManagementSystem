@@ -38,41 +38,6 @@ function getCsrfToken() {
 }
 
 
-    // Laravel form token fallback
-    const input =
-        document.querySelector(
-            'input[name="_token"]'
-        );
-
-    if (input && input.value) {
-        return input.value;
-    }
-
-
-    console.error(
-        'CSRF token could not be found.'
-    );
-
-    return null;
-}
-
-function getCsrfToken() {
-    const meta = document.querySelector('meta[name="csrf-token"]');
-
-    if (meta) {
-        return meta.getAttribute('content');
-    }
-
-    const input = document.querySelector('input[name="_token"]');
-
-    if (input) {
-        return input.value;
-    }
-
-    console.error('CSRF token could not be found.');
-    return null;
-}
-
 
 /* =========================================================
    PROFILE DROPDOWN
@@ -320,9 +285,6 @@ document.addEventListener('DOMContentLoaded', function () {
     );
 
 
-    /* ==========================================
-       ESC KEY
-       ========================================== */
 
     document.addEventListener(
         'keydown',
@@ -883,22 +845,6 @@ document.addEventListener(
 
     }
 );
-function getCsrfToken() {
-    const meta = document.querySelector('meta[name="csrf-token"]');
-
-    if (meta) {
-        return meta.getAttribute('content');
-    }
-
-    const input = document.querySelector('input[name="_token"]');
-
-    if (input) {
-        return input.value;
-    }
-
-    console.error('CSRF token could not be found.');
-    return null;
-}
 
 
 /* =========================================================
