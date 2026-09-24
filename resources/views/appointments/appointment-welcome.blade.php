@@ -92,8 +92,8 @@
         </p>
 
         <div class="ss-hero-actions">
-            <a href="{{ route('appointments.create') }}" class="ss-btn ss-btn--solid">Book an Appointment</a>
-            <a href="{{ route('appointments.login') }}" class="ss-btn ss-btn--ghost">Login</a>
+            <a href="{{ route('appointments.login') }}" class="ss-btn ss-btn--solid">Book an Appointment</a>
+
         </div>
     </div>
 
