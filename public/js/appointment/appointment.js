@@ -1,3 +1,61 @@
+/* =========================================================
+   GLOBAL CSRF TOKEN HELPER
+   ========================================================= */
+
+function getCsrfToken() {
+
+    const meta =
+        document.querySelector(
+            'meta[name="csrf-token"]'
+        );
+
+    if (meta) {
+
+        const token =
+            meta.getAttribute('content');
+
+        if (token) {
+            return token;
+        }
+    }
+
+
+    const input =
+        document.querySelector(
+            'input[name="_token"]'
+        );
+
+    if (input && input.value) {
+        return input.value;
+    }
+
+
+    console.error(
+        'CSRF token could not be found.'
+    );
+
+    return null;
+}
+
+
+    // Laravel form token fallback
+    const input =
+        document.querySelector(
+            'input[name="_token"]'
+        );
+
+    if (input && input.value) {
+        return input.value;
+    }
+
+
+    console.error(
+        'CSRF token could not be found.'
+    );
+
+    return null;
+}
+
 function getCsrfToken() {
     const meta = document.querySelector('meta[name="csrf-token"]');
 
