@@ -8268,3 +8268,36 @@ html.dark-mode .notification-badge {
     display: block;
     flex-shrink: 0;
 }
+
+#notificationDropdown .notification-header-icon {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    max-width: 40px !important;
+    max-height: 40px !important;
+
+    flex: 0 0 40px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    overflow: hidden !important;
+}
+
+#notificationDropdown .notification-header-icon svg.notification-header-svg {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    min-height: 24px !important;
+    max-width: 24px !important;
+    max-height: 24px !important;
+
+    flex: 0 0 24px !important;
+
+    display: block !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
