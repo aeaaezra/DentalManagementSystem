@@ -87,8 +87,8 @@
 >
 
 <div
-    id="profileWrapper"
-    class="relative shrink-0"
+    id="notificationWrapper"
+    class="notification-wrapper relative shrink-0"
 >
 
         <!-- NOTIFICATION BUTTON -->
@@ -701,8 +701,13 @@
 </div>
 
 
+</div>
 
-<div class="relative">
+<!-- PROFILE -->
+<div
+    id="profileWrapper"
+    class="relative shrink-0"
+>
 
     <button
         id="profileBtn"
@@ -1878,7 +1883,7 @@
 
 </section>
 
-<div class="lg:col-span-3 w-full bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+<section id="balanceHistorySection" class="lg:col-span-3 w-full bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-12">
 
     {{-- HEADER --}}
     <div class="px-8 pt-8 pb-6">
@@ -2054,11 +2059,12 @@
 
     </div>
 
-</div>
+</section>
     </main>
 
-    <footer class="bg-slate-50 pt-24 pb-12 border-t border-slate-200">
-            <div class="pt-8 border-t border-slate-200 text-center text-slate-400 text-xs">
+    <footer class="homepage-footer bg-[#0b0b0b] text-gray-400 border-t border-[#2b2b2b] pt-8 pb-8">
+        <div class="w-full max-w-7xl mx-auto px-6">
+            <div class="pt-6 border-t border-[#2b2b2b] text-center text-gray-500 text-xs">
                 © 2026 Shine & Smile Systems Dental. | All Rights Reserved.
             </div>
         </div>

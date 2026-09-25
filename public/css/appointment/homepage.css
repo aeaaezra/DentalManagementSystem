@@ -5890,7 +5890,7 @@ html.dark-mode main > div.lg\:col-span-3 > div.px-8.pb-8 > .grid > div {
    DESKTOP SPACING
    ========================================================= */
 
-@media (min-width: 768px) {
+@media (min-width: 600px) {
 
     #notificationWrapper {
         margin-right: 4px !important;
@@ -5930,4 +5930,602 @@ html.dark-mode main > div.lg\:col-span-3 > div.px-8.pb-8 > .grid > div {
         height: 20px !important;
     }
 
+}
+/* =========================================================
+   SHINE & SMILE — NOTIFICATION BUTTON
+   SINGLE CLEAN DEFINITION
+   ========================================================= */
+
+.notification-wrapper {
+    position: relative !important;
+
+    width: 42px !important;
+    min-width: 42px !important;
+    height: 42px !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex: 0 0 42px !important;
+    flex-shrink: 0 !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    overflow: visible !important;
+
+    z-index: 100001 !important;
+}
+
+
+/* =========================================================
+   BUTTON
+   ========================================================= */
+
+#notificationBtn,
+.notification-btn {
+    position: relative !important;
+
+    width: 42px !important;
+    min-width: 42px !important;
+    max-width: 42px !important;
+
+    height: 42px !important;
+    min-height: 42px !important;
+    max-height: 42px !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex: 0 0 42px !important;
+    flex-shrink: 0 !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    background: #171318 !important;
+
+    color: #ffffff !important;
+
+    border: 1px solid #4a3942 !important;
+    border-radius: 50% !important;
+
+    cursor: pointer !important;
+
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    overflow: visible !important;
+
+    box-sizing: border-box !important;
+
+    z-index: 100002 !important;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease !important;
+}
+
+
+/* =========================================================
+   HOVER
+   ========================================================= */
+
+#notificationBtn:hover,
+.notification-btn:hover {
+    background: #1d2129 !important;
+
+    color: #ff6aa9 !important;
+
+    border-color: #ec1961 !important;
+
+    transform: translateY(-1px) !important;
+}
+
+
+/* =========================================================
+   ACTIVE
+   ========================================================= */
+
+#notificationBtn:active,
+.notification-btn:active {
+    transform: scale(0.96) !important;
+}
+
+
+/* =========================================================
+   FOCUS
+   ========================================================= */
+
+#notificationBtn:focus,
+#notificationBtn:focus-visible,
+.notification-btn:focus,
+.notification-btn:focus-visible {
+    outline: 2px solid #ec1961 !important;
+    outline-offset: 3px !important;
+}
+
+
+/* =========================================================
+   BELL ICON
+   ========================================================= */
+
+#notificationBtn svg,
+.notification-btn svg {
+    display: block !important;
+
+    width: 21px !important;
+    height: 21px !important;
+
+    min-width: 21px !important;
+    min-height: 21px !important;
+
+    max-width: 21px !important;
+    max-height: 21px !important;
+
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    color: currentColor !important;
+
+    stroke: currentColor !important;
+
+    flex: 0 0 21px !important;
+
+    margin: 0 !important;
+
+    pointer-events: none !important;
+}
+
+
+/* =========================================================
+   NOTIFICATION BADGE
+   ========================================================= */
+
+#notificationBtn .notification-badge,
+.notification-btn .notification-badge {
+    position: absolute !important;
+
+    top: -4px !important;
+    right: -4px !important;
+
+    min-width: 17px !important;
+    height: 17px !important;
+
+    padding: 0 4px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    background: #ec1961 !important;
+
+    color: #ffffff !important;
+
+    border: 2px solid #171318 !important;
+
+    border-radius: 999px !important;
+
+    font-family: "Inter", sans-serif !important;
+
+    font-size: 9px !important;
+    font-weight: 700 !important;
+
+    line-height: 1 !important;
+
+    box-sizing: border-box !important;
+
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    z-index: 100003 !important;
+}
+
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+html.dark-mode .notification-wrapper {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+html.dark-mode #notificationBtn,
+html.dark-mode .notification-btn {
+    background: #171a21 !important;
+
+    color: #ffffff !important;
+
+    border-color: #3a3035 !important;
+}
+
+html.dark-mode #notificationBtn:hover,
+html.dark-mode .notification-btn:hover {
+    background: #1d2129 !important;
+
+    color: #ff6aa9 !important;
+
+    border-color: #ec1961 !important;
+}
+
+html.dark-mode #notificationBtn svg,
+html.dark-mode .notification-btn svg {
+    color: currentColor !important;
+    stroke: currentColor !important;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 767px) {
+
+    .notification-wrapper {
+        width: 40px !important;
+        min-width: 40px !important;
+
+        height: 40px !important;
+
+        flex-basis: 40px !important;
+    }
+
+    #notificationBtn,
+    .notification-btn {
+        width: 40px !important;
+        min-width: 40px !important;
+        max-width: 40px !important;
+
+        height: 40px !important;
+        min-height: 40px !important;
+        max-height: 40px !important;
+
+        flex-basis: 40px !important;
+    }
+
+    #notificationBtn svg,
+    .notification-btn svg {
+        width: 20px !important;
+        height: 20px !important;
+
+        min-width: 20px !important;
+        min-height: 20px !important;
+    }
+}
+
+
+/* =========================================================
+   SHINE & SMILE — FINAL HOMEPAGE OVERRIDES
+   Purpose: one authoritative navbar/notification/balance/footer layer.
+   ========================================================= */
+
+html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    min-height: 100vh;
+}
+
+.main-navbar {
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow: visible !important;
+    z-index: 99999 !important;
+}
+
+.main-navbar > div:first-child {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+}
+
+#navbarActions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 16px !important;
+    flex: 0 0 auto !important;
+    flex-shrink: 0 !important;
+    min-width: max-content !important;
+    margin-left: auto !important;
+    position: relative !important;
+    z-index: 100000 !important;
+}
+
+#notificationWrapper,
+.notification-wrapper {
+    position: relative !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 42px !important;
+    min-width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    flex: 0 0 42px !important;
+    flex-shrink: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    overflow: visible !important;
+    z-index: 100001 !important;
+}
+
+#notificationBtn,
+.notification-btn {
+    position: relative !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 42px !important;
+    min-width: 42px !important;
+    max-width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    max-height: 42px !important;
+    flex: 0 0 42px !important;
+    flex-shrink: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #171318 !important;
+    color: #ffffff !important;
+    border: 1px solid #4a3942 !important;
+    border-radius: 50% !important;
+    cursor: pointer !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+    z-index: 100002 !important;
+}
+
+#notificationBtn:hover,
+.notification-btn:hover {
+    background: #241b20 !important;
+    color: #ff6aa9 !important;
+    border-color: #ec1961 !important;
+}
+
+#notificationBtn:focus,
+#notificationBtn:focus-visible,
+.notification-btn:focus,
+.notification-btn:focus-visible {
+    outline: 2px solid #ec1961 !important;
+    outline-offset: 3px !important;
+}
+
+/* IMPORTANT: this is the navbar bell. It must NEVER be hidden. */
+#notificationBtn > svg,
+.notification-btn > svg {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 21px !important;
+    height: 21px !important;
+    min-width: 21px !important;
+    min-height: 21px !important;
+    max-width: 21px !important;
+    max-height: 21px !important;
+    color: currentColor !important;
+    stroke: currentColor !important;
+    flex: 0 0 21px !important;
+    margin: 0 !important;
+    pointer-events: none !important;
+}
+
+#notificationBtn .notification-badge,
+.notification-btn .notification-badge {
+    position: absolute !important;
+    top: -4px !important;
+    right: -4px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 18px !important;
+    height: 18px !important;
+    padding: 0 4px !important;
+    background: #ec1961 !important;
+    color: #ffffff !important;
+    border: 2px solid #171318 !important;
+    border-radius: 999px !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    z-index: 100003 !important;
+}
+
+#profileWrapper {
+    position: relative !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    flex: 0 0 auto !important;
+    flex-shrink: 0 !important;
+    min-width: max-content !important;
+    z-index: 100000 !important;
+}
+
+#profileBtn {
+    flex-shrink: 0 !important;
+    min-width: 0 !important;
+}
+
+#profileMenu {
+    z-index: 100004 !important;
+}
+
+#notificationDropdown {
+    position: absolute !important;
+    top: calc(100% + 12px) !important;
+    right: 0 !important;
+    left: auto !important;
+    width: 390px !important;
+    max-width: min(390px, calc(100vw - 24px)) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    z-index: 100005 !important;
+}
+
+#notificationDropdown.hidden {
+    display: none !important;
+}
+
+#notificationDropdown:not(.hidden) {
+    display: block !important;
+}
+
+.notification-filter-hidden {
+    display: none !important;
+}
+
+/* Hide only icons inside the dropdown header/empty-state. */
+#notificationDropdown .notification-header-icon,
+#notificationDropdown .notification-header-icon svg,
+#notificationDropdown .notification-empty-icon,
+#notificationDropdown .notification-empty-icon svg {
+    display: none !important;
+}
+
+/* Balance history must remain a real full-width section inside main. */
+#balanceHistorySection {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    margin-bottom: 48px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+
+#balanceHistorySection > div.px-8.pb-8 > .grid {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+}
+
+#balanceHistorySection > div.px-8.pb-8 > .grid > div {
+    min-width: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+#balanceHistorySection .overflow-x-auto {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+#balanceHistorySection table {
+    width: 100% !important;
+    max-width: 100% !important;
+    table-layout: fixed !important;
+}
+
+#balanceHistorySection th,
+#balanceHistorySection td {
+    overflow-wrap: break-word !important;
+}
+
+/* Prevent the footer from becoming the large white block shown in the screenshot. */
+.homepage-footer {
+    width: 100% !important;
+    min-height: 0 !important;
+    background: #0b0b0b !important;
+    color: #9ca3af !important;
+    border-top: 1px solid #2b2b2b !important;
+    margin-top: 0 !important;
+    padding-top: 32px !important;
+    padding-bottom: 32px !important;
+}
+
+.homepage-footer > div {
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.homepage-footer > div > div {
+    border-color: #2b2b2b !important;
+    color: #707784 !important;
+}
+
+@media (max-width: 1100px) {
+    #balanceHistorySection > div.px-8.pb-8 > .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (max-width: 767px) {
+    #navbarActions {
+        gap: 8px !important;
+    }
+
+    #notificationWrapper,
+    .notification-wrapper {
+        width: 40px !important;
+        min-width: 40px !important;
+        height: 40px !important;
+        min-height: 40px !important;
+        flex-basis: 40px !important;
+    }
+
+    #notificationBtn,
+    .notification-btn {
+        width: 40px !important;
+        min-width: 40px !important;
+        max-width: 40px !important;
+        height: 40px !important;
+        min-height: 40px !important;
+        max-height: 40px !important;
+        flex-basis: 40px !important;
+    }
+
+    #notificationBtn > svg,
+    .notification-btn > svg {
+        width: 20px !important;
+        height: 20px !important;
+        min-width: 20px !important;
+        min-height: 20px !important;
+    }
+
+    #notificationDropdown {
+        position: fixed !important;
+        top: 70px !important;
+        left: 12px !important;
+        right: 12px !important;
+        width: auto !important;
+        max-width: none !important;
+    }
+
+    #balanceHistorySection > div.px-8.pt-8,
+    #balanceHistorySection > div.px-8.pb-8,
+    #balanceHistorySection > div.px-8.py-5 {
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+    }
+
+    #balanceHistorySection > div.px-8.pb-8 > .grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    #balanceHistorySection table {
+        min-width: 720px !important;
+        max-width: none !important;
+        table-layout: auto !important;
+    }
 }
