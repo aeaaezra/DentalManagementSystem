@@ -8662,3 +8662,105 @@ html.dark-mode .notification-badge {
         padding-right: 16px !important;
     }
 }
+/* =========================================================
+   REMOVE NOTIFICATION SYSTEM COMPLETELY
+   ========================================================= */
+
+#notificationBtn,
+.notification-btn,
+.notification-wrapper,
+#notificationDropdown {
+    display: none !important;
+}
+
+/* =========================================================
+   NOTIFICATION BUTTON - TEXT ONLY
+   ========================================================= */
+
+#notificationBtn.notification-btn {
+    position: relative;
+
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+
+    width: auto !important;
+    min-width: auto !important;
+    height: auto !important;
+
+    padding: 8px 4px !important;
+
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+
+    color: #ffffff !important;
+
+    cursor: pointer;
+
+    box-shadow: none !important;
+
+    transition: color 0.2s ease;
+}
+
+
+/* Notification text */
+
+#notificationBtn .notification-text {
+    display: inline-block !important;
+
+    color: #ffffff !important;
+
+    font-size: 16px !important;
+    font-weight: 600 !important;
+
+    line-height: 1.4;
+
+    white-space: nowrap;
+}
+
+
+/* Hover */
+
+#notificationBtn:hover .notification-text {
+    color: #ec1961 !important;
+}
+
+
+/* Remove any remaining icon inside the navbar button */
+
+#notificationBtn svg,
+#notificationBtn i,
+#notificationBtn img {
+    display: none !important;
+}
+
+
+/* Badge stays attached to the text */
+
+#notificationBtn .notification-badge {
+    position: absolute;
+
+    top: -4px;
+    right: -14px;
+
+    min-width: 18px;
+    height: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 4px;
+
+    background: #ec1961;
+    color: #ffffff;
+
+    border: 2px solid #111111;
+    border-radius: 999px;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    line-height: 1;
+}

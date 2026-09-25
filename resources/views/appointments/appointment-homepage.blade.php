@@ -86,37 +86,23 @@
     <div class="notification-wrapper">
 
         <!-- NOTIFICATION BUTTON -->
-        <button
-            id="notificationBtn"
-            type="button"
-            aria-label="Open notifications"
-            aria-expanded="false"
-            class="notification-btn relative p-3 rounded-xl bg-pink-50 text-pink-600 hover:bg-pink-100 hover:text-pink-700 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-pink-200 active:scale-95 shadow-sm"
-        >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-6 h-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2"
-                aria-hidden="true"
-            >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                />
-            </svg>
+<button
+    id="notificationBtn"
+    type="button"
+    aria-label="Open notifications"
+    aria-expanded="false"
+    class="notification-btn"
+>
+    <span class="notification-text">
+        Notifications
+    </span>
 
-            @if($notificationCount > 0)
-                <span
-                    class="notification-badge absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-xs font-bold min-w-5 h-5 px-1 rounded-full flex items-center justify-center shadow-md ring-2 ring-white"
-                >
-                    {{ $notificationCount }}
-                </span>
-            @endif
-        </button>
+    @if($notificationCount > 0)
+        <span class="notification-badge">
+            {{ $notificationCount }}
+        </span>
+    @endif
+</button>
 
         @php
                 $totalNotifications = $notifications->count();
