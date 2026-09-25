@@ -274,7 +274,6 @@ select{
 
 /* SUBMIT */
 
-}
 .nav-center{
     display: flex;
     justify-content: center;
@@ -284,9 +283,7 @@ select{
     margin-right: auto;
 }
 
-.custom-pink { background-color: #ff85c1; }
 
-.text-custom-pink { color: #ff85c1; }
 
 /* CLICK */
 
@@ -333,7 +330,6 @@ button:active{
 
 /* Filter Dropdown */
 
-}
 
 
 .history-search {
@@ -443,7 +439,6 @@ button:active{
     flex-wrap:wrap;
 }
 
-}
 
 .btn-history {
     display: inline-flex;
@@ -547,10 +542,6 @@ button:active{
    BUTTONS
 ========================================= */
 
-transform: translateY(-1px);
-
-    box-shadow: 0 8px 20px rgba(236, 72, 153, .3);
-}
 
 .save-icon {
     font-size: 18px;
@@ -711,13 +702,13 @@ transform: translateY(-1px);
    ODONTOGRAM LEGEND
    ========================================================= */
 
+.odontogram-legend {
 display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
     gap: 16px;
     margin-top: 20px;
-}
 
 .legend-item {
     display: flex;
@@ -1852,8 +1843,6 @@ display: flex;
     display: none;
 }
 
-/* =========================================================
-}
 
 
 html.dark-mode :root {
@@ -4619,25 +4608,6 @@ html.dark-mode .notification-badge {
     margin: 0 !important;
 }
 
-/* =========================================================
-   NAVBAR NOTIFICATION BUTTON
-   TEXT ONLY
-   ========================================================= */
-
-#notificationBtn,
-.notification-btn {
-    position: relative !important;
-
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    width: auto !important;
-    min-width: auto !important;
-/* =========================================================
-   NAVBAR NOTIFICATION BUTTON
-   KEEP BUTTON + BELL ICON
-   ========================================================= */
 
 #notificationBtn,
 .notification-btn {
