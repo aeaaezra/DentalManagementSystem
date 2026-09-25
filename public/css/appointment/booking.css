@@ -7213,8 +7213,12 @@ body.report-modal-open {
     }
 
 }
+
 /* =========================================================
    SHINE & SMILE
+   NOTIFICATION MODAL
+   ========================================================= */
+
 .notification-modal {
     position: fixed;
 
@@ -7261,9 +7265,7 @@ body.report-modal-open {
 }
 
 
-/* =========================================================
-   MODAL CARD
-   ========================================================= */
+
 
 .notification-modal-card {
     position: relative;
@@ -7565,7 +7567,8 @@ body.report-modal-open {
 
 }
 /* =========================================================
-   SHINE & SMILE — NOTIFICATION SYSTEM
+   SHINE & SMILE
+   NOTIFICATION SYSTEM
    SINGLE CANONICAL DEFINITION
    ========================================================= */
 
@@ -7573,392 +7576,418 @@ body.report-modal-open {
     position: relative;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     z-index: 99990;
     margin-right: 35px;
 }
 
-.notification-btn {
+
+/* =========================================================
+   NOTIFICATION BUTTON
+   ========================================================= */
+
+.notification-btn,
+#notificationBtn {
     position: relative;
+
     width: 42px;
     height: 42px;
+
     min-width: 42px;
     min-height: 42px;
+
     display: inline-flex;
     align-items: center;
     justify-content: center;
+
     padding: 0;
     margin: 0;
+
     background: transparent;
+
     color: #e5e5e5;
+
     border: 1px solid #3a3035;
     border-radius: 50%;
+
     cursor: pointer;
+
     box-sizing: border-box;
-    transition: background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease;
+
+    transition:
+        background .2s ease,
+        color .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
 }
 
-.notification-btn:hover {
+.notification-btn:hover,
+#notificationBtn:hover {
     background: #1c1719;
     border-color: #ec1961;
     color: #ec1961;
 }
 
-.notification-btn:active {
+.notification-btn:active,
+#notificationBtn:active {
     transform: scale(.96);
 }
 
-.notification-btn:focus-visible {
+.notification-btn:focus-visible,
+#notificationBtn:focus-visible {
     outline: 2px solid #ec1961;
     outline-offset: 3px;
 }
 
+
+/* =========================================================
+   TOP BELL ICON ONLY
+   ========================================================= */
+
 .notification-btn svg,
-.notification-bell-icon {
+#notificationBtn svg,
+.notification-btn i,
+#notificationBtn i {
     width: 22px !important;
     height: 22px !important;
+
     min-width: 22px !important;
     min-height: 22px !important;
+
     max-width: 22px !important;
     max-height: 22px !important;
-    display: block;
-    flex: 0 0 22px;
+
+    display: block !important;
+
+    flex: 0 0 22px !important;
+
+    margin: 0 !important;
 }
+
+
+/* =========================================================
+   BADGE
+   ========================================================= */
 
 .notification-badge {
     position: absolute;
+
     top: -3px;
     right: -3px;
+
     min-width: 18px;
     height: 18px;
+
     padding: 0 4px;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     box-sizing: border-box;
+
     background: #ec1961;
     color: #ffffff;
+
     border: 2px solid #111111;
+
     border-radius: 999px;
+
     font-size: 10px;
     font-weight: 700;
+
     line-height: 1;
+
     z-index: 10;
 }
 
+
+/* =========================================================
+   NOTIFICATION DROPDOWN
+   ========================================================= */
+
 #notificationDropdown {
-    position: absolute;
-    top: calc(100% + 12px);
-    right: 0;
-    left: auto;
-    bottom: auto;
-    width: 390px;
-    max-width: calc(100vw - 24px);
-    max-height: 600px;
-    margin: 0;
-    padding: 0;
+    position: absolute !important;
+
+    top: calc(100% + 12px) !important;
+
+    right: 0 !important;
+    left: auto !important;
+    bottom: auto !important;
+
+    width: 390px !important;
+
+    max-width: calc(100vw - 24px) !important;
+
+    height: auto !important;
+
+    max-height: 600px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
     display: block;
-    overflow: hidden;
+
     box-sizing: border-box;
-    background: #111111;
-    color: #ffffff;
-    border: 1px solid rgba(236, 29, 102, .35);
-    border-radius: 18px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, .45);
-    z-index: 999999;
+
+    overflow: hidden !important;
+
+    background: #111111 !important;
+
+    color: #ffffff !important;
+
+    border: 1px solid rgba(236, 29, 102, .35) !important;
+
+    border-radius: 18px !important;
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, .45) !important;
+
+    z-index: 999999 !important;
 }
+
+
+/* Hidden state */
 
 #notificationDropdown.hidden {
     display: none !important;
 }
 
-/* Header */
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
 #notificationDropdown .notification-dropdown-header,
 #notificationDropdown .notification-header {
     width: 100%;
+
     min-height: 76px;
+
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
+
     box-sizing: border-box;
+
     margin: 0;
+
     padding: 16px 18px;
+
     background: #111111;
+
     color: #ffffff;
+
     border: 0;
+
     border-bottom: 1px solid #2b2b2b;
 }
 
+
+/* Header content */
+
 #notificationDropdown .notification-header-content {
-    width: auto;
-    height: auto;
     min-width: 0;
-    min-height: 0;
-    max-width: 100%;
+
+    flex: 1;
+
     display: flex;
-    flex: 1 1 auto;
-    flex-direction: row;
+
     align-items: center;
-    justify-content: flex-start;
+
     gap: 14px;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
 }
 
-/* Header icon: fixed size prevents the giant-bell bug */
+
+/* Header icon */
+
 #notificationDropdown .notification-header-icon {
     width: 46px;
     height: 46px;
+
     min-width: 46px;
     min-height: 46px;
+
     max-width: 46px;
     max-height: 46px;
+
     flex: 0 0 46px;
+
     display: flex;
+
     align-items: center;
     justify-content: center;
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
+
     background: #292029;
+
     border-radius: 14px;
+
+    overflow: hidden;
+
     color: #ffffff;
+
+    box-sizing: border-box;
 }
 
-#notificationDropdown .notification-header-icon svg {
+
+/* Header bell */
+
+#notificationDropdown .notification-header-icon svg,
+#notificationDropdown .notification-header-icon i {
     width: 22px !important;
     height: 22px !important;
+
     min-width: 22px !important;
     min-height: 22px !important;
+
     max-width: 22px !important;
     max-height: 22px !important;
-    flex: 0 0 22px !important;
+
     display: block !important;
+
     margin: 0 !important;
-    padding: 0 !important;
-    box-sizing: border-box !important;
 }
+
+
+/* Header text */
 
 #notificationDropdown .notification-header-text {
     min-width: 0;
-    flex: 1 1 auto;
-    display: block;
-    margin: 0;
-    padding: 0;
-}
-
-#notificationDropdown .notification-header-title-row {
-    width: auto;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 8px;
-    margin: 0;
-    padding: 0;
+    flex: 1;
 }
 
 #notificationDropdown .notification-header-title {
-    display: inline-block;
-    width: auto;
     margin: 0;
-    padding: 0;
+
     color: #ffffff;
-    font-family: inherit;
+
     font-size: 20px;
     font-weight: 700;
-    line-height: 1.25;
-    white-space: nowrap;
-}
 
-#notificationDropdown .notification-new-count {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: auto;
-    min-width: 0;
-    height: 24px;
-    margin: 0;
-    padding: 3px 9px;
-    background: rgba(236, 29, 102, .16);
-    border: 0;
-    border-radius: 999px;
-    color: #ec1d66;
-    font-size: 11px;
-    font-weight: 700;
-    line-height: 1;
-    white-space: nowrap;
+    line-height: 1.3;
 }
 
 #notificationDropdown .notification-header-subtitle {
-    display: block;
-    width: auto;
     margin: 5px 0 0;
-    padding: 0;
+
     color: #858585;
-    font-family: inherit;
+
     font-size: 13px;
-    font-weight: 400;
-    line-height: 1.4;
-    white-space: nowrap;
+
+    line-height: 1.5;
 }
 
-/* Close button */
-#notificationDropdown .notification-close-btn,
-#notificationDropdown #closeNotificationBtn {
-    position: relative;
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
-    min-height: 40px;
-    max-width: 40px;
-    max-height: 40px;
-    flex: 0 0 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-    padding: 0;
-    background: #303030;
-    border: 0;
-    border-radius: 50%;
-    color: #ffffff;
-    cursor: pointer;
-    box-sizing: border-box;
-    transition: background .2s ease, transform .2s ease;
-}
 
-#notificationDropdown .notification-close-btn:hover,
-#notificationDropdown #closeNotificationBtn:hover {
-    background: #414141;
-    transform: scale(1.05);
-}
+/* =========================================================
+   FILTERS
+   ========================================================= */
 
-#notificationDropdown .notification-close-btn svg,
-#notificationDropdown #closeNotificationBtn svg {
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-    min-height: 20px;
-    max-width: 20px;
-    max-height: 20px;
-    display: block;
-}
-
-/* Filters */
 #notificationDropdown .notification-tabs,
 #notificationDropdown .notification-filters,
 #notificationDropdown .notification-filter-bar {
     width: 100%;
-    min-height: 58px;
-    height: 58px;
+
     display: flex;
-    align-items: stretch;
-    justify-content: stretch;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 12px 18px;
+
     box-sizing: border-box;
-    margin: 0;
-    padding: 0 12px;
-    background: #111111;
-    border-bottom: 1px solid #2b2b2b;
+
+    flex-wrap: wrap;
 }
 
 #notificationDropdown .notification-filter {
-    position: relative;
-    flex: 1 1 0;
-    width: 33.333%;
-    height: 58px;
-    min-height: 58px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0 8px;
+    border: none;
+
     background: transparent;
-    border: 0;
-    border-radius: 0;
-    color: #777777;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1;
-    white-space: nowrap;
+
+    color: #888888;
+
+    padding: 7px 10px;
+
+    border-radius: 8px;
+
     cursor: pointer;
-    outline: none;
+
+    font-size: 13px;
 }
 
 #notificationDropdown .notification-filter:hover {
     color: #ffffff;
+    background: #1d1d1d;
 }
 
 #notificationDropdown .notification-filter.active {
-    color: #ec1d66;
+    color: #ffffff;
+    background: #ec1961;
 }
 
-#notificationDropdown .notification-filter.active::after {
-    content: "";
-    position: absolute;
-    left: 10px;
-    right: 10px;
-    bottom: 0;
-    height: 2px;
-    background: #ec1d66;
-    border-radius: 10px 10px 0 0;
-}
 
-#notificationDropdown .notification-filter > span,
-#notificationDropdown .notification-filter-count {
-    display: inline-block;
-    width: auto;
-    min-width: 0;
-    margin: 0;
-    padding: 0;
-    color: inherit;
-    font-size: inherit;
-    line-height: 1;
-    white-space: nowrap;
-}
+/* =========================================================
+   NOTIFICATION LIST
+   ========================================================= */
 
-/* List */
 #notificationDropdown .notification-list,
-#notificationDropdown .notification-scroll {
+#notificationDropdown .notification-scroll,
+#notificationList {
     width: 100%;
+
+    max-width: 100%;
+
     max-height: 390px;
+
     display: block;
+
     margin: 0;
     padding: 0;
+
     overflow-x: hidden;
+
     overflow-y: auto;
+
     box-sizing: border-box;
+
     background: #111111;
 }
 
-#notificationDropdown .notification-list::-webkit-scrollbar,
-#notificationDropdown .notification-scroll::-webkit-scrollbar {
-    width: 5px;
-}
 
-#notificationDropdown .notification-list::-webkit-scrollbar-thumb,
-#notificationDropdown .notification-scroll::-webkit-scrollbar-thumb {
-    background: #383838;
-    border-radius: 20px;
-}
+/* =========================================================
+   NOTIFICATION ITEM
+   ========================================================= */
 
-/* Items */
 #notificationDropdown .notification-item {
     position: relative;
+
     width: 100%;
+
     min-height: 106px;
+
     display: flex;
+
     align-items: flex-start;
+
     gap: 16px;
+
     box-sizing: border-box;
+
     margin: 0;
+
     padding: 18px 20px;
+
     background: #111111;
+
     border-bottom: 1px solid #292929;
+
     color: #ffffff;
+
     cursor: pointer;
+
     transition: background .2s ease;
 }
 
@@ -7966,211 +7995,284 @@ body.report-modal-open {
     background: #171717;
 }
 
-#notificationDropdown .notification-item[hidden],
-#notificationDropdown .notification-hidden {
-    display: none !important;
-}
 
-#notificationDropdown .notification-item[data-notification-status="unread"] {
-    background: #151215;
-}
+/* =========================================================
+   NOTIFICATION ICON
+   ========================================================= */
 
-#notificationDropdown .notification-item[data-notification-status="unread"]::before {
-    content: "";
-    position: absolute;
-    left: 7px;
-    top: 30px;
-    width: 7px;
-    height: 7px;
-    background: #ec4899;
-    border-radius: 50%;
-}
-
-#notificationDropdown .notification-unread-dot {
-    width: 8px;
-    height: 8px;
-    min-width: 8px;
-    min-height: 8px;
-    margin-top: 7px;
-    border-radius: 50%;
-    background: #ec1961;
-    flex-shrink: 0;
-}
-
-/* Item icons */
 #notificationDropdown .notification-icon,
 #notificationDropdown .notification-item > div:first-of-type {
     width: 46px;
     height: 46px;
+
     min-width: 46px;
     min-height: 46px;
+
     max-width: 46px;
     max-height: 46px;
+
     flex: 0 0 46px;
+
     display: flex;
+
     align-items: center;
     justify-content: center;
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+
     background: #292029;
+
     border-radius: 14px;
-    color: #ffffff;
+
     overflow: hidden;
+
+    box-sizing: border-box;
 }
+
+
+/* Prevent giant icons */
 
 #notificationDropdown .notification-icon svg,
-#notificationDropdown .notification-item > div:first-of-type svg {
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-    min-height: 20px;
-    max-width: 20px;
-    max-height: 20px;
-    display: block;
+#notificationDropdown .notification-item > div:first-of-type svg,
+#notificationDropdown .notification-icon i {
+    width: 20px !important;
+    height: 20px !important;
+
+    min-width: 20px !important;
+    min-height: 20px !important;
+
+    max-width: 20px !important;
+    max-height: 20px !important;
+
+    display: block !important;
 }
 
-#notificationDropdown .notification-icon-success { background: #17231b; color: #4ade80; }
-#notificationDropdown .notification-icon-cancel { background: #28181b; color: #f87171; }
-#notificationDropdown .notification-icon-payment { background: #211c29; color: #a78bfa; }
 
-/* Content */
+/* =========================================================
+   NOTIFICATION CONTENT
+   ========================================================= */
+
 #notificationDropdown .notification-content {
     min-width: 0;
-    flex: 1 1 auto;
+
+    flex: 1;
+
     display: block;
-    margin: 0;
-    padding: 0;
 }
 
 #notificationDropdown .notification-title {
     display: block;
+
     margin: 0 0 5px;
-    padding: 0;
+
     color: #ffffff;
+
     font-size: 15px;
+
     font-weight: 700;
+
     line-height: 1.4;
 }
 
 #notificationDropdown .notification-message {
     display: block;
+
     margin: 0;
-    padding: 0;
+
     color: #858585;
+
     font-size: 13px;
+
     line-height: 1.55;
+
     word-break: break-word;
 }
 
 #notificationDropdown .notification-time {
     display: flex;
+
     align-items: center;
+
     gap: 6px;
-    margin: 8px 0 0;
+
+    margin-top: 8px;
+
     color: #eeeeee;
+
     font-size: 13px;
-    line-height: 1;
 }
 
-#notificationDropdown .notification-time svg {
-    width: 15px;
-    height: 15px;
-    min-width: 15px;
-    max-width: 15px;
-}
 
-/* Empty state */
+/* =========================================================
+   EMPTY NOTIFICATION STATE
+   ========================================================= */
+
 #notificationDropdown .notification-empty,
 #notificationDropdown .notification-filter-empty,
-#notificationDropdown #notificationFilterEmpty {
-    min-height: 220px;
+#notificationDropdown #notificationFilterEmpty,
+#notificationDropdown .empty-state,
+#notificationDropdown .empty-notification,
+#notificationDropdown .no-notifications {
+
     width: 100%;
+
+    min-height: 220px;
+
     padding: 32px 24px;
+
     display: flex;
+
     flex-direction: column;
+
     align-items: center;
+
     justify-content: center;
+
     box-sizing: border-box;
+
     text-align: center;
+
     background: #111111;
+
     color: #777777;
+
+    overflow: hidden;
 }
+
+
+/* =========================================================
+   EMPTY STATE ICON
+   ========================================================= */
+
+/*
+   IMPORTANT:
+   This prevents the giant bell/icon shown
+   in your screenshot.
+*/
 
 #notificationDropdown .notification-empty svg,
+#notificationDropdown .notification-filter-empty svg,
+#notificationDropdown #notificationFilterEmpty svg,
 #notificationDropdown .empty-state svg,
-#notificationDropdown .empty-notification svg {
-    width: 64px !important;
-    height: 64px !important;
-    min-width: 64px !important;
-    min-height: 64px !important;
-    max-width: 64px !important;
-    max-height: 64px !important;
-    display: block;
-    margin: 0 auto 18px;
+#notificationDropdown .empty-notification svg,
+#notificationDropdown .no-notifications svg,
+
+#notificationDropdown .notification-empty i,
+#notificationDropdown .notification-filter-empty i,
+#notificationDropdown .empty-state i,
+#notificationDropdown .empty-notification i,
+#notificationDropdown .no-notifications i {
+
+    width: 48px !important;
+    height: 48px !important;
+
+    min-width: 48px !important;
+    min-height: 48px !important;
+
+    max-width: 48px !important;
+    max-height: 48px !important;
+
+    flex: 0 0 48px !important;
+
+    display: block !important;
+
+    margin: 0 auto 18px !important;
+
+    font-size: 48px !important;
+
+    box-sizing: border-box !important;
 }
 
-#notificationDropdown .notification-empty-title {
-    margin: 0 0 6px;
-    color: #dddddd;
-    font-size: 15px;
+
+/* =========================================================
+   EMPTY STATE TEXT
+   ========================================================= */
+
+#notificationDropdown .notification-empty-title,
+#notificationDropdown .notification-empty h4,
+#notificationDropdown .empty-state h4,
+#notificationDropdown .no-notifications h4 {
+
+    margin: 0 0 8px;
+
+    color: #ffffff;
+
+    font-size: 17px;
+
     font-weight: 600;
+
+    line-height: 1.4;
+
+    white-space: normal;
 }
 
-#notificationDropdown .notification-empty-text {
+#notificationDropdown .notification-empty-text,
+#notificationDropdown .notification-empty p,
+#notificationDropdown .empty-state p,
+#notificationDropdown .no-notifications p {
+
+    max-width: 280px;
+
     margin: 0;
-    color: #777777;
-    font-size: 12px;
-}
 
-/* Footer */
-#notificationDropdown .notification-footer {
-    width: 100%;
-    min-height: 62px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-    margin: 0;
-    padding: 15px 20px;
-    background: #111111;
-    border-top: 1px solid #292929;
-}
+    color: #858585;
 
-#notificationDropdown .notification-footer a,
-#notificationDropdown .notification-history-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 9px;
-    color: #eeeeee;
     font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
+
+    line-height: 1.5;
+
+    text-align: center;
+
+    white-space: normal;
 }
 
-#notificationDropdown .notification-footer a:hover,
-#notificationDropdown .notification-history-link:hover {
-    color: #ec4899;
-}
 
-#notificationDropdown .notification-footer svg,
-#notificationDropdown .notification-history-link svg {
-    width: 16px;
-    height: 16px;
-    min-width: 16px;
-    max-width: 16px;
-}
+/* =========================================================
+   MOBILE
+   ========================================================= */
 
-#notificationDropdown img {
-    max-width: 100%;
-    height: auto;
-}
+@media (max-width: 640px) {
 
-#notificationDropdown .delete-notification,
-#notificationDropdown .notification-delete,
-#notificationDropdown #clearAllNotifications {
-    display: none !important;
+    .notification-wrapper {
+        margin-right: 20px;
+    }
+
+    #notificationDropdown {
+        position: fixed !important;
+
+        top: 70px !important;
+
+        left: 12px !important;
+        right: 12px !important;
+
+        width: auto !important;
+
+        max-width: none !important;
+
+        max-height: calc(100vh - 90px) !important;
+
+        border-radius: 18px !important;
+    }
+
+    #notificationDropdown .notification-item {
+        min-height: 100px;
+
+        padding: 17px 15px;
+
+        gap: 10px;
+    }
+
+    #notificationDropdown .notification-icon,
+    #notificationDropdown .notification-item > div:first-of-type {
+        width: 42px;
+        height: 42px;
+
+        min-width: 42px;
+        min-height: 42px;
+
+        max-width: 42px;
+        max-height: 42px;
+
+        flex-basis: 42px;
+    }
 }
 
 /* Dark mode */
@@ -8268,36 +8370,295 @@ html.dark-mode .notification-badge {
     display: block;
     flex-shrink: 0;
 }
+/* =========================================================
+   NOTIFICATION SYSTEM - CLEAN FIX
+   ========================================================= */
 
-#notificationDropdown .notification-header-icon {
-    width: 40px !important;
-    height: 40px !important;
-    min-width: 40px !important;
-    min-height: 40px !important;
-    max-width: 40px !important;
-    max-height: 40px !important;
+/* Notification wrapper */
+#notificationWrapper {
+    position: relative;
+}
 
-    flex: 0 0 40px !important;
+/* Notification button */
+#notificationBtn {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    z-index: 1001;
+}
 
+/* Bell inside the TOP notification button ONLY */
+#notificationBtn svg,
+#notificationBtn i,
+#notificationBtn .notification-icon {
+    width: 24px !important;
+    height: 24px !important;
+    max-width: 24px !important;
+    max-height: 24px !important;
+    flex: 0 0 24px !important;
+}
+
+
+/* =========================================================
+   NOTIFICATION DROPDOWN
+   ========================================================= */
+
+#notificationDropdown {
+    position: absolute !important;
+
+    /* IMPORTANT: position relative to notification button */
+    top: calc(100% + 12px) !important;
+    right: 0 !important;
+    left: auto !important;
+
+    width: 380px !important;
+    max-width: calc(100vw - 30px) !important;
+
+    height: auto !important;
+    max-height: 520px !important;
+
+    background: #111111 !important;
+    border: 1px solid #2d2d2d !important;
+    border-radius: 16px !important;
+
+    overflow: hidden !important;
+
+    z-index: 99999 !important;
+
+    box-sizing: border-box !important;
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.55),
+        0 5px 20px rgba(0, 0, 0, 0.35) !important;
+}
+
+
+/* =========================================================
+   NOTIFICATION HEADER
+   ========================================================= */
+
+#notificationDropdown .notification-header {
+    width: 100% !important;
+    padding: 20px !important;
+    box-sizing: border-box !important;
+}
+
+#notificationDropdown .notification-header h3 {
+    margin: 0 !important;
+    font-size: 20px !important;
+    line-height: 1.3 !important;
+    white-space: normal !important;
+}
+
+#notificationDropdown .notification-header p {
+    margin: 6px 0 0 !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    white-space: normal !important;
+}
+
+
+/* =========================================================
+   NOTIFICATION COUNTERS / FILTERS
+   ========================================================= */
+
+#notificationDropdown .notification-filters {
     display: flex !important;
     align-items: center !important;
-    justify-content: center !important;
+    gap: 8px !important;
+
+    padding: 0 20px 15px !important;
+
+    flex-wrap: wrap !important;
+}
+
+#notificationDropdown .notification-filters button {
+    white-space: nowrap !important;
+}
+
+
+/* =========================================================
+   NOTIFICATION LIST
+   ========================================================= */
+
+#notificationList {
+    width: 100% !important;
+    max-width: 100% !important;
+
+    box-sizing: border-box !important;
+
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+
+    max-height: 330px !important;
+}
+
+
+/* =========================================================
+   INDIVIDUAL NOTIFICATION
+   ========================================================= */
+
+#notificationList .notification-item {
+    width: 100% !important;
+    max-width: 100% !important;
+
+    box-sizing: border-box !important;
+
+    padding: 15px 20px !important;
 
     overflow: hidden !important;
 }
 
-#notificationDropdown .notification-header-icon svg.notification-header-svg {
-    width: 24px !important;
-    height: 24px !important;
-    min-width: 24px !important;
-    min-height: 24px !important;
-    max-width: 24px !important;
-    max-height: 24px !important;
+#notificationList .notification-item * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
 
-    flex: 0 0 24px !important;
+#notificationList .notification-item p,
+#notificationList .notification-item span {
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+}
+
+
+/* =========================================================
+   EMPTY NOTIFICATION STATE
+   ========================================================= */
+
+#notificationDropdown .notification-empty,
+#notificationDropdown .empty-state,
+#notificationDropdown .no-notifications {
+    width: 100% !important;
+
+    min-height: 250px !important;
+
+    padding: 30px 20px !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    text-align: center !important;
+
+    box-sizing: border-box !important;
+
+    overflow: hidden !important;
+}
+
+
+/* =========================================================
+   FIX HUGE EMPTY-STATE BELL
+   ========================================================= */
+
+/*
+   VERY IMPORTANT:
+   Do NOT allow global SVG rules to enlarge
+   the empty-state notification icon.
+*/
+
+#notificationDropdown .notification-empty svg,
+#notificationDropdown .empty-state svg,
+#notificationDropdown .no-notifications svg {
+    width: 56px !important;
+    height: 56px !important;
+
+    min-width: 56px !important;
+    min-height: 56px !important;
+
+    max-width: 56px !important;
+    max-height: 56px !important;
+
+    flex: 0 0 56px !important;
+
+    margin: 0 auto 18px !important;
 
     display: block !important;
+}
 
+
+/* If the empty-state icon uses an IMG instead */
+#notificationDropdown .notification-empty img,
+#notificationDropdown .empty-state img,
+#notificationDropdown .no-notifications img {
+    width: 56px !important;
+    height: 56px !important;
+
+    max-width: 56px !important;
+    max-height: 56px !important;
+
+    object-fit: contain !important;
+
+    margin: 0 auto 18px !important;
+}
+
+
+/* =========================================================
+   EMPTY STATE TEXT
+   ========================================================= */
+
+#notificationDropdown .notification-empty h4,
+#notificationDropdown .empty-state h4,
+#notificationDropdown .no-notifications h4 {
+    margin: 0 0 8px !important;
+
+    font-size: 17px !important;
+    line-height: 1.4 !important;
+
+    white-space: normal !important;
+}
+
+#notificationDropdown .notification-empty p,
+#notificationDropdown .empty-state p,
+#notificationDropdown .no-notifications p {
     margin: 0 !important;
-    padding: 0 !important;
+
+    max-width: 280px !important;
+
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+
+    text-align: center !important;
+
+    white-space: normal !important;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    #notificationDropdown {
+        position: fixed !important;
+
+        top: 85px !important;
+        right: 15px !important;
+        left: 15px !important;
+
+        width: auto !important;
+        max-width: none !important;
+
+        max-height: calc(100vh - 105px) !important;
+    }
+
+    #notificationList {
+        max-height: calc(100vh - 300px) !important;
+    }
+
+    #notificationDropdown .notification-header {
+        padding: 16px !important;
+    }
+
+    #notificationDropdown .notification-filters {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+    }
 }
