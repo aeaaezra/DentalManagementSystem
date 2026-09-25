@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 
 
 <html lang="en" class="scroll-smooth">
@@ -12,6 +12,194 @@
 <link rel="stylesheet" href="{{ asset('css/appointment/patient-theme.css') }}">
 <link rel="stylesheet" href="{{ asset('css/appointment/homepage.css') }}">
     <link  rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}" >
+
+
+<style>
+/* =========================================================
+   APPOINTMENT HOMEPAGE — FINAL NAVBAR STRUCTURE
+   ========================================================= */
+
+.main-navbar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 99999 !important;
+    overflow: visible !important;
+}
+
+.main-navbar > div {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 24px !important;
+    box-sizing: border-box !important;
+}
+
+.main-navbar > div > .hidden.md\:flex {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    justify-content: center !important;
+    margin: 0 !important;
+}
+
+#navbarActions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 14px !important;
+    flex: 0 0 auto !important;
+    flex-shrink: 0 !important;
+    min-width: max-content !important;
+    margin-left: auto !important;
+    position: relative !important;
+    z-index: 100000 !important;
+}
+
+#notificationWrapper {
+    position: relative !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 42px !important;
+    min-width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    flex: 0 0 42px !important;
+    overflow: visible !important;
+    z-index: 100001 !important;
+}
+
+#notificationBtn {
+    position: relative !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 42px !important;
+    min-width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 50% !important;
+    background: #171318 !important;
+    color: #ffffff !important;
+    border: 1px solid #4a3942 !important;
+    cursor: pointer !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 100002 !important;
+}
+
+#notificationBtn svg {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 21px !important;
+    height: 21px !important;
+    min-width: 21px !important;
+    min-height: 21px !important;
+    color: currentColor !important;
+    stroke: currentColor !important;
+}
+
+#notificationBtn:hover {
+    color: #ec1961 !important;
+    border-color: #ec1961 !important;
+}
+
+#profileWrapper {
+    position: relative !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    flex: 0 0 auto !important;
+    flex-shrink: 0 !important;
+    min-width: max-content !important;
+    z-index: 100000 !important;
+}
+
+#profileBtn {
+    display: flex !important;
+    align-items: center !important;
+    flex: 0 0 auto !important;
+    flex-shrink: 0 !important;
+    min-width: max-content !important;
+    white-space: nowrap !important;
+}
+
+#notificationDropdown {
+    position: absolute !important;
+    top: calc(100% + 12px) !important;
+    right: 0 !important;
+    left: auto !important;
+    width: 390px !important;
+    max-width: calc(100vw - 24px) !important;
+    z-index: 9999999 !important;
+}
+
+#notificationDropdown.hidden,
+#profileMenu.hidden {
+    display: none !important;
+}
+
+#notificationDropdown:not(.hidden),
+#profileMenu:not(.hidden) {
+    display: block !important;
+}
+
+#profileMenu {
+    position: absolute !important;
+    top: calc(100% + 12px) !important;
+    right: 0 !important;
+    left: auto !important;
+    z-index: 9999999 !important;
+}
+
+@media (max-width: 767px) {
+    .main-navbar > div {
+        gap: 10px !important;
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .main-navbar > div > .hidden.md\:flex {
+        display: none !important;
+    }
+
+    #navbarActions {
+        gap: 8px !important;
+    }
+
+    #notificationBtn,
+    #notificationWrapper {
+        width: 40px !important;
+        min-width: 40px !important;
+        height: 40px !important;
+        min-height: 40px !important;
+    }
+
+    #notificationBtn svg {
+        width: 20px !important;
+        height: 20px !important;
+    }
+
+    #profileBtn > div:nth-child(2),
+    #profileBtn > svg {
+        display: none !important;
+    }
+
+    #notificationDropdown {
+        position: fixed !important;
+        top: 74px !important;
+        left: 12px !important;
+        right: 12px !important;
+        width: auto !important;
+        max-width: none !important;
+    }
+}
+</style>
 
 </head>
 
@@ -123,18 +311,6 @@
                 </span>
             @endif
         </button>
-
-        @php
-                $totalNotifications = $notifications->count();
-
-                $unreadNotifications = $notifications
-                    ->whereNull('read_at')
-                    ->count();
-
-                $readNotifications = $notifications
-                    ->whereNotNull('read_at')
-                    ->count();
-            @endphp
 
         <!-- NOTIFICATION DROPDOWN -->
 {{-- ============================================================
@@ -606,103 +782,6 @@
     </div>
 </div>
 
-<!-- ============================================================
-     NOTIFICATION DETAILS MODAL
-     ============================================================ -->
-<div
-    id="notificationModal"
-    class="notification-details-modal hidden"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="notificationModalTitle"
->
-    <div
-        id="notificationModalBackdrop"
-        class="notification-details-backdrop"
-    ></div>
-
-    <div class="notification-details-card">
-
-        <!-- HEADER -->
-        <div class="notification-details-header">
-
-            <div class="notification-details-icon">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-6 h-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    stroke-width="2"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                    />
-                </svg>
-            </div>
-
-            <div>
-                <h2 id="notificationModalTitle">
-                    Notification
-                </h2>
-
-                <p id="notificationModalTime">
-                    Just now
-                </p>
-            </div>
-
-            <button
-                type="button"
-                id="closeNotificationModal"
-                class="notification-details-close"
-                aria-label="Close notification"
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-5 h-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    stroke-width="2"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M6 18L18 6M6 6l12 12"
-                    />
-                </svg>
-            </button>
-
-        </div>
-
-        <!-- MESSAGE -->
-        <div class="notification-details-body">
-
-            <p id="notificationModalMessage"></p>
-
-        </div>
-
-        <!-- FOOTER -->
-        <div class="notification-details-footer">
-
-            <button
-                type="button"
-                id="doneNotificationModal"
-                class="notification-details-done"
-            >
-                Done
-            </button>
-
-        </div>
-
-    </div>
-</div>
-
-
-</div>
-
 <!-- PROFILE -->
 <div
     id="profileWrapper"
@@ -877,6 +956,103 @@
 
     </div>
 </nav>
+
+
+<!-- ============================================================
+     NOTIFICATION DETAILS MODAL
+     ============================================================ -->
+<div
+    id="notificationModal"
+    class="notification-details-modal hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="notificationModalTitle"
+>
+    <div
+        id="notificationModalBackdrop"
+        class="notification-details-backdrop"
+    ></div>
+
+    <div class="notification-details-card">
+
+        <!-- HEADER -->
+        <div class="notification-details-header">
+
+            <div class="notification-details-icon">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-6 h-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                    />
+                </svg>
+            </div>
+
+            <div>
+                <h2 id="notificationModalTitle">
+                    Notification
+                </h2>
+
+                <p id="notificationModalTime">
+                    Just now
+                </p>
+            </div>
+
+            <button
+                type="button"
+                id="closeNotificationModal"
+                class="notification-details-close"
+                aria-label="Close notification"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                    />
+                </svg>
+            </button>
+
+        </div>
+
+        <!-- MESSAGE -->
+        <div class="notification-details-body">
+
+            <p id="notificationModalMessage"></p>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="notification-details-footer">
+
+            <button
+                type="button"
+                id="doneNotificationModal"
+                class="notification-details-done"
+            >
+                Done
+            </button>
+
+        </div>
+
+    </div>
+</div>
+
+
 
 
 <div
@@ -2606,10 +2782,5 @@
 <script src="{{ asset('js/appointment/appointment.js') }}?v={{ time() }}"></script>
     <script src="{{ asset('js/appointment/patient-theme.js') }}"></script>
 
-<script>
-
-</script>
-
-</script>
 </body>
 </html>
