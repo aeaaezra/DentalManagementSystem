@@ -1,29 +1,22 @@
+
 :root {
     --primary: #db2777;
     --secondary: #f472b6;
 }
 
-body { font-family: 'Inter', sans-serif; }
-        h1, h2, h3 { font-family: 'Playfair Display', serif; }
-        .bg-pink-gradient { background: linear-gradient(135deg, #FCE4EC 0%, #FFFFFF 100%); }
-        .gold-text { color: #D4AF37; }
-        .gold-border { border-color: #D4AF37; }
-        .gold-bg { background-color: #D4AF37; }
+body { font-family: "Inter", sans-serif; }
+
+h1, h2, h3 { font-family: "Playfair Display", serif; }
+
+.bg-pink-gradient { background: linear-gradient(135deg, #FCE4EC 0%, #FFFFFF 100%); }
+
+.gold-text { color: #D4AF37; }
+
+.gold-border { border-color: #D4AF37; }
+
+.gold-bg { background-color: #D4AF37; }
 
 /*Side bar */
-.sidebar-link{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:12px 16px;
-    border-radius:12px;
-    transition:.3s;
-}
-
-.sidebar-link:hover{
-    background:#FCE4EC;
-    color:#E91E63;
-}
 
 *{
     margin:0;
@@ -34,7 +27,6 @@ body { font-family: 'Inter', sans-serif; }
 html{
     scroll-behavior:smooth;
 }
-
 
 /* ==================================
    CONTAINER
@@ -81,7 +73,7 @@ h1,
 h2,
 h3,
 h4{
-    font-family:'Playfair Display',serif;
+    font-family:"Playfair Display",serif;
 }
 
 .section-title{
@@ -92,7 +84,6 @@ h4{
     padding-bottom:15px;
     border-bottom:3px solid #f3f3f3;
 }
-
 
 /* ==================================
     SECTION CARDS
@@ -152,7 +143,6 @@ select{
     font-size:17px;
     transition:.3s;
 }
-
 
 /* ==================================
    DOCTOR CARDS
@@ -247,7 +237,6 @@ select{
     transform:scale(1.3);
 }
 
-
 /* ==================================
    SUCCESS
 ================================== */
@@ -281,22 +270,6 @@ select{
    NAVBAR
    ================================== */
 
-.navbar {
-    position: relative;
-    z-index: 9999;
-}
-
-@media (max-width: 768px) {
-
-    .main-navbar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        z-index: 99999 !important;
-    }
-
-}
 /* ==================================
    MOBILE RESPONSIVE
    ================================== */
@@ -379,6 +352,7 @@ select{
         font-size: 12px;
     }
 }
+
 /* ==================================
    PREMIUM BUTTONS
 ================================== */
@@ -391,8 +365,8 @@ select{
     margin-top:40px;
 }
 
-
 /* PREVIOUS */
+
 .btn-prev{
     display:flex;
     align-items:center;
@@ -447,22 +421,11 @@ select{
 
 /* NEXT */
 
-
 /* SUBMIT */
 
-}
-.nav-center{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    margin-left: auto;
-    margin-right: auto;
-}
-
 .custom-pink { background-color: #ff85c1; }
-        .text-custom-pink { color: #ff85c1; }
 
+.text-custom-pink { color: #ff85c1; }
 
 /* CLICK */
 
@@ -471,70 +434,11 @@ button:active{
 }
 
 .custom-pink { background-color: #E91E63; }
-        .text-custom-pink { color: #E91E63; }
 
-@media print {
-
-    @page {
-        size: A4;
-        margin: 10mm;
-    }
-
-    .no-print {
-        display: none !important;
-    }
-
-    body {
-        background: white !important;
-        margin: 0;
-        padding: 0;
-    }
-
-    #appointment-card {
-        width: 100%;
-        max-width: 100%;
-        margin: 0;
-        box-shadow: none !important;
-        border: none !important;
-        page-break-inside: avoid;
-        break-inside: avoid;
-    }
-
-    img {
-        max-width: 170px;
-        height: auto;
-    }
-}
+.text-custom-pink { color: #E91E63; }
 
 /* Filter Dropdown */
-}
 
-
-.history-search {
-    width: 250px !important;
-    height: 32px !important;
-    padding: 0 12px !important;
-    font-size: 14px !important;
-    border-radius: 8px !important;
-}
-
-.payment-filter {
-    width: 140px !important;
-    height: 32px !important;
-    padding: 0 18px !important;
-    border: 1px solid #d1d5db;
-    border-radius: 18px;
-    background: #fff;
-    font-size: 14px;
-    color: #374151;
-    outline: none;
-    cursor: pointer;
-}
-
-.payment-filter:focus {
-    border-color: #ec4899;
-    box-shadow: 0 0 0 3px rgba(236,72,153,.25);
-}
 .filter-select{
     width:180px !important;
     height:40px !important;
@@ -553,10 +457,10 @@ button:active{
     appearance:auto;
 }
 
-
 /* ===========================
    Professional Step Tracker
 =========================== */
+
 .tracker {
     position: relative;
     width: 100%;
@@ -569,7 +473,7 @@ button:active{
 }
 
 .tracker::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 12px;
     left: 25px;
@@ -640,7 +544,6 @@ button:active{
     border-color: #E91E63;
 }
 
-
 .odontogram{
     margin-top:25px;
     text-align:center;
@@ -682,7 +585,6 @@ button:active{
     font-size:12px;
     color:#555;
 }
-
 
 .odontogram-wrapper{
     position:relative;
@@ -752,8 +654,6 @@ button:active{
     width:120px;
 }
 
-
-
 .btn-next{
     display:flex;
     align-items:center;
@@ -794,7 +694,6 @@ button:active{
 .btn-next:hover .arrow{
     transform:translateX(5px);
 }
-
 
 .btn-submit{
     display:flex;
@@ -840,7 +739,6 @@ button:active{
 .btn-submit:hover .arrow{
     transform:translateX(5px);
 }
-
 
 .success-card{
     max-width:700px;
@@ -922,8 +820,6 @@ button:active{
     height: 20px;
 }
 
-
-
 .form-group label {
     font-weight: 600;
     display: block;
@@ -941,7 +837,9 @@ button:active{
     background: #fafafa;
     min-height: 60px;
 }
+
 /* Time slot buttons */
+
 .slot-btn {
     padding: 8px 14px;
     border-radius: 10px;
@@ -954,6 +852,7 @@ button:active{
 }
 
 /* ✅ HOVER (white style like your submit button) */
+
 .slot-btn:hover {
     background: white;
     color: #28a745;
@@ -961,11 +860,13 @@ button:active{
 }
 
 /* ✅ CLICK EFFECT (feels modern) */
+
 .slot-btn:active {
     transform: scale(0.95);
 }
 
 /* ✅ SELECTED SLOT */
+
 .slot-btn.active {
     background: #1e7e34; /* darker green */
     border: 2px solid #1e7e34;
@@ -974,15 +875,13 @@ button:active{
 }
 
 /* ✅ DISABLED (booked) */
+
 .slot-btn.disabled {
     border-color: #ccc;
     color: #aaa;
     background: #f1f1f1;
     cursor: not-allowed;
 }
-
-
-
 
 /* =========================================
    APPOINTMENT SUMMARY
@@ -1032,7 +931,6 @@ button:active{
     font-size: 14px;
 }
 
-
 /* =========================================
    SUMMARY CARD
 ========================================= */
@@ -1053,7 +951,6 @@ button:active{
 .summary-card:hover {
     box-shadow: 0 8px 25px rgba(0, 0, 0, .07);
 }
-
 
 /* =========================================
    CARD HEADER
@@ -1106,7 +1003,6 @@ button:active{
     color: #9ca3af;
 }
 
-
 /* =========================================
    EDIT BUTTON
 ========================================= */
@@ -1133,7 +1029,6 @@ button:active{
     background: #fce7f3;
     color: #be185d;
 }
-
 
 /* =========================================
    SUMMARY GRID
@@ -1183,7 +1078,6 @@ button:active{
 
     word-break: break-word;
 }
-
 
 /* =========================================
    MEDICAL HISTORY
@@ -1238,7 +1132,6 @@ button:active{
     gap: 6px;
 }
 
-
 /* =========================================
    TEETH
 ========================================= */
@@ -1276,7 +1169,6 @@ button:active{
     font-size: 13px;
     font-weight: 700;
 }
-
 
 /* =========================================
    APPOINTMENT HIGHLIGHT
@@ -1338,7 +1230,6 @@ button:active{
     font-size: 16px;
 }
 
-
 /* =========================================
    FINAL REVIEW BOX
 ========================================= */
@@ -1397,7 +1288,6 @@ button:active{
     line-height: 1.5;
 }
 
-
 /* =========================================
    BUTTONS
 ========================================= */
@@ -1444,8 +1334,7 @@ button:active{
     border-color: #9ca3af;
 }
 
-
-    transform: translateY(-1px);
+transform: translateY(-1px);
 
     box-shadow: 0 8px 20px rgba(236, 72, 153, .3);
 }
@@ -1453,7 +1342,6 @@ button:active{
 .save-icon {
     font-size: 18px;
 }
-
 
 /* =========================================
    MOBILE
@@ -1500,7 +1388,6 @@ button:active{
 
 }
 
-
 /* =========================================
    GREEN SAVE APPOINTMENT BUTTON
 ========================================= */
@@ -1538,7 +1425,6 @@ button:active{
     transition: all .3s ease;
 }
 
-
 /* HOVER */
 
 .btn-save:hover {
@@ -1554,13 +1440,9 @@ button:active{
         0 12px 25px rgba(40, 167, 69, .35);
 }
 
-
-/* CLICK */
-
 .btn-save:active {
     transform: scale(.97);
 }
-
 
 /* CHECK ICON */
 
@@ -1582,14 +1464,12 @@ button:active{
     transition: .3s;
 }
 
-
 /* ICON HOVER */
 
 .btn-save:hover .save-icon {
     background: #28a745;
     color: white;
 }
-
 
 /* =========================================
    CONFIRMED APPOINTMENT
@@ -1610,7 +1490,6 @@ button:active{
     box-shadow:
         0 15px 40px rgba(0, 0, 0, .08);
 }
-
 
 /* SUCCESS ICON */
 
@@ -1635,11 +1514,9 @@ button:active{
         0 10px 25px rgba(40, 167, 69, .15);
 }
 
-
 .confirmed-icon svg {
     display: block;
 }
-
 
 /* TITLE */
 
@@ -1652,7 +1529,6 @@ button:active{
     font-weight: 700;
 }
 
-
 /* SUCCESS MESSAGE */
 
 .confirmed-message {
@@ -1664,7 +1540,6 @@ button:active{
     font-weight: 700;
 }
 
-
 .confirmed-description {
     max-width: 560px;
 
@@ -1675,7 +1550,6 @@ button:active{
     font-size: 15px;
     line-height: 1.7;
 }
-
 
 /* STATUS */
 
@@ -1699,7 +1573,6 @@ button:active{
     text-align: left;
 }
 
-
 .status-icon {
     width: 38px;
     height: 38px;
@@ -1716,7 +1589,6 @@ button:active{
     border-radius: 50%;
 }
 
-
 .confirmed-status span {
     display: block;
 
@@ -1727,13 +1599,11 @@ button:active{
     font-size: 12px;
 }
 
-
 .confirmed-status strong {
     color: #166534;
 
     font-size: 15px;
 }
-
 
 /* APPOINTMENT DETAILS */
 
@@ -1751,7 +1621,6 @@ button:active{
     text-align: left;
 }
 
-
 .confirmed-details h3 {
     margin: 0 0 18px;
 
@@ -1759,7 +1628,6 @@ button:active{
 
     font-size: 20px;
 }
-
 
 .confirmed-detail-row {
     display: flex;
@@ -1774,18 +1642,15 @@ button:active{
     border-bottom: 1px solid #e5e7eb;
 }
 
-
 .confirmed-detail-row:last-child {
     border-bottom: none;
 }
-
 
 .confirmed-detail-row span {
     color: #6b7280;
 
     font-size: 14px;
 }
-
 
 .confirmed-detail-row strong {
     color: #374151;
@@ -1794,7 +1659,6 @@ button:active{
 
     text-align: right;
 }
-
 
 /* NOTICE */
 
@@ -1818,7 +1682,6 @@ button:active{
     text-align: left;
 }
 
-
 .notice-icon {
     color: #f97316;
 
@@ -1827,7 +1690,6 @@ button:active{
     display: flex;
     align-items: center;
 }
-
 
 .confirmed-notice p {
     margin: 0;
@@ -1838,7 +1700,6 @@ button:active{
 
     line-height: 1.6;
 }
-
 
 /* ACTION BUTTONS */
 
@@ -1853,7 +1714,6 @@ button:active{
 
     flex-wrap: wrap;
 }
-
 
 .btn-confirmed-print,
 .btn-confirmed-history {
@@ -1880,7 +1740,6 @@ button:active{
     transition: all .25s ease;
 }
 
-
 /* PRINT */
 
 .btn-confirmed-print {
@@ -1894,7 +1753,6 @@ button:active{
         0 6px 15px rgba(40, 167, 69, .2);
 }
 
-
 .btn-confirmed-print:hover {
     background: #fff;
 
@@ -1905,7 +1763,6 @@ button:active{
     box-shadow:
         0 8px 20px rgba(40, 167, 69, .3);
 }
-
 
 /* HISTORY */
 
@@ -1919,7 +1776,6 @@ button:active{
     text-decoration: none;
 }
 
-
 .btn-confirmed-history:hover {
     background: #e5e7eb;
 
@@ -1927,11 +1783,6 @@ button:active{
 
     transform: translateY(-2px);
 }
-
-
-/* =========================================
-   MOBILE
-========================================= */
 
 @media (max-width: 768px) {
 
@@ -1977,6 +1828,7 @@ button:active{
     }
 
 }
+
 /* =========================================================
    ODONTOGRAM CONTAINER
 ========================================================= */
@@ -2003,7 +1855,6 @@ button:active{
     box-sizing: border-box;
 }
 
-
 /* =========================================================
    TOOTH ROW
 ========================================================= */
@@ -2018,7 +1869,6 @@ button:active{
 
     white-space: nowrap;
 }
-
 
 /* =========================================================
    TOOTH
@@ -2053,7 +1903,6 @@ button:active{
         box-shadow 0.15s ease;
 }
 
-
 /* Inner circle */
 
 .tooth::before {
@@ -2075,7 +1924,6 @@ button:active{
     pointer-events: none;
 }
 
-
 /* Hover */
 
 .tooth:hover {
@@ -2087,7 +1935,6 @@ button:active{
         0 0 0 3px rgba(219, 39, 119, 0.15);
 }
 
-
 /* Selected */
 
 .tooth.selected {
@@ -2096,7 +1943,6 @@ button:active{
     box-shadow:
         0 0 0 4px rgba(219, 39, 119, 0.25);
 }
-
 
 /* =========================================================
    PRIMARY TEETH
@@ -2111,7 +1957,6 @@ button:active{
     width: 7px;
     height: 7px;
 }
-
 
 /* =========================================================
    NUMBER ROWS
@@ -2143,7 +1988,6 @@ button:active{
     display: inline-block;
 }
 
-
 /* =========================================================
    ROW SPACING
 ========================================================= */
@@ -2165,7 +2009,6 @@ button:active{
     margin-top: 4px;
 }
 
-
 /* =========================================================
    GAPS
 ========================================================= */
@@ -2181,7 +2024,6 @@ button:active{
 
     flex-shrink: 0;
 }
-
 
 /* =========================================================
    JAW DIRECTIONS
@@ -2203,16 +2045,13 @@ button:active{
     margin-right: 0;
 }
 
-
 .jaw-direction.top {
     margin-bottom: 10px;
 }
 
-
 .jaw-direction.bottom {
     margin-top: 12px;
 }
-
 
 .direction {
     display: flex;
@@ -2229,7 +2068,6 @@ button:active{
     color: #333;
 }
 
-
 .direction-right {
     justify-content: flex-start;
 }
@@ -2237,7 +2075,6 @@ button:active{
 .direction-left {
     justify-content: flex-end;
 }
-
 
 /* =========================================================
    JAW LINES
@@ -2251,7 +2088,6 @@ button:active{
 
     border-radius: 2px;
 }
-
 
 /* =========================================================
    HORIZONTAL CENTER DIVIDER
@@ -2274,7 +2110,6 @@ button:active{
     pointer-events: none;
 }
 
-
 .horizontal-divider div {
     width: calc(50% - 13px);
 
@@ -2282,7 +2117,6 @@ button:active{
 
     background: #222;
 }
-
 
 /* =========================================================
    VERTICAL CENTER DIVIDER
@@ -2307,7 +2141,6 @@ button:active{
     pointer-events: none;
 }
 
-
 /* =========================================================
    STATUS COLORS
 ========================================================= */
@@ -2320,7 +2153,6 @@ button:active{
     border-color: #333;
 }
 
-
 /* Caries */
 
 .tooth.status-caries {
@@ -2329,7 +2161,6 @@ button:active{
     border-color: #b91c1c;
 }
 
-
 /* Filled */
 
 .tooth.status-filled {
@@ -2337,7 +2168,6 @@ button:active{
 
     border-color: #2563eb;
 }
-
 
 /* Missing */
 
@@ -2349,7 +2179,6 @@ button:active{
     opacity: 0.55;
 }
 
-
 /* Extraction */
 
 .tooth.status-extraction {
@@ -2357,7 +2186,6 @@ button:active{
 
     border-color: #ea580c;
 }
-
 
 /* Crown */
 
@@ -2367,7 +2195,6 @@ button:active{
     border-color: #ca8a04;
 }
 
-
 /* Root Canal */
 
 .tooth.status-root-canal {
@@ -2376,12 +2203,11 @@ button:active{
     border-color: #7c3aed;
 }
 
-
-
 /* =========================================================
    ODONTOGRAM LEGEND
    ========================================================= */
-    display: flex;
+
+display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
@@ -2410,25 +2236,30 @@ button:active{
 .legend-color.healthy {
     background-color: #10b981 !important;
 }
+
 .legend-color.caries {
     background-color: #ef4444 !important;
 }
+
 .legend-color.filled {
     background-color: #3b82f6 !important;
 }
+
 .legend-color.missing {
     background-color: #6b7280 !important;
 }
+
 .legend-color.extraction {
     background-color: #f97316 !important;
 }
+
 .legend-color.crown {
     background-color: #eab308 !important;
 }
+
 .legend-color.root-canal {
     background-color: #8b5cf6 !important;
 }
-
 
 /* =========================================================
    TOOTH POPUP
@@ -2457,11 +2288,9 @@ button:active{
     box-sizing: border-box;
 }
 
-
 .tooth-status-popup.show {
     display: block;
 }
-
 
 /* =========================================================
    POPUP HEADER
@@ -2481,18 +2310,15 @@ button:active{
     border-bottom: 1px solid #eee;
 }
 
-
 .tooth-status-header strong {
     font-size: 14px;
 
     color: #333;
 }
 
-
 #selectedToothNumber {
     color: #db2777;
 }
-
 
 #closeToothPopup {
     width: 28px;
@@ -2515,13 +2341,11 @@ button:active{
     border-radius: 6px;
 }
 
-
 #closeToothPopup:hover {
     background: #fce7f3;
 
     color: #db2777;
 }
-
 
 /* =========================================================
    POPUP BUTTONS
@@ -2534,7 +2358,6 @@ button:active{
 
     gap: 7px;
 }
-
 
 .tooth-status-options button {
     display: flex;
@@ -2562,7 +2385,6 @@ button:active{
     transition: all 0.15s ease;
 }
 
-
 .tooth-status-options button:hover {
     background: #fce7f3;
 
@@ -2570,7 +2392,6 @@ button:active{
 
     color: #be185d;
 }
-
 
 /* =========================================================
    RESPONSIVE
@@ -2591,180 +2412,29 @@ button:active{
 
 }
 
+/* Smooth menu animation */
 
-    #mobileSidebar {
-        background: #ffffff;
-        border-right: 1px solid #f1f1f1;
-        box-shadow: 12px 0 35px rgba(0, 0, 0, 0.15);
-    }
+/* User Profile Section */
 
-    /* Smooth menu animation */
-    #mobileSidebar,
-    #mobileSidebarOverlay {
-        transition: all 0.3s ease;
-    }
+/* Close Button */
 
-    /* User Profile Section */
-    .sidebar-user-profile {
-        background: linear-gradient(135deg, #fff5f8, #ffffff);
-        border-bottom: 1px solid #f1f1f1;
-        padding: 22px 20px;
-    }
+/* Menu Container */
 
-    .sidebar-profile-image {
-        width: 52px;
-        height: 52px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 3px solid #ec4899;
-        box-shadow: 0 4px 12px rgba(236, 72, 153, 0.25);
-    }
+/* Menu Item */
 
-    .sidebar-user-name {
-        font-size: 15px;
-        font-weight: 700;
-        color: #1f2937;
-        line-height: 1.3;
-    }
+/* Active Menu */
 
-    .sidebar-user-role {
-        font-size: 12px;
-        font-weight: 500;
-        color: #9ca3af;
-        margin-top: 3px;
-    }
+/* Bottom Section */
 
-    /* Close Button */
-    .sidebar-close-btn {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        border: none;
-        background: transparent;
-        color: #6b7280;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s ease;
-    }
+/* Settings */
 
-    .sidebar-close-btn:hover {
-        background: #fdf2f8;
-        color: #ec4899;
-        transform: rotate(90deg);
-    }
+/* Logout */
 
-    /* Menu Container */
-    .sidebar-menu {
-        padding: 16px 12px;
-    }
+/* Overlay */
 
-    /* Menu Item */
-    .sidebar-menu-item {
-        width: 100%;
-        min-height: 48px;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        padding: 0 16px;
-        border-radius: 12px;
-        text-decoration: none;
-        color: #6b7280;
-        font-size: 15px;
-        font-weight: 500;
-        margin-bottom: 6px;
-        transition: all 0.2s ease;
-    }
+/* Scrollbar */
 
-    .sidebar-menu-item svg {
-        width: 20px;
-        height: 20px;
-        flex-shrink: 0;
-        stroke-width: 1.8;
-    }
-
-    .sidebar-menu-item:hover {
-        background: #fdf2f8;
-        color: #db2777;
-        transform: translateX(3px);
-    }
-
-    /* Active Menu */
-    .sidebar-menu-item.active {
-        background: linear-gradient(135deg, #ec4899, #db2777);
-        color: white;
-        font-weight: 600;
-        box-shadow: 0 6px 15px rgba(219, 39, 119, 0.25);
-    }
-
-    .sidebar-menu-item.active:hover {
-        color: white;
-        transform: translateX(2px);
-    }
-
-    /* Bottom Section */
-    .sidebar-bottom {
-        border-top: 1px solid #f1f1f1;
-        padding: 14px 12px;
-        background: #ffffff;
-    }
-
-    /* Settings */
-    .sidebar-settings {
-        color: #6b7280;
-    }
-
-    /* Logout */
-    .sidebar-logout {
-        color: #dc2626;
-        border: none;
-        background: transparent;
-        cursor: pointer;
-        text-align: left;
-    }
-
-    .sidebar-logout:hover {
-        background: #fef2f2;
-        color: #dc2626;
-    }
-
-    .sidebar-logout svg {
-        stroke: #dc2626;
-    }
-
-    /* Overlay */
-    #mobileSidebarOverlay {
-        background: rgba(15, 23, 42, 0.45);
-        backdrop-filter: blur(2px);
-    }
-
-    /* Scrollbar */
-    #mobileSidebar nav::-webkit-scrollbar {
-        width: 4px;
-    }
-
-    #mobileSidebar nav::-webkit-scrollbar-thumb {
-        background: #f9a8d4;
-        border-radius: 10px;
-    }
-
-    /* Small Phones */
-    @media (max-width: 400px) {
-        #mobileSidebar {
-            width: 280px;
-            max-width: 88vw;
-        }
-
-        .sidebar-user-profile {
-            padding: 18px 16px;
-        }
-
-        .sidebar-menu-item {
-            min-height: 46px;
-            padding: 0 14px;
-        }
-    }
+/* Small Phones */
 
 .submit-modal {
     position: fixed;
@@ -2922,11 +2592,11 @@ button:active{
     }
 }
 
-
 /* =========================================================
    FINAL STANDARD PATIENT FORM FIX
    Keeps all labels and text fields consistent
 ========================================================= */
+
 .form-grid,
 .medical-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2940,7 +2610,7 @@ button:active{
 .form-group label {
     display: block;
     margin: 0 0 7px;
-    font-family: 'Inter', sans-serif;
+    font-family: "Inter", sans-serif;
     font-size: 15px;
     font-weight: 600;
     line-height: 1.4;
@@ -2953,7 +2623,7 @@ button:active{
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
+    font-family: "Inter", sans-serif;
     font-size: 15px;
     font-weight: 400;
     line-height: 1.5;
@@ -3009,6 +2679,7 @@ button:active{
 }
 
 /* Do not apply normal text-input width to checkboxes/radios */
+
 .form-group input[type=checkbox],
 .form-group input[type=radio] {
     width: auto;
@@ -3303,10 +2974,6 @@ button:active{
     width: 45%;
 }
 
-.direction-left {
-    justify-content: flex-end;
-}
-
 .jaw-line {
     height: 1px;
     background: #e5e7eb;
@@ -3339,7 +3006,9 @@ button:active{
         min-width: 650px;
         padding: 20px 15px;
     }
-}/* =========================================================
+}
+
+/* =========================================================
    TOOTH CONDITION MODAL
 ========================================================= */
 
@@ -3358,7 +3027,6 @@ button:active{
     display: none !important;
 }
 
-
 /* =========================================================
    MODAL OVERLAY
 ========================================================= */
@@ -3371,7 +3039,6 @@ button:active{
     background: rgba(0, 0, 0, 0.55) !important;
     z-index: 1 !important;
 }
-
 
 /* =========================================================
    MODAL CONTENT
@@ -3403,7 +3070,6 @@ button:active{
     }
 }
 
-
 /* =========================================================
    MODAL HEADER
 ========================================================= */
@@ -3434,7 +3100,6 @@ button:active{
     line-height: 1.3 !important;
 }
 
-
 /* =========================================================
    CLOSE BUTTON
 ========================================================= */
@@ -3458,7 +3123,6 @@ button:active{
 .close-tooth-modal:hover {
     background: rgba(255, 255, 255, 0.35) !important;
 }
-
 
 /* =========================================================
    MODAL BODY
@@ -3485,7 +3149,6 @@ button:active{
     color: #e91e63 !important;
     font-size: 17px !important;
 }
-
 
 /* =========================================================
    CONDITION OPTIONS
@@ -3529,7 +3192,6 @@ button:active{
     flex-shrink: 0 !important;
 }
 
-
 /* =========================================================
    HEALTHY
 ========================================================= */
@@ -3548,7 +3210,6 @@ button:active{
     border-color: #16a34a !important;
     color: #166534 !important;
 }
-
 
 /* =========================================================
    CARIES
@@ -3569,7 +3230,6 @@ button:active{
     color: #991b1b !important;
 }
 
-
 /* =========================================================
    FILLED
 ========================================================= */
@@ -3588,7 +3248,6 @@ button:active{
     border-color: #2563eb !important;
     color: #1e40af !important;
 }
-
 
 /* =========================================================
    MISSING
@@ -3609,7 +3268,6 @@ button:active{
     color: #374151 !important;
 }
 
-
 /* =========================================================
    EXTRACTION
 ========================================================= */
@@ -3628,7 +3286,6 @@ button:active{
     border-color: #ea580c !important;
     color: #9a3412 !important;
 }
-
 
 /* =========================================================
    CROWN
@@ -3649,7 +3306,6 @@ button:active{
     color: #854d0e !important;
 }
 
-
 /* =========================================================
    ROOT CANAL
 ========================================================= */
@@ -3669,7 +3325,6 @@ button:active{
     color: #5b21b6 !important;
 }
 
-
 /* =========================================================
    FOOTER
 ========================================================= */
@@ -3686,7 +3341,6 @@ button:active{
     background: #fafafa !important;
     border-radius: 0 0 18px 18px !important;
 }
-
 
 /* =========================================================
    CANCEL BUTTON
@@ -3709,7 +3363,6 @@ button:active{
 .cancel-tooth-condition:hover {
     background: #f3f4f6 !important;
 }
-
 
 /* =========================================================
    CONFIRM BUTTON
@@ -3737,11 +3390,6 @@ button:active{
     transform: translateY(-1px) !important;
     box-shadow: 0 6px 15px rgba(233, 30, 99, 0.3) !important;
 }
-
-
-/* =========================================================
-   ODONTOGRAM LEGEND
-========================================================= */
 
 .odontogram-legend {
     display: flex !important;
@@ -3809,7 +3457,6 @@ button:active{
     background: #8b5cf6 !important;
 }
 
-
 /* =========================================================
    ODONTOGRAM TOOTH BASE
 ========================================================= */
@@ -3825,7 +3472,6 @@ button:active{
     transform: scale(1.08) !important;
 }
 
-
 /* =========================================================
    HEALTHY TOOTH - GREEN BACKGROUND
 ========================================================= */
@@ -3837,7 +3483,6 @@ button:active{
     box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.22) !important;
     border-radius: 50% !important;
 }
-
 
 /* =========================================================
    CARIES TOOTH - RED BACKGROUND
@@ -3851,7 +3496,6 @@ button:active{
     border-radius: 50% !important;
 }
 
-
 /* =========================================================
    FILLED TOOTH - BLUE BACKGROUND
 ========================================================= */
@@ -3863,7 +3507,6 @@ button:active{
     box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.22) !important;
     border-radius: 50% !important;
 }
-
 
 /* =========================================================
    MISSING TOOTH - GRAY BACKGROUND
@@ -3878,7 +3521,6 @@ button:active{
     opacity: 0.75 !important;
 }
 
-
 /* =========================================================
    EXTRACTION TOOTH - ORANGE BACKGROUND
 ========================================================= */
@@ -3890,7 +3532,6 @@ button:active{
     box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.22) !important;
     border-radius: 50% !important;
 }
-
 
 /* =========================================================
    CROWN TOOTH - YELLOW BACKGROUND
@@ -3904,7 +3545,6 @@ button:active{
     border-radius: 50% !important;
 }
 
-
 /* =========================================================
    ROOT CANAL TOOTH - PURPLE BACKGROUND
 ========================================================= */
@@ -3917,7 +3557,6 @@ button:active{
     border-radius: 50% !important;
 }
 
-
 /* =========================================================
    SELECTED TOOTH
 ========================================================= */
@@ -3926,7 +3565,6 @@ button:active{
     outline: 3px solid #e91e63 !important;
     outline-offset: 3px !important;
 }
-
 
 /* =========================================================
    MOBILE
@@ -3957,10 +3595,6 @@ button:active{
     }
 }
 
-/* =========================================================
-   TOOTH CONDITION MODAL
-========================================================= */
-
 .tooth-condition-modal {
     position: fixed !important;
     inset: 0 !important;
@@ -3974,96 +3608,6 @@ button:active{
     z-index: 999999 !important;
 }
 
-.tooth-condition-modal.hidden {
-    display: none !important;
-}
-
-
-/* =========================================================
-   MODAL OVERLAY
-========================================================= */
-
-.tooth-condition-modal-overlay {
-    position: absolute !important;
-    inset: 0 !important;
-
-    width: 100% !important;
-    height: 100% !important;
-
-    background: rgba(0, 0, 0, 0.55) !important;
-
-    z-index: 1 !important;
-}
-
-
-/* =========================================================
-   MODAL CONTENT
-========================================================= */
-
-.tooth-condition-modal-content {
-    position: relative !important;
-
-    width: 420px !important;
-    max-width: calc(100vw - 30px) !important;
-    max-height: calc(100vh - 40px) !important;
-
-    overflow-y: auto !important;
-
-    background: #ffffff !important;
-    border-radius: 18px !important;
-
-    box-shadow:
-        0 20px 60px rgba(0, 0, 0, 0.25) !important;
-
-    z-index: 2 !important;
-
-    box-sizing: border-box !important;
-
-    animation: toothModalShow 0.2s ease !important;
-}
-
-
-@keyframes toothModalShow {
-    from {
-        opacity: 0;
-        transform: scale(0.95) translateY(-10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-}
-
-
-/* =========================================================
-   MODAL HEADER
-========================================================= */
-
-.tooth-condition-modal-header {
-    width: 100% !important;
-    min-height: 65px !important;
-
-    padding: 18px 22px !important;
-
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-
-    box-sizing: border-box !important;
-
-    border-bottom: 1px solid #eeeeee !important;
-
-    background: linear-gradient(
-        135deg,
-        #e91e63,
-        #d63384
-    ) !important;
-
-    border-radius: 18px 18px 0 0 !important;
-}
-
-
 .tooth-condition-modal-header h3 {
     margin: 0 !important;
     padding: 0 !important;
@@ -4073,11 +3617,6 @@ button:active{
     font-size: 20px !important;
     font-weight: 700 !important;
 }
-
-
-/* =========================================================
-   CLOSE BUTTON
-========================================================= */
 
 .close-tooth-modal {
     width: 34px !important;
@@ -4102,121 +3641,11 @@ button:active{
     transition: 0.2s !important;
 }
 
-
-.close-tooth-modal:hover {
-    background: rgba(255, 255, 255, 0.35) !important;
-}
-
-
-/* =========================================================
-   MODAL BODY
-========================================================= */
-
-.tooth-condition-modal-body {
-    width: 100% !important;
-
-    padding: 22px !important;
-
-    box-sizing: border-box !important;
-
-    background: #ffffff !important;
-}
-
-
-.selected-tooth-text {
-    margin: 0 0 20px 0 !important;
-
-    padding: 14px 16px !important;
-
-    background: #fff1f6 !important;
-
-    border-left: 4px solid #e91e63 !important;
-
-    border-radius: 8px !important;
-
-    color: #374151 !important;
-
-    font-size: 15px !important;
-}
-
-
-.selected-tooth-text strong {
-    color: #e91e63 !important;
-    font-size: 17px !important;
-}
-
-
-/* =========================================================
-   CONDITION OPTIONS
-========================================================= */
-
-.condition-options {
-    width: 100% !important;
-
-    display: grid !important;
-
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-
-    gap: 12px !important;
-
-    box-sizing: border-box !important;
-}
-
-
 /* =========================================================
    CONDITION OPTION
 ========================================================= */
 
-.condition-option {
-    position: relative !important;
-
-    width: 100% !important;
-    min-height: 48px !important;
-
-    padding: 12px 14px !important;
-
-    box-sizing: border-box !important;
-
-    display: flex !important;
-    align-items: center !important;
-
-    gap: 10px !important;
-
-    background: #ffffff !important;
-
-    border: 2px solid #e5e7eb !important;
-
-    border-radius: 10px !important;
-
-    cursor: pointer !important;
-
-    font-size: 14px !important;
-    font-weight: 600 !important;
-
-    color: #374151 !important;
-
-    transition: all 0.2s ease !important;
-}
-
-
-.condition-option:hover {
-    transform: translateY(-1px) !important;
-}
-
-
 /* RADIO */
-
-.condition-option input {
-    width: 17px !important;
-    height: 17px !important;
-
-    margin: 0 !important;
-
-    flex-shrink: 0 !important;
-}
-
-
-/* HEALTHY */
 
 .healthy-option {
     border-color: #86efac !important;
@@ -4233,13 +3662,6 @@ button:active{
     color: #15803d !important;
 }
 
-.healthy-option input {
-    accent-color: #22c55e !important;
-}
-
-
-/* CARIES */
-
 .caries-option {
     border-color: #fca5a5 !important;
 }
@@ -4254,13 +3676,6 @@ button:active{
     border-color: #ef4444 !important;
     color: #b91c1c !important;
 }
-
-.caries-option input {
-    accent-color: #ef4444 !important;
-}
-
-
-/* FILLED */
 
 .filled-option {
     border-color: #93c5fd !important;
@@ -4277,13 +3692,6 @@ button:active{
     color: #1d4ed8 !important;
 }
 
-.filled-option input {
-    accent-color: #3b82f6 !important;
-}
-
-
-/* MISSING */
-
 .missing-option {
     border-color: #d1d5db !important;
 }
@@ -4299,13 +3707,6 @@ button:active{
     color: #374151 !important;
 }
 
-.missing-option input {
-    accent-color: #6b7280 !important;
-}
-
-
-/* EXTRACTION */
-
 .extraction-option {
     border-color: #fdba74 !important;
 }
@@ -4320,13 +3721,6 @@ button:active{
     border-color: #f97316 !important;
     color: #c2410c !important;
 }
-
-.extraction-option input {
-    accent-color: #f97316 !important;
-}
-
-
-/* CROWN */
 
 .crown-option {
     border-color: #fde047 !important;
@@ -4347,9 +3741,6 @@ button:active{
     accent-color: #ca8a04 !important;
 }
 
-
-/* ROOT CANAL */
-
 .root-canal-option {
     border-color: #c4b5fd !important;
 }
@@ -4368,32 +3759,6 @@ button:active{
 .root-canal-option input {
     accent-color: #7c3aed !important;
 }
-
-
-/* =========================================================
-   FOOTER
-========================================================= */
-
-.tooth-condition-modal-footer {
-    width: 100% !important;
-
-    padding: 18px 22px !important;
-
-    box-sizing: border-box !important;
-
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-end !important;
-
-    gap: 12px !important;
-
-    border-top: 1px solid #eeeeee !important;
-
-    background: #fafafa !important;
-
-    border-radius: 0 0 18px 18px !important;
-}
-
 
 /* CANCEL */
 
@@ -4416,47 +3781,7 @@ button:active{
     cursor: pointer !important;
 }
 
-
-.cancel-tooth-condition:hover {
-    background: #f3f4f6 !important;
-}
-
-
 /* CONFIRM */
-
-.confirm-tooth-condition {
-    min-width: 110px !important;
-    height: 42px !important;
-
-    padding: 0 18px !important;
-
-    border: none !important;
-    border-radius: 8px !important;
-
-    background: linear-gradient(
-        135deg,
-        #e91e63,
-        #d63384
-    ) !important;
-
-    color: #ffffff !important;
-
-    font-size: 14px !important;
-    font-weight: 700 !important;
-
-    cursor: pointer !important;
-
-    transition: all 0.2s ease !important;
-}
-
-
-.confirm-tooth-condition:hover {
-    transform: translateY(-1px) !important;
-
-    box-shadow:
-        0 6px 15px rgba(233, 30, 99, 0.3) !important;
-}
-
 
 /* =========================================================
    CONFIRMED MODAL
@@ -4474,11 +3799,9 @@ button:active{
     z-index: 1000000 !important;
 }
 
-
 .tooth-confirmed-modal.hidden {
     display: none !important;
 }
-
 
 .tooth-confirmed-overlay {
     position: absolute !important;
@@ -4487,7 +3810,6 @@ button:active{
 
     background: rgba(0, 0, 0, 0.55) !important;
 }
-
 
 .tooth-confirmed-content {
     position: relative !important;
@@ -4511,7 +3833,6 @@ button:active{
     animation: toothModalShow 0.25s ease !important;
 }
 
-
 .tooth-confirmed-icon {
     width: 70px !important;
     height: 70px !important;
@@ -4532,7 +3853,6 @@ button:active{
     font-weight: 700 !important;
 }
 
-
 .tooth-confirmed-content h3 {
     margin: 0 0 10px !important;
 
@@ -4540,7 +3860,6 @@ button:active{
 
     font-size: 21px !important;
 }
-
 
 .tooth-confirmed-content p {
     margin: 0 0 25px !important;
@@ -4551,7 +3870,6 @@ button:active{
 
     line-height: 1.6 !important;
 }
-
 
 .close-confirmed-modal {
     width: 100% !important;
@@ -4576,7 +3894,6 @@ button:active{
     cursor: pointer !important;
 }
 
-
 /* =========================================================
    LEGEND
 ========================================================= */
@@ -4592,7 +3909,6 @@ button:active{
     margin-top: 20px !important;
 }
 
-
 .legend-item {
     display: flex !important;
 
@@ -4605,7 +3921,6 @@ button:active{
     color: #374151 !important;
 }
 
-
 .legend-color {
     width: 16px !important;
     height: 16px !important;
@@ -4617,27 +3932,6 @@ button:active{
     border: 1px solid rgba(0, 0, 0, 0.1) !important;
 }
 
-
-.legend-color.healthy {
-    background: #22c55e !important;
-}
-
-.legend-color.caries {
-    background: #ef4444 !important;
-}
-
-.legend-color.filled {
-    background: #3b82f6 !important;
-}
-
-.legend-color.missing {
-    background: #6b7280 !important;
-}
-
-.legend-color.extraction {
-    background: #f97316 !important;
-}
-
 .legend-color.crown {
     background: #ca8a04 !important;
 }
@@ -4645,7 +3939,6 @@ button:active{
 .legend-color.root-canal {
     background: #7c3aed !important;
 }
-
 
 /* =========================================================
    TOOTH CONDITION COLORS
@@ -4655,24 +3948,20 @@ button:active{
     transition: all 0.2s ease !important;
 }
 
-
 .tooth.condition-healthy {
     background: #dcfce7 !important;
     border-color: #22c55e !important;
 }
-
 
 .tooth.condition-caries {
     background: #fee2e2 !important;
     border-color: #ef4444 !important;
 }
 
-
 .tooth.condition-filled {
     background: #dbeafe !important;
     border-color: #3b82f6 !important;
 }
-
 
 .tooth.condition-missing {
     background: #e5e7eb !important;
@@ -4680,24 +3969,20 @@ button:active{
     opacity: 0.55 !important;
 }
 
-
 .tooth.condition-extraction {
     background: #ffedd5 !important;
     border-color: #f97316 !important;
 }
-
 
 .tooth.condition-crown {
     background: #fef9c3 !important;
     border-color: #ca8a04 !important;
 }
 
-
 .tooth.condition-root-canal {
     background: #ede9fe !important;
     border-color: #7c3aed !important;
 }
-
 
 /* MOBILE */
 
@@ -5160,12 +4445,9 @@ button:active{
     }
 
 }
+
 .submit-modal {
     display: none;
-}
-
-.submit-modal.active {
-    display: flex;
 }
 
 /* =========================================================
@@ -5731,7 +5013,6 @@ html.dark-mode .border-yellow-100{
    GLOBAL NAVIGATION / NOTIFICATION SPACING
    ============================================================ */
 
-
 .main-nav-link {
     position: relative;
     display: inline-flex;
@@ -5775,223 +5056,51 @@ html.dark-mode .border-yellow-100{
     text-transform: uppercase;
     text-decoration: none;
     transition: color 0.2s ease;
-}
-
-.main-nav-link:hover {
-    color: #ff2f78 !important;
-}
-
-.main-nav-link.active {
-    color: #ff2f78 !important;
-}
-
-.main-nav-link.active::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 2px;
-    background: #e91e63;
 }
 
 /* ================================
    NAVBAR LIGHT / DARK MODE
    ================================ */
 
-.main-navbar {
-    background: #ffffff !important;
-    border-bottom: 1px solid #e5e5e5 !important;
-}
-
 /* Light mode */
-.main-navbar .main-nav-link {
-    color: #555555;
-}
-
-.main-navbar .main-nav-link:hover {
-    color: #e91e63 !important;
-}
-
-.main-navbar .main-nav-link.active {
-    color: #e91e63 !important;
-}
 
 /* Dark mode */
-html.dark-mode .main-navbar {
-    background: #080808 !important;
-    border-bottom: 1px solid #292929 !important;
-}
-
-html.dark-mode .main-navbar .main-nav-link {
-    color: #b8b8b8;
-}
-
-html.dark-mode .main-navbar .main-nav-link:hover {
-    color: #ff2f78 !important;
-}
-
-html.dark-mode .main-navbar .main-nav-link.active {
-    color: #ff2f78 !important;
-}
 
 /* ============================================================
    PATIENT LOGOUT MODAL
    ============================================================ */
+
 /* ============================================================
    LOGOUT CONFIRMATION MODAL
    ============================================================ */
 
-.logout-modal {
-    position: fixed !important;
-    inset: 0 !important;
-
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    width: 100%;
-    height: 100%;
-
-    padding: 20px;
-
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-
-    transition:
-        opacity 0.2s ease,
-        visibility 0.2s ease;
-
-    z-index: 9999999 !important;
-}
-
 /* OPEN STATE */
-.logout-modal.show {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-}
-
 
 /* ============================================================
    BACKDROP
    ============================================================ */
 
-.logout-modal-overlay {
-    position: absolute !important;
-    inset: 0 !important;
-
-    width: 100%;
-    height: 100%;
-
-    background: rgba(0, 0, 0, 0.68);
-
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-
-    cursor: default;
-}
-
-
 /* ============================================================
    MODAL CARD
    ============================================================ */
 
-.logout-modal-card {
-    position: relative !important;
-
-    z-index: 2 !important;
-
-    width: min(100%, 420px);
-
-    padding: 32px;
-
-    background: #ffffff;
-
-    border: 1px solid #eeeeee;
-
-    border-radius: 20px;
-
-    text-align: center;
-
-    box-shadow:
-        0 30px 80px rgba(0, 0, 0, 0.30);
-
-    transform: translateY(15px) scale(0.96);
-
-    transition:
-        transform 0.2s ease;
-}
-
 /* CARD ANIMATION WHEN OPEN */
-.logout-modal.show .logout-modal-card {
-    transform: translateY(0) scale(1);
-}
-
 
 /* ============================================================
    ICON
    ============================================================ */
 
-.logout-modal-icon {
-    width: 64px;
-    height: 64px;
-
-    margin: 0 auto 18px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    background: #fff1f7;
-    color: #ec1d66;
-}
-
-
 /* ============================================================
    TITLE
    ============================================================ */
-
-.logout-modal-card h2 {
-    margin: 0;
-
-    color: #1f2937;
-
-    font-size: 24px;
-    font-weight: 800;
-}
-
 
 /* ============================================================
    MESSAGE
    ============================================================ */
 
-.logout-modal-card p {
-    margin: 10px auto 25px;
-
-    max-width: 320px;
-
-    color: #6b7280;
-
-    font-size: 14px;
-    line-height: 1.6;
-}
-
-
 /* ============================================================
    BUTTONS
    ============================================================ */
-
-.logout-modal-actions {
-    display: flex;
-
-    gap: 12px;
-
-    width: 100%;
-}
 
 .logout-cancel-btn,
 .logout-confirm-btn {
@@ -6013,7 +5122,6 @@ html.dark-mode .main-navbar .main-nav-link.active {
         transform 0.15s ease;
 }
 
-
 /* ============================================================
    CANCEL BUTTON
    ============================================================ */
@@ -6033,7 +5141,6 @@ html.dark-mode .main-navbar .main-nav-link.active {
 .logout-cancel-btn:active {
     transform: scale(0.97);
 }
-
 
 /* ============================================================
    LOGOUT BUTTON
@@ -6057,7 +5164,6 @@ html.dark-mode .main-navbar .main-nav-link.active {
     transform: scale(0.97);
 }
 
-
 /* ============================================================
    DISABLED LOGOUT BUTTON
    ============================================================ */
@@ -6070,90 +5176,17 @@ html.dark-mode .main-navbar .main-nav-link.active {
     transform: none;
 }
 
-
 /* ============================================================
    BODY LOCK WHILE MODAL IS OPEN
    ============================================================ */
-
-body.logout-modal-open {
-    overflow: hidden;
-}
-
 
 /* ============================================================
    MOBILE
    ============================================================ */
 
-@media (max-width: 480px) {
-
-    .logout-modal {
-        padding: 16px;
-    }
-
-    .logout-modal-card {
-        width: 100%;
-
-        padding: 26px 20px;
-
-        border-radius: 18px;
-    }
-
-    .logout-modal-icon {
-        width: 58px;
-        height: 58px;
-
-        margin-bottom: 15px;
-    }
-
-    .logout-modal-card h2 {
-        font-size: 21px;
-    }
-
-    .logout-modal-card p {
-        font-size: 13px;
-
-        margin-bottom: 22px;
-    }
-
-    .logout-modal-actions {
-        gap: 10px;
-    }
-
-    .logout-cancel-btn,
-    .logout-confirm-btn {
-        min-height: 44px;
-
-        font-size: 13px;
-    }
-}
 /* ============================================================
    DARK MODE
    ============================================================ */
-
-html.dark-mode .logout-modal-card {
-    background: #111111 !important;
-
-    color: #f5f2ef !important;
-
-    border-color: rgba(255,255,255,.10) !important;
-
-    box-shadow:
-        0 30px 80px rgba(0,0,0,.65) !important;
-}
-
-html.dark-mode .logout-modal-icon {
-    background: rgba(236,29,102,.10) !important;
-
-    color: #ff2f78 !important;
-}
-
-html.dark-mode .logout-modal-card h2 {
-    color: #f5f2ef !important;
-}
-
-html.dark-mode .logout-modal-card p {
-    color: #999999 !important;
-}
 
 html.dark-mode .logout-cancel-btn {
     background: #1b1b1b !important;
@@ -6183,9 +5216,6 @@ html.dark-mode .logout-confirm-btn:hover {
     border-color: #ff2f78 !important;
 }
 
-
-/* MOBILE */
-
 @media (max-width: 480px) {
 
     .logout-modal-card {
@@ -6202,6 +5232,7 @@ html.dark-mode .logout-confirm-btn:hover {
     }
 
 }
+
 /* =========================================
    MOBILE RESPONSIVE DESIGN
    ========================================= */
@@ -6305,6 +5336,7 @@ html.dark-mode .logout-confirm-btn:hover {
         height: auto;
     }
 }
+
 @media (max-width: 480px) {
 
     .booking-container {
@@ -6344,48 +5376,12 @@ html.dark-mode .logout-confirm-btn:hover {
         padding: 12px;
     }
 }
+
 /* ==========================================================
    ISSUE REPORT CONFIRMATION MODAL
    ========================================================== */
 
-.report-modal-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 20px;
-
-    background: rgba(0, 0, 0, 0.72);
-
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-
-    transition:
-        opacity 0.25s ease,
-        visibility 0.25s ease;
-}
-
-
-/* OPEN STATE */
-
-.report-modal-overlay.is-open {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-}
-
-
 /* PREVENT PAGE SCROLL */
-
-body.report-modal-open {
-    overflow: hidden;
-}
-
 
 /* ==========================================================
    MODAL
@@ -6414,13 +5410,6 @@ body.report-modal-open {
         transform 0.25s ease;
 }
 
-
-.report-modal-overlay.is-open
-.report-confirm-modal {
-    transform: translateY(0) scale(1);
-}
-
-
 /* ==========================================================
    WARNING ICON
    ========================================================== */
@@ -6441,7 +5430,6 @@ body.report-modal-open {
     font-weight: 700;
 }
 
-
 .report-warning-icon {
     color: #f59e0b;
 
@@ -6449,7 +5437,6 @@ body.report-modal-open {
 
     border: 1px solid rgba(245, 158, 11, 0.25);
 }
-
 
 /* ==========================================================
    TITLE
@@ -6464,7 +5451,6 @@ body.report-modal-open {
     font-weight: 700;
 }
 
-
 .report-confirm-modal p {
     margin: 0 auto;
 
@@ -6475,7 +5461,6 @@ body.report-modal-open {
     font-size: 15px;
     line-height: 1.6;
 }
-
 
 /* ==========================================================
    BUTTONS
@@ -6488,7 +5473,6 @@ body.report-modal-open {
 
     margin-top: 28px;
 }
-
 
 .report-btn {
     flex: 1;
@@ -6510,13 +5494,9 @@ body.report-modal-open {
         background 0.2s ease;
 }
 
-
 .report-btn:hover {
     transform: translateY(-1px);
 }
-
-
-/* CANCEL */
 
 .report-btn-cancel {
     color: #ffffff;
@@ -6526,13 +5506,9 @@ body.report-modal-open {
     border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-
 .report-btn-cancel:hover {
     background: rgba(255, 255, 255, 0.06);
 }
-
-
-/* SUBMIT */
 
 .report-btn-submit {
     color: #ffffff;
@@ -6542,11 +5518,9 @@ body.report-modal-open {
     border: 1px solid #ec1970;
 }
 
-
 .report-btn-submit:hover {
     opacity: 0.9;
 }
-
 
 /* ==========================================================
    MOBILE
@@ -6586,364 +5560,46 @@ body.report-modal-open {
    PROFILE DROPDOWN
 ========================================= */
 
-#profileMenu {
-    position: absolute !important;
-
-    top: calc(100% + 12px) !important;
-    right: 0 !important;
-
-    width: 234px !important;
-
-    background: #151515 !important;
-
-    border: 1px solid #bdbdbd !important;
-    border-radius: 14px !important;
-
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45) !important;
-
-    overflow: hidden !important;
-
-    z-index: 999999 !important;
-}
-
 /* CLOSED */
-/* =========================================
-   PROFILE DROPDOWN
-========================================= */
-
-#profileMenu {
-    position: absolute !important;
-    top: calc(100% + 12px) !important;
-    right: 0 !important;
-
-    width: 234px !important;
-
-    background: #151515 !important;
-
-    border: 1px solid #bdbdbd !important;
-    border-radius: 14px !important;
-
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45) !important;
-
-    overflow: hidden !important;
-
-    z-index: 999999 !important;
-}
-
-/* CLOSED */
-#profileMenu.hidden {
-    display: none !important;
-}
 
 /* OPEN */
-#profileMenu:not(.hidden) {
-    display: block !important;
-}
 
 /* MENU ITEMS */
-#profileMenu a,
-#profileMenu button {
-    width: 100% !important;
-    min-height: 52px !important;
-
-    display: flex !important;
-    align-items: center !important;
-
-    gap: 14px !important;
-    padding: 0 16px !important;
-
-    box-sizing: border-box !important;
-
-    background: transparent !important;
-    border: 0 !important;
-
-    color: #e5e5e5 !important;
-
-    font-size: 16px !important;
-    font-weight: 500 !important;
-
-    text-decoration: none !important;
-    cursor: pointer !important;
-    text-align: left !important;
-}
 
 /* SETTINGS HOVER */
-#profileMenu a:hover {
-    background: rgba(255, 255, 255, 0.06) !important;
-    color: #ff1f72 !important;
-}
 
 /* LOGOUT */
-#profileMenu button {
-    color: #e5e5e5 !important;
-}
 
 /* LOGOUT HOVER */
-#profileMenu button:hover {
-    background: rgba(255, 255, 255, 0.06) !important;
-    color: #ff1f72 !important;
-}
 
 /* ICONS */
-#profileMenu svg {
-    width: 22px !important;
-    height: 22px !important;
-    flex-shrink: 0 !important;
-}
 
 /* SEPARATOR */
-#profileMenu a + button {
-    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-}
-/* MENU ITEMS */
-#profileMenu a,
-#profileMenu button {
-    width: 100% !important;
-
-    min-height: 52px !important;
-
-    display: flex !important;
-    align-items: center !important;
-
-    gap: 14px !important;
-
-    padding: 0 16px !important;
-
-    box-sizing: border-box !important;
-
-    background: transparent !important;
-
-    border: 0 !important;
-
-    color: #e5e5e5 !important;
-
-    font-size: 16px !important;
-    font-weight: 500 !important;
-
-    text-decoration: none !important;
-
-    cursor: pointer !important;
-
-    text-align: left !important;
-}
-
-/* SETTINGS HOVER */
-#profileMenu a:hover {
-    background: rgba(255, 255, 255, 0.06) !important;
-    color: #ff1f72 !important;
-}
-
-/* LOGOUT */
-#profileMenu button {
-    color: #e5e5e5 !important;
-}
-
-/* LOGOUT HOVER */
-#profileMenu button:hover {
-    background: rgba(255, 255, 255, 0.06) !important;
-    color: #ff1f72 !important;
-}
-
-/* ICONS */
-#profileMenu svg {
-    width: 22px !important;
-    height: 22px !important;
-
-    flex-shrink: 0 !important;
-}
-
-/* SEPARATOR */
-#profileMenu a + button {
-    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-}
-
 
 /* =========================================================
    PROFILE DROPDOWN
    ========================================================= */
 
-#profileWrapper {
-    position: relative !important;
-}
-
 /* Profile button */
-#profileBtn {
-    position: relative !important;
-
-    display: flex !important;
-    align-items: center !important;
-
-    gap: 8px !important;
-
-    cursor: pointer !important;
-
-    z-index: 1000000 !important;
-}
 
 /* Profile image */
-#profileBtn img {
-    width: 44px !important;
-    height: 44px !important;
-
-    min-width: 44px !important;
-    min-height: 44px !important;
-
-    max-width: 44px !important;
-    max-height: 44px !important;
-
-    border-radius: 50% !important;
-
-    object-fit: cover !important;
-}
 
 /* Dropdown */
-#profileMenu {
-    position: absolute !important;
-
-    top: calc(100% + 12px) !important;
-    right: 0 !important;
-
-    width: 234px !important;
-
-    background: #151515 !important;
-
-    border: 1px solid #3a3a3a !important;
-
-    border-radius: 14px !important;
-
-    box-shadow:
-        0 15px 40px rgba(0, 0, 0, 0.55) !important;
-
-    overflow: hidden !important;
-
-    z-index: 9999999 !important;
-}
 
 /* Closed */
-#profileMenu.hidden {
-    display: none !important;
-}
 
 /* Open */
-#profileMenu:not(.hidden) {
-    display: block !important;
-}
 
 /* Settings + Logout */
-#profileMenu a,
-#profileMenu button {
-    width: 100% !important;
-
-    min-height: 52px !important;
-
-    display: flex !important;
-    align-items: center !important;
-
-    gap: 14px !important;
-
-    padding: 0 16px !important;
-
-    margin: 0 !important;
-
-    box-sizing: border-box !important;
-
-    background: transparent !important;
-
-    border: 0 !important;
-
-    color: #e5e5e5 !important;
-
-    font-family: inherit !important;
-
-    font-size: 15px !important;
-
-    font-weight: 500 !important;
-
-    line-height: 1 !important;
-
-    text-decoration: none !important;
-
-    text-align: left !important;
-
-    cursor: pointer !important;
-}
 
 /* Icons */
-#profileMenu a svg,
-#profileMenu button svg {
-    width: 21px !important;
-    height: 21px !important;
-
-    min-width: 21px !important;
-    min-height: 21px !important;
-
-    max-width: 21px !important;
-    max-height: 21px !important;
-
-    flex: 0 0 21px !important;
-
-    display: block !important;
-}
 
 /* Icon wrapper if used */
-#profileMenu a i,
-#profileMenu button i {
-    width: 21px !important;
-    height: 21px !important;
-
-    min-width: 21px !important;
-
-    display: flex !important;
-
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-/* Hover */
-#profileMenu a:hover,
-#profileMenu button:hover {
-    background: rgba(255, 255, 255, 0.06) !important;
-
-    color: #ff1f72 !important;
-}
 
 /* Divider */
-#profileMenu a + button {
-    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-}
 
 /* Mobile */
-@media (max-width: 640px) {
 
-    #profileMenu {
-        width: 210px !important;
-
-        top: calc(100% + 10px) !important;
-    }
-
-    #profileMenu a,
-    #profileMenu button {
-        min-height: 48px !important;
-
-        padding: 0 14px !important;
-
-        font-size: 14px !important;
-    }
-
-    #profileMenu a svg,
-    #profileMenu button svg {
-        width: 20px !important;
-        height: 20px !important;
-
-        min-width: 20px !important;
-        min-height: 20px !important;
-
-        max-width: 20px !important;
-        max-height: 20px !important;
-
-        flex-basis: 20px !important;
-    }
-}
 /* =========================================================
    CANCEL APPOINTMENT MODAL
    ========================================================= */
@@ -6998,7 +5654,6 @@ body.report-modal-open {
     opacity: 1;
 }
 
-
 /* =========================================================
    DARK MODE
    ========================================================= */
@@ -7011,7 +5666,6 @@ body.report-modal-open {
     background: #251C22;
     border-color: #374151;
 }
-
 
 /* =========================================================
    SUCCESS MODAL
@@ -7065,7 +5719,6 @@ body.report-modal-open {
     opacity: 1;
 }
 
-
 /* =========================================================
    DARK MODE - SUCCESS MODAL
    ========================================================= */
@@ -7078,7 +5731,6 @@ body.report-modal-open {
     background: #251C22;
     border: 1px solid #374151;
 }
-
 
 @media (max-width: 640px) {
 
@@ -7093,1858 +5745,4 @@ body.report-modal-open {
         border-radius: 1rem;
     }
 
-}
-
-/* =========================================================
-   SHINE & SMILE
-   NOTIFICATION MODAL
-   ========================================================= */
-
-.notification-modal {
-    position: fixed;
-
-    inset: 0;
-
-    width: 100vw;
-    height: 100vh;
-
-    padding: 20px;
-
-    display: none;
-
-    align-items: center;
-    justify-content: center;
-
-    box-sizing: border-box;
-
-    z-index: 999999;
-}
-
-
-.notification-modal.show {
-    display: flex !important;
-}
-
-
-/* =========================================================
-   MODAL OVERLAY
-   ========================================================= */
-
-.notification-modal-overlay {
-    position: absolute;
-
-    inset: 0;
-
-    width: 100%;
-    height: 100%;
-
-    background: rgba(0, 0, 0, 0.78);
-
-    backdrop-filter: blur(7px);
-
-    -webkit-backdrop-filter: blur(7px);
-}
-
-
-
-
-.notification-modal-card {
-    position: relative;
-
-    z-index: 2;
-
-    width: 500px;
-
-    max-width: calc(100vw - 40px);
-
-    max-height: calc(100vh - 40px);
-
-    padding: 32px;
-
-    box-sizing: border-box;
-
-    overflow-y: auto;
-
-    background: #211b1f;
-
-    border: 1px solid #42353b;
-
-    border-radius: 20px;
-
-    box-shadow:
-        0 30px 80px rgba(0, 0, 0, 0.65);
-
-    animation:
-        notificationModalIn
-        0.2s
-        ease-out;
-}
-
-
-@keyframes notificationModalIn {
-
-    from {
-        opacity: 0;
-
-        transform:
-            scale(0.94)
-            translateY(8px);
-    }
-
-    to {
-        opacity: 1;
-
-        transform:
-            scale(1)
-            translateY(0);
-    }
-
-}
-
-
-/* =========================================================
-   MODAL CLOSE
-   ========================================================= */
-
-.notification-modal-close {
-    position: absolute;
-
-    top: 14px;
-    right: 14px;
-
-    width: 36px;
-    height: 36px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    padding: 0;
-
-    border: none;
-
-    border-radius: 50%;
-
-    background: #353035;
-
-    color: #ffffff;
-
-    cursor: pointer;
-
-    transition:
-        background 0.2s ease;
-}
-
-
-.notification-modal-close:hover {
-    background: #ec1961;
-}
-
-
-.notification-modal-close svg {
-    width: 18px;
-    height: 18px;
-}
-
-
-/* =========================================================
-   MODAL ICON
-   ========================================================= */
-
-.notification-modal-icon {
-    width: 58px;
-    height: 58px;
-
-    margin: 0 auto 17px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    background: rgba(236, 25, 97, 0.12);
-
-    border: 1px solid rgba(236, 25, 97, 0.20);
-
-    color: #ec1961;
-}
-
-
-.notification-modal-icon svg {
-    width: 27px;
-    height: 27px;
-
-    min-width: 27px;
-    min-height: 27px;
-}
-
-
-/* =========================================================
-   MODAL TITLE
-   ========================================================= */
-
-#notificationModalTitle {
-    margin: 0;
-
-    color: #ffffff;
-
-    font-size: 20px;
-    font-weight: 700;
-
-    line-height: 1.3;
-
-    text-align: center;
-}
-
-
-/* =========================================================
-   MODAL TIME
-   ========================================================= */
-
-#notificationModalTime {
-    margin: 6px 0 20px;
-
-    color: #8f888c;
-
-    font-size: 12px;
-
-    text-align: center;
-}
-
-
-/* =========================================================
-   MODAL MESSAGE
-   ========================================================= */
-
-.notification-modal-message-box {
-    margin-bottom: 20px;
-
-    padding: 18px;
-
-    background: #2a2025;
-
-    border: 1px solid #46363e;
-
-    border-radius: 14px;
-}
-
-
-#notificationModalMessage {
-    margin: 0;
-
-    color: #e8e0e4;
-
-    font-size: 14px;
-
-    line-height: 1.7;
-
-    text-align: left;
-
-    word-break: break-word;
-}
-
-
-/* =========================================================
-   MODAL DONE
-   ========================================================= */
-
-.notification-modal-done {
-    width: 100%;
-
-    height: 46px;
-
-    padding: 0;
-
-    border: none;
-
-    border-radius: 10px;
-
-    background: #ec1961;
-
-    color: #ffffff;
-
-    font-size: 14px;
-
-    font-weight: 700;
-
-    cursor: pointer;
-
-    transition:
-        background 0.2s ease,
-        transform 0.15s ease;
-}
-
-
-.notification-modal-done:hover {
-    background: #d91658;
-}
-
-
-.notification-modal-done:active {
-    transform: scale(0.99);
-}
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media (max-width: 640px) {
-
-    .notification-dropdown {
-        position: fixed;
-
-        top: 70px;
-
-        left: 10px;
-        right: 10px;
-
-        width: auto;
-
-        max-width: none;
-
-        border-radius: 16px;
-    }
-
-
-    .notification-list {
-        max-height: 65vh;
-    }
-
-
-    .notification-item {
-        min-height: 100px;
-
-        padding: 15px;
-
-        gap: 10px;
-    }
-
-
-    .notification-message {
-        font-size: 12px;
-    }
-
-
-    .notification-modal {
-        padding: 15px;
-    }
-
-
-    .notification-modal-card {
-        width: 100%;
-
-        max-width: none;
-
-        max-height: calc(100vh - 30px);
-
-        padding: 26px 20px;
-
-        border-radius: 18px;
-    }
-
-}
-/* =========================================================
-   SHINE & SMILE
-   NOTIFICATION SYSTEM
-   SINGLE CANONICAL DEFINITION
-   ========================================================= */
-
-.notification-wrapper {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 99990;
-    margin-right: 35px;
-}
-
-
-/* =========================================================
-   NOTIFICATION BUTTON
-   ========================================================= */
-
-.notification-btn,
-#notificationBtn {
-    position: relative;
-
-    width: 42px;
-    height: 42px;
-
-    min-width: 42px;
-    min-height: 42px;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 0;
-    margin: 0;
-
-    background: transparent;
-
-    color: #e5e5e5;
-
-    border: 1px solid #3a3035;
-    border-radius: 50%;
-
-    cursor: pointer;
-
-    box-sizing: border-box;
-
-    transition:
-        background .2s ease,
-        color .2s ease,
-        border-color .2s ease,
-        transform .2s ease;
-}
-
-.notification-btn:hover,
-#notificationBtn:hover {
-    background: #1c1719;
-    border-color: #ec1961;
-    color: #ec1961;
-}
-
-.notification-btn:active,
-#notificationBtn:active {
-    transform: scale(.96);
-}
-
-.notification-btn:focus-visible,
-#notificationBtn:focus-visible {
-    outline: 2px solid #ec1961;
-    outline-offset: 3px;
-}
-
-
-/* =========================================================
-   TOP BELL ICON ONLY
-   ========================================================= */
-
-.notification-btn svg,
-#notificationBtn svg,
-.notification-btn i,
-#notificationBtn i {
-    width: 22px !important;
-    height: 22px !important;
-
-    min-width: 22px !important;
-    min-height: 22px !important;
-
-    max-width: 22px !important;
-    max-height: 22px !important;
-
-    display: block !important;
-
-    flex: 0 0 22px !important;
-
-    margin: 0 !important;
-}
-
-
-/* =========================================================
-   BADGE
-   ========================================================= */
-
-.notification-badge {
-    position: absolute;
-
-    top: -3px;
-    right: -3px;
-
-    min-width: 18px;
-    height: 18px;
-
-    padding: 0 4px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    box-sizing: border-box;
-
-    background: #ec1961;
-    color: #ffffff;
-
-    border: 2px solid #111111;
-
-    border-radius: 999px;
-
-    font-size: 10px;
-    font-weight: 700;
-
-    line-height: 1;
-
-    z-index: 10;
-}
-
-
-/* =========================================================
-   NOTIFICATION DROPDOWN
-   ========================================================= */
-
-#notificationDropdown {
-    position: absolute !important;
-
-    top: calc(100% + 12px) !important;
-
-    right: 0 !important;
-    left: auto !important;
-    bottom: auto !important;
-
-    width: 390px !important;
-
-    max-width: calc(100vw - 24px) !important;
-
-    height: auto !important;
-
-    max-height: 600px !important;
-
-    margin: 0 !important;
-    padding: 0 !important;
-
-    display: block;
-
-    box-sizing: border-box;
-
-    overflow: hidden !important;
-
-    background: #111111 !important;
-
-    color: #ffffff !important;
-
-    border: 1px solid rgba(236, 29, 102, .35) !important;
-
-    border-radius: 18px !important;
-
-    box-shadow:
-        0 20px 50px rgba(0, 0, 0, .45) !important;
-
-    z-index: 999999 !important;
-}
-
-
-/* Hidden state */
-
-#notificationDropdown.hidden {
-    display: none !important;
-}
-
-
-/* =========================================================
-   HEADER
-   ========================================================= */
-
-#notificationDropdown .notification-dropdown-header,
-#notificationDropdown .notification-header {
-    width: 100%;
-
-    min-height: 76px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    box-sizing: border-box;
-
-    margin: 0;
-
-    padding: 16px 18px;
-
-    background: #111111;
-
-    color: #ffffff;
-
-    border: 0;
-
-    border-bottom: 1px solid #2b2b2b;
-}
-
-
-/* Header content */
-
-#notificationDropdown .notification-header-content {
-    min-width: 0;
-
-    flex: 1;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 14px;
-}
-
-
-/* Header icon */
-
-#notificationDropdown .notification-header-icon {
-    width: 46px;
-    height: 46px;
-
-    min-width: 46px;
-    min-height: 46px;
-
-    max-width: 46px;
-    max-height: 46px;
-
-    flex: 0 0 46px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    background: #292029;
-
-    border-radius: 14px;
-
-    overflow: hidden;
-
-    color: #ffffff;
-
-    box-sizing: border-box;
-}
-
-
-/* Header bell */
-
-#notificationDropdown .notification-header-icon svg,
-#notificationDropdown .notification-header-icon i {
-    width: 22px !important;
-    height: 22px !important;
-
-    min-width: 22px !important;
-    min-height: 22px !important;
-
-    max-width: 22px !important;
-    max-height: 22px !important;
-
-    display: block !important;
-
-    margin: 0 !important;
-}
-
-
-/* Header text */
-
-#notificationDropdown .notification-header-text {
-    min-width: 0;
-    flex: 1;
-}
-
-#notificationDropdown .notification-header-title {
-    margin: 0;
-
-    color: #ffffff;
-
-    font-size: 20px;
-    font-weight: 700;
-
-    line-height: 1.3;
-}
-
-#notificationDropdown .notification-header-subtitle {
-    margin: 5px 0 0;
-
-    color: #858585;
-
-    font-size: 13px;
-
-    line-height: 1.5;
-}
-
-
-/* =========================================================
-   FILTERS
-   ========================================================= */
-
-#notificationDropdown .notification-tabs,
-#notificationDropdown .notification-filters,
-#notificationDropdown .notification-filter-bar {
-    width: 100%;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-    padding: 12px 18px;
-
-    box-sizing: border-box;
-
-    flex-wrap: wrap;
-}
-
-#notificationDropdown .notification-filter {
-    border: none;
-
-    background: transparent;
-
-    color: #888888;
-
-    padding: 7px 10px;
-
-    border-radius: 8px;
-
-    cursor: pointer;
-
-    font-size: 13px;
-}
-
-#notificationDropdown .notification-filter:hover {
-    color: #ffffff;
-    background: #1d1d1d;
-}
-
-#notificationDropdown .notification-filter.active {
-    color: #ffffff;
-    background: #ec1961;
-}
-
-
-/* =========================================================
-   NOTIFICATION LIST
-   ========================================================= */
-
-#notificationDropdown .notification-list,
-#notificationDropdown .notification-scroll,
-#notificationList {
-    width: 100%;
-
-    max-width: 100%;
-
-    max-height: 390px;
-
-    display: block;
-
-    margin: 0;
-    padding: 0;
-
-    overflow-x: hidden;
-
-    overflow-y: auto;
-
-    box-sizing: border-box;
-
-    background: #111111;
-}
-
-
-/* =========================================================
-   NOTIFICATION ITEM
-   ========================================================= */
-
-#notificationDropdown .notification-item {
-    position: relative;
-
-    width: 100%;
-
-    min-height: 106px;
-
-    display: flex;
-
-    align-items: flex-start;
-
-    gap: 16px;
-
-    box-sizing: border-box;
-
-    margin: 0;
-
-    padding: 18px 20px;
-
-    background: #111111;
-
-    border-bottom: 1px solid #292929;
-
-    color: #ffffff;
-
-    cursor: pointer;
-
-    transition: background .2s ease;
-}
-
-#notificationDropdown .notification-item:hover {
-    background: #171717;
-}
-
-
-/* =========================================================
-   NOTIFICATION ICON
-   ========================================================= */
-
-#notificationDropdown .notification-icon,
-#notificationDropdown .notification-item > div:first-of-type {
-    width: 46px;
-    height: 46px;
-
-    min-width: 46px;
-    min-height: 46px;
-
-    max-width: 46px;
-    max-height: 46px;
-
-    flex: 0 0 46px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    background: #292029;
-
-    border-radius: 14px;
-
-    overflow: hidden;
-
-    box-sizing: border-box;
-}
-
-
-/* Prevent giant icons */
-
-#notificationDropdown .notification-icon svg,
-#notificationDropdown .notification-item > div:first-of-type svg,
-#notificationDropdown .notification-icon i {
-    width: 20px !important;
-    height: 20px !important;
-
-    min-width: 20px !important;
-    min-height: 20px !important;
-
-    max-width: 20px !important;
-    max-height: 20px !important;
-
-    display: block !important;
-}
-
-
-/* =========================================================
-   NOTIFICATION CONTENT
-   ========================================================= */
-
-#notificationDropdown .notification-content {
-    min-width: 0;
-
-    flex: 1;
-
-    display: block;
-}
-
-#notificationDropdown .notification-title {
-    display: block;
-
-    margin: 0 0 5px;
-
-    color: #ffffff;
-
-    font-size: 15px;
-
-    font-weight: 700;
-
-    line-height: 1.4;
-}
-
-#notificationDropdown .notification-message {
-    display: block;
-
-    margin: 0;
-
-    color: #858585;
-
-    font-size: 13px;
-
-    line-height: 1.55;
-
-    word-break: break-word;
-}
-
-#notificationDropdown .notification-time {
-    display: flex;
-
-    align-items: center;
-
-    gap: 6px;
-
-    margin-top: 8px;
-
-    color: #eeeeee;
-
-    font-size: 13px;
-}
-
-
-/* =========================================================
-   EMPTY NOTIFICATION STATE
-   ========================================================= */
-
-#notificationDropdown .notification-empty,
-#notificationDropdown .notification-filter-empty,
-#notificationDropdown #notificationFilterEmpty,
-#notificationDropdown .empty-state,
-#notificationDropdown .empty-notification,
-#notificationDropdown .no-notifications {
-
-    width: 100%;
-
-    min-height: 220px;
-
-    padding: 32px 24px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    justify-content: center;
-
-    box-sizing: border-box;
-
-    text-align: center;
-
-    background: #111111;
-
-    color: #777777;
-
-    overflow: hidden;
-}
-
-
-/* =========================================================
-   EMPTY STATE ICON
-   ========================================================= */
-
-/*
-   IMPORTANT:
-   This prevents the giant bell/icon shown
-   in your screenshot.
-*/
-
-#notificationDropdown .notification-empty svg,
-#notificationDropdown .notification-filter-empty svg,
-#notificationDropdown #notificationFilterEmpty svg,
-#notificationDropdown .empty-state svg,
-#notificationDropdown .empty-notification svg,
-#notificationDropdown .no-notifications svg,
-
-#notificationDropdown .notification-empty i,
-#notificationDropdown .notification-filter-empty i,
-#notificationDropdown .empty-state i,
-#notificationDropdown .empty-notification i,
-#notificationDropdown .no-notifications i {
-
-    width: 48px !important;
-    height: 48px !important;
-
-    min-width: 48px !important;
-    min-height: 48px !important;
-
-    max-width: 48px !important;
-    max-height: 48px !important;
-
-    flex: 0 0 48px !important;
-
-    display: block !important;
-
-    margin: 0 auto 18px !important;
-
-    font-size: 48px !important;
-
-    box-sizing: border-box !important;
-}
-
-
-/* =========================================================
-   EMPTY STATE TEXT
-   ========================================================= */
-
-#notificationDropdown .notification-empty-title,
-#notificationDropdown .notification-empty h4,
-#notificationDropdown .empty-state h4,
-#notificationDropdown .no-notifications h4 {
-
-    margin: 0 0 8px;
-
-    color: #ffffff;
-
-    font-size: 17px;
-
-    font-weight: 600;
-
-    line-height: 1.4;
-
-    white-space: normal;
-}
-
-#notificationDropdown .notification-empty-text,
-#notificationDropdown .notification-empty p,
-#notificationDropdown .empty-state p,
-#notificationDropdown .no-notifications p {
-
-    max-width: 280px;
-
-    margin: 0;
-
-    color: #858585;
-
-    font-size: 14px;
-
-    line-height: 1.5;
-
-    text-align: center;
-
-    white-space: normal;
-}
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media (max-width: 640px) {
-
-    .notification-wrapper {
-        margin-right: 20px;
-    }
-
-    #notificationDropdown {
-        position: fixed !important;
-
-        top: 70px !important;
-
-        left: 12px !important;
-        right: 12px !important;
-
-        width: auto !important;
-
-        max-width: none !important;
-
-        max-height: calc(100vh - 90px) !important;
-
-        border-radius: 18px !important;
-    }
-
-    #notificationDropdown .notification-item {
-        min-height: 100px;
-
-        padding: 17px 15px;
-
-        gap: 10px;
-    }
-
-    #notificationDropdown .notification-icon,
-    #notificationDropdown .notification-item > div:first-of-type {
-        width: 42px;
-        height: 42px;
-
-        min-width: 42px;
-        min-height: 42px;
-
-        max-width: 42px;
-        max-height: 42px;
-
-        flex-basis: 42px;
-    }
-}
-
-/* Dark mode */
-html.dark-mode .notification-btn {
-    background: #171a21 !important;
-    color: #ec3f91 !important;
-    border-color: #2b3038 !important;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, .30) !important;
-}
-
-html.dark-mode .notification-btn:hover {
-    background: #1d2129 !important;
-    color: #ff6aa9 !important;
-    border-color: #414752 !important;
-}
-
-html.dark-mode .notification-btn:active {
-    background: #111318 !important;
-    transform: scale(.96) !important;
-}
-
-html.dark-mode .notification-btn svg {
-    color: #ec3f91 !important;
-}
-
-html.dark-mode .notification-badge {
-    background: #ec3f91 !important;
-    border-color: #0f1115 !important;
-}
-
-/* Responsive */
-@media (min-width: 768px) {
-    .notification-wrapper { margin-right: 10px; }
-}
-
-@media (max-width: 767px) {
-    .notification-wrapper { margin-right: 20px; }
-}
-
-@media (max-width: 640px) {
-    #notificationDropdown {
-        position: fixed;
-        top: 70px;
-        left: 12px;
-        right: 12px;
-        width: auto;
-        max-width: none;
-        max-height: calc(100vh - 90px);
-        border-radius: 18px;
-    }
-
-    #notificationDropdown .notification-dropdown-header,
-    #notificationDropdown .notification-header {
-        min-height: 76px;
-        padding: 16px;
-    }
-
-    #notificationDropdown .notification-header-title { font-size: 18px; }
-    #notificationDropdown .notification-header-subtitle { font-size: 12px; }
-    #notificationDropdown .notification-filter { font-size: 13px; }
-
-    #notificationDropdown .notification-item {
-        min-height: 100px;
-        padding: 17px 15px;
-        gap: 10px;
-    }
-
-    #notificationDropdown .notification-icon,
-    #notificationDropdown .notification-item > div:first-of-type {
-        width: 42px;
-        height: 42px;
-        min-width: 42px;
-        min-height: 42px;
-        max-width: 42px;
-        max-height: 42px;
-        flex-basis: 42px;
-    }
-}
-
-.notification-header-icon {
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
-    min-height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.notification-header-icon svg {
-    width: 24px !important;
-    height: 24px !important;
-    max-width: 24px;
-    max-height: 24px;
-    display: block;
-    flex-shrink: 0;
-}
-/* =========================================================
-   NOTIFICATION WRAPPER
-   ========================================================= */
-
-.notification-wrapper {
-    position: relative !important;
-
-    display: inline-flex !important;
-    align-items: center !important;
-
-    z-index: 999999 !important;
-
-    margin: 0 !important;
-}
-
-
-/* =========================================================
-   NAVBAR NOTIFICATION BUTTON
-   TEXT ONLY
-   ========================================================= */
-
-#notificationBtn,
-.notification-btn {
-    position: relative !important;
-
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    width: auto !important;
-    min-width: auto !important;
-
-    height: 40px !important;
-    min-height: 40px !important;
-
-    padding: 0 4px !important;
-
-    margin: 0 !important;
-
-    background: transparent !important;
-
-    border: none !important;
-    border-radius: 0 !important;
-
-    color: #ffffff !important;
-
-    font-family: 'Inter', sans-serif !important;
-
-    font-size: 15px !important;
-    font-weight: 600 !important;
-
-    line-height: 1 !important;
-
-    cursor: pointer !important;
-
-    box-shadow: none !important;
-
-    outline: none !important;
-
-    white-space: nowrap !important;
-
-    transition:
-        color 0.2s ease,
-        opacity 0.2s ease !important;
-}
-
-
-/* Navbar notification hover */
-
-#notificationBtn:hover,
-.notification-btn:hover {
-    color: #ec1961 !important;
-
-    background: transparent !important;
-
-    transform: none !important;
-
-    box-shadow: none !important;
-}
-
-
-/* Navbar notification focus */
-
-#notificationBtn:focus,
-#notificationBtn:focus-visible,
-.notification-btn:focus,
-.notification-btn:focus-visible {
-    outline: none !important;
-
-    box-shadow: none !important;
-}
-
-
-/* =========================================================
-   REMOVE NAVBAR BELL
-   ========================================================= */
-
-#notificationBtn svg,
-#notificationBtn i,
-#notificationBtn img,
-.notification-btn svg,
-.notification-btn i,
-.notification-btn img {
-    display: none !important;
-
-    width: 0 !important;
-    height: 0 !important;
-
-    max-width: 0 !important;
-    max-height: 0 !important;
-}
-
-
-/* =========================================================
-   NOTIFICATION BADGE
-   ========================================================= */
-
-#notificationBtn .notification-badge,
-.notification-btn .notification-badge {
-    position: absolute !important;
-
-    top: -5px !important;
-    right: -15px !important;
-
-    min-width: 17px !important;
-    width: auto !important;
-
-    height: 17px !important;
-
-    padding: 0 4px !important;
-
-    display: flex !important;
-
-    align-items: center !important;
-    justify-content: center !important;
-
-    background: #ec1961 !important;
-
-    color: #ffffff !important;
-
-    border: 2px solid #111111 !important;
-
-    border-radius: 999px !important;
-
-    font-family: 'Inter', sans-serif !important;
-
-    font-size: 9px !important;
-
-    font-weight: 700 !important;
-
-    line-height: 1 !important;
-
-    box-sizing: border-box !important;
-
-    z-index: 10 !important;
-}
-
-
-/* =========================================================
-   DARK MODE NAVBAR
-   ========================================================= */
-
-html.dark-mode #notificationBtn,
-html.dark-mode .notification-btn {
-    background: transparent !important;
-
-    color: #ffffff !important;
-
-    border: none !important;
-
-    box-shadow: none !important;
-}
-
-html.dark-mode #notificationBtn:hover,
-html.dark-mode .notification-btn:hover {
-    background: transparent !important;
-
-    color: #ec3f91 !important;
-}
-
-
-/* =========================================================
-   NOTIFICATION DROPDOWN
-   ========================================================= */
-
-/* =========================================================
-   SHINE & SMILE
-   FINAL NOTIFICATION DESIGN
-   ========================================================= */
-
-/* =========================
-   DROPDOWN
-   ========================= */
-
-#notificationDropdown {
-    position: absolute !important;
-
-    top: calc(100% + 10px) !important;
-    right: 0 !important;
-    left: auto !important;
-
-    width: 390px !important;
-    max-width: calc(100vw - 24px) !important;
-
-    height: auto !important;
-    max-height: 520px !important;
-
-    margin: 0 !important;
-    padding: 0 !important;
-
-    background: #111111 !important;
-    color: #ffffff !important;
-
-    border: 1px solid #3a2633 !important;
-    border-radius: 18px !important;
-
-    overflow: hidden !important;
-
-    box-sizing: border-box !important;
-
-    z-index: 999999 !important;
-
-    box-shadow:
-        0 20px 45px rgba(0, 0, 0, .55) !important;
-}
-
-
-/* Hidden */
-
-#notificationDropdown.hidden {
-    display: none !important;
-}
-
-
-/* =========================
-   REMOVE ALL BELLS / ICONS
-   ========================= */
-
-#notificationDropdown .notification-header-icon,
-#notificationDropdown .notification-header-icon svg,
-#notificationDropdown .notification-header-icon i,
-#notificationDropdown .notification-header-icon img,
-#notificationDropdown .notification-empty-icon,
-#notificationDropdown .notification-empty-icon svg,
-#notificationDropdown .notification-empty-icon i {
-    display: none !important;
-
-    visibility: hidden !important;
-
-    width: 0 !important;
-    height: 0 !important;
-
-    min-width: 0 !important;
-    min-height: 0 !important;
-
-    max-width: 0 !important;
-    max-height: 0 !important;
-
-    padding: 0 !important;
-    margin: 0 !important;
-
-    overflow: hidden !important;
-}
-
-
-/* =========================
-   HEADER
-   ========================= */
-
-#notificationDropdown .notification-dropdown-header {
-    width: 100% !important;
-
-    min-height: 106px !important;
-
-    display: flex !important;
-
-    align-items: flex-start !important;
-    justify-content: space-between !important;
-
-    padding: 20px !important;
-    margin: 0 !important;
-
-    background: #111111 !important;
-
-    border: none !important;
-    border-bottom: 1px solid #303030 !important;
-
-    box-sizing: border-box !important;
-}
-
-
-/* Header content */
-
-#notificationDropdown .notification-header-content {
-    flex: 1 !important;
-
-    width: auto !important;
-    min-width: 0 !important;
-
-    display: block !important;
-
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-
-/* Header text */
-
-#notificationDropdown .notification-header-text {
-    width: 100% !important;
-
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-
-/* =========================
-   TITLE
-   ========================= */
-
-#notificationDropdown .notification-header-title-row {
-    width: 100% !important;
-
-    display: flex !important;
-
-    align-items: center !important;
-    justify-content: space-between !important;
-
-    gap: 10px !important;
-
-    margin: 0 !important;
-}
-
-
-#notificationDropdown .notification-header-title {
-    margin: 0 !important;
-    padding: 0 !important;
-
-    color: #f5f5f5 !important;
-
-    font-family: 'Inter', sans-serif !important;
-
-    font-size: 20px !important;
-    font-weight: 700 !important;
-
-    line-height: 1.3 !important;
-}
-
-
-/* Hide "0 New" if you don't want it */
-
-#notificationDropdown .notification-new-count {
-    display: none !important;
-}
-
-
-/* =========================
-   SUBTITLE
-   ========================= */
-
-#notificationDropdown .notification-header-subtitle {
-    margin: 5px 0 0 !important;
-    padding: 0 !important;
-
-    color: #8b8b8b !important;
-
-    font-family: 'Inter', sans-serif !important;
-
-    font-size: 13px !important;
-    font-weight: 400 !important;
-
-    line-height: 1.5 !important;
-}
-
-
-/* =========================
-   CLOSE BUTTON
-   ========================= */
-
-#notificationDropdown .notification-close-btn {
-    flex-shrink: 0 !important;
-
-    width: 42px !important;
-    height: 42px !important;
-
-    display: flex !important;
-
-    align-items: center !important;
-    justify-content: center !important;
-
-    padding: 0 !important;
-
-    margin: 5px 0 0 15px !important;
-
-    background: #353535 !important;
-
-    border: none !important;
-    border-radius: 50% !important;
-
-    color: #ffffff !important;
-
-    cursor: pointer !important;
-
-    box-shadow: none !important;
-
-    transition: .2s ease !important;
-}
-
-
-#notificationDropdown .notification-close-btn:hover {
-    background: #454545 !important;
-
-    color: #ffffff !important;
-
-    transform: scale(1.04) !important;
-}
-
-
-#notificationDropdown .notification-close-btn svg {
-    width: 20px !important;
-    height: 20px !important;
-
-    min-width: 20px !important;
-    min-height: 20px !important;
-
-    max-width: 20px !important;
-    max-height: 20px !important;
-
-    display: block !important;
-}
-
-
-/* =========================
-   FILTER BAR
-   ========================= */
-
-#notificationDropdown .notification-filter-bar {
-    width: 100% !important;
-
-    min-height: 64px !important;
-
-    display: flex !important;
-
-    align-items: center !important;
-
-    gap: 0 !important;
-
-    padding: 0 20px !important;
-    margin: 0 !important;
-
-    background: #111111 !important;
-
-    border-bottom: 1px solid #303030 !important;
-
-    box-sizing: border-box !important;
-
-    overflow: hidden !important;
-}
-
-
-/* =========================
-   FILTER BUTTONS
-   ========================= */
-
-#notificationDropdown .notification-filter {
-    height: 62px !important;
-
-    display: inline-flex !important;
-
-    align-items: center !important;
-    justify-content: center !important;
-
-    padding: 0 14px !important;
-    margin: 0 !important;
-
-    background: transparent !important;
-
-    border: 1px solid transparent !important;
-    border-radius: 2px !important;
-
-    color: #858585 !important;
-
-    font-family: 'Inter', sans-serif !important;
-
-    font-size: 15px !important;
-    font-weight: 600 !important;
-
-    line-height: 1 !important;
-
-    white-space: nowrap !important;
-
-    cursor: pointer !important;
-
-    box-shadow: none !important;
-
-    transition: .2s ease !important;
-}
-
-
-/* Hover */
-
-#notificationDropdown .notification-filter:hover {
-    color: #ffffff !important;
-
-    background: #191919 !important;
-}
-
-
-/* Active */
-
-#notificationDropdown .notification-filter.active {
-    color: #ec1961 !important;
-
-    background: #111111 !important;
-
-    border: 2px solid #ffffff !important;
-
-    border-radius: 2px !important;
-
-    box-shadow: none !important;
-}
-
-
-/* =========================
-   NOTIFICATION LIST
-   ========================= */
-
-#notificationDropdown #notificationList {
-    width: 100% !important;
-
-    max-width: 100% !important;
-
-    max-height: 350px !important;
-
-    margin: 0 !important;
-    padding: 0 !important;
-
-    background: #111111 !important;
-
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-
-    box-sizing: border-box !important;
-}
-
-
-/* =========================
-   EMPTY STATE
-   ========================= */
-
-#notificationDropdown .notification-empty,
-#notificationDropdown .empty-state,
-#notificationDropdown .no-notifications,
-#notificationDropdown #notificationFilterEmpty {
-    width: 100% !important;
-
-    min-height: 90px !important;
-
-    display: flex !important;
-
-    flex-direction: column !important;
-
-    align-items: flex-start !important;
-    justify-content: center !important;
-
-    padding: 18px 20px !important;
-    margin: 0 !important;
-
-    background: #111111 !important;
-
-    box-sizing: border-box !important;
-
-    text-align: left !important;
-}
-
-
-/* Empty title */
-
-#notificationDropdown .notification-empty-title,
-#notificationDropdown .notification-empty h4,
-#notificationDropdown .empty-state h4,
-#notificationDropdown .no-notifications h4 {
-    margin: 0 !important;
-    padding: 0 !important;
-
-    color: #eeeeee !important;
-
-    font-family: 'Inter', sans-serif !important;
-
-    font-size: 19px !important;
-    font-weight: 500 !important;
-
-    line-height: 1.4 !important;
-}
-
-
-/* Empty message */
-
-#notificationDropdown .notification-empty-text,
-#notificationDropdown .notification-empty p,
-#notificationDropdown .empty-state p,
-#notificationDropdown .no-notifications p {
-    margin: 2px 0 0 !important;
-    padding: 0 !important;
-
-    color: #eeeeee !important;
-
-    font-family: 'Inter', sans-serif !important;
-
-    font-size: 18px !important;
-    font-weight: 400 !important;
-
-    line-height: 1.4 !important;
-
-    text-align: left !important;
-
-    max-width: none !important;
-}
-
-
-/* =========================
-   REMOVE EMPTY ICON
-   ========================= */
-
-#notificationDropdown .notification-empty svg,
-#notificationDropdown .notification-empty i,
-#notificationDropdown .empty-state svg,
-#notificationDropdown .empty-state i,
-#notificationDropdown .no-notifications svg,
-#notificationDropdown .no-notifications i {
-    display: none !important;
-
-    width: 0 !important;
-    height: 0 !important;
-
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-
-/* =========================
-   MOBILE
-   ========================= */
-
-@media (max-width: 640px) {
-
-    #notificationDropdown {
-        position: fixed !important;
-
-        top: 70px !important;
-
-        left: 12px !important;
-        right: 12px !important;
-
-        width: auto !important;
-        max-width: none !important;
-
-        max-height: calc(100vh - 85px) !important;
-
-        border-radius: 16px !important;
-    }
-
-
-    #notificationDropdown .notification-dropdown-header {
-        min-height: 100px !important;
-
-        padding: 18px !important;
-    }
-
-
-    #notificationDropdown .notification-header-title {
-        font-size: 19px !important;
-    }
-
-
-    #notificationDropdown .notification-header-subtitle {
-        font-size: 12px !important;
-    }
-
-
-    #notificationDropdown .notification-close-btn {
-        width: 40px !important;
-        height: 40px !important;
-    }
-
-
-    #notificationDropdown .notification-filter-bar {
-        padding: 0 14px !important;
-    }
-
-
-    #notificationDropdown .notification-filter {
-        padding: 0 10px !important;
-
-        font-size: 14px !important;
-    }
 }

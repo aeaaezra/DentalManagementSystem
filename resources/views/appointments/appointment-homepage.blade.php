@@ -9,7 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Shine & Smile Dental | Creating Healthy, Beautiful Smiles</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@600;700&display=swap"  rel="stylesheet"  >
-    <link  href="{{ asset('css/appointment/booking.css') }}"  rel="stylesheet"  >
+    <link  href="{{ asset('css/appointment/homepage.css') }}"  rel="stylesheet"  >
     <link  rel="stylesheet"   href="{{ asset('css/appointment/patient-theme.css') }}" >
     <link  rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}" >
 
