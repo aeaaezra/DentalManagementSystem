@@ -5182,9 +5182,6 @@ html.dark-mode .notification-btn:hover {
     max-width: none !important;
 }
 
-/* =========================
-   REMOVE EMPTY ICON
-   ========================= */
 
 #notificationDropdown .notification-empty svg,
 #notificationDropdown .notification-empty i,
@@ -5201,9 +5198,6 @@ html.dark-mode .notification-btn:hover {
     padding: 0 !important;
 }
 
-/* =========================
-   MOBILE
-   ========================= */
 
 @media (max-width: 640px) {
 
@@ -5257,4 +5251,131 @@ html.dark-mode .notification-btn:hover {
 
         font-size: 14px !important;
     }
+}
+
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden !important;
+}
+
+
+/* Main page wrapper */
+
+main,
+.main-content,
+.page-content,
+.dashboard-content {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+
+/* Appointment balance/history container */
+
+.appointment-balance-container,
+.balance-history-container,
+.history-container {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+
+/* Balance cards */
+
+.balance-cards,
+.balance-grid,
+.stats-grid,
+.summary-grid {
+    width: 100%;
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    box-sizing: border-box;
+}
+
+
+/* Individual cards */
+
+.balance-card,
+.stat-card,
+.summary-card {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+
+/* Tables */
+
+.table-container,
+.history-table-container {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    box-sizing: border-box;
+}
+
+
+table {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+
+
+@media (max-width: 1100px) {
+
+    .balance-cards,
+    .balance-grid,
+    .stats-grid,
+    .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 768px) {
+
+    .balance-cards,
+    .balance-grid,
+    .stats-grid,
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .balance-card,
+    .stat-card,
+    .summary-card {
+        width: 100%;
+    }
+
+    .table-container,
+    .history-table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+        min-width: 700px;
+    }
+
+}
+
+
+
+@media (max-width: 480px) {
+
+    .balance-card,
+    .stat-card,
+    .summary-card {
+        padding: 18px !important;
+    }
+
 }
