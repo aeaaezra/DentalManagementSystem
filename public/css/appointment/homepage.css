@@ -6529,3 +6529,268 @@ body {
         table-layout: auto !important;
     }
 }
+/* =========================================================
+   NOTIFICATION DROPDOWN — CLEAN POSITIONING
+   ========================================================= */
+
+#notificationWrapper {
+    position: relative !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 42px !important;
+    height: 42px !important;
+    flex: 0 0 42px !important;
+    overflow: visible !important;
+    z-index: 100000 !important;
+}
+
+#notificationBtn {
+    position: relative !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border-radius: 50% !important;
+
+    background: #171318 !important;
+    color: #ffffff !important;
+    border: 1px solid #4a3942 !important;
+
+    cursor: pointer !important;
+
+    z-index: 100001 !important;
+}
+
+#notificationBtn svg {
+    display: block !important;
+    width: 21px !important;
+    height: 21px !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* =========================================================
+   NOTIFICATION PANEL
+   ========================================================= */
+
+#notificationDropdown {
+    position: absolute !important;
+
+    top: calc(100% + 10px) !important;
+    right: -20px !important;
+    left: auto !important;
+
+    width: 380px !important;
+    max-width: calc(100vw - 30px) !important;
+
+    max-height: 520px !important;
+
+    overflow: hidden !important;
+
+    background: #111111 !important;
+    color: #ffffff !important;
+
+    border: 1px solid #3a2a33 !important;
+    border-radius: 20px !important;
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(255, 255, 255, 0.02) !important;
+
+    z-index: 9999999 !important;
+
+    transform-origin: top right !important;
+}
+
+/* Hidden state */
+
+#notificationDropdown.hidden {
+    display: none !important;
+}
+
+/* Visible state */
+
+#notificationDropdown:not(.hidden) {
+    display: block !important;
+}
+
+/* =========================================================
+   NOTIFICATION HEADER
+   ========================================================= */
+
+#notificationDropdown .notification-header {
+    padding: 22px 22px 18px !important;
+
+    border-bottom: 1px solid #2d2d2d !important;
+}
+
+#notificationDropdown .notification-header h3 {
+    margin: 0 !important;
+    font-size: 22px !important;
+    font-weight: 700 !important;
+}
+
+#notificationDropdown .notification-header p {
+    margin-top: 5px !important;
+    color: #888888 !important;
+    font-size: 14px !important;
+}
+
+/* =========================================================
+   CLOSE BUTTON
+   ========================================================= */
+
+#notificationDropdown .notification-close,
+#notificationDropdown button[aria-label="Close"] {
+    width: 44px !important;
+    height: 44px !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    border-radius: 50% !important;
+
+    background: #3a3a3a !important;
+    color: #ffffff !important;
+
+    border: none !important;
+    cursor: pointer !important;
+}
+
+#notificationDropdown .notification-close:hover,
+#notificationDropdown button[aria-label="Close"]:hover {
+    background: #4a4a4a !important;
+}
+
+/* =========================================================
+   FILTER TABS
+   ========================================================= */
+
+#notificationDropdown .notification-tabs {
+    display: flex !important;
+    align-items: stretch !important;
+
+    padding: 0 20px !important;
+
+    border-bottom: 1px solid #2d2d2d !important;
+}
+
+#notificationDropdown .notification-tab {
+    flex: 1 !important;
+
+    min-height: 58px !important;
+
+    padding: 0 12px !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    background: transparent !important;
+
+    color: #858585 !important;
+
+    border: none !important;
+    border-bottom: 2px solid transparent !important;
+
+    font-size: 14px !important;
+    font-weight: 600 !important;
+
+    cursor: pointer !important;
+}
+
+#notificationDropdown .notification-tab:hover {
+    color: #ffffff !important;
+}
+
+#notificationDropdown .notification-tab.active {
+    color: #ff1f73 !important;
+    border-bottom-color: #ff1f73 !important;
+}
+
+/* =========================================================
+   NOTIFICATION LIST
+   ========================================================= */
+
+#notificationList {
+    max-height: 360px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+#notificationList::-webkit-scrollbar {
+    width: 5px !important;
+}
+
+#notificationList::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+
+#notificationList::-webkit-scrollbar-thumb {
+    background: #444444 !important;
+    border-radius: 10px !important;
+}
+
+/* =========================================================
+   EMPTY NOTIFICATION STATE
+   ========================================================= */
+
+#notificationDropdown .notification-empty {
+    padding: 35px 24px !important;
+
+    text-align: left !important;
+
+    color: #eeeeee !important;
+}
+
+#notificationDropdown .notification-empty h4 {
+    margin: 0 0 8px !important;
+
+    font-size: 18px !important;
+    font-weight: 700 !important;
+}
+
+#notificationDropdown .notification-empty p {
+    margin: 0 !important;
+
+    color: #888888 !important;
+
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+    #notificationDropdown {
+        position: fixed !important;
+
+        top: 70px !important;
+        right: 12px !important;
+        left: 12px !important;
+
+        width: auto !important;
+        max-width: none !important;
+
+        max-height: calc(100vh - 90px) !important;
+
+        border-radius: 18px !important;
+    }
+
+    #notificationList {
+        max-height: calc(100vh - 300px) !important;
+    }
+}
