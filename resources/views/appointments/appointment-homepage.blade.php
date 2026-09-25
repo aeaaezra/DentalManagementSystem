@@ -9,8 +9,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Shine & Smile Dental | Creating Healthy, Beautiful Smiles</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@600;700&display=swap"  rel="stylesheet"  >
-    <link  href="{{ asset('css/appointment/homepage.css') }}"  rel="stylesheet"  >
-    <link  rel="stylesheet"   href="{{ asset('css/appointment/patient-theme.css') }}" >
+<link rel="stylesheet" href="{{ asset('css/appointment/patient-theme.css') }}">
+<link rel="stylesheet" href="{{ asset('css/appointment/homepage.css') }}">
     <link  rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}" >
 
 </head>
@@ -18,10 +18,10 @@
 <body>
 
 <nav class="main-navbar fixed top-0 left-0 w-full z-[99999]">
-    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+<div class="w-full max-w-none px-6 py-4 flex items-center">
 
         <!-- Logo + Mobile Menu -->
-        <div class="flex items-center gap-3">
+<div class="flex items-center gap-3 shrink-0">
             <!-- Mobile Hamburger -->
             <button
                 id="mobileMenuBtn"
@@ -51,7 +51,7 @@
         </div>
 
 
-<div class="hidden md:flex items-center gap-10 mx-auto">
+<div class="hidden md:flex items-center gap-10 mx-auto shrink-0">
 
     <!-- HOME -->
     <a href="{{ route('appointments.homepage') }}"
@@ -81,9 +81,15 @@
 
 </div>
 
-<div class="flex items-center gap-4 relative">
+<div
+    id="navbarActions"
+    class="flex items-center gap-4 relative shrink-0 ml-auto"
+>
 
-    <div class="notification-wrapper">
+<div
+    id="profileWrapper"
+    class="relative shrink-0"
+>
 
         <!-- NOTIFICATION BUTTON -->
         <button

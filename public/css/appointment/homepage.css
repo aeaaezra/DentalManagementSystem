@@ -5663,3 +5663,271 @@ html.dark-mode main > div.lg\:col-span-3 > div.px-8.pb-8 > .grid > div {
         table-layout: auto !important;
     }
 }
+
+
+/* =========================================================
+   FINAL HOMEPAGE NAVBAR FIX
+   NOTIFICATION + PROFILE
+   ========================================================= */
+
+.main-navbar {
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow: visible !important;
+    z-index: 99999 !important;
+}
+
+.main-navbar > .container,
+.main-navbar > div {
+    width: 100% !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+}
+
+
+/* =========================================================
+   NAVBAR LAYOUT
+   ========================================================= */
+
+#navbarActions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+
+    flex: 0 0 auto !important;
+    flex-shrink: 0 !important;
+
+    width: auto !important;
+    min-width: max-content !important;
+
+    margin-left: auto !important;
+
+    position: relative !important;
+
+    z-index: 100000 !important;
+}
+
+
+/* =========================================================
+   NOTIFICATION WRAPPER
+   ========================================================= */
+
+#notificationWrapper,
+.notification-wrapper {
+    position: relative !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 42px !important;
+    min-width: 42px !important;
+
+    height: 42px !important;
+    min-height: 42px !important;
+
+    flex: 0 0 42px !important;
+    flex-shrink: 0 !important;
+
+    margin: 0 !important;
+
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    overflow: visible !important;
+
+    z-index: 100001 !important;
+}
+
+
+/* =========================================================
+   NOTIFICATION BUTTON
+   ========================================================= */
+
+#notificationBtn,
+.notification-btn {
+    position: relative !important;
+
+    display: inline-flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 42px !important;
+    min-width: 42px !important;
+
+    height: 42px !important;
+    min-height: 42px !important;
+
+    flex: 0 0 42px !important;
+    flex-shrink: 0 !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    background: #171318 !important;
+
+    color: #ffffff !important;
+
+    border: 1px solid #4a3942 !important;
+    border-radius: 50% !important;
+
+    cursor: pointer !important;
+
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    overflow: visible !important;
+
+    box-sizing: border-box !important;
+
+    z-index: 100002 !important;
+}
+
+
+/* =========================================================
+   BELL
+   ========================================================= */
+
+#notificationBtn svg,
+.notification-btn svg {
+    display: block !important;
+
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    width: 22px !important;
+    height: 22px !important;
+
+    min-width: 22px !important;
+    min-height: 22px !important;
+
+    max-width: 22px !important;
+    max-height: 22px !important;
+
+    color: #ffffff !important;
+
+    stroke: currentColor !important;
+
+    flex: 0 0 22px !important;
+
+    margin: 0 !important;
+}
+
+
+/* =========================================================
+   HOVER
+   ========================================================= */
+
+#notificationBtn:hover,
+.notification-btn:hover {
+    background: #241b20 !important;
+
+    color: #ec1961 !important;
+
+    border-color: #ec1961 !important;
+}
+
+
+/* =========================================================
+   BADGE
+   ========================================================= */
+
+#notificationBtn .notification-badge,
+.notification-btn .notification-badge {
+    position: absolute !important;
+
+    top: -4px !important;
+    right: -4px !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    min-width: 18px !important;
+    height: 18px !important;
+
+    padding: 0 4px !important;
+
+    background: #ec1961 !important;
+
+    color: #ffffff !important;
+
+    border: 2px solid #111111 !important;
+
+    border-radius: 999px !important;
+
+    font-size: 10px !important;
+    font-weight: 700 !important;
+
+    line-height: 1 !important;
+
+    z-index: 100003 !important;
+}
+
+
+/* =========================================================
+   PROFILE
+   ========================================================= */
+
+#profileWrapper {
+    position: relative !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+
+    flex: 0 0 auto !important;
+    flex-shrink: 0 !important;
+
+    min-width: max-content !important;
+
+    z-index: 100000 !important;
+}
+
+
+/* =========================================================
+   DESKTOP SPACING
+   ========================================================= */
+
+@media (min-width: 768px) {
+
+    #notificationWrapper {
+        margin-right: 4px !important;
+    }
+
+    #navbarActions {
+        gap: 16px !important;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 767px) {
+
+    #navbarActions {
+        gap: 8px !important;
+    }
+
+    #notificationBtn,
+    .notification-btn {
+        width: 40px !important;
+        height: 40px !important;
+
+        min-width: 40px !important;
+        min-height: 40px !important;
+
+        flex-basis: 40px !important;
+    }
+
+    #notificationBtn svg,
+    .notification-btn svg {
+        width: 20px !important;
+        height: 20px !important;
+    }
+
+}
