@@ -5241,82 +5241,6 @@ html.dark-mode .notification-btn:hover {
     }
 }
 
-html,
-body {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden !important;
-}
-
-
-/* Main page wrapper */
-
-main,
-.main-content,
-.page-content,
-.dashboard-content {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-}
-
-
-/* Appointment balance/history container */
-
-.appointment-balance-container,
-.balance-history-container,
-.history-container {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-    overflow: hidden;
-}
-
-
-/* Balance cards */
-
-.balance-cards,
-.balance-grid,
-.stats-grid,
-.summary-grid {
-    width: 100%;
-    max-width: 100%;
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    box-sizing: border-box;
-}
-
-
-/* Individual cards */
-
-.balance-card,
-.stat-card,
-.summary-card {
-    min-width: 0;
-    max-width: 100%;
-    box-sizing: border-box;
-}
-
-
-/* Tables */
-
-.table-container,
-.history-table-container {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: auto;
-    box-sizing: border-box;
-}
-
-
-table {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-}
-
-
-
 @media (max-width: 1100px) {
 
     .balance-cards,
@@ -5366,4 +5290,376 @@ table {
         padding: 18px !important;
     }
 
+}
+
+
+
+/* =========================================================
+   SHINE & SMILE — FINAL HOMEPAGE / NOTIFICATION FIX
+   ========================================================= */
+
+/* ---------- PAGE WIDTH / OVERFLOW ---------- */
+
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.main-navbar {
+    width: 100%;
+    overflow: visible !important;
+}
+
+.main-navbar > .container {
+    width: 100%;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    min-width: 0;
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 24px;
+}
+
+.main-navbar > .container > div:first-child {
+    min-width: 0;
+    flex-shrink: 0;
+}
+
+.main-navbar > .container > .hidden.md\:flex {
+    min-width: 0;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(20px, 3vw, 44px);
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    overflow: hidden;
+}
+
+.main-navbar > .container > div:last-child {
+    min-width: 0;
+    flex-shrink: 0;
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    white-space: nowrap;
+}
+
+/* ---------- NOTIFICATION BUTTON ---------- */
+
+.notification-wrapper {
+    position: relative !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 42px !important;
+    width: 42px !important;
+    height: 42px !important;
+    margin: 0 !important;
+    z-index: 1000000 !important;
+}
+
+#notificationBtn,
+.notification-btn {
+    position: relative !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex: 0 0 42px !important;
+    width: 42px !important;
+    min-width: 42px !important;
+    max-width: 42px !important;
+
+    height: 42px !important;
+    min-height: 42px !important;
+    max-height: 42px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    background: #171a21 !important;
+    color: #ec3f91 !important;
+
+    border: 1px solid #3a3035 !important;
+    border-radius: 50% !important;
+
+    cursor: pointer !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    box-sizing: border-box !important;
+    z-index: 1000001 !important;
+}
+
+#notificationBtn:hover,
+.notification-btn:hover {
+    background: #1d2129 !important;
+    color: #ff6aa9 !important;
+    border-color: #ec1961 !important;
+}
+
+#notificationBtn svg,
+.notification-btn svg {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    width: 21px !important;
+    height: 21px !important;
+    min-width: 21px !important;
+    min-height: 21px !important;
+    max-width: 21px !important;
+    max-height: 21px !important;
+
+    color: currentColor !important;
+    stroke: currentColor !important;
+}
+
+/* Never hide the navbar bell. Only hide the dropdown header icon. */
+#notificationDropdown .notification-header-icon,
+#notificationDropdown .notification-header-icon svg,
+#notificationDropdown .notification-empty-icon,
+#notificationDropdown .notification-empty-icon svg {
+    display: none !important;
+}
+
+/* Badge */
+#notificationBtn .notification-badge,
+.notification-btn .notification-badge {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: absolute !important;
+    top: -4px !important;
+    right: -4px !important;
+    z-index: 1000002 !important;
+}
+
+/* ---------- NOTIFICATION DROPDOWN ---------- */
+
+#notificationDropdown {
+    position: absolute !important;
+    top: calc(100% + 12px) !important;
+    right: 0 !important;
+    left: auto !important;
+
+    width: 390px !important;
+    max-width: min(390px, calc(100vw - 24px)) !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+
+    z-index: 1000000 !important;
+}
+
+/* Keep Tailwind .hidden authoritative when JS closes it. */
+#notificationDropdown.hidden {
+    display: none !important;
+}
+
+#notificationDropdown:not(.hidden) {
+    display: block !important;
+}
+
+/* ---------- PROFILE AREA ---------- */
+
+.main-navbar #profileBtn {
+    flex: 0 1 auto !important;
+    min-width: 0 !important;
+    max-width: 240px !important;
+}
+
+.main-navbar #profileBtn > div:nth-child(2) {
+    min-width: 0 !important;
+    max-width: 140px !important;
+}
+
+/* ---------- BALANCE HISTORY ---------- */
+
+main > div.lg\:col-span-3 {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+
+    margin-left: auto !important;
+    margin-right: auto !important;
+
+    overflow: hidden !important;
+}
+
+/* The summary cards must shrink instead of pushing the fourth card
+   outside the viewport. */
+main > div.lg\:col-span-3 > div.px-8.pb-8 > .grid {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+main > div.lg\:col-span-3 > div.px-8.pb-8 > .grid > div {
+    min-width: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Table area */
+main > div.lg\:col-span-3 > div.border-t {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+}
+
+main > div.lg\:col-span-3 .overflow-x-auto {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Make the six history columns fit on desktop. */
+main > div.lg\:col-span-3 table {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    table-layout: fixed !important;
+}
+
+main > div.lg\:col-span-3 th,
+main > div.lg\:col-span-3 td {
+    overflow-wrap: break-word !important;
+}
+
+/* ---------- DARK HISTORY CARD ---------- */
+
+html.dark-mode main > div.lg\:col-span-3 {
+    background: #111111 !important;
+    border-color: #303030 !important;
+    color: #f5f5f5 !important;
+}
+
+html.dark-mode main > div.lg\:col-span-3 h2,
+html.dark-mode main > div.lg\:col-span-3 h3 {
+    color: #f5f5f5 !important;
+}
+
+html.dark-mode main > div.lg\:col-span-3 table {
+    color: #f5f5f5 !important;
+}
+
+html.dark-mode main > div.lg\:col-span-3 thead {
+    background: #1a1a1a !important;
+}
+
+html.dark-mode main > div.lg\:col-span-3 tbody tr {
+    border-color: #303030 !important;
+}
+
+html.dark-mode main > div.lg\:col-span-3 tbody tr:hover {
+    background: #181818 !important;
+}
+
+html.dark-mode main > div.lg\:col-span-3 th {
+    color: #a9a9a9 !important;
+    border-color: #303030 !important;
+}
+
+html.dark-mode main > div.lg\:col-span-3 td {
+    color: #eeeeee !important;
+    border-color: #303030 !important;
+}
+
+html.dark-mode main > div.lg\:col-span-3 .text-gray-500 {
+    color: #9ca3af !important;
+}
+
+/* ---------- BALANCE CARDS ---------- */
+
+html.dark-mode main > div.lg\:col-span-3 > div.px-8.pb-8 > .grid > div {
+    border-radius: 14px !important;
+}
+
+@media (max-width: 1100px) {
+    main > div.lg\:col-span-3 > div.px-8.pb-8 > .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .main-navbar > .container {
+        display: flex !important;
+        justify-content: space-between !important;
+        gap: 10px !important;
+    }
+
+    .main-navbar > .container > .hidden.md\:flex {
+        display: none !important;
+    }
+
+    .main-navbar > .container > div:last-child {
+        gap: 8px !important;
+    }
+
+    .main-navbar #profileBtn > div:nth-child(2) {
+        display: none !important;
+    }
+
+    .notification-wrapper {
+        flex-basis: 40px !important;
+        width: 40px !important;
+    }
+
+    #notificationBtn,
+    .notification-btn {
+        width: 40px !important;
+        min-width: 40px !important;
+        height: 40px !important;
+        min-height: 40px !important;
+    }
+
+    #notificationDropdown {
+        position: fixed !important;
+        top: 70px !important;
+        left: 12px !important;
+        right: 12px !important;
+        width: auto !important;
+        max-width: none !important;
+    }
+
+    main > div.lg\:col-span-3 > div.px-8.pb-8 > .grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    main > div.lg\:col-span-3 {
+        padding: 0 !important;
+    }
+
+    main > div.lg\:col-span-3 > div.px-8.pt-8,
+    main > div.lg\:col-span-3 > div.px-8.pb-8,
+    main > div.lg\:col-span-3 > div.px-8.py-5 {
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+    }
+
+    main > div.lg\:col-span-3 .overflow-x-auto {
+        overflow-x: auto !important;
+    }
+
+    main > div.lg\:col-span-3 table {
+        min-width: 720px !important;
+        max-width: none !important;
+        table-layout: auto !important;
+    }
 }
