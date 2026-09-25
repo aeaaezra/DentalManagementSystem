@@ -4634,27 +4634,34 @@ html.dark-mode .notification-badge {
 
     width: auto !important;
     min-width: auto !important;
+/* =========================================================
+   NAVBAR NOTIFICATION BUTTON
+   KEEP BUTTON + BELL ICON
+   ========================================================= */
 
-    height: 40px !important;
-    min-height: 40px !important;
+#notificationBtn,
+.notification-btn {
+    position: relative !important;
 
-    padding: 0 4px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 
+    width: 42px !important;
+    min-width: 42px !important;
+
+    height: 42px !important;
+    min-height: 42px !important;
+
+    padding: 0 !important;
     margin: 0 !important;
 
     background: transparent !important;
 
-    border: none !important;
-    border-radius: 0 !important;
+    border: 1px solid #3a3035 !important;
+    border-radius: 50% !important;
 
     color: #ffffff !important;
-
-    font-family: "Inter", sans-serif !important;
-
-    font-size: 15px !important;
-    font-weight: 600 !important;
-
-    line-height: 1 !important;
 
     cursor: pointer !important;
 
@@ -4662,39 +4669,51 @@ html.dark-mode .notification-badge {
 
     outline: none !important;
 
-    white-space: nowrap !important;
-
     transition:
-        color 0.2s ease,
-        opacity 0.2s ease !important;
+        background .2s ease,
+        color .2s ease,
+        border-color .2s ease,
+        transform .2s ease !important;
 }
 
-/* Navbar notification hover */
+
+/* Hover */
 
 #notificationBtn:hover,
 .notification-btn:hover {
+    background: #1c1719 !important;
+
     color: #ec1961 !important;
 
-    background: transparent !important;
+    border-color: #ec1961 !important;
 
-    transform: none !important;
-
-    box-shadow: none !important;
+    transform: translateY(-1px) !important;
 }
 
-/* Navbar notification focus */
+
+/* Active */
+
+#notificationBtn:active,
+.notification-btn:active {
+    transform: scale(.96) !important;
+}
+
+
+/* Focus */
 
 #notificationBtn:focus,
 #notificationBtn:focus-visible,
 .notification-btn:focus,
 .notification-btn:focus-visible {
-    outline: none !important;
+    outline: 2px solid #ec1961 !important;
 
-    box-shadow: none !important;
+    outline-offset: 3px !important;
 }
 
+
 /* =========================================================
-   REMOVE NAVBAR BELL
+   NAVBAR BELL ICON
+   KEEP THIS VISIBLE
    ========================================================= */
 
 #notificationBtn svg,
@@ -4703,14 +4722,22 @@ html.dark-mode .notification-badge {
 .notification-btn svg,
 .notification-btn i,
 .notification-btn img {
-    display: none !important;
+    display: block !important;
 
-    width: 0 !important;
-    height: 0 !important;
+    width: 21px !important;
+    height: 21px !important;
 
-    max-width: 0 !important;
-    max-height: 0 !important;
+    min-width: 21px !important;
+    min-height: 21px !important;
+
+    max-width: 21px !important;
+    max-height: 21px !important;
+
+    margin: 0 !important;
+
+    visibility: visible !important;
 }
+
 
 /* =========================================================
    NOTIFICATION BADGE
@@ -4720,12 +4747,10 @@ html.dark-mode .notification-badge {
 .notification-btn .notification-badge {
     position: absolute !important;
 
-    top: -5px !important;
-    right: -15px !important;
+    top: -4px !important;
+    right: -4px !important;
 
     min-width: 17px !important;
-    width: auto !important;
-
     height: 17px !important;
 
     padding: 0 4px !important;
@@ -4743,10 +4768,7 @@ html.dark-mode .notification-badge {
 
     border-radius: 999px !important;
 
-    font-family: "Inter", sans-serif !important;
-
     font-size: 9px !important;
-
     font-weight: 700 !important;
 
     line-height: 1 !important;
@@ -4756,8 +4778,9 @@ html.dark-mode .notification-badge {
     z-index: 10 !important;
 }
 
+
 /* =========================================================
-   DARK MODE NAVBAR
+   DARK MODE
    ========================================================= */
 
 html.dark-mode #notificationBtn,
@@ -4766,23 +4789,18 @@ html.dark-mode .notification-btn {
 
     color: #ffffff !important;
 
-    border: none !important;
-
-    box-shadow: none !important;
+    border-color: #3a3035 !important;
 }
+
 
 html.dark-mode #notificationBtn:hover,
 html.dark-mode .notification-btn:hover {
-    background: transparent !important;
+    background: #1c1719 !important;
 
     color: #ec3f91 !important;
+
+    border-color: #ec3f91 !important;
 }
-
-/* =========================================================
-   SHINE & SMILE
-   FINAL NOTIFICATION DESIGN
-   ========================================================= */
-
 /* =========================
    DROPDOWN
    ========================= */
