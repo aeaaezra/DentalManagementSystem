@@ -1,0 +1,2108 @@
+.* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+:root {
+    --primary: #db2777;
+    --primary-dark: #be185d;
+    --primary-light: #fce7f3;
+    --primary-soft: #fff0f6;
+
+    --background: #fff5f8;
+    --card: #ffffff;
+
+    --border: #f0dce5;
+    --border-light: #f5e2e9;
+
+    --text: #292329;
+    --text-light: #686168;
+    --muted: #999999;
+    --muted-light: #aaaaaa;
+
+    --success-bg: #dcfce7;
+    --success-text: #15803d;
+
+    --warning-bg: #fef3c7;
+    --warning-text: #a16207;
+
+    --danger-bg: #fee2e2;
+    --danger-text: #b91c1c;
+
+    --blue-bg: #dbeafe;
+    --blue: #3b82f6;
+
+    --yellow-bg: #fef3c7;
+    --yellow: #f59e0b;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: var(--background);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+button,
+input,
+textarea,
+select {
+    font-family: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+svg {
+    display: block;
+}
+
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+.dashboard {
+    display: flex;
+    min-height: 100vh;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar {
+    width: 250px;
+    background: var(--card);
+    border-right: 1px solid var(--border);
+
+    padding: 22px 16px;
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    z-index: 1000;
+}
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.brand {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 5px 10px 25px;
+
+    border-bottom: 1px solid #f3e1e7;
+}
+
+.brand-icon {
+    width: 44px;
+    height: 44px;
+
+    flex-shrink: 0;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ec4899,
+            #db2777
+        );
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+
+    box-shadow:
+        0 6px 15px
+        rgba(219, 39, 119, 0.20);
+}
+
+.brand-icon svg {
+    width: 25px;
+    height: 25px;
+
+    fill: none;
+    stroke: currentColor;
+
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.brand-text h2 {
+    color: var(--primary);
+
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.brand-text span {
+    color: var(--muted);
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   SIDEBAR TITLE
+========================================================= */
+
+.sidebar-title {
+    color: #aaaaaa;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    margin: 25px 10px 10px;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.nav-item {
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 12px 13px;
+
+    margin-bottom: 5px;
+
+    border-radius: 10px;
+
+    color: var(--text-light);
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.nav-item:hover {
+    background: var(--primary-soft);
+    color: var(--primary);
+}
+
+.nav-item.active {
+    background:
+        linear-gradient(
+            90deg,
+            var(--primary-light),
+            #fff5f8
+        );
+
+    color: var(--primary);
+
+    font-weight: 700;
+}
+
+.nav-icon {
+    width: 22px;
+    height: 22px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-icon svg {
+    width: 18px;
+    height: 18px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    transition:
+        transform 0.2s ease,
+        stroke-width 0.2s ease;
+}
+
+.nav-item:hover .nav-icon svg {
+    transform: scale(1.05);
+}
+
+.nav-item.active .nav-icon svg {
+    stroke-width: 2.1;
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+.logout {
+    position: absolute;
+
+    left: 16px;
+    right: 16px;
+
+    bottom: 20px;
+}
+
+.logout:hover {
+    color: #dc2626;
+    background: #fff1f2;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main {
+    margin-left: 250px;
+
+    width: calc(100% - 250px);
+
+    min-height: 100vh;
+}
+
+
+/* =========================================================
+   TOPBAR
+========================================================= */
+
+.topbar {
+    height: 72px;
+
+    background: var(--card);
+
+    border-bottom: 1px solid var(--border);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 30px;
+
+    position: sticky;
+    top: 0;
+
+    z-index: 500;
+}
+
+.page-title h1 {
+    font-size: 21px;
+
+    color: var(--text);
+}
+
+.page-title p {
+    color: var(--muted);
+
+    font-size: 12px;
+
+    margin-top: 3px;
+}
+
+
+/* =========================================================
+   TOPBAR RIGHT
+========================================================= */
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+
+    gap: 18px;
+}
+
+
+/* =========================================================
+   NOTIFICATION
+========================================================= */
+
+.notification {
+    width: 38px;
+    height: 38px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #fff4f8;
+
+    color: var(--text-light);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+}
+
+.notification svg {
+    width: 18px;
+    height: 18px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.notification:hover {
+    color: var(--primary);
+}
+
+.notification-badge {
+    position: absolute;
+
+    width: 8px;
+    height: 8px;
+
+    background: #ef4444;
+
+    border-radius: 50%;
+
+    top: 7px;
+    right: 7px;
+
+    border: 2px solid white;
+}
+
+
+/* =========================================================
+   DOCTOR PROFILE
+========================================================= */
+
+.doctor-profile {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+}
+
+.doctor-avatar {
+    width: 39px;
+    height: 39px;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f9a8d4,
+            #db2777
+        );
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+
+    font-weight: 700;
+
+    font-size: 12px;
+}
+
+.doctor-info strong {
+    display: block;
+
+    font-size: 13px;
+}
+
+.doctor-info span {
+    display: block;
+
+    font-size: 11px;
+
+    color: var(--muted);
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.content {
+    padding: 28px 30px;
+}
+
+
+/* =========================================================
+   SEARCH SECTION
+========================================================= */
+
+.search-section {
+    background: var(--card);
+
+    padding: 20px;
+
+    border-radius: 15px;
+
+    border: 1px solid var(--border);
+
+    margin-bottom: 22px;
+}
+
+.search-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 15px;
+}
+
+.search-header h2 {
+    font-size: 17px;
+}
+
+.search-header p {
+    font-size: 12px;
+
+    color: var(--muted);
+
+    margin-top: 3px;
+}
+
+
+/* =========================================================
+   SEARCH BOX
+========================================================= */
+
+.search-box {
+    position: relative;
+}
+
+.search-box input {
+    width: 100%;
+
+    height: 46px;
+
+    border: 1px solid #ead7df;
+
+    border-radius: 10px;
+
+    padding: 0 45px;
+
+    outline: none;
+
+    font-size: 13px;
+
+    background: #fffafb;
+
+    color: var(--text);
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.search-box input::placeholder {
+    color: #aaa;
+}
+
+.search-box input:focus {
+    border-color: #ec4899;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            236,
+            72,
+            153,
+            0.08
+        );
+}
+
+.search-icon {
+    position: absolute;
+
+    left: 15px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    width: 18px;
+    height: 18px;
+
+    color: #999;
+
+    pointer-events: none;
+}
+
+.search-icon svg {
+    width: 18px;
+    height: 18px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 2;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+
+/* =========================================================
+   PATIENT GRID
+========================================================= */
+
+.patient-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 16px;
+
+    margin-bottom: 30px;
+}
+
+
+/* =========================================================
+   PATIENT CARD
+========================================================= */
+
+.patient-card {
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 15px;
+
+    padding: 18px;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.patient-card:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 25px
+        rgba(
+            100,
+            30,
+            60,
+            0.08
+        );
+
+    border-color: #f3a8c7;
+}
+
+.patient-top {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+}
+
+.patient-avatar {
+    width: 48px;
+    height: 48px;
+
+    flex-shrink: 0;
+
+    border-radius: 13px;
+
+    background: var(--primary-light);
+
+    color: var(--primary);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: 700;
+
+    font-size: 16px;
+}
+
+.patient-name {
+    font-size: 14px;
+
+    font-weight: 700;
+}
+
+.patient-id {
+    color: var(--muted);
+
+    font-size: 11px;
+
+    margin-top: 3px;
+}
+
+
+/* =========================================================
+   PATIENT DETAILS
+========================================================= */
+
+.patient-details {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 10px;
+
+    margin: 17px 0;
+}
+
+.detail-item span {
+    display: block;
+
+    color: #aaa;
+
+    font-size: 10px;
+
+    margin-bottom: 3px;
+}
+
+.detail-item strong {
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   VIEW RECORD BUTTON
+========================================================= */
+
+.view-record-btn {
+    width: 100%;
+
+    border: none;
+
+    background: var(--primary-soft);
+
+    color: var(--primary);
+
+    padding: 10px;
+
+    border-radius: 8px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.view-record-btn svg {
+    width: 15px;
+    height: 15px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.view-record-btn:hover {
+    background: var(--primary);
+
+    color: white;
+}
+
+
+/* =========================================================
+   NO RESULTS
+========================================================= */
+
+.no-results {
+    display: none;
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 15px;
+
+    padding: 50px 20px;
+
+    text-align: center;
+}
+
+.no-results.show {
+    display: block;
+}
+
+.no-results-icon {
+    width: 50px;
+    height: 50px;
+
+    margin: 0 auto 15px;
+
+    border-radius: 14px;
+
+    background: var(--primary-soft);
+
+    color: var(--primary);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.no-results-icon svg {
+    width: 23px;
+    height: 23px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.no-results h3 {
+    font-size: 15px;
+
+    margin-bottom: 5px;
+}
+
+.no-results p {
+    color: var(--muted);
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   RECORD CONTAINER
+========================================================= */
+
+.record-container {
+    display: none;
+}
+
+.record-container.show {
+    display: block;
+}
+
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+.back-btn {
+    border: none;
+
+    background: transparent;
+
+    color: var(--primary);
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    margin-bottom: 16px;
+
+    font-size: 13px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+}
+
+.back-btn svg {
+    width: 17px;
+    height: 17px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.back-btn:hover {
+    color: var(--primary-dark);
+}
+
+
+/* =========================================================
+   PROFILE CARD
+========================================================= */
+
+.profile-card {
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 16px;
+
+    padding: 22px;
+
+    margin-bottom: 18px;
+}
+
+.profile-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+}
+
+.profile-left {
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+}
+
+.large-avatar {
+    width: 70px;
+    height: 70px;
+
+    flex-shrink: 0;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fce7f3,
+            #fbcfe8
+        );
+
+    color: var(--primary);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 22px;
+
+    font-weight: 800;
+}
+
+.profile-name {
+    font-size: 20px;
+
+    font-weight: 700;
+}
+
+.profile-id {
+    color: var(--muted);
+
+    font-size: 12px;
+
+    margin-top: 4px;
+}
+
+.profile-meta {
+    display: flex;
+
+    gap: 18px;
+
+    margin-top: 8px;
+
+    font-size: 12px;
+
+    color: #666;
+}
+
+
+/* =========================================================
+   EDIT BUTTON
+========================================================= */
+
+.edit-btn {
+    border: 1px solid var(--primary);
+
+    color: var(--primary);
+
+    background: white;
+
+    padding: 9px 16px;
+
+    border-radius: 8px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.edit-btn svg {
+    width: 15px;
+    height: 15px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.edit-btn:hover {
+    background: var(--primary);
+
+    color: white;
+}
+
+
+/* =========================================================
+   STATS
+========================================================= */
+
+.stats-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 14px;
+
+    margin-bottom: 18px;
+}
+
+.stat-card {
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 13px;
+
+    padding: 17px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+}
+
+.stat-icon {
+    width: 42px;
+    height: 42px;
+
+    flex-shrink: 0;
+
+    border-radius: 11px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-icon svg {
+    width: 20px;
+    height: 20px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.7;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.stat-icon.visits {
+    background: #fce7f3;
+    color: #db2777;
+}
+
+.stat-icon.treatments {
+    background: #ede9fe;
+    color: #7c3aed;
+}
+
+.stat-icon.allergies {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.stat-icon.last-visit {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.stat-card span {
+    display: block;
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+    margin-bottom: 5px;
+}
+
+.stat-card strong {
+    font-size: 22px;
+
+    color: var(--primary);
+}
+
+.small-stat {
+    font-size: 16px !important;
+}
+
+
+/* =========================================================
+   TABS
+========================================================= */
+
+.tabs {
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 13px 13px 0 0;
+
+    display: flex;
+
+    overflow-x: auto;
+
+    scrollbar-width: thin;
+}
+
+.tab-btn {
+    border: none;
+
+    background: transparent;
+
+    padding: 15px 20px;
+
+    color: #888;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    border-bottom: 3px solid transparent;
+
+    white-space: nowrap;
+
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.tab-btn:hover {
+    color: var(--primary);
+}
+
+.tab-btn.active {
+    color: var(--primary);
+
+    border-bottom-color: var(--primary);
+}
+
+
+/* =========================================================
+   TAB CONTENT
+========================================================= */
+
+.tab-content {
+    display: none;
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-top: none;
+
+    border-radius: 0 0 13px 13px;
+
+    padding: 24px;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+
+/* =========================================================
+   SECTION HEADING
+========================================================= */
+
+.section-heading {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 18px;
+}
+
+.section-heading h3 {
+    font-size: 15px;
+}
+
+.section-heading p {
+    color: var(--muted);
+
+    font-size: 11px;
+
+    margin-top: 3px;
+}
+
+
+/* =========================================================
+   INFORMATION GRID
+========================================================= */
+
+.information-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 15px;
+}
+
+.info-box {
+    background: #fff9fb;
+
+    border: 1px solid var(--border-light);
+
+    border-radius: 10px;
+
+    padding: 14px;
+}
+
+.info-box label {
+    display: block;
+
+    color: var(--muted);
+
+    font-size: 10px;
+
+    margin-bottom: 6px;
+}
+
+.info-box strong {
+    font-size: 13px;
+
+    color: var(--text);
+}
+
+
+/* =========================================================
+   ODONTOGRAM
+========================================================= */
+
+.odontogram-container {
+    background: #fff9fb;
+
+    border: 1px solid #f3dfe7;
+
+    border-radius: 13px;
+
+    padding: 25px;
+
+    overflow-x: auto;
+}
+
+.arch-title {
+    text-align: center;
+
+    color: #888;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.5px;
+
+    margin-bottom: 10px;
+}
+
+.teeth-row {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    margin: 10px 0 22px;
+
+    min-width: 700px;
+}
+
+.tooth {
+    width: 40px;
+    height: 48px;
+
+    flex-shrink: 0;
+
+    border: 1px solid #d8c7cf;
+
+    background: white;
+
+    border-radius:
+        8px 8px 12px 12px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-direction: column;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.tooth:hover {
+    border-color: var(--primary);
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 4px 10px
+        rgba(
+            219,
+            39,
+            119,
+            0.12
+        );
+}
+
+.tooth-number {
+    font-size: 9px;
+
+    color: #777;
+
+    line-height: 1;
+}
+
+.tooth-shape {
+    width: 20px;
+    height: 22px;
+
+    margin-top: 3px;
+
+    color: #777;
+}
+
+.tooth-shape svg {
+    width: 100%;
+    height: 100%;
+
+    fill: currentColor;
+
+    stroke: none;
+}
+
+.tooth.caries {
+    background: #fee2e2;
+
+    border-color: #ef4444;
+
+    color: #dc2626;
+}
+
+.tooth.caries .tooth-shape {
+    color: #dc2626;
+}
+
+.tooth.filled {
+    background: var(--blue-bg);
+
+    border-color: var(--blue);
+
+    color: #2563eb;
+}
+
+.tooth.filled .tooth-shape {
+    color: #2563eb;
+}
+
+.tooth.missing {
+    background: #f3f4f6;
+
+    border-color: #9ca3af;
+
+    opacity: 0.6;
+}
+
+.tooth.crown {
+    background: var(--yellow-bg);
+
+    border-color: var(--yellow);
+
+    color: #d97706;
+}
+
+.tooth.crown .tooth-shape {
+    color: #d97706;
+}
+
+.tooth.selected {
+    outline:
+        3px solid
+        rgba(
+            219,
+            39,
+            119,
+            0.25
+        );
+
+    border-color: var(--primary);
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   ODONTOGRAM LEGEND
+========================================================= */
+
+.odontogram-legend {
+    display: flex;
+
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    gap: 15px;
+
+    margin-top: 25px;
+}
+
+.legend-item {
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    font-size: 10px;
+
+    color: #777;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+
+    border-radius: 3px;
+}
+
+.legend-healthy {
+    background: white;
+
+    border: 1px solid #ccc;
+}
+
+.legend-caries {
+    background: #fee2e2;
+
+    border: 1px solid #ef4444;
+}
+
+.legend-filled {
+    background: #dbeafe;
+
+    border: 1px solid #3b82f6;
+}
+
+.legend-crown {
+    background: #fef3c7;
+
+    border: 1px solid #f59e0b;
+}
+
+.legend-missing {
+    background: #f3f4f6;
+
+    border: 1px solid #9ca3af;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-container {
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    min-width: 650px;
+}
+
+.data-table th {
+    background: #fff7fa;
+
+    text-align: left;
+
+    padding: 12px;
+
+    font-size: 10px;
+
+    color: #999;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.4px;
+}
+
+.data-table td {
+    padding: 14px 12px;
+
+    border-bottom: 1px solid #f4e5ea;
+
+    font-size: 12px;
+}
+
+.data-table tbody tr:hover {
+    background: #fffafb;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status {
+    padding: 5px 9px;
+
+    border-radius: 20px;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    display: inline-block;
+}
+
+.status.completed {
+    background: var(--success-bg);
+
+    color: var(--success-text);
+}
+
+.status.pending {
+    background: var(--warning-bg);
+
+    color: var(--warning-text);
+}
+
+.status.cancelled {
+    background: var(--danger-bg);
+
+    color: var(--danger-text);
+}
+
+
+/* =========================================================
+   NOTES
+========================================================= */
+
+.notes-container {
+    display: grid;
+
+    gap: 12px;
+}
+
+.note-card {
+    border: 1px solid var(--border);
+
+    border-left:
+        4px solid var(--primary);
+
+    border-radius: 10px;
+
+    padding: 15px;
+
+    background: #fffafb;
+}
+
+.note-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-bottom: 7px;
+}
+
+.note-header strong {
+    font-size: 12px;
+}
+
+.note-date {
+    color: #aaa;
+
+    font-size: 10px;
+}
+
+.note-card p {
+    color: #666;
+
+    font-size: 12px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   PRIMARY BUTTON
+========================================================= */
+
+.primary-btn {
+    background: var(--primary);
+
+    color: white;
+
+    border: none;
+
+    padding: 9px 15px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.primary-btn svg {
+    width: 15px;
+    height: 15px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.primary-btn:hover {
+    background: var(--primary-dark);
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal {
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        rgba(
+            30,
+            15,
+            25,
+            0.45
+        );
+
+    align-items: center;
+
+    justify-content: center;
+
+    z-index: 9999;
+
+    padding: 20px;
+
+    backdrop-filter: blur(2px);
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-box {
+    width: 100%;
+
+    max-width: 550px;
+
+    background: white;
+
+    border-radius: 15px;
+
+    padding: 24px;
+
+    box-shadow:
+        0 20px 50px
+        rgba(
+            0,
+            0,
+            0,
+            0.18
+        );
+
+    animation:
+        modalIn
+        0.2s ease;
+}
+
+@keyframes modalIn {
+
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+}
+
+
+/* =========================================================
+   MODAL HEADER
+========================================================= */
+
+.modal-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    margin-bottom: 20px;
+}
+
+.modal-header h3 {
+    font-size: 17px;
+}
+
+.modal-header p {
+    color: var(--muted);
+
+    font-size: 11px;
+
+    margin-top: 4px;
+}
+
+.close-modal {
+    border: none;
+
+    background: #f8f1f4;
+
+    color: #777;
+
+    width: 32px;
+    height: 32px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.close-modal svg {
+    width: 16px;
+    height: 16px;
+
+    fill: none;
+
+    stroke: currentColor;
+
+    stroke-width: 1.8;
+
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.close-modal:hover {
+    background: #fce7f3;
+
+    color: var(--primary);
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    margin-bottom: 6px;
+}
+
+.form-group textarea,
+.form-group select {
+    width: 100%;
+
+    border: 1px solid #e6d6dd;
+
+    border-radius: 9px;
+
+    padding: 11px;
+
+    outline: none;
+
+    font-size: 12px;
+
+    background: white;
+
+    color: var(--text);
+
+    transition: border-color 0.2s ease;
+}
+
+.form-group textarea {
+    min-height: 120px;
+
+    resize: vertical;
+}
+
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: var(--primary);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            219,
+            39,
+            119,
+            0.06
+        );
+}
+
+.character-count {
+    text-align: right;
+
+    color: #aaa;
+
+    font-size: 10px;
+
+    margin-top: 4px;
+}
+
+
+/* =========================================================
+   MODAL ACTIONS
+========================================================= */
+
+.modal-actions {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 18px;
+}
+
+.cancel-btn {
+    border: 1px solid #ddd;
+
+    background: white;
+
+    color: #666;
+
+    padding: 9px 15px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-size: 12px;
+}
+
+.cancel-btn:hover {
+    background: #f8f8f8;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1200px) {
+
+    .patient-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .information-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+}
+
+
+@media (max-width: 1000px) {
+
+    .stats-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+}
+
+
+@media (max-width: 800px) {
+
+    .sidebar {
+        width: 70px;
+
+        padding: 15px 8px;
+    }
+
+
+    .brand-text,
+    .sidebar-title,
+    .nav-item span:not(.nav-icon) {
+        display: none;
+    }
+
+
+    .brand {
+        justify-content: center;
+
+        padding:
+            5px
+            0
+            20px;
+    }
+
+
+    .nav-item {
+        justify-content: center;
+
+        padding:
+            12px
+            5px;
+    }
+
+
+    .logout {
+        left: 8px;
+        right: 8px;
+    }
+
+
+    .main {
+        margin-left: 70px;
+
+        width:
+            calc(
+                100% - 70px
+            );
+    }
+
+
+    .content {
+        padding:
+            20px
+            15px;
+    }
+
+
+    .patient-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .profile-header {
+        align-items: flex-start;
+
+        gap: 15px;
+
+        flex-direction: column;
+    }
+
+
+    .information-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 550px) {
+
+    .topbar {
+        padding:
+            0
+            15px;
+    }
+
+
+    .doctor-info {
+        display: none;
+    }
+
+
+    .stats-grid {
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+
+    .profile-meta {
+        flex-direction: column;
+
+        gap: 5px;
+    }
+
+
+    .large-avatar {
+        width: 58px;
+        height: 58px;
+    }
+
+
+    .tab-content {
+        padding: 17px;
+    }
+
+
+    .section-heading {
+        align-items: flex-start;
+
+        gap: 12px;
+
+        flex-direction: column;
+    }
+
+
+    .modal-box {
+        padding: 20px;
+    }
+
+}
+
+
+@media (max-width: 400px) {
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-name {
+        font-size: 17px;
+    }
+
+    .page-title h1 {
+        font-size: 18px;
+    }
+
+}

@@ -1,0 +1,1886 @@
+    <!DOCTYPE html>
+    <html lang="en" class="scroll-smooth">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <title>Shine & Smile Dental | Creating Healthy, Beautiful Smiles</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="{{ asset('css/appointment/booking.css') }}">
+        <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
+        <link rel="stylesheet" href="{{ asset('css/appointment/patient-theme.css') }}">
+    <script src="{{ asset('js/patient-theme.js') }}"></script>
+
+    </head>
+    <body>
+
+
+    <nav class="main-navbar fixed top-0 left-0 w-full z-[99999]">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+
+            <!-- Logo + Burger -->
+            <div class="relative flex items-center gap-4">
+
+                <div class="text-2xl font-bold text-[#E91E63]">
+                    Shine & Smile
+                </div>
+            </div>
+
+    <div class="hidden md:flex items-center gap-10 mx-auto">
+
+    <!-- HOME -->
+    <a href="{{ route('appointments.homepage') }}"
+       class="main-nav-link {{ request()->routeIs('appointments.homepage') ? 'active' : '' }}">
+        HOME
+    </a>
+
+    <!-- APPOINTMENTS -->
+    <a href="{{ route('appointments.create') }}"
+       class="main-nav-link {{ request()->routeIs('appointments.create') ? 'active' : '' }}">
+        APPOINTMENTS
+    </a>
+
+    <!-- FAQ -->
+    <a href="{{ route('faq') }}"
+       class="main-nav-link {{ request()->routeIs('faq') ? 'active' : '' }}">
+        FAQ'S
+    </a>
+
+    <!-- HISTORY -->
+    <a href="{{ route('appointments.history') }}"
+       class="main-nav-link {{ request()->routeIs('appointments.history') ? 'active' : '' }}">
+        HISTORY
+    </a>
+
+</div>
+<div class="flex items-center gap-4 relative">
+
+    <div class="notification-wrapper">
+
+        <!-- NOTIFICATION BUTTON -->
+        <button
+            id="notificationBtn"
+            type="button"
+            aria-label="Open notifications"
+            aria-expanded="false"
+            class="notification-btn relative p-3 rounded-xl bg-pink-50 text-pink-600 hover:bg-pink-100 hover:text-pink-700 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-pink-200 active:scale-95 shadow-sm"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                />
+            </svg>
+
+            @if($notificationCount > 0)
+                <span
+                    class="notification-badge absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-xs font-bold min-w-5 h-5 px-1 rounded-full flex items-center justify-center shadow-md ring-2 ring-white"
+                >
+                    {{ $notificationCount }}
+                </span>
+            @endif
+        </button>
+
+        @php
+                $totalNotifications = $notifications->count();
+
+                $unreadNotifications = $notifications
+                    ->whereNull('read_at')
+                    ->count();
+
+                $readNotifications = $notifications
+                    ->whereNotNull('read_at')
+                    ->count();
+            @endphp
+
+        <!-- NOTIFICATION DROPDOWN -->
+{{-- ============================================================
+     NOTIFICATION DROPDOWN
+     ============================================================ --}}
+
+@php
+    /*
+    |--------------------------------------------------------------------------
+    | Notification Counts
+    |--------------------------------------------------------------------------
+    | Use read_at consistently throughout the notification system.
+    */
+
+    $totalNotifications = $notifications->count();
+
+    $unreadNotifications = $notifications
+        ->filter(fn ($notification) => is_null($notification->read_at))
+        ->count();
+
+    $readNotifications = $notifications
+        ->filter(fn ($notification) => !is_null($notification->read_at))
+        ->count();
+@endphp
+
+
+<div
+    id="notificationDropdown"
+    class="hidden notification-dropdown"
+    aria-hidden="true"
+>
+
+    {{-- ============================================================
+         HEADER
+         ============================================================ --}}
+
+    <div class="notification-dropdown-header">
+
+        <div class="notification-header-content">
+
+            {{-- Bell Icon --}}
+            <div class="notification-header-icon">
+
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    aria-hidden="true"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                    />
+                </svg>
+
+            </div>
+
+
+            {{-- Header Text --}}
+            <div class="notification-header-text">
+
+                <div class="notification-header-title-row">
+
+                    <h3 class="notification-header-title">
+                        Notifications
+                    </h3>
+
+                    <span class="notification-new-count">
+                        {{ $unreadNotifications }} New
+                    </span>
+
+                </div>
+
+                <p class="notification-header-subtitle">
+                    Stay updated with your appointments
+                </p>
+
+            </div>
+
+        </div>
+
+
+        {{-- Close Button --}}
+        <button
+            id="closeNotificationBtn"
+            type="button"
+            class="notification-close-btn"
+            aria-label="Close notifications"
+        >
+
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                />
+            </svg>
+
+        </button>
+
+    </div>
+
+
+    {{-- ============================================================
+         FILTER BAR
+         ============================================================ --}}
+
+    <div
+        class="notification-filter-bar"
+        role="tablist"
+        aria-label="Notification filters"
+    >
+
+        {{-- ALL --}}
+        <button
+            type="button"
+            class="notification-filter active"
+            data-filter="all"
+            role="tab"
+            aria-selected="true"
+        >
+            <span>All</span>
+            <span class="notification-filter-count">
+                {{ $totalNotifications }}
+            </span>
+        </button>
+
+
+        {{-- UNREAD --}}
+        <button
+            type="button"
+            class="notification-filter"
+            data-filter="unread"
+            role="tab"
+            aria-selected="false"
+        >
+            <span>Unread</span>
+            <span class="notification-filter-count">
+                {{ $unreadNotifications }}
+            </span>
+        </button>
+
+
+        {{-- READ --}}
+        <button
+            type="button"
+            class="notification-filter"
+            data-filter="read"
+            role="tab"
+            aria-selected="false"
+        >
+            <span>Read</span>
+            <span class="notification-filter-count">
+                {{ $readNotifications }}
+            </span>
+        </button>
+
+    </div>
+
+
+    {{-- ============================================================
+         NOTIFICATION LIST
+         ============================================================ --}}
+
+    <div
+        id="notificationList"
+        class="notification-list"
+    >
+
+        @forelse($notifications as $notification)
+
+            @php
+                /*
+                |--------------------------------------------------------------------------
+                | Notification Data
+                |--------------------------------------------------------------------------
+                */
+
+                $isUnread = is_null($notification->read_at);
+
+                $title = $notification->data['title']
+                    ?? 'Notification';
+
+                $message = $notification->data['message']
+                    ?? 'No message available.';
+
+                $lowerTitle = strtolower($title);
+
+                $notificationTime = $notification->created_at
+                    ->diffForHumans();
+            @endphp
+
+
+            {{-- ====================================================
+                 NOTIFICATION ITEM
+                 ==================================================== --}}
+
+            <div
+                class="notification-item"
+                data-notification-id="{{ $notification->id }}"
+                data-notification-status="{{ $isUnread ? 'unread' : 'read' }}"
+                data-notification-title="{{ $title }}"
+                data-notification-message="{{ $message }}"
+                data-notification-time="{{ $notificationTime }}"
+                role="button"
+                tabindex="0"
+                aria-label="View notification"
+            >
+
+                {{-- UNREAD DOT --}}
+                @if($isUnread)
+
+                    <span
+                        class="notification-unread-dot"
+                        title="Unread"
+                        aria-label="Unread notification"
+                    ></span>
+
+                @endif
+
+
+                {{-- ====================================================
+                     NOTIFICATION ICON
+                     ==================================================== --}}
+
+                <div
+                    class="notification-icon
+                    @if(str_contains($lowerTitle, 'cancel'))
+                        notification-icon-cancel
+                    @elseif(
+                        str_contains($lowerTitle, 'confirm') ||
+                        str_contains($lowerTitle, 'approved')
+                    )
+                        notification-icon-success
+                    @elseif(str_contains($lowerTitle, 'payment'))
+                        notification-icon-payment
+                    @else
+                        notification-icon-default
+                    @endif"
+                >
+
+                    {{-- CANCEL --}}
+                    @if(str_contains($lowerTitle, 'cancel'))
+
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M6 18L18 6M6 6l12 12"
+                            />
+                        </svg>
+
+
+                    {{-- CONFIRMED / APPROVED --}}
+                    @elseif(
+                        str_contains($lowerTitle, 'confirm') ||
+                        str_contains($lowerTitle, 'approved')
+                    )
+
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M5 13l4 4L19 7"
+                            />
+                        </svg>
+
+
+                    {{-- PAYMENT --}}
+                    @elseif(str_contains($lowerTitle, 'payment'))
+
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                        </svg>
+
+
+                    {{-- DEFAULT APPOINTMENT --}}
+                    @else
+
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                            />
+                        </svg>
+
+                    @endif
+
+                </div>
+
+
+                {{-- ====================================================
+                     NOTIFICATION CONTENT
+                     ==================================================== --}}
+
+                <div class="notification-content">
+
+                    <h4 class="notification-title">
+                        {{ $title }}
+                    </h4>
+
+
+                    <p class="notification-message">
+                        {{ $message }}
+                    </p>
+
+
+                    <div class="notification-time">
+
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                        </svg>
+
+                        <span>
+                            {{ $notificationTime }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        @empty
+
+
+            {{-- ====================================================
+                 EMPTY STATE
+                 ==================================================== --}}
+
+            <div
+                id="noNotificationsMessage"
+                class="notification-empty"
+            >
+
+                <div class="notification-empty-icon">
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5"
+                        />
+                    </svg>
+
+                </div>
+
+
+                <p class="notification-empty-title">
+                    No notifications found
+                </p>
+
+
+                <p class="notification-empty-text">
+                    You're all caught up for now!
+                </p>
+
+            </div>
+
+        @endforelse
+
+
+        {{-- ========================================================
+             FILTER EMPTY STATE
+             ======================================================== --}}
+
+        <div
+            id="notificationFilterEmpty"
+            class="notification-empty hidden"
+        >
+
+            <div class="notification-empty-icon">
+
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    aria-hidden="true"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5"
+                    />
+                </svg>
+
+            </div>
+
+
+            <p
+                id="notificationFilterEmptyTitle"
+                class="notification-empty-title"
+            >
+                No notifications
+            </p>
+
+
+            <p class="notification-empty-text">
+                There are no notifications in this category.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {{-- ============================================================
+         FOOTER
+         ============================================================ --}}
+
+    @if($totalNotifications > 0)
+
+        <div class="notification-footer">
+
+            <a
+                href="{{ route('appointments.history') }}"
+                class="notification-history-link"
+            >
+
+                <span>
+                    View appointment history
+                </span>
+
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    aria-hidden="true"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 5l7 7-7 7"
+                    />
+                </svg>
+
+            </a>
+
+        </div>
+
+    @endif
+
+</div>
+
+    </div>
+</div>
+
+<!-- ============================================================
+     NOTIFICATION DETAILS MODAL
+     ============================================================ -->
+<div
+    id="notificationModal"
+    class="notification-details-modal hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="notificationModalTitle"
+>
+    <div
+        id="notificationModalBackdrop"
+        class="notification-details-backdrop"
+    ></div>
+
+    <div class="notification-details-card">
+
+        <!-- HEADER -->
+        <div class="notification-details-header">
+
+            <div class="notification-details-icon">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-6 h-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                    />
+                </svg>
+            </div>
+
+            <div>
+                <h2 id="notificationModalTitle">
+                    Notification
+                </h2>
+
+                <p id="notificationModalTime">
+                    Just now
+                </p>
+            </div>
+
+            <button
+                type="button"
+                id="closeNotificationModal"
+                class="notification-details-close"
+                aria-label="Close notification"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                    />
+                </svg>
+            </button>
+
+        </div>
+
+        <!-- MESSAGE -->
+        <div class="notification-details-body">
+
+            <p id="notificationModalMessage"></p>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="notification-details-footer">
+
+            <button
+                type="button"
+                id="doneNotificationModal"
+                class="notification-details-done"
+            >
+                Done
+            </button>
+
+        </div>
+
+    </div>
+</div>
+    <!-- Profile Dropdown -->
+    <div class="relative">
+
+        <button id="profileBtn"
+            type="button"
+            class="flex items-center gap-2 focus:outline-none">
+
+        <img
+        src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : asset('images/default-profile.png') }}"
+        alt="Profile"
+        class="w-10 h-10 rounded-full border-2 border-pink-500 object-cover">
+
+            <div class="hidden md:block text-left">
+                <p class="text-sm font-semibold text-gray-800">
+        {{ Auth::user()->name }}
+    </p>
+                <p class="text-xs text-gray-500">
+                    Patient
+                </p>
+            </div>
+
+            <svg xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4 text-gray-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7" />
+            </svg>
+
+        </button>
+
+        <!-- Dropdown Menu -->
+    <div id="profileMenu"
+        class="hidden absolute right-0 mt-3 w-52 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-[9999]">
+
+        <!-- Settings -->
+        <a href="{{ route('appointments.settings', [ 'return' => url()->current() ]) }}"
+        class="flex items-center gap-3 px-2 py-2 text-gray-700 hover:bg-pink-50 hover:text-pink-600 transition">
+
+        <svg xmlns="http://www.w3.org/2000/svg"
+            class="w-5 h-5"
+            viewBox="0 0 24 24"
+            fill="currentColor">
+
+        <path d="M19.14,12.94a7.49,7.49,0,0,0,.05-.94,7.49,7.49,0,0,0-.05-.94l2.03-1.58a.5.5,0,0,0,.12-.64l-1.92-3.32a.5.5,0,0,0-.6-.22l-2.39.96a7.28,7.28,0,0,0-1.63-.94L14.4,2.81A.5.5,0,0,0,13.91,2H10.09a.5.5,0,0,0-.49.81L9.25,5.32a7.28,7.28,0,0,0-1.63.94l-2.39-.96a.5.5,0,0,0-.6.22L2.71,8.84a.5.5,0,0,0,.12.64L4.86,11.06a7.49,7.49,0,0,0-.05.94,7.49,7.49,0,0,0,.05.94L2.83,14.52a.5.5,0,0,0-.12.64l1.92,3.32a.5.5,0,0,0,.6.22l2.39-.96a7.28,7.28,0,0,0,1.63.94l.35,2.51a.5.5,0,0,0,.49.41h3.82a.5.5,0,0,0,.49-.41l.35-2.51a7.28,7.28,0,0,0,1.63-.94l2.39.96a.5.5,0,0,0,.6-.22l1.92-3.32a.5.5,0,0,0-.12-.64ZM12,15.5A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/>
+    </svg>
+
+            <span>Settings</span>
+        </a>
+
+<form
+    method="POST"
+    action="{{ route('logout') }}"
+    id="logoutForm"
+>
+    @csrf
+
+    <button
+        type="button"
+        id="logoutBtn"
+        class="w-full text-left flex items-center gap-3 px-3 py-3 text-red-600 hover:bg-red-50 transition"
+    >
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-5 h-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+        >
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7"
+            />
+
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 12h4"
+            />
+        </svg>
+
+        <span>Logout</span>
+    </button>
+</form>
+
+    </div>
+
+    </div>
+
+            </div>
+
+        </div>
+    </nav>
+
+
+
+    <div class="booking-container">
+    @if ($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>• {{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+    <h2>Dental Appointment Tracker</h2>
+
+    <div class="tracker">
+
+        <!-- STEP 1 -->
+        <div class="tracker-step active" id="tracker-step-1">
+            <div class="circle">1</div>
+            <span>Form</span>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="tracker-step" id="tracker-step-2">
+            <div class="circle">2</div>
+            <span>Summary</span>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="tracker-step" id="tracker-step-3">
+            <div class="circle">3</div>
+            <span>Confirmed</span>
+        </div>
+
+    </div>
+
+        <form method="POST"
+            action="{{ route('appointments.store') }}"
+            enctype="multipart/form-data">
+
+            @csrf
+
+
+
+            <!-- STEP 1 -->
+        <div class="form-step active" id="step1">
+
+        <!-- PATIENT INFORMATION -->
+        <div class="section-card">
+
+            <h3 class="section-title">
+                Patient Information
+            </h3>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Full Name</label>
+
+                    <input
+                        type="text"
+                        name="patient_name"
+                        value="{{ auth()->user()->name }}"
+                        readonly
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>Age</label>
+                    <input type="number"
+                        name="age"
+                        value="{{ old('age') }}">
+                </div>
+
+                <div class="form-group">
+                    <label>Sex</label>
+                    <select name="sex">
+                        <option value="">Select</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+
+                <label>Civil Status</label>
+
+                <select name="civil_status">
+
+                    <option value="">Select Civil Status</option>
+
+                    <option value="Single"
+                        {{ old('civil_status') == 'Single' ? 'selected' : '' }}>
+                        Single
+                    </option>
+
+                    <option value="Married"
+                        {{ old('civil_status') == 'Married' ? 'selected' : '' }}>
+                        Married
+                    </option>
+
+                    <option value="Widowed"
+                        {{ old('civil_status') == 'Widowed' ? 'selected' : '' }}>
+                        Widowed
+                    </option>
+
+                    <option value="Separated"
+                        {{ old('civil_status') == 'Separated' ? 'selected' : '' }}>
+                        Separated
+                    </option>
+
+                    <option value="Divorced"
+                        {{ old('civil_status') == 'Divorced' ? 'selected' : '' }}>
+                        Divorced
+                    </option>
+
+                </select>
+
+            </div>
+                <div class="form-group">
+                    <label>Contact Number</label>
+                    <input type="text"
+                        name="tel_no"
+                        value="{{ old('tel_no') }}">
+                </div>
+
+            <div class="form-group">
+
+                <label>Occupation</label>
+
+                <select name="occupation">
+
+                    <option value="">Select Occupation</option>
+
+                    <option value="Student"
+                        {{ old('occupation') == 'Student' ? 'selected' : '' }}>
+                        Student
+                    </option>
+
+                    <option value="Employed"
+                        {{ old('occupation') == 'Employed' ? 'selected' : '' }}>
+                        Employed
+                    </option>
+
+                    <option value="Self-Employed"
+                        {{ old('occupation') == 'Self-Employed' ? 'selected' : '' }}>
+                        Self-Employed
+                    </option>
+
+                    <option value="Business Owner"
+                        {{ old('occupation') == 'Business Owner' ? 'selected' : '' }}>
+                        Business Owner
+                    </option>
+
+                    <option value="Government Employee"
+                        {{ old('occupation') == 'Government Employee' ? 'selected' : '' }}>
+                        Government Employee
+                    </option>
+
+                    <option value="Private Employee"
+                        {{ old('occupation') == 'Private Employee' ? 'selected' : '' }}>
+                        Private Employee
+                    </option>
+
+                    <option value="Unemployed"
+                        {{ old('occupation') == 'Unemployed' ? 'selected' : '' }}>
+                        Unemployed
+                    </option>
+
+                    <option value="Retired"
+                        {{ old('occupation') == 'Retired' ? 'selected' : '' }}>
+                        Retired
+                    </option>
+
+                    <option value="Other"
+                        {{ old('occupation') == 'Other' ? 'selected' : '' }}>
+                        Other
+                    </option>
+
+                </select>
+
+            </div>
+
+            </div>
+
+            <div class="form-group">
+                <label>Address</label>
+                <textarea name="address">{{ old('address') }}</textarea>
+            </div>
+
+                <div class="signature-section">
+
+        <div class="signature-actions">
+
+            <button
+                type="button"
+                class="add-signature-button"
+                id="addSignatureButton"
+            >
+                Add Signature
+            </button>
+
+            <button
+                type="button"
+                class="clear-signature-button"
+                id="clearSignatureButton"
+            >
+                Clear Signature
+            </button>
+
+        </div>
+
+        <div
+            class="signature-preview"
+            id="signaturePreview"
+        >
+
+            <img
+                id="signatureImage"
+                src=""
+                alt="Patient Signature"
+                style="display: none;"
+            >
+
+            <span id="signaturePlaceholder">
+                No signature added
+            </span>
+
+        </div>
+
+        <div class="signature-line">
+
+            <div></div>
+
+            <span>
+                Patient / Guardian Signature
+            </span>
+
+        </div>
+
+        <input
+            type="hidden"
+            name="patient_signature"
+            id="patientSignature"
+        >
+
+    </div>
+        </div>
+
+        <!-- MEDICAL HISTORY -->
+<div class="section-card">
+
+    <h3 class="section-title">
+        Medical History
+    </h3>
+
+    <div class="medical-grid">
+
+        <div class="medical-item">
+
+            <label class="checkbox-label">
+
+                <input
+                    type="checkbox"
+                    name="heart_condition"
+                    value="1"
+                >
+
+                Heart Condition
+
+            </label>
+
+            <input
+                type="text"
+                name="heart_condition_details"
+                placeholder="Provide details"
+            >
+
+        </div>
+
+        <div class="medical-item">
+
+            <label class="checkbox-label">
+
+                <input
+                    type="checkbox"
+                    name="allergy"
+                    value="1"
+                >
+
+                Allergy
+
+            </label>
+
+            <input
+                type="text"
+                name="allergy_details"
+                placeholder="Provide details"
+            >
+
+        </div>
+
+        <div class="medical-item">
+
+            <label class="checkbox-label">
+
+                <input
+                    type="checkbox"
+                    name="diabetes"
+                    value="1"
+                >
+
+                Diabetes
+
+            </label>
+
+            <input
+                type="text"
+                name="diabetes_details"
+                placeholder="Provide details"
+            >
+
+        </div>
+
+        <div class="medical-item">
+
+            <label class="checkbox-label">
+
+                <input
+                    type="checkbox"
+                    name="hypertension"
+                    value="1"
+                >
+
+                Hypertension / High Blood Pressure
+
+            </label>
+
+            <input
+                type="text"
+                name="hypertension_details"
+                placeholder="Provide details"
+            >
+
+        </div>
+
+        <div class="medical-item">
+
+            <label class="checkbox-label">
+
+                <input
+                    type="checkbox"
+                    name="bleeding_tendency"
+                    value="1"
+                >
+
+                Bleeding Tendency
+
+            </label>
+
+            <input
+                type="text"
+                name="bleeding_tendency_details"
+                placeholder="Provide details"
+            >
+
+        </div>
+
+        <div class="medical-item">
+
+            <label class="checkbox-label">
+
+                <input
+                    type="checkbox"
+                    name="asthma"
+                    value="1"
+                >
+
+                Asthma
+
+            </label>
+
+            <input
+                type="text"
+                name="asthma_details"
+                placeholder="Provide details"
+            >
+
+        </div>
+
+    </div>
+
+    <div class="form-group">
+
+        <label>
+            Other Diseases / Abnormalities & Treatments
+        </label>
+
+        <textarea
+            name="other_conditions"
+            placeholder="Provide additional medical information..."
+        ></textarea>
+
+    </div>
+
+
+
+</div>
+
+        <!-- APPOINTMENT DETAILS -->
+
+        <div class="section-card" >
+
+            <h3 class="section-title">
+                Appointment Details
+            </h3>
+<div class="form-group">
+
+    <label for="service_id">Dental Service</label>
+
+    <select name="service_id" id="service_id" required>
+
+        <option value="">Select Service</option>
+
+        @foreach($services as $service)
+
+            <option
+                value="{{ $service->id }}"
+                data-duration="{{ $service->duration_minutes ?? 0 }}"
+                data-price="{{ $service->price }}"
+            >
+                {{ $service->service_name }}
+                (₱{{ number_format($service->price, 2) }}
+                - {{ $service->duration_minutes ?? 0 }} minutes)
+            </option>
+
+        @endforeach
+
+    </select>
+
+</div>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Appointment Date</label>
+                    <input type="date" id="date"
+                        name="appointment_date"
+                        onchange="loadSlots(this.value)"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label>Available Time Slots</label>
+                    <div id="slots" class="slots-container">
+                        <small>Select a date first</small>
+                    </div>
+                </div>
+
+                <!-- Hidden inputs -->
+                <input type="hidden" name="appointment_time" id="start_time">
+                <input type="hidden" name="end_time" id="end_time">
+
+            </div>
+
+            <div class="form-group">
+                <label>Reason for Visit</label>
+                <textarea name="reason"></textarea>
+            </div>
+
+        </div>
+
+        <div class="btn-group">
+            <a
+                href="{{ route('appointments.homepage') }}"
+                class="btn-prev"
+            >
+                <span class="arrow">
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="3"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+
+                        <polyline points="15 18 9 12 15 6"></polyline>
+
+                    </svg>
+
+                </span>
+
+                <span>
+                    Previous
+                </span>
+
+            </a>
+
+    <button type="button"
+            class="btn-next"
+            onclick="nextStep()">
+
+        <span>Next</span>
+
+        <span class="arrow">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+
+                <polyline points="9 18 15 12 9 6"></polyline>
+
+            </svg>
+        </span>
+
+    </button>
+        </div>
+
+
+    </div>
+
+    <!-- ============================= -->
+    <!-- STEP 2: APPOINTMENT SUMMARY -->
+    <!-- ============================= -->
+
+    <div class="form-step" id="step2">
+
+        <!-- Summary Header -->
+        <div class="summary-header">
+            <div class="summary-header-icon">
+                ✓
+            </div>
+
+            <div>
+                <h2>Review Your Appointment</h2>
+                <p>
+                    Please check all the information below before saving your appointment.
+                </p>
+            </div>
+        </div>
+
+
+        <!-- ============================= -->
+        <!-- PATIENT INFORMATION -->
+        <!-- ============================= -->
+
+        <div class="summary-card">
+
+            <div class="summary-card-header">
+                <div>
+                    <span class="summary-number">01</span>
+                    <div>
+                        <h3>Patient Information</h3>
+                        <p>Personal information provided</p>
+                    </div>
+                </div>
+
+                <button type="button"
+                        class="summary-edit"
+                        onclick="previousStep()">
+                    Edit
+                </button>
+            </div>
+
+
+            <div class="summary-grid">
+
+                <div class="summary-item">
+                    <span>Full Name</span>
+                    <strong id="summary_patient_name">—</strong>
+                </div>
+
+                <div class="summary-item">
+                    <span>Age</span>
+                    <strong id="summary_age">—</strong>
+                </div>
+
+                <div class="summary-item">
+                    <span>Sex</span>
+                    <strong id="summary_sex">—</strong>
+                </div>
+
+                <div class="summary-item">
+                    <span>Civil Status</span>
+                    <strong id="summary_civil_status">—</strong>
+                </div>
+
+                <div class="summary-item">
+                    <span>Contact Number</span>
+                    <strong id="summary_tel_no">—</strong>
+                </div>
+
+                <div class="summary-item">
+                    <span>Occupation</span>
+                    <strong id="summary_occupation">—</strong>
+                </div>
+
+                <div class="summary-item full">
+                    <span>Address</span>
+                    <strong id="summary_address">—</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ============================= -->
+        <!-- MEDICAL HISTORY -->
+        <!-- ============================= -->
+
+        <div class="summary-card">
+
+            <div class="summary-card-header">
+
+                <div>
+                    <span class="summary-number">02</span>
+
+                    <div>
+                        <h3>Medical History</h3>
+                        <p>Health information provided</p>
+                    </div>
+                </div>
+
+                <button type="button"
+                        class="summary-edit"
+                        onclick="previousStep()">
+                    Edit
+                </button>
+
+            </div>
+
+
+            <div class="medical-summary-grid">
+
+                <div class="medical-summary-item">
+                    <span>Heart Condition</span>
+                    <strong id="summary_heart_condition">No</strong>
+                </div>
+
+                <div class="medical-summary-item">
+                    <span>Allergy</span>
+                    <strong id="summary_allergy">No</strong>
+                </div>
+
+                <div class="medical-summary-item">
+                    <span>Diabetes</span>
+                    <strong id="summary_diabetes">No</strong>
+                </div>
+
+                <div class="medical-summary-item">
+                    <span>Hypertension</span>
+                    <strong id="summary_hypertension">No</strong>
+                </div>
+
+                <div class="medical-summary-item">
+                    <span>Bleeding Tendency</span>
+                    <strong id="summary_bleeding_tendency">No</strong>
+                </div>
+
+                <div class="medical-summary-item">
+                    <span>Asthma</span>
+                    <strong id="summary_asthma">No</strong>
+                </div>
+
+            </div>
+
+
+            <div class="summary-large-item">
+
+                <span>Other Diseases / Treatments</span>
+
+                <strong id="summary_other_conditions">
+                    None
+                </strong>
+
+            </div>
+
+        </div>
+
+
+<div class="appointment-highlight">
+
+    <div class="appointment-icon">
+
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        >
+            <circle cx="12" cy="12" r="9"></circle>
+            <polyline points="12 7 12 12 15 15"></polyline>
+        </svg>
+
+    </div>
+
+    <div>
+
+        <span>Appointment Time</span>
+
+        <strong id="summary_time">
+            —
+        </strong>
+
+        <small id="summary_duration">
+            —
+        </small>
+
+    </div>
+
+</div>
+<div class="appointment-highlight">
+
+    <div class="appointment-icon">
+
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+        >
+            <rect
+                x="3"
+                y="4"
+                width="18"
+                height="18"
+                rx="2"
+            ></rect>
+
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+
+        </svg>
+
+    </div>
+
+    <div>
+
+        <span>Appointment Date</span>
+
+        <strong id="summary_date">
+            —
+        </strong>
+
+    </div>
+
+</div>
+        <!-- ============================= -->
+        <!-- FINAL REVIEW NOTICE -->
+        <!-- ============================= -->
+
+        <div class="final-review-box">
+
+            <div class="final-review-icon">
+                !
+            </div>
+
+            <div>
+
+                <h4>Final Review</h4>
+
+                <p>
+                    Please review your information carefully.
+                    This summary is provided to help prevent errors
+                    in your appointment details.
+                </p>
+
+                <p>
+                    If you find anything incorrect, click
+                    <strong>Previous</strong> to edit your information.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ============================= -->
+        <!-- SUMMARY BUTTONS -->
+        <!-- ============================= -->
+
+    <div class="summary-buttons">
+
+        <button type="button"
+                class="btn-previous"
+                onclick="previousStep()">
+
+            <span class="arrow">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </span>
+
+            <span>Previous</span>
+
+        </button>
+
+
+        <button
+        type="button"
+        class="btn-save"
+        id="openSubmitModalBtn"
+    >
+        <span>
+            Save Appointment
+        </span>
+
+        <span class="save-icon">
+            ✓
+        </span>
+    </button>
+
+    </div>
+    </div>
+
+    </form>
+  <div id="submitModal" class="submit-modal">
+
+    <div
+        class="submit-modal-overlay"
+        id="submitModalOverlay"
+    ></div>
+
+    <div class="submit-modal-content">
+
+        <div class="submit-modal-icon">
+            ?
+        </div>
+
+        <h2>Confirm Submission</h2>
+
+        <p>
+            Are you sure you want to submit your appointment?
+        </p>
+
+        <div class="submit-modal-buttons">
+
+            <button
+                type="button"
+                class="modal-cancel-btn"
+                id="cancelSubmitBtn"
+            >
+                Cancel
+            </button>
+
+            <button
+                type="button"
+                class="modal-confirm-btn"
+                id="confirmSubmitBtn"
+            >
+                Yes, Submit
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div
+    class="signature-modal"
+    id="signatureModal"
+    aria-hidden="true"
+>
+    <div
+        class="signature-modal-overlay"
+        id="signatureModalOverlay"
+    ></div>
+
+    <div
+        class="signature-modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="signatureModalTitle"
+    >
+
+        <div class="signature-modal-header">
+
+            <div>
+
+                <span class="signature-modal-label">
+                    PATIENT RECORD
+                </span>
+
+                <h2 id="signatureModalTitle">
+                    Add Signature
+                </h2>
+
+                <p>
+                    Please sign inside the box below.
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                class="signature-modal-close"
+                id="closeSignatureModal"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <div class="signature-pad-wrapper">
+
+            <canvas
+                id="signatureCanvas"
+                class="signature-canvas"
+            ></canvas>
+
+            <div
+                class="signature-canvas-placeholder"
+                id="signatureCanvasPlaceholder"
+            >
+                Sign here
+            </div>
+
+        </div>
+
+        <div class="signature-modal-footer">
+
+            <button
+                type="button"
+                class="signature-reset-button"
+                id="resetSignatureButton"
+            >
+                Clear
+            </button>
+
+            <div class="signature-modal-actions">
+
+                <button
+                    type="button"
+                    class="signature-cancel-button"
+                    id="cancelSignatureButton"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="button"
+                    class="signature-save-button"
+                    id="saveSignatureButton"
+                >
+                    Save Signature
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- =========================================================
+     LOGOUT CONFIRMATION MODAL
+     ========================================================= -->
+
+<div
+    id="logoutModal"
+    class="logout-modal"
+    aria-hidden="true"
+>
+
+    <!-- OVERLAY -->
+    <div
+        id="logoutModalOverlay"
+        class="logout-modal-overlay"
+    ></div>
+
+
+    <!-- MODAL CARD -->
+    <div
+        class="logout-modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="logoutModalTitle"
+    >
+
+        <!-- ICON -->
+        <div class="logout-modal-icon">
+
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+
+        </div>
+
+
+        <!-- TITLE -->
+        <h2 id="logoutModalTitle">
+            Logout?
+        </h2>
+
+
+        <!-- MESSAGE -->
+        <p>
+            Are you sure you want to log out of your account?
+        </p>
+
+
+        <!-- BUTTONS -->
+        <div class="logout-modal-actions">
+
+            <button
+                type="button"
+                id="cancelLogout"
+                class="logout-cancel-btn"
+            >
+                Cancel
+            </button>
+
+
+            <button
+                type="button"
+                id="confirmLogout"
+                class="logout-confirm-btn"
+            >
+                Logout
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+    <script src="{{ asset('js/appointment/booking.js') }}"></script>
+    <script src="{{ asset('js/appointment/patient-theme.js') }}"></script>
+    </body>
+    </html>
