@@ -2058,7 +2058,6 @@
     </div>
 
 </section>
-
 <section id="balanceHistorySection" class="balance-history-section">
 
     {{-- HEADER --}}
@@ -2088,13 +2087,11 @@
                     Outstanding Balance
                 </span>
 
-                <span class="balance-card-icon">
-                    ₱
-                </span>
+                <span class="balance-card-icon">₱</span>
             </div>
 
             <h3 class="balance-card-value">
-                ₱{{ number_format($totalOutstanding ?? 0, 2) }}
+                ₱{{ number_format((float) ($totalOutstanding ?? 0), 2) }}
             </h3>
 
             <p class="balance-card-description">
@@ -2112,13 +2109,11 @@
                     Total Paid
                 </span>
 
-                <span class="balance-card-icon">
-                    ✓
-                </span>
+                <span class="balance-card-icon">✓</span>
             </div>
 
             <h3 class="balance-card-value">
-                ₱{{ number_format($totalPaid ?? 0, 2) }}
+                ₱{{ number_format((float) ($totalPaid ?? 0), 2) }}
             </h3>
 
             <p class="balance-card-description">
@@ -2136,9 +2131,7 @@
                     Total Appointments
                 </span>
 
-                <span class="balance-card-icon">
-                    #
-                </span>
+                <span class="balance-card-icon">#</span>
             </div>
 
             <h3 class="balance-card-value">
@@ -2160,9 +2153,7 @@
                     Pending Payments
                 </span>
 
-                <span class="balance-card-icon">
-                    !
-                </span>
+                <span class="balance-card-icon">!</span>
             </div>
 
             <h3 class="balance-card-value">
@@ -2196,7 +2187,6 @@
                     </tr>
                 </thead>
 
-
                 <tbody>
 
                     @forelse($appointmentHistory as $appointment)
@@ -2204,18 +2194,20 @@
                         @php
                             $amountPaid = (float) ($appointment->amount_paid ?? 0);
                             $balance = (float) ($appointment->balance ?? 0);
-
-                            /*
-                             * If total_amount is zero/missing while a balance
-                             * exists, use amount paid + balance as the displayed
-                             * total. This prevents the UI from showing:
-                             * Total Fee ₱0.00 / Balance ₱7,000.00
-                             *
-                             * The database should still be corrected separately.
-                             */
                             $totalAmount = (float) ($appointment->total_amount ?? 0);
 
-                            if ($totalAmount <= 0 && ($amountPaid > 0 || $balance > 0)) {
+                            /*
+                             * UI safeguard:
+                             * If total_amount is empty/zero but payment
+                             * information exists, calculate the displayed
+                             * total as amount paid + remaining balance.
+                             *
+                             * This does NOT update the database.
+                             */
+                            if (
+                                $totalAmount <= 0 &&
+                                ($amountPaid > 0 || $balance > 0)
+                            ) {
                                 $totalAmount = $amountPaid + $balance;
                             }
 
@@ -2260,14 +2252,20 @@
                             {{-- STATUS --}}
                             <td class="balance-status-cell">
 
-                                @if($paymentStatus === 'paid')
+                                @if ($paymentStatus === 'paid')
 
                                     <span class="balance-status status-paid">
                                         <span class="status-dot"></span>
                                         Paid
                                     </span>
 
-                                @elseif($paymentStatus === 'partially paid')
+                                @elseif (
+                                    in_array($paymentStatus, [
+                                        'partially paid',
+                                        'partial',
+                                        'partially_paid'
+                                    ])
+                                )
 
                                     <span class="balance-status status-partial">
                                         <span class="status-dot"></span>
@@ -2322,7 +2320,8 @@
     </div>
 
 </section>
-    </main>
+
+</main>
 
     <footer class="homepage-footer bg-[#0b0b0b] text-gray-400 border-t border-[#2b2b2b] pt-8 pb-8">
         <div class="w-full max-w-7xl mx-auto px-6">
