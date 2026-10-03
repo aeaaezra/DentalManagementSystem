@@ -2455,9 +2455,10 @@ html.dark-mode .border-yellow-100{
    ================================ */
 
 .main-navbar {
-    background: #080808 !important;
-    border-bottom: 1px solid #292929 !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid #e5e5e5 !important;
 }
+
 /* Light mode */
 
 .main-navbar .main-nav-link {
@@ -7447,69 +7448,87 @@ body {
 
 }
 
+
 /* =========================================================
-   FINAL NAVBAR TEXT FIX
+   FINAL NAVBAR FIX — 2026-10-03
+   Fixes navbar colors/blue backgrounds only.
+   Does not alter notification, profile, balance, or layout rules.
    ========================================================= */
 
-.main-navbar .main-nav-link {
-    position: relative !important;
-
-    display: inline-flex !important;
-    align-items: center !important;
-
-    height: 52px !important;
-
-    color: #b8b8b8 !important;
-
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    letter-spacing: 1.5px !important;
-    text-transform: uppercase !important;
-
-    text-decoration: none !important;
-
-    transition:
-        color 0.2s ease,
-        opacity 0.2s ease !important;
+.main-navbar {
+    background: #080808 !important;
+    border-bottom: 1px solid #292929 !important;
 }
 
-/* Normal link hover */
+.main-navbar .main-nav-link {
+    background: transparent !important;
+    background-color: transparent !important;
+    color: #b8b8b8 !important;
+    text-decoration: none !important;
+}
+
 .main-navbar .main-nav-link:hover {
+    background: transparent !important;
+    background-color: transparent !important;
     color: #ffffff !important;
 }
 
-/* Active page */
 .main-navbar .main-nav-link.active {
+    background: transparent !important;
+    background-color: transparent !important;
     color: #ff2f78 !important;
 }
 
-/* Active underline */
 .main-navbar .main-nav-link.active::after {
-    content: "" !important;
-
-    position: absolute !important;
-
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-
-    height: 2px !important;
-
     background: #ff2f78 !important;
-
-    border-radius: 2px !important;
 }
 
-/* Dark mode */
+/* Prevent utility/Tailwind background classes from painting navbar links. */
+.main-navbar a.main-nav-link,
+.main-navbar a.main-nav-link:hover,
+.main-navbar a.main-nav-link.active {
+    background-image: none !important;
+}
+
+/* Brand / Shine & Smile */
+.main-navbar > div:first-child a {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+/* Keep every navbar anchor transparent unless a dedicated component needs its own background. */
+.main-navbar .main-nav-link,
+.main-navbar .main-nav-link * {
+    text-decoration: none !important;
+}
+
+/* Dark-mode equivalent, with higher specificity than the older duplicate rules. */
+html.dark-mode .main-navbar {
+    background: #080808 !important;
+    border-bottom: 1px solid #292929 !important;
+}
+
 html.dark-mode .main-navbar .main-nav-link {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
     color: #b8b8b8 !important;
 }
 
 html.dark-mode .main-navbar .main-nav-link:hover {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
     color: #ffffff !important;
 }
 
 html.dark-mode .main-navbar .main-nav-link.active {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
     color: #ff2f78 !important;
 }
 
