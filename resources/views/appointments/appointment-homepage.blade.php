@@ -1,7 +1,6 @@
 
+<html lang="en" class="scroll-smooth dark-mode">
 
-
-<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -209,6 +208,8 @@
 <div class="w-full max-w-none px-6 py-4 flex items-center">
 
         <!-- Logo + Mobile Menu -->
+
+        <!-- Logo + Mobile Menu -->
 <div class="flex items-center gap-3 shrink-0">
             <!-- Mobile Hamburger -->
             <button
@@ -232,13 +233,12 @@
             </button>
 
             <!-- Logo -->
-            <a href="{{ route('appointments.homepage') }}"
-               class="text-xl sm:text-2xl font-bold text-[#E91E63] whitespace-nowrap">
-                Shine & Smile
-            </a>
+<a href="{{ route('appointments.homepage') }}"
+   class="text-xl sm:text-2xl font-bold whitespace-nowrap"
+   style="color: #ff2f78 !important; -webkit-text-fill-color: #ff2f78 !important;">
+    Shine & Smile
+</a>
         </div>
-
-
 <div class="hidden md:flex items-center gap-10 mx-auto shrink-0">
 
     <!-- HOME -->

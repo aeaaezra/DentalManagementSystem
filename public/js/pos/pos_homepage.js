@@ -1,3 +1,4 @@
+function updateCartCount()
 document.addEventListener("DOMContentLoaded", () => {
     const products = [
         {
@@ -49,64 +50,52 @@ document.addEventListener("DOMContentLoaded", () => {
     let paymentMethod = "cash";
 
     const productGrid = document.getElementById("productGrid");
-    const cartItems = document.getElementById("cartItems");
-    const cartEmpty = document.getElementById("cartEmpty");
+const productGrid = document.getElementById("productGrid");
 
-    const searchInput = document.getElementById("productSearch");
-    const barcodeInput = document.getElementById("barcodeInput");
+const cartItems = document.getElementById("cartList");
+const cartEmpty = document.querySelector(".empty-cart");
 
-    const subtotalElement = document.getElementById("subtotal");
-    const discountElement = document.getElementById("discount");
-    const taxElement = document.getElementById("tax");
-    const totalElement = document.getElementById("totalAmount");
+const searchInput = document.getElementById("searchInput");
+const barcodeInput = document.getElementById("barcodeBtn");
 
-    const cartCountElement = document.getElementById("cartCount");
+const subtotalElement = document.getElementById("subtotal");
+const discountElement = document.getElementById("discount");
+const taxElement = document.getElementById("tax");
+const totalElement = document.getElementById("total");
 
-    const discountInput = document.getElementById("discountInput");
-    const applyDiscountButton = document.getElementById("applyDiscount");
+const cartCountElement = document.getElementById("cartCount");
 
-    const processPaymentButton =
-        document.getElementById("processPayment");
+const discountInput = document.getElementById("discountCode");
+const applyDiscountButton = document.getElementById("applyDiscount");
+const processPaymentButton = document.getElementById("processPayment");
 
-    const paymentModal =
-        document.getElementById("paymentModal");
+const paymentModal = document.getElementById("paymentModal");
 
-    const paymentOverlay =
-        document.getElementById("paymentOverlay");
+const cashReceivedInput =
+    document.getElementById("amountReceived");
 
-    const closePaymentModal =
-        document.getElementById("closePaymentModal");
+const changeAmountElement =
+    document.getElementById("change");
 
-    const cashReceivedInput =
-        document.getElementById("cashReceived");
+const confirmPaymentButton = null;
 
-    const changeAmountElement =
-        document.getElementById("changeAmount");
+const darkModeButton =
+    document.getElementById("themeToggle");
 
-    const confirmPaymentButton =
-        document.getElementById("confirmPayment");
+const clearCartButton =
+    document.getElementById("clearCart");
 
-    const darkModeButton =
-        document.getElementById("darkModeButton");
+const categoryButtons =
+    document.querySelectorAll("[data-category]");
 
-    const clearCartButton =
-        document.getElementById("clearCart");
+const paymentButtons =
+    document.querySelectorAll("[data-payment]");
 
-    const holdOrderButton =
-        document.getElementById("holdOrder");
+const gridViewButton =
+    document.getElementById("gridView");
 
-    const categoryButtons =
-        document.querySelectorAll("[data-category]");
-
-    const paymentButtons =
-        document.querySelectorAll("[data-payment]");
-
-    const gridViewButton =
-        document.getElementById("gridView");
-
-    const listViewButton =
-        document.getElementById("listView");
-
+const listViewButton =
+    document.getElementById("listView");
     function formatCurrency(value) {
         return `₱${Number(value).toLocaleString("en-PH", {
             minimumFractionDigits: 2,
@@ -165,46 +154,46 @@ document.addEventListener("DOMContentLoaded", () => {
                     <i class="fa-solid fa-tooth"></i>
                 </div>
 
-                <div class="product-content">
-                    <span class="product-category">
-                        ${product.category}
-                    </span>
+<div class="product-info">
 
-                    <h3>
-                        ${product.name}
-                    </h3>
+    <span class="product-category">
+        ${product.category}
+    </span>
 
-                    <p class="product-sku">
-                        SKU: ${product.sku}
-                    </p>
+    <h3>
+        ${product.name}
+    </h3>
 
-                    <div class="product-bottom">
-                        <strong>
-                            ${formatCurrency(product.price)}
-                        </strong>
+    <p class="sku">
+        SKU: ${product.sku}
+    </p>
 
-                        <span class="${
-                            outOfStock
-                                ? "stock-out"
-                                : "stock-available"
-                        }">
-                            ${
-                                outOfStock
-                                    ? "Out of stock"
-                                    : `${product.stock} pcs`
-                            }
-                        </span>
-                    </div>
+    <div class="price-row">
 
-                    <button
-                        class="add-cart-button"
-                        data-product-id="${product.id}"
-                        ${outOfStock ? "disabled" : ""}
-                    >
-                        <i class="fa-solid fa-cart-plus"></i>
-                        Add to Cart
-                    </button>
-                </div>
+        <strong class="price">
+            ${formatCurrency(product.price)}
+        </strong>
+
+        <span class="${outOfStock ? "stock out" : "stock"}">
+            ${
+                outOfStock
+                    ? "Out of stock"
+                    : `${product.stock} pcs`
+            }
+        </span>
+
+    </div>
+
+    <button
+        class="add-button"
+        data-product-id="${product.id}"
+        ${outOfStock ? "disabled" : ""}
+    >
+        <i class="fa-solid fa-cart-plus"></i>
+        Add to Cart
+    </button>
+       
+	 </div>
             `;
 
             productGrid.appendChild(card);
@@ -215,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function attachProductButtons() {
         const buttons =
-            document.querySelectorAll(".add-cart-button");
+            document.querySelectorAll(".add-button");
 
         buttons.forEach(button => {
             button.addEventListener("click", () => {
@@ -400,22 +389,24 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    function updateCartCount() {
-        if (!cartCountElement) {
-            return;
-        }
+function updateCartCount() {
+    const count = cart.reduce(
+        (total, item) => total + item.quantity,
+        0
+    );
 
-        const count =
-            cart.reduce(
-                (total, item) =>
-                    total + item.quantity,
-                0
-            );
-
-        cartCountElement.textContent =
-            `${count} item${count === 1 ? "" : "s"} selected`;
+    if (cartCountElement) {
+        cartCountElement.textContent = count;
     }
 
+    const selectedText =
+        document.getElementById("selectedText");
+
+    if (selectedText) {
+        selectedText.textContent =
+            `${count} item${count === 1 ? "" : "s"} selected`;
+    }
+}
     function calculateSubtotal() {
         return cart.reduce(
             (total, item) =>
