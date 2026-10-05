@@ -1,47 +1,14 @@
-function updateCartCount()
 document.addEventListener("DOMContentLoaded", () => {
-    const products = [
-        {
-            id: 1,
-            name: "Mefenamic",
-            sku: "DEN-001",
-            category: "Consumables",
-            price: 250,
-            stock: 0
-        },
-        {
-            id: 2,
-            name: "Nitrile Gloves (Medium)",
-            sku: "DEN-002",
-            category: "Consumables",
-            price: 550,
-            stock: 77
-        },
-        {
-            id: 3,
-            name: "Paracetamol",
-            sku: "DEN-003",
-            category: "Consumables",
-            price: 10,
-            stock: 0
-        },
-        {
-            id: 4,
-            name: "Paracetamol",
-            sku: "DEN-004",
-            category: "Consumables",
-            price: 5,
-            stock: 0
-        },
-        {
-            id: 5,
-            name: "Paracetamol",
-            sku: "DEN-006",
-            category: "Consumables",
-            price: 175,
-            stock: 98
-        }
-    ];
+    const products = Array.isArray(window.posProducts) ? window.posProducts.map(product => ({
+        id: Number(product.id),
+        name: product.name ?? "Unnamed Product",
+        sku: product.sku ?? "",
+        category: product.category ?? "Uncategorized",
+        brand: product.brand ?? "",
+        price: Number(product.price) || 0,
+        stock: Number(product.stock) || 0,
+        image: product.image ?? ""
+    })) : [];
 
     let cart = [];
     let activeCategory = "All Items";
@@ -50,7 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let paymentMethod = "cash";
 
     const productGrid = document.getElementById("productGrid");
-const productGrid = document.getElementById("productGrid");
 
 const cartItems = document.getElementById("cartList");
 const cartEmpty = document.querySelector(".empty-cart");
@@ -892,10 +858,14 @@ function updateCartCount() {
         );
     }
 
-    if (paymentOverlay) {
-        paymentOverlay.addEventListener(
+    if (paymentModal) {
+        paymentModal.addEventListener(
             "click",
-            closePayment
+            (event) => {
+                if (event.target === paymentModal) {
+                    closePayment();
+                }
+            }
         );
     }
 

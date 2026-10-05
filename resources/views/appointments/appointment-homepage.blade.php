@@ -4,9 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <title>Shine & Smile Dental | Creating Healthy, Beautiful Smiles</title>
+	    <meta name="csrf-token" content="{{ csrf_token() }}">
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+	    tailwind.config = {
+	        darkMode: 'class'
+	    };
+	</script>
+	    <title>Shine & Smile Dental | Creating Healthy, Beautiful Smiles</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@600;700&display=swap"  rel="stylesheet"  >
 <link rel="stylesheet" href="{{ asset('css/appointment/patient-theme.css') }}">
 <link rel="stylesheet" href="{{ asset('css/appointment/homepage.css') }}">
@@ -1406,11 +1411,9 @@
 
 </section>
 
-  <div class="lg:col-span-3 w-full bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-
+<div class="lg:col-span-3 w-full bg-white dark:bg-[#111318] p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-[#2b3038]">
         <!-- Left Column: Appointments -->
-<section class="mb-12 bg-white p-8 rounded-2xl shadow-sm border border-gray-100 max-w-5xl mx-auto">
-
+<section class="mb-12 bg-white dark:bg-[#111318] p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-[#2b3038] max-w-5xl mx-auto">
 
     <div class="flex justify-between items-center mb-8">
 

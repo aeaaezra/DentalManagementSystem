@@ -10,24 +10,27 @@ use App\Models\PosSaleItems;
 
 class POSController extends Controller
 {
-    public function homepage()
-    {
-        $products = Products::where('is_active', true)
-            ->orderBy('product_name')
-            ->get();
+public function homepage()
+{
+    $products = Products::where('is_active', true)
+        ->orderBy('product_name')
+        ->get();
 
-        return view('pos.homepage', compact('products'));
-    }
+    $posProducts = $products->map(function ($product) {
+        return [
+            'id' => $product->id,
+            'name' => $product->product_name,
+            'sku' => $product->sku,
+            'category' => $product->category,
+            'brand' => $product->brand_name,
+            'price' => (float) $product->selling_price,
+            'stock' => (int) $product->quantity,
+            'image' => $product->image,
+        ];
+    })->values();
 
-    public function index()
-    {
-        $products = Products::where('is_active', true)
-            ->orderBy('product_name')
-            ->get();
-
-        return view('pos.pos', compact('products'));
-    }
-
+    return view('pos.homepage', compact('products', 'posProducts'));
+}
     public function checkout(Request $request)
     {
         /*

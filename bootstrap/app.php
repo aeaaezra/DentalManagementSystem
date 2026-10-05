@@ -28,38 +28,25 @@ return Application::configure(basePath: dirname(__DIR__))
 
         /*
         |--------------------------------------------------------------------------
-        | Redirect unauthenticated users
+        | Redirect Unauthenticated Users
         |--------------------------------------------------------------------------
+        |
+        | Appointment pages go to the appointment login page.
+        | All other protected pages go to the normal system login.
+        |
         */
 
         $middleware->redirectGuestsTo(function (Request $request) {
 
-            /*
-            |--------------------------------------------------------------------------
-            | Appointment pages → Appointment Login
-            |--------------------------------------------------------------------------
-            */
-
-            if (
-                $request->is('shine-and-smile/appointments/*') ||
-                $request->is('shine-and-smile/appointments-booking')
-            ) {
-                return url('/shine-and-smile/appointments/login');
+            if ($request->is('appointments/*')) {
+                return route('appointments.login');
             }
 
-            /*
-            |--------------------------------------------------------------------------
-            | Everything else → Normal Login
-            |--------------------------------------------------------------------------
-            */
-
-            return url('/login');
+            return route('login');
         });
-
     })
 
     ->withExceptions(function (Exceptions $exceptions): void {
-
         //
     })
 

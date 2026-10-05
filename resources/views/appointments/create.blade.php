@@ -7,9 +7,9 @@
         <title>Shine & Smile Dental | Creating Healthy, Beautiful Smiles</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="{{ asset('css/appointment/booking.css') }}">
-        <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
-        <link rel="stylesheet" href="{{ asset('css/appointment/patient-theme.css') }}">
+
+<link rel="stylesheet" href="{{ asset('css/appointment/patient-theme.css') }}">
+<link rel="stylesheet" href="{{ asset('css/appointment/booking.css') }}">
     <script src="{{ asset('js/patient-theme.js') }}"></script>
 
     </head>
@@ -54,10 +54,8 @@
     </a>
 
 </div>
-<div class="flex items-center gap-4 relative">
-
-    <div class="notification-wrapper">
-
+<div class="flex items-center gap-20 relative">
+<div class="notification-wrapper" style="margin-right: 30px !important;">
         <!-- NOTIFICATION BUTTON -->
         <button
             id="notificationBtn"
@@ -103,10 +101,6 @@
                     ->count();
             @endphp
 
-        <!-- NOTIFICATION DROPDOWN -->
-{{-- ============================================================
-     NOTIFICATION DROPDOWN
-     ============================================================ --}}
 
 @php
     /*
@@ -577,38 +571,32 @@
          ============================================================ --}}
 
     @if($totalNotifications > 0)
+<div class="notification-footer">
 
-        <div class="notification-footer">
+    <a
+        href="{{ route('appointments.history') }}"
+        class="notification-history-link"
+    >
+        <span>View appointment history</span>
 
-            <a
-                href="{{ route('appointments.history') }}"
-                class="notification-history-link"
-            >
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+        >
+            <path
+                d="M9 5l7 7-7 7"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            />
+        </svg>
 
-                <span>
-                    View appointment history
-                </span>
+    </a>
 
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    aria-hidden="true"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M9 5l7 7-7 7"
-                    />
-                </svg>
-
-            </a>
-
-        </div>
-
-    @endif
+</div>    @endif
 
 </div>
 

@@ -221,9 +221,11 @@
             </div>
             <button class="modal-primary" id="newSale">Start New Sale</button>
         </div>
-    </div>
+<script>
+    window.posProducts = @json($posProducts);
+</script>
 
-<script src="{{ asset('js/pos/pos_homepage.js') }}"></script>
+<script src="{{ asset('js/pos/pos_homepage.js') }}?v={{ time() }}"></script>
 </body>
 </html>
 

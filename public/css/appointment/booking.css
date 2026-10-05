@@ -4975,8 +4975,6 @@ html.dark-mode .border-yellow-100{
         padding-bottom: 30px !important;
     }
 
-        margin-right: 20px !important;
-    }
 }html.dark-mode #notificationBtn{
     margin-right: 10px !important;
 }html.dark-mode .main-nav-link{
@@ -5745,4 +5743,563 @@ html.dark-mode .logout-confirm-btn:hover {
         border-radius: 1rem;
     }
 
+}
+/* =========================================================
+   NOTIFICATION FIX ONLY
+   ========================================================= */
+
+.notification-wrapper {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    z-index: 100001 !important;
+    margin-right: 14px !important;
+}
+
+#notificationBtn {
+    position: relative !important;
+    width: 40px !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+
+    color: #b8b8b8 !important;
+    cursor: pointer !important;
+
+    border-radius: 50% !important;
+    pointer-events: auto !important;
+
+    z-index: 100002 !important;
+}
+
+#notificationBtn:hover {
+    color: #ff2f78 !important;
+    background: rgba(255, 47, 120, 0.10) !important;
+}
+
+#notificationBtn svg {
+    width: 20px !important;
+    height: 20px !important;
+    display: block !important;
+    pointer-events: none !important;
+}
+
+/* Notification dropdown */
+#notificationDropdown {
+    position: absolute !important;
+    top: calc(100% + 10px) !important;
+    right: 0 !important;
+
+    z-index: 100003 !important;
+
+    display: none;
+}
+
+/* When JavaScript opens it */
+#notificationDropdown.show {
+    display: block !important;
+}
+
+/* Prevent invisible elements from blocking clicks */
+#notificationModalBackdrop {
+    pointer-events: none;
+}
+
+#notificationModalBackdrop.active {
+    pointer-events: auto;
+}
+
+    #navbarActions {
+        display: flex !important;
+        align-items: center !important;
+        gap: 24px !important;
+    }
+
+    #notificationWrapper,
+    .notification-wrapper {
+        margin-right: 0 !important;
+        flex-shrink: 0 !important;
+    }
+
+    #profileWrapper {
+        margin-left: 0 !important;
+        flex-shrink: 0 !important;
+    }
+/* NOTIFICATION TO PROFILE GAP */
+.main-navbar #notificationBtn {
+}
+/* =========================================================
+   BOOKING PAGE - NOTIFICATION / PROFILE GAP
+   ========================================================= */
+
+.main-navbar #navbarActions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 24px !important;
+    flex-shrink: 0 !important;
+}
+
+/* Notification */
+.main-navbar #navbarActions .notification-wrapper {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex: 0 0 auto !important;
+    width: 60px !important;
+    min-width: 60px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Notification button */
+.main-navbar #navbarActions #notificationBtn {
+    position: relative !important;
+
+    width: 60px !important;
+    min-width: 60px !important;
+    height: 60px !important;
+    min-height: 60px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    flex: 0 0 60px !important;
+
+    border: 0 !important;
+    border-radius: 16px !important;
+
+    background: #24121c !important;
+    color: #ff2f78 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Profile stays as a separate flex item */
+.main-navbar #navbarActions #profileBtn {
+    position: relative !important;
+    flex: 0 0 auto !important;
+    margin-left: 0 !important;
+}
+
+html.dark-mode body {
+    background: #080808 !important;
+    color: #f5f5f5 !important;
+}
+
+/* =========================================================
+   CREATE APPOINTMENT — DARK MODE FIX
+   booking.css ONLY
+   ========================================================= */
+
+/* ---------- SECTION CARDS ---------- */
+
+html.dark-mode body .section-card {
+    background: #181818 !important;
+    color: #f5f5f5 !important;
+    border: 1px solid #303030 !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.40) !important;
+}
+
+html.dark-mode body .section-card .section-title {
+    color: #ec4899 !important;
+    border-bottom-color: #303030 !important;
+}
+
+
+/* ---------- MEDICAL HISTORY ---------- */
+
+html.dark-mode body .medical-item {
+    background: #202020 !important;
+    color: #f5f5f5 !important;
+    border: 1px solid #363636 !important;
+}
+
+html.dark-mode body .medical-item:hover {
+    background: #252525 !important;
+    border-color: #ec4899 !important;
+}
+
+html.dark-mode body .checkbox-label {
+    color: #eeeeee !important;
+}
+
+html.dark-mode body .checkbox-label span {
+    color: #eeeeee !important;
+}
+
+html.dark-mode body .medical-item input[type="checkbox"] {
+    accent-color: #ec4899 !important;
+}
+
+
+/* ---------- ADDITIONAL MEDICAL INFORMATION ---------- */
+
+html.dark-mode body textarea {
+    background: #1a1a1a !important;
+    color: #ffffff !important;
+    border-color: #3a3a3a !important;
+}
+
+html.dark-mode body textarea::placeholder {
+    color: #777777 !important;
+}
+
+html.dark-mode body textarea:focus {
+    background: #1a1a1a !important;
+    color: #ffffff !important;
+    border-color: #ec4899 !important;
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15) !important;
+}
+
+
+/* ---------- SIGNATURE SECTION ---------- */
+
+html.dark-mode body .signature-section {
+    border-top-color: #303030 !important;
+}
+
+html.dark-mode body .signature-preview {
+    background: #111111 !important;
+    border-color: #444444 !important;
+    color: #eeeeee !important;
+}
+
+html.dark-mode body #signaturePlaceholder {
+    color: #777777 !important;
+}
+
+html.dark-mode body .signature-line div {
+    background: #555555 !important;
+}
+
+html.dark-mode body .signature-line span {
+    color: #999999 !important;
+}
+
+
+/* ---------- CLEAR SIGNATURE BUTTON ---------- */
+
+html.dark-mode body .clear-signature-button {
+    background: #202020 !important;
+    color: #cccccc !important;
+    border-color: #444444 !important;
+}
+
+html.dark-mode body .clear-signature-button:hover {
+    background: #2a2a2a !important;
+    color: #ec4899 !important;
+    border-color: #ec4899 !important;
+}
+
+
+/* ---------- SIGNATURE CANVAS ---------- */
+
+html.dark-mode body .signature-pad-wrapper {
+    background: #111111 !important;
+    border-color: #444444 !important;
+}
+
+html.dark-mode body .signature-canvas {
+    background: #111111 !important;
+}
+
+html.dark-mode body .signature-canvas-placeholder {
+    color: #666666 !important;
+}
+
+
+/* ---------- AVAILABLE TIME SLOTS ---------- */
+
+html.dark-mode body .slots-container {
+    background: #111111 !important;
+    border-color: #303030 !important;
+    color: #eeeeee !important;
+}
+
+
+/* ---------- INPUTS / SELECTS ---------- */
+
+html.dark-mode body input,
+html.dark-mode body select {
+    background: #1a1a1a !important;
+    color: #ffffff !important;
+    border-color: #3a3a3a !important;
+}
+
+html.dark-mode body input::placeholder {
+    color: #777777 !important;
+}
+
+html.dark-mode body input:focus,
+html.dark-mode body select:focus {
+    background: #1a1a1a !important;
+    color: #ffffff !important;
+    border-color: #ec4899 !important;
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15) !important;
+}
+
+
+/* ---------- SELECT OPTIONS ---------- */
+
+html.dark-mode body select option {
+    background: #1a1a1a !important;
+    color: #ffffff !important;
+}
+
+
+/* ---------- FORM LABELS ---------- */
+
+html.dark-mode body label {
+    color: #eeeeee !important;
+}
+
+
+/* ---------- SIGNATURE MODAL ---------- */
+
+html.dark-mode body .signature-modal-content {
+    background: #181818 !important;
+    color: #ffffff !important;
+    border: 1px solid #333333 !important;
+}
+
+html.dark-mode body .signature-modal-header {
+    background: #181818 !important;
+    color: #ffffff !important;
+    border-bottom-color: #303030 !important;
+}
+
+html.dark-mode body .signature-modal-footer {
+    background: #181818 !important;
+    border-top-color: #303030 !important;
+}
+
+html.dark-mode body .signature-modal-label {
+    color: #ec4899 !important;
+}
+
+html.dark-mode body #signatureModalTitle {
+    color: #ffffff !important;
+}
+
+html.dark-mode body .signature-reset-button,
+html.dark-mode body .signature-cancel-button {
+    background: #222222 !important;
+    color: #dddddd !important;
+    border-color: #444444 !important;
+}
+
+html.dark-mode body .signature-reset-button:hover,
+html.dark-mode body .signature-cancel-button:hover {
+    background: #2d2d2d !important;
+    border-color: #ec4899 !important;
+    color: #ec4899 !important;
+}
+
+
+/* ---------- MEDICAL SUMMARY ---------- */
+
+html.dark-mode body .medical-summary-item {
+    background: #202020 !important;
+    color: #eeeeee !important;
+    border-color: #363636 !important;
+}
+
+html.dark-mode body .medical-summary-item p,
+html.dark-mode body .medical-summary-item span {
+    color: #cccccc !important;
+}
+/* =========================================================
+   CREATE APPOINTMENT - DARK MODE
+   booking.css controls this page
+   ========================================================= */
+
+html.dark-mode body {
+    background: #080808 !important;
+    color: #f5f5f5 !important;
+}
+
+/* Main booking container */
+html.dark-mode .booking-container {
+    background: #111111 !important;
+    color: #f5f5f5 !important;
+    border-color: #2d2d2d !important;
+}
+
+/* ALL appointment sections */
+html.dark-mode .section-card {
+    background: #111111 !important;
+    color: #f5f5f5 !important;
+    border: 1px solid #2d2d2d !important;
+    box-shadow: 0 15px 40px rgba(0,0,0,.35) !important;
+}
+
+/* Section titles */
+html.dark-mode .section-title {
+    color: #f5f5f5 !important;
+    border-bottom-color: #2d2d2d !important;
+}
+
+/* Labels */
+html.dark-mode .section-card label,
+html.dark-mode .section-card .form-group label {
+    color: #e5e5e5 !important;
+}
+
+/* Text */
+html.dark-mode .section-card p,
+html.dark-mode .section-card span {
+    color: #b8b8b8;
+}
+
+/* Inputs */
+html.dark-mode .section-card input:not([type="checkbox"]):not([type="radio"]),
+html.dark-mode .section-card textarea,
+html.dark-mode .section-card select {
+    background: #181818 !important;
+    color: #f5f5f5 !important;
+    border-color: #3a3a3a !important;
+}
+
+/* Placeholder */
+html.dark-mode .section-card input::placeholder,
+html.dark-mode .section-card textarea::placeholder {
+    color: #777777 !important;
+}
+
+/* Medical history boxes */
+html.dark-mode .medical-item {
+    background: #181818 !important;
+    color: #f5f5f5 !important;
+    border-color: #333333 !important;
+}
+
+html.dark-mode .medical-item:hover {
+    background: #1d1d1d !important;
+    border-color: #ec1d66 !important;
+}
+
+html.dark-mode .medical-item label {
+    color: #e5e5e5 !important;
+}
+
+/* Doctor cards */
+html.dark-mode .doctor-card {
+    background: #181818 !important;
+    color: #f5f5f5 !important;
+    border-color: #333333 !important;
+}
+
+html.dark-mode .doctor-card:hover {
+    border-color: #ec1d66 !important;
+}
+
+/* Time slots */
+html.dark-mode .slots-container {
+    background: #111111 !important;
+    border-color: #333333 !important;
+}
+
+html.dark-mode .slot,
+html.dark-mode .time-slot {
+    background: #181818 !important;
+    color: #f5f5f5 !important;
+    border-color: #333333 !important;
+}
+
+/* Signature area */
+html.dark-mode .signature-section {
+    border-top-color: #333333 !important;
+}
+
+html.dark-mode .signature-preview {
+    background: #181818 !important;
+    border-color: #444444 !important;
+}
+
+html.dark-mode .signature-preview span,
+html.dark-mode #signaturePlaceholder {
+    color: #777777 !important;
+}
+
+html.dark-mode .clear-signature-button {
+    background: #181818 !important;
+    color: #d0d0d0 !important;
+    border-color: #3a3a3a !important;
+}
+
+html.dark-mode .signature-line div {
+    background: #555555 !important;
+}
+
+html.dark-mode .signature-line span {
+    color: #999999 !important;
+}
+
+/* Medical summary */
+html.dark-mode .medical-summary-item {
+    background: #181818 !important;
+    color: #f5f5f5 !important;
+    border-color: #333333 !important;
+}
+
+/* Buttons remain pink */
+html.dark-mode .add-signature-button {
+    background: #d12d5d !important;
+    color: #ffffff !important;
+}
+
+/* =========================================================
+   FIX: Notification button stuck in hover/focus state
+   ========================================================= */
+
+.notification-btn {
+    background: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+    transition: background-color 0.2s ease,
+                color 0.2s ease,
+                transform 0.2s ease;
+}
+
+/* Only show hover effect when the mouse is actually over it */
+@media (hover: hover) and (pointer: fine) {
+    .notification-btn:hover {
+        background: #fce7f3 !important;
+        color: #db2777 !important;
+    }
+}
+
+/* Remove browser focus appearance */
+.notification-btn:focus,
+.notification-btn:focus-visible,
+.notification-btn:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Don't keep the hover background after clicking */
+.notification-btn:active {
+    background: transparent !important;
+}
+
+/* If JS adds an open class, keep the button controlled */
+.notification-btn.open {
+    background: transparent !important;
+}
+.notification-wrapper {
+    background: transparent !important;
+}
+
+.notification-wrapper:hover {
+    background: transparent !important;
 }

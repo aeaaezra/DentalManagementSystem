@@ -7450,88 +7450,1545 @@ body {
 
 
 /* =========================================================
-   FINAL NAVBAR FIX — 2026-10-03
-   Fixes navbar colors/blue backgrounds only.
-   Does not alter notification, profile, balance, or layout rules.
+   FINAL NAVBAR — MATCH REFERENCE
    ========================================================= */
 
-.main-navbar {
+/* NAVBAR */
+html body .main-navbar {
     background: #080808 !important;
+    background-color: #080808 !important;
     border-bottom: 1px solid #292929 !important;
 }
 
-.main-navbar .main-nav-link {
+/* =========================================================
+   LOGO — DARK LIKE REFERENCE
+   ========================================================= */
+
+html body .main-navbar > div:first-child a,
+html body .main-navbar > div:first-child a *,
+html body .main-navbar > div:first-child a span {
+    color: #050505 !important;
+    -webkit-text-fill-color: #050505 !important;
+
     background: transparent !important;
     background-color: transparent !important;
-    color: #b8b8b8 !important;
+    background-image: none !important;
+
     text-decoration: none !important;
 }
 
-.main-navbar .main-nav-link:hover {
+/* =========================================================
+   NAVIGATION LINKS
+   ========================================================= */
+
+html body .main-navbar .main-nav-link {
+    color: #d1d1d1 !important;
+    -webkit-text-fill-color: #d1d1d1 !important;
+
     background: transparent !important;
     background-color: transparent !important;
-    color: #ffffff !important;
+    background-image: none !important;
+
+    text-decoration: none !important;
 }
 
-.main-navbar .main-nav-link.active {
-    background: transparent !important;
-    background-color: transparent !important;
+/* ACTIVE HOME */
+html body .main-navbar .main-nav-link.active {
     color: #ff2f78 !important;
-}
+    -webkit-text-fill-color: #ff2f78 !important;
 
-.main-navbar .main-nav-link.active::after {
-    background: #ff2f78 !important;
-}
-
-/* Prevent utility/Tailwind background classes from painting navbar links. */
-.main-navbar a.main-nav-link,
-.main-navbar a.main-nav-link:hover,
-.main-navbar a.main-nav-link.active {
-    background-image: none !important;
-}
-
-/* Brand / Shine & Smile */
-.main-navbar > div:first-child a {
     background: transparent !important;
     background-color: transparent !important;
-    background-image: none !important;
+}
+
+/* HOVER */
+html body .main-navbar .main-nav-link:hover {
+    color: #ff2f78 !important;
+    -webkit-text-fill-color: #ff2f78 !important;
+
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* ACTIVE UNDERLINE */
+html body .main-navbar .main-nav-link.active::after {
+    content: "" !important;
+
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+
+    width: 100% !important;
+    height: 2px !important;
+
+    background: #ff2f78 !important;
+    border-radius: 2px !important;
+}
+
+/* =========================================================
+   NOTIFICATION — KEEP REFERENCE STYLE
+   ========================================================= */
+
+html body .main-navbar #notificationBtn,
+html body .main-navbar .notification-btn {
+    background: #171318 !important;
     color: #ffffff !important;
-    text-decoration: none !important;
+    border: 1px solid #4a3942 !important;
 }
 
-/* Keep every navbar anchor transparent unless a dedicated component needs its own background. */
-.main-navbar .main-nav-link,
-.main-navbar .main-nav-link * {
-    text-decoration: none !important;
+html body .main-navbar #notificationBtn:hover,
+html body .main-navbar .notification-btn:hover {
+    background: #241b20 !important;
+    color: #ff6aa9 !important;
+    border-color: #ec1961 !important;
 }
 
-/* Dark-mode equivalent, with higher specificity than the older duplicate rules. */
-html.dark-mode .main-navbar {
+/* Notification badge */
+html body .main-navbar #notificationBtn .notification-badge,
+html body .main-navbar .notification-btn .notification-badge {
+    background: #ec1961 !important;
+    color: #ffffff !important;
+}
+
+/* =========================================================
+   PROFILE
+   ========================================================= */
+
+html body .main-navbar #profileBtn {
+    color: #ffffff !important;
+}
+
+html body .main-navbar #profileBtn * {
+    box-sizing: border-box;
+}
+
+html body .main-navbar #profileBtn .text-white,
+html body .main-navbar #profileBtn [class*="text-white"] {
+    color: #ffffff !important;
+}
+
+html body .main-navbar #profileBtn .text-gray-400,
+html body .main-navbar #profileBtn [class*="text-gray-400"] {
+    color: #999999 !important;
+}
+
+/* Profile dropdown arrow */
+html body .main-navbar #profileBtn svg {
+    color: #b8b8b8 !important;
+    stroke: #b8b8b8 !important;
+}
+
+/* =========================================================
+   REMOVE UNWANTED LINK BACKGROUNDS
+   ========================================================= */
+
+html body .main-navbar a,
+html body .main-navbar a:hover,
+html body .main-navbar a:focus,
+html body .main-navbar a:active {
+    background-image: none !important;
+}
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+html.dark-mode body .main-navbar {
     background: #080808 !important;
+    background-color: #080808 !important;
     border-bottom: 1px solid #292929 !important;
 }
 
-html.dark-mode .main-navbar .main-nav-link {
-    background: transparent !important;
-    background-color: transparent !important;
-    background-image: none !important;
-    color: #b8b8b8 !important;
+html.dark-mode body .main-navbar .main-nav-link {
+    color: #d1d1d1 !important;
+    -webkit-text-fill-color: #d1d1d1 !important;
 }
 
-html.dark-mode .main-navbar .main-nav-link:hover {
-    background: transparent !important;
-    background-color: transparent !important;
-    background-image: none !important;
-    color: #ffffff !important;
+html.dark-mode body .main-navbar .main-nav-link.active {
+    color: #ff2f78 !important;
+    -webkit-text-fill-color: #ff2f78 !important;
 }
 
-html.dark-mode .main-navbar .main-nav-link.active {
-    background: transparent !important;
-    background-color: transparent !important;
-    background-image: none !important;
+html.dark-mode body .main-navbar > div:first-child a,
+html.dark-mode body .main-navbar > div:first-child a *,
+html.dark-mode body .main-navbar > div:first-child a span {
+    color: #050505 !important;
+    -webkit-text-fill-color: #050505 !important;
+}
+/* =========================================================
+   FINAL SHINE & SMILE LOGO FIX
+   ========================================================= */
+
+html body .main-navbar > div:first-child {
     color: #ff2f78 !important;
 }
 
-html.dark-mode .main-navbar .main-nav-link.active::after {
-    background: #ff2f78 !important;
+html body .main-navbar > div:first-child a:first-child,
+html body .main-navbar > div:first-child a:first-child span,
+html body .main-navbar > div:first-child a:first-child * {
+    color: #ff2f78 !important;
+    -webkit-text-fill-color: #ff2f78 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+}
+/* =========================================================
+   FINAL NAVBAR POSITION — MATCH REFERENCE
+   ========================================================= */
+
+@media (min-width: 768px) {
+
+    .main-navbar > div > .hidden.md\:flex {
+        transform: translateX(38px) !important;
+    }
+
+    #navbarActions {
+        margin-left: auto !important;
+        transform: translateX(38px) !important;
+    }
+
+}
+
+html body nav.main-navbar a.text-xl.sm\:text-2xl.font-bold.whitespace-nowrap {
+    color: #ff2f78 !important;
+    -webkit-text-fill-color: #ff2f78 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+}
+/* =========================================================
+   SHINE & SMILE - NOTIFICATION DROPDOWN FINAL FIX
+   ========================================================= */
+
+/* Main notification dropdown */
+#notificationDropdown {
+    position: fixed !important;
+
+    top: 78px !important;
+    right: 24px !important;
+    left: auto !important;
+
+    width: 490px !important;
+    max-width: calc(100vw - 32px) !important;
+
+    height: min(720px, calc(100vh - 100px)) !important;
+    max-height: calc(100vh - 100px) !important;
+    min-height: 0 !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    overflow: hidden !important;
+
+    background: #111111 !important;
+    color: #ffffff !important;
+
+    border: 1px solid rgba(236, 29, 102, 0.35) !important;
+    border-radius: 22px !important;
+
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.55) !important;
+
+    z-index: 999999 !important;
+
+    box-sizing: border-box !important;
+}
+
+/* Hidden state */
+#notificationDropdown.hidden {
+    display: none !important;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+#notificationDropdown .notification-dropdown-header,
+#notificationDropdown .notification-header {
+    flex: 0 0 auto !important;
+
+    width: 100% !important;
+    min-height: 110px !important;
+
+    padding: 22px 24px !important;
+    margin: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+
+    box-sizing: border-box !important;
+
+    background: #111111 !important;
+
+    border: 0 !important;
+    border-bottom: 1px solid #2d2d2d !important;
+}
+
+/* Header text */
+#notificationDropdown .notification-header-content {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+
+    display: block !important;
+}
+
+#notificationDropdown .notification-header-title {
+    margin: 0 !important;
+
+    color: #ffffff !important;
+
+    font-size: 30px !important;
+    line-height: 1.15 !important;
+    font-weight: 700 !important;
+}
+
+#notificationDropdown .notification-header-subtitle {
+    margin: 8px 0 0 !important;
+
+    color: #999999 !important;
+
+    font-size: 16px !important;
+    line-height: 1.4 !important;
+}
+
+/* Close button */
+#notificationDropdown .notification-close-btn {
+    flex: 0 0 54px !important;
+
+    width: 54px !important;
+    height: 54px !important;
+
+    min-width: 54px !important;
+    min-height: 54px !important;
+
+    margin-left: 18px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    border: none !important;
+    border-radius: 50% !important;
+
+    background: #383838 !important;
+    color: #ffffff !important;
+
+    cursor: pointer !important;
+
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+#notificationDropdown .notification-close-btn:hover {
+    background: #454545 !important;
+    color: #ffffff !important;
+}
+
+#notificationDropdown .notification-close-btn svg {
+    width: 24px !important;
+    height: 24px !important;
+
+    min-width: 24px !important;
+    min-height: 24px !important;
+
+    max-width: 24px !important;
+    max-height: 24px !important;
+
+    display: block !important;
+
+    transform: none !important;
+}
+
+/* =========================================================
+   FILTER TABS
+   ========================================================= */
+
+#notificationDropdown .notification-filter-bar {
+    flex: 0 0 auto !important;
+
+    width: 100% !important;
+    height: 74px !important;
+    min-height: 74px !important;
+
+    padding: 0 24px !important;
+    margin: 0 !important;
+
+    display: flex !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+
+    box-sizing: border-box !important;
+
+    background: #111111 !important;
+
+    border-bottom: 1px solid #2d2d2d !important;
+}
+
+#notificationDropdown .notification-filter {
+    position: relative !important;
+
+    height: 74px !important;
+
+    padding: 0 18px !important;
+    margin: 0 12px 0 0 !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    border: 0 !important;
+    background: transparent !important;
+
+    color: #858585 !important;
+
+    font-size: 17px !important;
+    font-weight: 700 !important;
+
+    cursor: pointer !important;
+
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+#notificationDropdown .notification-filter:hover {
+    color: #ff4d98 !important;
+    background: transparent !important;
+}
+
+#notificationDropdown .notification-filter[aria-selected="true"] {
+    color: #ff3f91 !important;
+}
+
+#notificationDropdown .notification-filter[aria-selected="true"]::after {
+    content: "" !important;
+
+    position: absolute !important;
+
+    left: 0 !important;
+    right: 0 !important;
+    bottom: -1px !important;
+
+    height: 3px !important;
+
+    background: #ff3f91 !important;
+
+    border-radius: 3px 3px 0 0 !important;
+}
+
+/* Filter counts */
+#notificationDropdown .notification-filter-count {
+    margin-left: 4px !important;
+}
+
+/* =========================================================
+   NOTIFICATION LIST
+   ========================================================= */
+
+#notificationDropdown .notification-list {
+    flex: 1 1 auto !important;
+
+    width: 100% !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+
+    background: #111111 !important;
+
+    box-sizing: border-box !important;
+
+    scrollbar-width: thin;
+    scrollbar-color: #444444 transparent;
+}
+
+#notificationDropdown .notification-list::-webkit-scrollbar {
+    width: 7px !important;
+}
+
+#notificationDropdown .notification-list::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+
+#notificationDropdown .notification-list::-webkit-scrollbar-thumb {
+    background: #444444 !important;
+    border-radius: 10px !important;
+}
+
+/* Notification item */
+#notificationDropdown .notification-item {
+    position: relative !important;
+
+    width: 100% !important;
+    min-height: 124px !important;
+
+    padding: 20px 24px !important;
+    margin: 0 !important;
+
+    display: flex !important;
+    align-items: flex-start !important;
+
+    gap: 20px !important;
+
+    box-sizing: border-box !important;
+
+    background: #161616 !important;
+    color: #ffffff !important;
+
+    border: 0 !important;
+    border-bottom: 1px solid #292929 !important;
+
+    cursor: pointer !important;
+}
+
+#notificationDropdown .notification-item:hover {
+    background: #1c1c1c !important;
+}
+
+/* Notification icon */
+#notificationDropdown .notification-icon {
+    flex: 0 0 58px !important;
+
+    width: 58px !important;
+    height: 58px !important;
+
+    min-width: 58px !important;
+    min-height: 58px !important;
+
+    max-width: 58px !important;
+    max-height: 58px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    border-radius: 15px !important;
+
+    background: #251d27 !important;
+    color: #ffffff !important;
+
+    box-sizing: border-box !important;
+}
+
+#notificationDropdown .notification-icon svg {
+    width: 23px !important;
+    height: 23px !important;
+
+    min-width: 23px !important;
+    min-height: 23px !important;
+
+    max-width: 23px !important;
+    max-height: 23px !important;
+
+    display: block !important;
+
+    transform: none !important;
+}
+
+/* Notification content */
+#notificationDropdown .notification-content {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+#notificationDropdown .notification-title {
+    margin: 0 0 7px !important;
+
+    color: #ffffff !important;
+
+    font-size: 18px !important;
+    line-height: 1.3 !important;
+    font-weight: 700 !important;
+}
+
+#notificationDropdown .notification-message {
+    margin: 0 !important;
+
+    color: #bdbdbd !important;
+
+    font-size: 15px !important;
+    line-height: 1.55 !important;
+
+    overflow-wrap: anywhere !important;
+}
+
+#notificationDropdown .notification-time {
+    margin-top: 10px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+
+    color: #777777 !important;
+
+    font-size: 13px !important;
+}
+
+#notificationDropdown .notification-time svg {
+    width: 16px !important;
+    height: 16px !important;
+
+    min-width: 16px !important;
+    min-height: 16px !important;
+
+    max-width: 16px !important;
+    max-height: 16px !important;
+
+    display: block !important;
+
+    transform: none !important;
+}
+
+/* Unread dot */
+#notificationDropdown .notification-unread-dot {
+    position: absolute !important;
+
+    top: 22px !important;
+    left: 14px !important;
+
+    width: 8px !important;
+    height: 8px !important;
+
+    min-width: 8px !important;
+    min-height: 8px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border-radius: 50% !important;
+
+    background: #ff3f91 !important;
+}
+
+/* =========================================================
+   FILTER EMPTY MESSAGE
+   ========================================================= */
+
+/* IMPORTANT: hidden means actually hidden */
+#notificationDropdown #notificationFilterEmpty.hidden {
+    display: none !important;
+}
+
+#notificationDropdown #notificationFilterEmpty:not(.hidden) {
+    width: 100% !important;
+
+    min-height: 180px !important;
+
+    padding: 35px 24px !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    box-sizing: border-box !important;
+
+    background: #111111 !important;
+}
+
+/* Empty state */
+#notificationDropdown .notification-empty {
+    width: 100% !important;
+
+    padding: 40px 24px !important;
+
+    text-align: center !important;
+
+    box-sizing: border-box !important;
+
+    background: #111111 !important;
+}
+
+#notificationDropdown .notification-empty-title {
+    margin: 0 !important;
+
+    color: #aaaaaa !important;
+
+    font-size: 17px !important;
+    font-weight: 600 !important;
+}
+
+#notificationDropdown .notification-empty-text {
+    margin: 7px 0 0 !important;
+
+    color: #777777 !important;
+
+    font-size: 14px !important;
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+#notificationDropdown .notification-footer {
+    flex: 0 0 auto !important;
+
+    width: 100% !important;
+    min-height: 72px !important;
+
+    padding: 0 24px !important;
+    margin: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    box-sizing: border-box !important;
+
+    background: #111111 !important;
+
+    border-top: 1px solid #2d2d2d !important;
+}
+
+/* History link */
+#notificationDropdown .notification-history-link {
+    position: relative !important;
+
+    width: auto !important;
+    height: auto !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    padding: 10px 0 !important;
+    margin: 0 !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    gap: 8px !important;
+
+    background: transparent !important;
+    color: #ff3f91 !important;
+
+    border: 0 !important;
+    border-radius: 0 !important;
+
+    font-size: 15px !important;
+    font-weight: 700 !important;
+
+    text-decoration: none !important;
+
+    transform: none !important;
+    box-shadow: none !important;
+
+    overflow: visible !important;
+}
+
+#notificationDropdown .notification-history-link:hover {
+    color: #ff69ab !important;
+    background: transparent !important;
+}
+
+/* FIX THE GIANT PINK DIAGONAL ARROW */
+#notificationDropdown .notification-history-link svg {
+    position: static !important;
+
+    width: 18px !important;
+    height: 18px !important;
+
+    min-width: 18px !important;
+    min-height: 18px !important;
+
+    max-width: 18px !important;
+    max-height: 18px !important;
+
+    display: block !important;
+
+    flex: 0 0 18px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    color: currentColor !important;
+
+    stroke: currentColor !important;
+
+    transform: none !important;
+
+    rotate: none !important;
+
+    scale: 1 !important;
+
+    overflow: visible !important;
+}
+
+/* Make sure the arrow path cannot become huge */
+#notificationDropdown .notification-history-link svg path {
+    stroke: currentColor !important;
+    stroke-width: 2 !important;
+
+    transform: none !important;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+    #notificationDropdown {
+        top: 70px !important;
+        right: 10px !important;
+        left: 10px !important;
+
+        width: auto !important;
+        max-width: none !important;
+
+        height: calc(100vh - 85px) !important;
+        max-height: calc(100vh - 85px) !important;
+
+        border-radius: 18px !important;
+    }
+
+    #notificationDropdown .notification-dropdown-header,
+    #notificationDropdown .notification-header {
+        min-height: 92px !important;
+
+        padding: 18px !important;
+    }
+
+    #notificationDropdown .notification-header-title {
+        font-size: 24px !important;
+    }
+
+    #notificationDropdown .notification-header-subtitle {
+        font-size: 13px !important;
+    }
+
+    #notificationDropdown .notification-close-btn {
+        width: 46px !important;
+        height: 46px !important;
+
+        min-width: 46px !important;
+        min-height: 46px !important;
+    }
+
+    #notificationDropdown .notification-filter-bar {
+        height: 62px !important;
+        min-height: 62px !important;
+
+        padding: 0 12px !important;
+    }
+
+    #notificationDropdown .notification-filter {
+        height: 62px !important;
+
+        padding: 0 12px !important;
+
+        font-size: 14px !important;
+    }
+
+    #notificationDropdown .notification-item {
+        min-height: 110px !important;
+
+        padding: 16px !important;
+
+        gap: 13px !important;
+    }
+
+    #notificationDropdown .notification-icon {
+        flex-basis: 48px !important;
+
+        width: 48px !important;
+        height: 48px !important;
+
+        min-width: 48px !important;
+        min-height: 48px !important;
+
+        max-width: 48px !important;
+        max-height: 48px !important;
+    }
+
+    #notificationDropdown .notification-title {
+        font-size: 16px !important;
+    }
+
+    #notificationDropdown .notification-message {
+        font-size: 13px !important;
+    }
+
+    #notificationDropdown .notification-footer {
+        min-height: 64px !important;
+
+        padding: 0 16px !important;
+    }
+
+    #notificationDropdown .notification-history-link {
+        font-size: 14px !important;
+    }
+}
+/* =========================================================
+   APPOINTMENT BOOKING - FINAL DARK MODE FIX
+   Shine & Smile Dental System
+   ========================================================= */
+
+/* ---------- GLOBAL PAGE ---------- */
+
+body {
+    background: #0b0b0d !important;
+    color: #f5f5f5 !important;
+}
+
+main,
+.appointment-page,
+.booking-page,
+.booking-container {
+    background: #0b0b0d !important;
+    color: #f5f5f5 !important;
+}
+
+/* Prevent content from hiding underneath fixed navbar */
+.booking-container,
+.appointment-container,
+main {
+    padding-top: 35px !important;
+}
+
+/* ---------- SECTION CARDS ---------- */
+
+.section-card,
+.form-section,
+.booking-section,
+.appointment-section,
+.medical-history,
+.appointment-details {
+    background: #111113 !important;
+    border: 1px solid #29292d !important;
+    border-radius: 22px !important;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35) !important;
+    color: #f5f5f5 !important;
+}
+
+/* ---------- HEADINGS ---------- */
+
+.section-card h1,
+.section-card h2,
+.section-card h3,
+.form-section h1,
+.form-section h2,
+.form-section h3,
+.booking-section h1,
+.booking-section h2,
+.booking-section h3,
+.medical-history h1,
+.medical-history h2,
+.appointment-details h1,
+.appointment-details h2 {
+    color: #ffffff !important;
+}
+
+.medical-history h2,
+.appointment-details h2 {
+    font-weight: 700 !important;
+    letter-spacing: -0.4px;
+}
+
+/* Section divider */
+.section-card hr,
+.form-section hr,
+.medical-history hr,
+.appointment-details hr {
+    border: 0 !important;
+    border-top: 1px solid #3a3a3f !important;
+    margin: 20px 0 28px !important;
+}
+
+/* ---------- MEDICAL HISTORY GRID ---------- */
+
+.medical-history .grid,
+.medical-history-grid,
+.medical-history .form-grid {
+    gap: 24px !important;
+}
+
+/* White medical cards -> DARK */
+
+.medical-history .grid > div,
+.medical-history-grid > div,
+.medical-history .form-grid > div {
+    background: #18181b !important;
+    border: 1px solid #303036 !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+}
+
+/* Selected medical card */
+
+.medical-history .grid > div:has(input[type="checkbox"]:checked),
+.medical-history-grid > div:has(input[type="checkbox"]:checked) {
+    border-color: #ec4899 !important;
+    box-shadow: 0 0 0 1px rgba(236, 72, 153, 0.25) !important;
+}
+
+/* ---------- CHECKBOXES ---------- */
+
+input[type="checkbox"] {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+
+    width: 27px !important;
+    height: 27px !important;
+
+    background: #222225 !important;
+    border: 2px solid #55555b !important;
+    border-radius: 5px !important;
+
+    cursor: pointer !important;
+    vertical-align: middle !important;
+
+    position: relative !important;
+    flex-shrink: 0 !important;
+}
+
+input[type="checkbox"]:checked {
+    background: #ec4899 !important;
+    border-color: #ec4899 !important;
+}
+
+input[type="checkbox"]:checked::after {
+    content: "✓" !important;
+    position: absolute !important;
+    color: #ffffff !important;
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    left: 4px !important;
+    top: 0px !important;
+}
+
+/* ---------- LABELS ---------- */
+
+.medical-history label,
+.medical-history .checkbox-label,
+.medical-history span {
+    color: #eeeeee !important;
+}
+
+.medical-history label {
+    font-weight: 600 !important;
+}
+
+/* ---------- TEXT INPUTS ---------- */
+
+input[type="text"],
+input[type="date"],
+input[type="email"],
+input[type="number"],
+input[type="tel"],
+input[type="time"],
+select,
+textarea {
+    background: #18181b !important;
+    color: #f5f5f5 !important;
+    border: 1px solid #36363c !important;
+    border-radius: 12px !important;
+    outline: none !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Placeholder */
+
+input::placeholder,
+textarea::placeholder {
+    color: #77777f !important;
+    opacity: 1 !important;
+}
+
+/* Focus */
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #ec4899 !important;
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.12) !important;
+}
+
+/* ---------- MEDICAL DETAILS INPUT ---------- */
+
+.medical-history input[type="text"],
+.medical-history textarea {
+    background: #111113 !important;
+    border: 1px solid #303036 !important;
+    color: #ffffff !important;
+}
+
+/* ---------- OTHER DISEASES ---------- */
+
+.medical-history textarea {
+    min-height: 110px !important;
+    resize: vertical !important;
+}
+
+/* ---------- APPOINTMENT DETAILS ---------- */
+
+.appointment-details {
+    margin-top: 28px !important;
+}
+
+.appointment-details label {
+    display: block !important;
+    color: #eeeeee !important;
+    font-weight: 600 !important;
+    margin-bottom: 9px !important;
+}
+
+/* Dental service */
+
+.appointment-details select {
+    width: 100% !important;
+    min-height: 48px !important;
+    padding: 0 16px !important;
+}
+
+/* Date */
+
+.appointment-details input[type="date"] {
+    width: 100% !important;
+    min-height: 48px !important;
+    padding: 0 16px !important;
+}
+
+/* ---------- DATE ICON ---------- */
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) !important;
+    opacity: 0.8 !important;
+    cursor: pointer !important;
+}
+
+/* ---------- AVAILABLE TIME SLOTS ---------- */
+
+.available-time-slots,
+.time-slots,
+#timeSlots,
+#availableTimeSlots {
+    background: #18181b !important;
+    color: #77777f !important;
+    border: 1px solid #36363c !important;
+    border-radius: 12px !important;
+    min-height: 64px !important;
+    padding: 16px !important;
+}
+
+/* When slots exist */
+
+.available-time-slots button,
+.time-slots button,
+#timeSlots button,
+#availableTimeSlots button {
+    background: #222225 !important;
+    color: #ffffff !important;
+    border: 1px solid #44444b !important;
+    border-radius: 9px !important;
+    padding: 10px 16px !important;
+    cursor: pointer !important;
+    transition: 0.2s ease !important;
+}
+
+.available-time-slots button:hover,
+.time-slots button:hover,
+#timeSlots button:hover,
+#availableTimeSlots button:hover {
+    background: #ec4899 !important;
+    border-color: #ec4899 !important;
+    color: #ffffff !important;
+}
+
+.available-time-slots button.selected,
+.time-slots button.selected,
+#timeSlots button.selected,
+#availableTimeSlots button.selected {
+    background: #ec4899 !important;
+    border-color: #ec4899 !important;
+    color: #ffffff !important;
+}
+
+/* ---------- REASON FOR VISIT ---------- */
+
+.appointment-details textarea {
+    width: 100% !important;
+    min-height: 125px !important;
+    padding: 15px 17px !important;
+    line-height: 1.5 !important;
+}
+
+/* ---------- BUTTONS ---------- */
+
+button {
+    font-family: inherit !important;
+}
+
+button.next,
+.next-btn,
+button[id*="next"],
+button[class*="next"] {
+    background: #ec4899 !important;
+    color: #ffffff !important;
+    border: 1px solid #ec4899 !important;
+    border-radius: 999px !important;
+    font-weight: 700 !important;
+    transition: all 0.2s ease !important;
+}
+
+button.next:hover,
+.next-btn:hover,
+button[id*="next"]:hover,
+button[class*="next"]:hover {
+    background: #db2777 !important;
+    transform: translateY(-1px);
+}
+
+/* Previous */
+
+button.previous,
+.previous-btn,
+button[id*="previous"],
+button[class*="previous"] {
+    background: #3f444b !important;
+    color: #ffffff !important;
+    border: 1px solid #555b63 !important;
+    border-radius: 999px !important;
+}
+
+/* ---------- SIGNATURE AREA ---------- */
+
+.signature-container,
+.signature-box,
+.signature-preview {
+    background: #18181b !important;
+    border: 1px solid #36363c !important;
+    border-radius: 16px !important;
+    color: #88888f !important;
+}
+
+/* White signature preview */
+
+.signature-preview *,
+.signature-container * {
+    color: inherit;
+}
+
+/* ---------- SIGNATURE BUTTONS ---------- */
+
+button[id*="signature"],
+.signature-btn {
+    border-radius: 10px !important;
+}
+
+button[id*="addSignature"] {
+    background: #c2185b !important;
+    color: #ffffff !important;
+}
+
+button[id*="clearSignature"] {
+    background: #ffffff !important;
+    color: #475569 !important;
+}
+
+/* ---------- MOBILE ---------- */
+
+@media (max-width: 900px) {
+
+    .medical-history .grid,
+    .medical-history-grid,
+    .medical-history .form-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .appointment-details {
+        padding: 20px !important;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .section-card,
+    .form-section,
+    .medical-history,
+    .appointment-details {
+        border-radius: 16px !important;
+        padding: 16px !important;
+    }
+
+    .medical-history .grid > div,
+    .medical-history-grid > div {
+        padding: 15px !important;
+    }
+
+    input[type="checkbox"] {
+        width: 23px !important;
+        height: 23px !important;
+    }
+
+}
+body,
+html {
+    background: #0b0b0d !important;
+    color: #ffffff !important;
+}
+
+/* Cards / containers */
+body .card,
+body .section,
+body .section-card,
+body .form-section,
+body .booking-section,
+body .appointment-section,
+body .medical-history,
+body .appointment-details,
+body .medical-history-section,
+body .booking-card,
+body .form-card {
+    background-color: #111113 !important;
+    color: #ffffff !important;
+    border-color: #303036 !important;
+}
+
+/* =========================================================
+   MEDICAL HISTORY - FORCE DARK
+   ========================================================= */
+
+body .medical-history *,
+body .medical-history-section * {
+    color: #ffffff !important;
+}
+
+/* The actual white boxes */
+body .medical-history div,
+body .medical-history-section div {
+    background-color: #18181b !important;
+}
+
+/* But don't make the whole section the same color */
+body .medical-history,
+body .medical-history-section {
+    background-color: #111113 !important;
+}
+
+/* Input boxes */
+body .medical-history input,
+body .medical-history textarea,
+body .medical-history select,
+body .medical-history-section input,
+body .medical-history-section textarea,
+body .medical-history-section select {
+    background-color: #0f0f11 !important;
+    color: #ffffff !important;
+    border: 1px solid #3a3a40 !important;
+}
+
+/* Placeholder */
+body .medical-history input::placeholder,
+body .medical-history textarea::placeholder,
+body .medical-history-section input::placeholder,
+body .medical-history-section textarea::placeholder {
+    color: #85858d !important;
+}
+
+/* =========================================================
+   CHECKBOX
+   ========================================================= */
+
+body .medical-history input[type="checkbox"],
+body .medical-history-section input[type="checkbox"] {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+
+    width: 27px !important;
+    height: 27px !important;
+
+    background: #29292d !important;
+    border: 2px solid #55555c !important;
+    border-radius: 5px !important;
+
+    display: inline-block !important;
+    position: relative !important;
+}
+
+body .medical-history input[type="checkbox"]:checked,
+body .medical-history-section input[type="checkbox"]:checked {
+    background: #ec4899 !important;
+    border-color: #ec4899 !important;
+}
+
+body .medical-history input[type="checkbox"]:checked::after,
+body .medical-history-section input[type="checkbox"]:checked::after {
+    content: "✓" !important;
+    position: absolute !important;
+    left: 4px !important;
+    top: -2px !important;
+    color: white !important;
+    font-size: 20px !important;
+    font-weight: bold !important;
+}
+
+/* =========================================================
+   APPOINTMENT DETAILS
+   ========================================================= */
+
+body .appointment-details,
+body .appointment-details-section {
+    background: #111113 !important;
+    color: #ffffff !important;
+}
+
+/* Labels */
+body .appointment-details label,
+body .appointment-details-section label {
+    color: #ffffff !important;
+}
+
+/* Inputs */
+body .appointment-details input,
+body .appointment-details textarea,
+body .appointment-details select,
+body .appointment-details-section input,
+body .appointment-details-section textarea,
+body .appointment-details-section select {
+    background: #18181b !important;
+    color: #ffffff !important;
+    border: 1px solid #38383f !important;
+}
+
+/* =========================================================
+   TIME SLOTS - REMOVE WHITE BOX
+   ========================================================= */
+
+body #timeSlots,
+body #availableTimeSlots,
+body .time-slots,
+body .available-time-slots,
+body .available-slots,
+body [class*="time-slot"] {
+    background: #18181b !important;
+    color: #85858d !important;
+    border-color: #38383f !important;
+}
+
+/* =========================================================
+   SIGNATURE PREVIEW - REMOVE WHITE
+   ========================================================= */
+
+body .signature-preview,
+body .signature-container,
+body .signature-box,
+body #signaturePreview,
+body #signatureCanvasContainer {
+    background: #18181b !important;
+    color: #85858d !important;
+    border-color: #38383f !important;
+}
+
+/* =========================================================
+   TEXT
+   ========================================================= */
+
+body .medical-history h1,
+body .medical-history h2,
+body .medical-history h3,
+body .appointment-details h1,
+body .appointment-details h2,
+body .appointment-details h3 {
+    color: #ffffff !important;
+}
+
+/* =========================================================
+   FOCUS
+   ========================================================= */
+
+body input:focus,
+body textarea:focus,
+body select:focus {
+    background: #18181b !important;
+    color: #ffffff !important;
+    border-color: #ec4899 !important;
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15) !important;
+}
+
+/* =========================================================
+   FORCE DARK ON COMMON WHITE BACKGROUNDS
+   ========================================================= */
+
+body [style*="background: white"],
+body [style*="background:white"],
+body [style*="background-color: white"],
+body [style*="background-color:white"],
+body [style*="background: #fff"],
+body [style*="background:#fff"],
+body [style*="background-color: #fff"],
+body [style*="background-color:#fff"] {
+    background: #18181b !important;
+    background-color: #18181b !important;
+    color: #ffffff !important;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    body .medical-history div,
+    body .medical-history-section div {
+        background-color: #18181b !important;
+    }
+
+    body .medical-history input,
+    body .medical-history textarea,
+    body .medical-history select {
+        background-color: #0f0f11 !important;
+    }
+}
+
+/* =========================================================
+   SIGNATURE - DARK MODE FINAL FIX
+   ========================================================= */
+
+html.dark-mode .signature-preview {
+    background: #18181b !important;
+    border-color: #3a3a40 !important;
+    color: #85858d !important;
+}
+
+html.dark-mode .signature-preview img {
+    background: transparent !important;
+}
+
+html.dark-mode .signature-pad-wrapper {
+    background: #18181b !important;
+    border-color: #3a3a40 !important;
+}
+
+html.dark-mode .signature-canvas {
+    background: #18181b !important;
+}
+
+html.dark-mode .signature-canvas-placeholder {
+    color: #77777f !important;
+}
+
+html.dark-mode #signaturePlaceholder {
+    color: #77777f !important;
+}
+
+html.dark-mode .signature-line div {
+    background: #55555c !important;
+}
+
+html.dark-mode .signature-line span {
+    color: #85858d !important;
 }
