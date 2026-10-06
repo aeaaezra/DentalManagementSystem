@@ -1378,35 +1378,415 @@
                         <div><span>Last Visit</span><strong id="recordPatientLastVisit">—</strong></div>
                     </div>
                 </div>
+{{-- ============================================================
+     PATIENT INFORMATION
+============================================================ --}}
 
-                <section class="record-ui-card">
-                    <div class="record-ui-card-header"><h2>Patient Information</h2></div>
-                    <div class="record-ui-form-grid">
-                        <div class="record-ui-form-group"><label>Full Name</label><div class="record-ui-value" id="overviewFullName">—</div></div>
-                        <div class="record-ui-form-group"><label>Age</label><div class="record-ui-value" id="overviewAge">—</div></div>
-                        <div class="record-ui-form-group"><label>Sex</label><div class="record-ui-value" id="overviewSex">—</div></div>
-                        <div class="record-ui-form-group"><label>Civil Status</label><div class="record-ui-value" id="overviewCivilStatus">—</div></div>
-                        <div class="record-ui-form-group"><label>Contact Number</label><div class="record-ui-value" id="overviewPhone">—</div></div>
-                        <div class="record-ui-form-group"><label>Occupation</label><div class="record-ui-value" id="overviewOccupation">—</div></div>
-                        <div class="record-ui-form-group full-width"><label>Address</label><div class="record-ui-value record-ui-textarea" id="overviewAddress">—</div></div>
-                    </div>
-                </section>
+<section class="record-ui-card">
 
-                <section class="record-ui-card">
-                    <div class="record-ui-card-header"><h2>Medical History</h2></div>
-                    <div class="medical-ui-grid">
-                        <div class="medical-ui-item" id="medicalCardHeart"><label class="medical-ui-check-label"><input type="checkbox" id="medicalHeartCheckbox" disabled><span class="medical-ui-checkmark"></span><strong>Heart Condition</strong></label><p id="medicalHeartCondition" class="medical-ui-status">No</p><div id="medicalHeartDetails" class="medical-ui-details">—</div></div>
-                        <div class="medical-ui-item" id="medicalCardAllergy"><label class="medical-ui-check-label"><input type="checkbox" id="medicalAllergyCheckbox" disabled><span class="medical-ui-checkmark"></span><strong>Allergy</strong></label><p id="medicalAllergy" class="medical-ui-status">No</p><div id="medicalAllergyDetails" class="medical-ui-details">—</div></div>
-                        <div class="medical-ui-item" id="medicalCardDiabetes"><label class="medical-ui-check-label"><input type="checkbox" id="medicalDiabetesCheckbox" disabled><span class="medical-ui-checkmark"></span><strong>Diabetes</strong></label><p id="medicalDiabetes" class="medical-ui-status">No</p><div id="medicalDiabetesDetails" class="medical-ui-details">—</div></div>
-                        <div class="medical-ui-item" id="medicalCardHypertension"><label class="medical-ui-check-label"><input type="checkbox" id="medicalHypertensionCheckbox" disabled><span class="medical-ui-checkmark"></span><strong>Hypertension / High Blood Pressure</strong></label><p id="medicalHypertension" class="medical-ui-status">No</p><div id="medicalHypertensionDetails" class="medical-ui-details">—</div></div>
-                        <div class="medical-ui-item" id="medicalCardBleeding"><label class="medical-ui-check-label"><input type="checkbox" id="medicalBleedingCheckbox" disabled><span class="medical-ui-checkmark"></span><strong>Bleeding Tendency</strong></label><p id="medicalBleeding" class="medical-ui-status">No</p><div id="medicalBleedingDetails" class="medical-ui-details">—</div></div>
-                        <div class="medical-ui-item" id="medicalCardAsthma"><label class="medical-ui-check-label"><input type="checkbox" id="medicalAsthmaCheckbox" disabled><span class="medical-ui-checkmark"></span><strong>Asthma</strong></label><p id="medicalAsthma" class="medical-ui-status">No</p><div id="medicalAsthmaDetails" class="medical-ui-details">—</div></div>
-                    </div>
-                    <div class="medical-ui-other"><label>Other Diseases / Abnormalities &amp; Treatments</label><div id="medicalOtherConditions" class="medical-ui-other-box">None recorded.</div></div>
-                    <div class="medical-record-signature"><div class="signature-line"></div><span>Patient / Guardian Signature</span></div>
-                </section>
+    <div class="record-ui-card-header">
+        <h2>Patient Information</h2>
+    </div>
+
+    <div class="record-ui-form-grid">
+
+        {{-- FULL NAME --}}
+        <div class="record-ui-form-group">
+            <label>Full Name</label>
+
+            <div
+                class="record-ui-value"
+                id="overviewFullName"
+            >
+                —
+            </div>
+        </div>
 
 
+        {{-- AGE --}}
+        <div class="record-ui-form-group">
+            <label>Age</label>
+
+            <div
+                class="record-ui-value"
+                id="overviewAge"
+            >
+                —
+            </div>
+        </div>
+
+
+        {{-- SEX --}}
+        <div class="record-ui-form-group">
+            <label>Sex</label>
+
+            <div
+                class="record-ui-value"
+                id="overviewSex"
+            >
+                —
+            </div>
+        </div>
+
+
+        {{-- CIVIL STATUS --}}
+        <div class="record-ui-form-group">
+            <label>Civil Status</label>
+
+            <div
+                class="record-ui-value"
+                id="overviewCivilStatus"
+            >
+                —
+            </div>
+        </div>
+
+
+        {{-- CONTACT NUMBER --}}
+        <div class="record-ui-form-group">
+            <label>Contact Number</label>
+
+            <div
+                class="record-ui-value"
+                id="overviewPhone"
+            >
+                —
+            </div>
+        </div>
+
+
+        {{-- OCCUPATION --}}
+        <div class="record-ui-form-group">
+            <label>Occupation</label>
+
+            <div
+                class="record-ui-value"
+                id="overviewOccupation"
+            >
+                —
+            </div>
+        </div>
+
+
+        {{-- ADDRESS --}}
+        <div class="record-ui-form-group full-width">
+            <label>Address</label>
+
+            <div
+                class="record-ui-value record-ui-textarea"
+                id="overviewAddress"
+            >
+                —
+            </div>
+        </div>
+
+
+        {{-- ========================================================
+             PATIENT / GUARDIAN SIGNATURE
+        ========================================================= --}}
+
+        <div class="record-ui-form-group full-width">
+
+            <label>
+                Patient / Guardian Signature
+            </label>
+
+            <div
+                class="patient-information-signature"
+                id="patientSignatureContainer"
+            >
+
+                {{-- ACTUAL PATIENT SIGNATURE --}}
+                <img
+                    id="overviewPatientSignature"
+                    src=""
+                    alt="Patient / Guardian Signature"
+                    style="display: none;"
+                >
+
+                {{-- SHOWN ONLY WHEN NO SIGNATURE EXISTS --}}
+                <span
+                    id="overviewPatientSignaturePlaceholder"
+                >
+                    No signature added
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+{{-- ============================================================
+     MEDICAL HISTORY
+============================================================ --}}
+
+<section class="record-ui-card">
+
+    <div class="record-ui-card-header">
+        <h2>Medical History</h2>
+    </div>
+
+
+    <div class="medical-ui-grid">
+
+        {{-- HEART CONDITION --}}
+        <div
+            class="medical-ui-item"
+            id="medicalCardHeart"
+        >
+
+            <label class="medical-ui-check-label">
+
+                <input
+                    type="checkbox"
+                    id="medicalHeartCheckbox"
+                    disabled
+                >
+
+                <span class="medical-ui-checkmark"></span>
+
+                <strong>
+                    Heart Condition
+                </strong>
+
+            </label>
+
+            <p
+                id="medicalHeartCondition"
+                class="medical-ui-status"
+            >
+                No
+            </p>
+
+            <div
+                id="medicalHeartDetails"
+                class="medical-ui-details"
+            >
+                —
+            </div>
+
+        </div>
+
+
+        {{-- ALLERGY --}}
+        <div
+            class="medical-ui-item"
+            id="medicalCardAllergy"
+        >
+
+            <label class="medical-ui-check-label">
+
+                <input
+                    type="checkbox"
+                    id="medicalAllergyCheckbox"
+                    disabled
+                >
+
+                <span class="medical-ui-checkmark"></span>
+
+                <strong>
+                    Allergy
+                </strong>
+
+            </label>
+
+            <p
+                id="medicalAllergy"
+                class="medical-ui-status"
+            >
+                No
+            </p>
+
+            <div
+                id="medicalAllergyDetails"
+                class="medical-ui-details"
+            >
+                —
+            </div>
+
+        </div>
+
+
+        {{-- DIABETES --}}
+        <div
+            class="medical-ui-item"
+            id="medicalCardDiabetes"
+        >
+
+            <label class="medical-ui-check-label">
+
+                <input
+                    type="checkbox"
+                    id="medicalDiabetesCheckbox"
+                    disabled
+                >
+
+                <span class="medical-ui-checkmark"></span>
+
+                <strong>
+                    Diabetes
+                </strong>
+
+            </label>
+
+            <p
+                id="medicalDiabetes"
+                class="medical-ui-status"
+            >
+                No
+            </p>
+
+            <div
+                id="medicalDiabetesDetails"
+                class="medical-ui-details"
+            >
+                —
+            </div>
+
+        </div>
+
+
+        {{-- HYPERTENSION --}}
+        <div
+            class="medical-ui-item"
+            id="medicalCardHypertension"
+        >
+
+            <label class="medical-ui-check-label">
+
+                <input
+                    type="checkbox"
+                    id="medicalHypertensionCheckbox"
+                    disabled
+                >
+
+                <span class="medical-ui-checkmark"></span>
+
+                <strong>
+                    Hypertension / High Blood Pressure
+                </strong>
+
+            </label>
+
+            <p
+                id="medicalHypertension"
+                class="medical-ui-status"
+            >
+                No
+            </p>
+
+            <div
+                id="medicalHypertensionDetails"
+                class="medical-ui-details"
+            >
+                —
+            </div>
+
+        </div>
+
+
+        {{-- BLEEDING TENDENCY --}}
+        <div
+            class="medical-ui-item"
+            id="medicalCardBleeding"
+        >
+
+            <label class="medical-ui-check-label">
+
+                <input
+                    type="checkbox"
+                    id="medicalBleedingCheckbox"
+                    disabled
+                >
+
+                <span class="medical-ui-checkmark"></span>
+
+                <strong>
+                    Bleeding Tendency
+                </strong>
+
+            </label>
+
+            <p
+                id="medicalBleeding"
+                class="medical-ui-status"
+            >
+                No
+            </p>
+
+            <div
+                id="medicalBleedingDetails"
+                class="medical-ui-details"
+            >
+                —
+            </div>
+
+        </div>
+
+
+        {{-- ASTHMA --}}
+        <div
+            class="medical-ui-item"
+            id="medicalCardAsthma"
+        >
+
+            <label class="medical-ui-check-label">
+
+                <input
+                    type="checkbox"
+                    id="medicalAsthmaCheckbox"
+                    disabled
+                >
+
+                <span class="medical-ui-checkmark"></span>
+
+                <strong>
+                    Asthma
+                </strong>
+
+            </label>
+
+            <p
+                id="medicalAsthma"
+                class="medical-ui-status"
+            >
+                No
+            </p>
+
+            <div
+                id="medicalAsthmaDetails"
+                class="medical-ui-details"
+            >
+                —
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {{-- OTHER CONDITIONS --}}
+    <div class="medical-ui-other">
+
+        <label>
+            Other Diseases / Abnormalities &amp; Treatments
+        </label>
+
+        <div
+            id="medicalOtherConditions"
+            class="medical-ui-other-box"
+        >
+            None recorded.
+        </div>
+
+    </div>
+
+</section>
 
                 <section class="record-ui-card">
                     <div class="record-ui-card-header"><h2>Appointment Details</h2></div>

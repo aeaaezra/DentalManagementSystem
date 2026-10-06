@@ -526,24 +526,70 @@ document.addEventListener("DOMContentLoaded", () => {
             "overviewOccupation",
             occupation
         );
+setText(
+    "overviewAddress",
+    address
+);
 
-        setText(
-            "overviewAddress",
-            address
-        );
+// ============================================================
+// PATIENT / GUARDIAN SIGNATURE
+// ============================================================
 
-        const appointments =
-            patient.appointments || [];
+const signatureImage =
+    document.getElementById("overviewPatientSignature");
 
-        const validAppointments =
-            appointments.filter(item =>
-                [
-                    "completed",
-                    "approved"
-                ].includes(
-                    String(item.status || "").toLowerCase()
-                )
-            );
+const signaturePlaceholder =
+    document.getElementById(
+        "overviewPatientSignaturePlaceholder"
+    );
+
+if (
+    patient.patient_signature &&
+    String(patient.patient_signature).trim() !== ""
+) {
+    let signatureUrl =
+        String(patient.patient_signature).trim();
+
+    // Database stores paths such as:
+    // signatures/patient-record-xxxxx.png
+    //
+    // Convert to:
+    // /storage/signatures/patient-record-xxxxx.png
+    if (
+        !signatureUrl.startsWith("http://") &&
+        !signatureUrl.startsWith("https://") &&
+        !signatureUrl.startsWith("/")
+    ) {
+        signatureUrl =
+            "/storage/" +
+            signatureUrl.replace(/^\/+/, "");
+    }
+
+    if (signatureImage) {
+        signatureImage.src = signatureUrl;
+        signatureImage.style.display = "block";
+    }
+
+    if (signaturePlaceholder) {
+        signaturePlaceholder.style.display = "none";
+    }
+
+} else {
+
+    if (signatureImage) {
+        signatureImage.removeAttribute("src");
+        signatureImage.style.display = "none";
+    }
+
+    if (signaturePlaceholder) {
+        signaturePlaceholder.style.display = "inline";
+        signaturePlaceholder.textContent =
+            "No signature added";
+    }
+}
+
+const appointments =
+    patient.appointments || [];
 
         validAppointments.sort(
             (a, b) =>
