@@ -976,8 +976,7 @@ Route::middleware([
 |--------------------------------------------------------------------------
 | POS / CASHIER MODULE
 |--------------------------------------------------------------------------
-*/
-Route::get('/pos', function () {
+*/Route::get('/pos', function () {
     return view('pos.landingpage');
 })->name('pos.landingpage');
 
@@ -1002,6 +1001,23 @@ Route::prefix('pos')
             ]
         )->middleware(['auth', 'role:cashier'])
          ->name('checkout');
+Route::post(
+    '/discount/validate',
+    [
+        POSController::class,
+        'validateDiscount'
+    ]
+)->middleware(['auth', 'role:cashier'])
+ ->name('discount.validate');
+
+        Route::post(
+            '/discount/validate',
+            [
+                POSController::class,
+                'validateDiscount'
+            ]
+        )->middleware(['auth', 'role:cashier'])
+         ->name('discount.validate');
 
         Route::view(
             '/profile',
@@ -1016,9 +1032,9 @@ Route::prefix('pos')
          ->name('settings');
     });
 
-
-
-Route::get('/ordering/welcome', function () {  return view('customer.welcome'); })->name('customer.welcome');
+Route::get('/ordering/welcome', function () {
+    return view('customer.welcome');
+})->name('customer.welcome');
 /*
 |--------------------------------------------------------------------------
 | Customer Authentication

@@ -43,7 +43,8 @@ const cashReceivedInput =
 const changeAmountElement =
     document.getElementById("change");
 
-const confirmPaymentButton = null;
+const confirmPaymentButton =
+    document.getElementById("confirmPayment");
 
 const darkModeButton =
     document.getElementById("themeToggle");
@@ -158,7 +159,7 @@ const listViewButton =
         <i class="fa-solid fa-cart-plus"></i>
         Add to Cart
     </button>
-       
+
 	 </div>
             `;
 
