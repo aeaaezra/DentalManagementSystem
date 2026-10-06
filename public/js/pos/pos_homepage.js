@@ -10,12 +10,12 @@ document.addEventListener("DOMContentLoaded", () => {
         image: product.image ?? ""
     })) : [];
 
-    let cart = [];
-    let activeCategory = "All Items";
-    let searchTerm = "";
- let discount = 0;
-let appliedDiscount = null;
-let paymentMethod = "cash";
+        let cart = [];
+        let activeCategory = "All Items";
+        let searchTerm = "";
+        let discount = 0;
+        let appliedDiscount = null;
+        let paymentMethod = "cash";
 
     const productGrid = document.getElementById("productGrid");
 
@@ -390,13 +390,43 @@ function updateCartCount() {
         );
     }
 
-    function calculateDiscount(subtotal) {
-        return subtotal * discount;
+function calculateDiscount(subtotal) {
+    if (!appliedDiscount) {
+        return 0;
     }
 
-    function calculateTax(amount) {
-        return amount * 0.08;
+    let discountAmount = 0;
+
+    if (appliedDiscount.type === "percentage") {
+        discountAmount =
+            subtotal *
+            (Number(appliedDiscount.value) / 100);
     }
+
+    if (appliedDiscount.type === "fixed") {
+        discountAmount =
+            Number(appliedDiscount.value);
+    }
+
+    if (
+        appliedDiscount.maximum_discount !== null &&
+        appliedDiscount.maximum_discount !== undefined
+    ) {
+        discountAmount = Math.min(
+            discountAmount,
+            Number(appliedDiscount.maximum_discount)
+        );
+    }
+
+    return Math.min(
+        discountAmount,
+        subtotal
+    );
+}
+
+        function calculateTax(amount) {
+            return 0;
+        }
 
     function updateTotals() {
         const subtotal =
@@ -447,32 +477,134 @@ function updateCartCount() {
         calculateChange();
     }
 
-    function applyDiscount() {
-        if (!discountInput) {
-            return;
-        }
+async function applyDiscount() {
+    if (!discountInput) {
+        return;
+    }
 
-        const code =
-            discountInput.value
-                .trim()
-                .toUpperCase();
+    const code = discountInput.value
+        .trim()
+        .toUpperCase();
 
-        if (code === "PROMO10") {
-            discount = 0.10;
-        } else if (code === "PROMO20") {
-            discount = 0.20;
-        } else {
-            discount = 0;
+    if (!code) {
+        appliedDiscount = null;
+        discount = 0;
+        updateTotals();
+        return;
+    }
 
-            if (code !== "") {
-                alert(
-                    "Invalid discount code."
-                );
+    const subtotal = calculateSubtotal();
+
+    if (subtotal <= 0) {
+        alert("Please add products to the cart first.");
+        return;
+    }
+
+    const csrfToken = document
+        .querySelector('meta[name="csrf-token"]')
+        ?.getAttribute("content");
+
+    if (!csrfToken) {
+        alert("Security token is missing. Please refresh the page.");
+        return;
+    }
+
+    if (applyDiscountButton) {
+        applyDiscountButton.disabled = true;
+        applyDiscountButton.textContent = "Checking...";
+    }
+
+    try {
+        const response = await fetch(
+            "/pos/discount/validate",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "X-CSRF-TOKEN": csrfToken,
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+
+                body: JSON.stringify({
+                    code: code,
+                    subtotal: subtotal
+                })
             }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message ||
+                data.error ||
+                "Invalid discount code."
+            );
         }
+
+        /*
+         * Store the discount returned by Laravel.
+         */
+        appliedDiscount = {
+            code: data.code,
+            type: data.type,
+            value: Number(data.value),
+            minimum_amount: Number(
+                data.minimum_amount || 0
+            ),
+            maximum_discount:
+                data.maximum_discount !== null
+                    ? Number(data.maximum_discount)
+                    : null,
+            discount_amount:
+                Number(data.discount_amount) || 0
+        };
+
+        /*
+         * Keep the current discount amount
+         * for the existing frontend calculation.
+         */
+        discount =
+            subtotal > 0
+                ? appliedDiscount.discount_amount / subtotal
+                : 0;
 
         updateTotals();
+
+        alert(
+            `Discount ${appliedDiscount.code} applied.\n` +
+            `Discount: ${formatCurrency(
+                appliedDiscount.discount_amount
+            )}`
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Discount validation error:",
+            error
+        );
+
+        appliedDiscount = null;
+        discount = 0;
+
+        updateTotals();
+
+        alert(
+            error.message ||
+            "Invalid discount code."
+        );
+
+    } finally {
+
+        if (applyDiscountButton) {
+            applyDiscountButton.disabled = false;
+            applyDiscountButton.textContent = "Apply";
+        }
     }
+}
 
 function openPaymentModal() {
     if (cart.length === 0) {
