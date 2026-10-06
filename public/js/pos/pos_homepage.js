@@ -13,8 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let cart = [];
     let activeCategory = "All Items";
     let searchTerm = "";
-    let discount = 0;
-    let paymentMethod = "cash";
+ let discount = 0;
+let appliedDiscount = null;
+let paymentMethod = "cash";
 
     const productGrid = document.getElementById("productGrid");
 
@@ -45,7 +46,14 @@ const changeAmountElement =
 
 const confirmPaymentButton =
     document.getElementById("confirmPayment");
+const printReceiptButton =
+    document.getElementById("printReceipt");
 
+const downloadReceiptButton =
+    document.getElementById("downloadReceipt");
+
+const newSaleButton =
+    document.getElementById("newSale");
 const darkModeButton =
     document.getElementById("themeToggle");
 
@@ -479,7 +487,7 @@ function updateCartCount() {
             return;
         }
 
-        paymentModal.classList.add("active");
+       paymentModal.classList.add("show");
 
         paymentModal.setAttribute(
             "aria-hidden",
@@ -502,8 +510,7 @@ function updateCartCount() {
             return;
         }
 
-        paymentModal.classList.remove("active");
-
+        paymentModal.classList.remove("show");
         paymentModal.setAttribute(
             "aria-hidden",
             "true"
@@ -1015,7 +1022,257 @@ async function confirmPayment() {
             );
         }
     }
+function printReceipt() {
+    if (!window.lastReceipt) {
+        alert("No completed payment is available to print.");
+        return;
+    }
 
+    const receipt = window.lastReceipt;
+
+    const receiptWindow = window.open(
+        "",
+        "_blank",
+        "width=420,height=650"
+    );
+
+    if (!receiptWindow) {
+        alert("Please allow pop-ups to print the receipt.");
+        return;
+    }
+
+    receiptWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Receipt - ${receipt.invoice}</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    width: 320px;
+                    margin: 30px auto;
+                    color: #111;
+                }
+
+                h2 {
+                    text-align: center;
+                    margin-bottom: 5px;
+                }
+
+                .center {
+                    text-align: center;
+                }
+
+                .line {
+                    border-top: 1px dashed #777;
+                    margin: 15px 0;
+                }
+
+                .row {
+                    display: flex;
+                    justify-content: space-between;
+                    margin: 8px 0;
+                }
+
+                .total {
+                    font-size: 18px;
+                    font-weight: bold;
+                }
+
+                @media print {
+                    body {
+                        margin: 0;
+                    }
+                }
+            </style>
+        </head>
+
+        <body>
+
+            <h2>SHINE & SMILE</h2>
+
+            <div class="center">
+                Dental Supply POS
+            </div>
+
+            <div class="line"></div>
+
+            <div class="row">
+                <span>Invoice</span>
+                <strong>${receipt.invoice}</strong>
+            </div>
+
+            <div class="row">
+                <span>Payment</span>
+                <strong>${receipt.method}</strong>
+            </div>
+
+            <div class="line"></div>
+
+            <div class="row total">
+                <span>Total</span>
+                <span>${formatCurrency(receipt.total)}</span>
+            </div>
+
+            <div class="row">
+                <span>Amount Received</span>
+                <span>${formatCurrency(receipt.amountReceived)}</span>
+            </div>
+
+            <div class="row">
+                <span>Change</span>
+                <span>${formatCurrency(receipt.change)}</span>
+            </div>
+
+            <div class="line"></div>
+
+            <div class="center">
+                Thank you for your purchase!
+            </div>
+
+        </body>
+        </html>
+    `);
+
+    receiptWindow.document.close();
+
+    receiptWindow.focus();
+
+    setTimeout(() => {
+        receiptWindow.print();
+    }, 300);
+}
+
+
+function downloadReceipt() {
+    if (!window.lastReceipt) {
+        alert("No completed payment is available to download.");
+        return;
+    }
+
+    const receipt = window.lastReceipt;
+
+    const receiptText =
+`SHINE & SMILE
+Dental Supply POS
+--------------------------------
+Invoice: ${receipt.invoice}
+Payment: ${receipt.method}
+--------------------------------
+Total: ${formatCurrency(receipt.total)}
+Amount Received: ${formatCurrency(receipt.amountReceived)}
+Change: ${formatCurrency(receipt.change)}
+--------------------------------
+Thank you for your purchase!
+`;
+
+    const blob = new Blob(
+        [receiptText],
+        {
+            type: "text/plain;charset=utf-8"
+        }
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+
+    link.href = url;
+
+    link.download =
+        `Receipt-${receipt.invoice}.txt`;
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+
+    URL.revokeObjectURL(url);
+}
+
+
+function startNewSale() {
+    cart = [];
+
+    discount = 0;
+
+    window.lastReceipt = null;
+
+    if (discountInput) {
+        discountInput.value = "";
+    }
+
+    if (paymentModal) {
+        paymentModal.classList.remove("show");
+
+        paymentModal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+    }
+
+    const paymentModalActions =
+        document.getElementById(
+            "paymentModalActions"
+        );
+
+    const receiptActions =
+        document.getElementById(
+            "receiptActions"
+        );
+
+    const paymentConfirmation =
+        document.getElementById(
+            "paymentConfirmation"
+        );
+
+    const modalTitle =
+        document.getElementById(
+            "paymentModalTitle"
+        );
+
+    const modalMessage =
+        document.getElementById(
+            "paymentModalMessage"
+        );
+
+    if (paymentModalActions) {
+        paymentModalActions.style.display =
+            "block";
+    }
+
+    if (receiptActions) {
+        receiptActions.style.display =
+            "none";
+    }
+
+    if (paymentConfirmation) {
+        paymentConfirmation.style.display =
+            "block";
+    }
+
+    if (modalTitle) {
+        modalTitle.textContent =
+            "Confirm Payment";
+    }
+
+    if (modalMessage) {
+        modalMessage.textContent =
+            "Review the payment before completing this transaction.";
+    }
+
+    if (confirmPaymentButton) {
+        confirmPaymentButton.disabled = false;
+
+        confirmPaymentButton.innerHTML =
+            '<i class="fa-solid fa-check"></i> Confirm Payment';
+    }
+
+    renderProducts();
+    renderCart();
+    updateTotals();
+}
     if (applyDiscountButton) {
         applyDiscountButton.addEventListener(
             "click",
