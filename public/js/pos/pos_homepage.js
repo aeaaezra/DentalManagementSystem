@@ -1683,4 +1683,4 @@ if (newSaleButton) {
     renderCart();
     updateTotals();
 });
-}
+
