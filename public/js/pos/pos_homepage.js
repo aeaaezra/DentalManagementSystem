@@ -1,460 +1,936 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const products = Array.isArray(window.posProducts) ? window.posProducts.map(product => ({
-        id: Number(product.id),
-        name: product.name ?? "Unnamed Product",
-        sku: product.sku ?? "",
-        category: product.category ?? "Uncategorized",
-        brand: product.brand ?? "",
-        price: Number(product.price) || 0,
-        stock: Number(product.stock) || 0,
-        image: product.image ?? ""
-    })) : [];
 
-    let cart = [];
-    let activeCategory = "All Items";
-    let searchTerm = "";
- let discount = 0;
-let appliedDiscount = null;
-let paymentMethod = "cash";
+    const products = Array.isArray(window.posProducts) ? window.posProducts.map(product => ({
 
-    const productGrid = document.getElementById("productGrid");
+        id: Number(product.id),
+
+        name: product.name ?? "Unnamed Product",
+
+        sku: product.sku ?? "",
+
+        category: product.category ?? "Uncategorized",
+
+        brand: product.brand ?? "",
+
+        price: Number(product.price) || 0,
+
+        stock: Number(product.stock) || 0,
+
+        image: product.image ?? ""
+
+    })) : [];
+
+
+
+        let cart = [];
+
+        let activeCategory = "All Items";
+
+        let searchTerm = "";
+
+        let discount = 0;
+
+        let appliedDiscount = null;
+
+        let paymentMethod = "cash";
+
+
+
+    const productGrid = document.getElementById("productGrid");
+
+
 
 const cartItems = document.getElementById("cartList");
+
 const cartEmpty = document.querySelector(".empty-cart");
 
+
+
 const searchInput = document.getElementById("searchInput");
+
 const barcodeInput = document.getElementById("barcodeBtn");
 
+
+
 const subtotalElement = document.getElementById("subtotal");
+
 const discountElement = document.getElementById("discount");
+
 const taxElement = document.getElementById("tax");
+
 const totalElement = document.getElementById("total");
+
+
 
 const cartCountElement = document.getElementById("cartCount");
 
+
+
 const discountInput = document.getElementById("discountCode");
+
 const applyDiscountButton = document.getElementById("applyDiscount");
+
 const processPaymentButton = document.getElementById("processPayment");
+
+
 
 const paymentModal = document.getElementById("paymentModal");
 
+
+
 const cashReceivedInput =
-    document.getElementById("amountReceived");
+
+    document.getElementById("amountReceived");
+
 const modalCashReceivedInput =
-    document.getElementById("modalAmountReceived");
+
+    document.getElementById("modalAmountReceived");
+
+
 
 const changeAmountElement =
-    document.getElementById("change");
+
+    document.getElementById("change");
+
+
 
 const confirmPaymentButton =
-    document.getElementById("confirmPayment");
+
+    document.getElementById("confirmPayment");
+
 const printReceiptButton =
-    document.getElementById("printReceipt");
+
+    document.getElementById("printReceipt");
+
+
 
 const downloadReceiptButton =
-    document.getElementById("downloadReceipt");
+
+    document.getElementById("downloadReceipt");
+
+
 
 const newSaleButton =
-    document.getElementById("newSale");
+
+    document.getElementById("newSale");
+
 const darkModeButton =
-    document.getElementById("themeToggle");
+
+    document.getElementById("themeToggle");
+
+
 
 const clearCartButton =
-    document.getElementById("clearCart");
+
+    document.getElementById("clearCart");
+
+
 
 const categoryButtons =
-    document.querySelectorAll("[data-category]");
+
+    document.querySelectorAll("[data-category]");
+
+
 
 const paymentButtons =
-    document.querySelectorAll("[data-payment]");
+
+    document.querySelectorAll("[data-payment]");
+
+
 
 const gridViewButton =
-    document.getElementById("gridView");
+
+    document.getElementById("gridView");
+
+
 
 const listViewButton =
-    document.getElementById("listView");
-    function formatCurrency(value) {
-        return `₱${Number(value).toLocaleString("en-PH", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        })}`;
-    }
 
-    function getFilteredProducts() {
-        return products.filter(product => {
-            const matchesCategory =
-                activeCategory === "All Items" ||
-                product.category === activeCategory;
+    document.getElementById("listView");
 
-            const search =
-                searchTerm.toLowerCase().trim();
+    function formatCurrency(value) {
 
-            const matchesSearch =
-                !search ||
-                product.name.toLowerCase().includes(search) ||
-                product.sku.toLowerCase().includes(search);
+        return `₱${Number(value).toLocaleString("en-PH", {
 
-            return matchesCategory && matchesSearch;
-        });
-    }
+            minimumFractionDigits: 2,
+
+            maximumFractionDigits: 2
+
+        })}`;
+
+    }
+
+
+
+    function getFilteredProducts() {
+
+        return products.filter(product => {
+
+            const matchesCategory =
+
+                activeCategory === "All Items" ||
+
+                product.category === activeCategory;
+
+
+
+            const search =
+
+                searchTerm.toLowerCase().trim();
+
+
+
+            const matchesSearch =
+
+                !search ||
+
+                product.name.toLowerCase().includes(search) ||
+
+                product.sku.toLowerCase().includes(search);
+
+
+
+            return matchesCategory && matchesSearch;
+
+        });
+
+    }
+
+
 
 function renderProducts() {
-    if (!productGrid) return;
 
-    const list = getFilteredProducts();
+    if (!productGrid) return;
 
-    if (!list.length) {
-        productGrid.innerHTML = `
-            <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted)">
-                <i class="fa-solid fa-box-open" style="font-size:38px;margin-bottom:12px"></i>
-                <h3>No products found</h3>
-                <p style="font-size:12px;margin-top:5px">
-                    Try another search, brand, or category.
-                </p>
-            </div>
-        `;
-        return;
-    }
 
-    productGrid.innerHTML = list.map((p) => {
-        const out = p.stock <= 0;
-        const low = !out && p.stock <= 10;
 
-        let image = p.image || "";
+    const list = getFilteredProducts();
 
-        if (image && !/^(https?:)?\/\//.test(image)) {
-            if (image.startsWith("storage/")) {
-                image = "/" + image;
-            } else {
-                image = "/storage/" + image.replace(/^\/+/, "");
-            }
-        }
 
-        return `
-            <article class="product-card">
 
-                <div class="product-image">
+    if (!list.length) {
 
-                    ${
-                        image
-                            ? `
-                                <img
-                                    src="${image}"
-                                    alt="${p.name}"
-                                    class="product-image-file"
-                                    loading="lazy"
-                                    onerror="
-                                        this.style.display='none';
-                                        this.nextElementSibling.style.display='flex';
-                                    "
-                                >
+        productGrid.innerHTML = `
 
-                                <div
-                                    class="product-image-fallback"
-                                    style="display:none;"
-                                >
-                                    <i class="fa-solid fa-box"></i>
-                                </div>
-                              `
-                            : `
-                                <div class="product-image-fallback">
-                                    <i class="fa-solid fa-box"></i>
-                                </div>
-                              `
-                    }
+            <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted)">
 
-                    <button
-                        type="button"
-                        class="product-favorite"
-                        data-favorite="${p.id}"
-                        title="Favorite"
-                    >
-                        <i class="fa-regular fa-heart"></i>
-                    </button>
+                <i class="fa-solid fa-box-open" style="font-size:38px;margin-bottom:12px"></i>
 
-                </div>
+                <h3>No products found</h3>
 
-                <div class="product-info">
+                <p style="font-size:12px;margin-top:5px">
 
-                    <span class="product-category">
-                        ${p.category}
-                    </span>
+                    Try another search, brand, or category.
 
-                    <h3>${p.name}</h3>
+                </p>
 
-                    <div class="sku">
-                        SKU: ${p.sku}
-                    </div>
+            </div>
 
-                    <div class="stock ${out ? "out" : low ? "low" : ""}">
-                        <i class="fa-solid fa-circle"></i>
-                        ${
-                            out
-                                ? "Out of Stock"
-                                : low
-                                    ? `Low Stock (${p.stock})`
-                                    : `In Stock (${p.stock})`
-                        }
-                    </div>
+        `;
 
-                    <div class="price-row">
-                        <span class="price">
-                            ${formatCurrency(p.price)}
-                        </span>
-                    </div>
+        return;
 
-                    <button
-                        type="button"
-                        class="add-button"
-                        data-add="${p.id}"
-                        ${out ? "disabled" : ""}
-                    >
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        ${out ? "Out of Stock" : "Add to Cart"}
-                    </button>
+    }
 
-                </div>
 
-            </article>
-        `;
-    }).join("");
+
+    productGrid.innerHTML = list.map((p) => {
+
+        const out = p.stock <= 0;
+
+        const low = !out && p.stock <= 10;
+
+
+
+        let image = p.image || "";
+
+
+
+        if (image && !/^(https?:)?\/\//.test(image)) {
+
+            if (image.startsWith("storage/")) {
+
+                image = "/" + image;
+
+            } else {
+
+                image = "/storage/" + image.replace(/^\/+/, "");
+
+            }
+
+        }
+
+
+
+        return `
+
+            <article class="product-card">
+
+
+
+                <div class="product-image">
+
+
+
+                    ${
+
+                        image
+
+                            ? `
+
+                                <img
+
+                                    src="${image}"
+
+                                    alt="${p.name}"
+
+                                    class="product-image-file"
+
+                                    loading="lazy"
+
+                                    onerror="
+
+                                        this.style.display='none';
+
+                                        this.nextElementSibling.style.display='flex';
+
+                                    "
+
+                                >
+
+
+
+                                <div
+
+                                    class="product-image-fallback"
+
+                                    style="display:none;"
+
+                                >
+
+                                    <i class="fa-solid fa-box"></i>
+
+                                </div>
+
+                              `
+
+                            : `
+
+                                <div class="product-image-fallback">
+
+                                    <i class="fa-solid fa-box"></i>
+
+                                </div>
+
+                              `
+
+                    }
+
+
+
+                    <button
+
+                        type="button"
+
+                        class="product-favorite"
+
+                        data-favorite="${p.id}"
+
+                        title="Favorite"
+
+                    >
+
+                        <i class="fa-regular fa-heart"></i>
+
+                    </button>
+
+
+
+                </div>
+
+
+
+                <div class="product-info">
+
+
+
+                    <span class="product-category">
+
+                        ${p.category}
+
+                    </span>
+
+
+
+                    <h3>${p.name}</h3>
+
+
+
+                    <div class="sku">
+
+                        SKU: ${p.sku}
+
+                    </div>
+
+
+
+                    <div class="stock ${out ? "out" : low ? "low" : ""}">
+
+                        <i class="fa-solid fa-circle"></i>
+
+                        ${
+
+                            out
+
+                                ? "Out of Stock"
+
+                                : low
+
+                                    ? `Low Stock (${p.stock})`
+
+                                    : `In Stock (${p.stock})`
+
+                        }
+
+                    </div>
+
+
+
+                    <div class="price-row">
+
+                        <span class="price">
+
+                            ${formatCurrency(p.price)}
+
+                        </span>
+
+                    </div>
+
+
+
+                    <button
+
+                        type="button"
+
+                        class="add-button"
+
+                        data-add="${p.id}"
+
+                        ${out ? "disabled" : ""}
+
+                    >
+
+                        <i class="fa-solid fa-cart-shopping"></i>
+
+                        ${out ? "Out of Stock" : "Add to Cart"}
+
+                    </button>
+
+
+
+                </div>
+
+
+
+            </article>
+
+        `;
+
+    }).join("");
+
 }
+
+
 
 function addToCart(productId) {
-    const id = Number(productId);
 
-    const product = products.find(
-        item => Number(item.id) === id
-    );
+    const id = Number(productId);
 
-    if (!product) {
-        console.error("Product not found:", id);
-        return;
-    }
 
-    if (product.stock <= 0) {
-        alert("This product is out of stock.");
-        return;
-    }
 
-    const existingItem = cart.find(
-        item => Number(item.id) === id
-    );
+    const product = products.find(
 
-    if (existingItem) {
-        if (existingItem.quantity >= product.stock) {
-            alert(`Only ${product.stock} item(s) available.`);
-            return;
-        }
+        item => Number(item.id) === id
 
-        existingItem.quantity += 1;
-    } else {
-        cart.push({
-            id: product.id,
-            name: product.name,
-            sku: product.sku,
-            price: product.price,
-            quantity: 1,
-            stock: product.stock
-        });
-    }
+    );
 
-    renderCart();
-    updateTotals();
+
+
+    if (!product) {
+
+        console.error("Product not found:", id);
+
+        return;
+
+    }
+
+
+
+    if (product.stock <= 0) {
+
+        alert("This product is out of stock.");
+
+        return;
+
+    }
+
+
+
+    const existingItem = cart.find(
+
+        item => Number(item.id) === id
+
+    );
+
+
+
+    if (existingItem) {
+
+        if (existingItem.quantity >= product.stock) {
+
+            alert(`Only ${product.stock} item(s) available.`);
+
+            return;
+
+        }
+
+
+
+        existingItem.quantity += 1;
+
+    } else {
+
+        cart.push({
+
+            id: product.id,
+
+            name: product.name,
+
+            sku: product.sku,
+
+            price: product.price,
+
+            quantity: 1,
+
+            stock: product.stock
+
+        });
+
+    }
+
+
+
+    renderCart();
+
+    updateTotals();
+
 }
 
-    function renderCart() {
-        if (!cartItems || !cartEmpty) {
-            return;
-        }
 
-        cartItems.innerHTML = "";
 
-        if (cart.length === 0) {
-            cartEmpty.style.display = "flex";
+    function renderCart() {
 
-            updateCartCount();
+        if (!cartItems || !cartEmpty) {
 
-            return;
-        }
+            return;
 
-        cartEmpty.style.display = "none";
+        }
 
-        cart.forEach(item => {
-            const cartItem =
-                document.createElement("div");
 
-            cartItem.className = "cart-item";
 
-            cartItem.innerHTML = `
-                <div class="cart-item-info">
-                    <h4>
-                        ${item.name}
-                    </h4>
+        cartItems.innerHTML = "";
 
-                    <span>
-                        ${item.sku}
-                    </span>
 
-                    <strong>
-                        ${formatCurrency(item.price)}
-                    </strong>
-                </div>
 
-                <div class="cart-item-controls">
-                    <button
-                        class="quantity-button"
-                        data-action="decrease"
-                        data-id="${item.id}"
-                    >
-                        <i class="fa-solid fa-minus"></i>
-                    </button>
+        if (cart.length === 0) {
 
-                    <span class="quantity">
-                        ${item.quantity}
-                    </span>
+            cartEmpty.style.display = "flex";
 
-                    <button
-                        class="quantity-button"
-                        data-action="increase"
-                        data-id="${item.id}"
-                    >
-                        <i class="fa-solid fa-plus"></i>
-                    </button>
 
-                    <button
-                        class="remove-cart-button"
-                        data-action="remove"
-                        data-id="${item.id}"
-                    >
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
 
-                <div class="cart-item-total">
-                    ${formatCurrency(
-                        item.price * item.quantity
-                    )}
-                </div>
-            `;
+            updateCartCount();
 
-            cartItems.appendChild(cartItem);
-        });
 
-        attachCartButtons();
-        updateCartCount();
-    }
 
-    function attachCartButtons() {
-        const buttons =
-            document.querySelectorAll(
-                "[data-action]"
-            );
+            return;
 
-        buttons.forEach(button => {
-            button.addEventListener("click", () => {
-                const productId =
-                    Number(button.dataset.id);
+        }
 
-                const action =
-                    button.dataset.action;
 
-                if (action === "increase") {
-                    changeQuantity(productId, 1);
-                }
 
-                if (action === "decrease") {
-                    changeQuantity(productId, -1);
-                }
+        cartEmpty.style.display = "none";
 
-                if (action === "remove") {
-                    removeFromCart(productId);
-                }
-            });
-        });
-    }
+
+
+        cart.forEach(item => {
+
+            const cartItem =
+
+                document.createElement("div");
+
+
+
+            cartItem.className = "cart-item";
+
+
+
+            cartItem.innerHTML = `
+
+                <div class="cart-item-info">
+
+                    <h4>
+
+                        ${item.name}
+
+                    </h4>
+
+
+
+                    <span>
+
+                        ${item.sku}
+
+                    </span>
+
+
+
+                    <strong>
+
+                        ${formatCurrency(item.price)}
+
+                    </strong>
+
+                </div>
+
+
+
+                <div class="cart-item-controls">
+
+                    <button
+
+                        class="quantity-button"
+
+                        data-action="decrease"
+
+                        data-id="${item.id}"
+
+                    >
+
+                        <i class="fa-solid fa-minus"></i>
+
+                    </button>
+
+
+
+                    <span class="quantity">
+
+                        ${item.quantity}
+
+                    </span>
+
+
+
+                    <button
+
+                        class="quantity-button"
+
+                        data-action="increase"
+
+                        data-id="${item.id}"
+
+                    >
+
+                        <i class="fa-solid fa-plus"></i>
+
+                    </button>
+
+
+
+                    <button
+
+                        class="remove-cart-button"
+
+                        data-action="remove"
+
+                        data-id="${item.id}"
+
+                    >
+
+                        <i class="fa-solid fa-trash"></i>
+
+                    </button>
+
+                </div>
+
+
+
+                <div class="cart-item-total">
+
+                    ${formatCurrency(
+
+                        item.price * item.quantity
+
+                    )}
+
+                </div>
+
+            `;
+
+
+
+            cartItems.appendChild(cartItem);
+
+        });
+
+
+
+        attachCartButtons();
+
+        updateCartCount();
+
+    }
+
+
+
+    function attachCartButtons() {
+
+        const buttons =
+
+            document.querySelectorAll(
+
+                "[data-action]"
+
+            );
+
+
+
+        buttons.forEach(button => {
+
+            button.addEventListener("click", () => {
+
+                const productId =
+
+                    Number(button.dataset.id);
+
+
+
+                const action =
+
+                    button.dataset.action;
+
+
+
+                if (action === "increase") {
+
+                    changeQuantity(productId, 1);
+
+                }
+
+
+
+                if (action === "decrease") {
+
+                    changeQuantity(productId, -1);
+
+                }
+
+
+
+                if (action === "remove") {
+
+                    removeFromCart(productId);
+
+                }
+
+            });
+
+        });
+
+    }
+
+
 
 function updateCartCount() {
-    const count = cart.reduce(
-        (total, item) => total + item.quantity,
-        0
-    );
 
-    if (cartCountElement) {
-        cartCountElement.textContent = count;
-    }
+    const count = cart.reduce(
 
-    const selectedText =
-        document.getElementById("selectedText");
+        (total, item) => total + item.quantity,
 
-    if (selectedText) {
-        selectedText.textContent =
-            `${count} item${count === 1 ? "" : "s"} selected`;
-    }
+        0
+
+    );
+
+
+
+    if (cartCountElement) {
+
+        cartCountElement.textContent = count;
+
+    }
+
+
+
+    const selectedText =
+
+        document.getElementById("selectedText");
+
+
+
+    if (selectedText) {
+
+        selectedText.textContent =
+
+            `${count} item${count === 1 ? "" : "s"} selected`;
+
+    }
+
 }
-    function calculateSubtotal() {
-        return cart.reduce(
-            (total, item) =>
-                total + item.price * item.quantity,
-            0
+
+    function calculateSubtotal() {
+
+        return cart.reduce(
+
+            (total, item) =>
+
+                total + item.price * item.quantity,
+
+            0
+
+        );
+
+    }
+
+
+
+function calculateDiscount(subtotal) {
+    if (!appliedDiscount) {
+        return 0;
+    }
+
+    let discountAmount = 0;
+
+    if (appliedDiscount.type === "percentage") {
+        discountAmount = subtotal * (Number(appliedDiscount.value) / 100);
+    }
+
+    if (appliedDiscount.type === "fixed") {
+        discountAmount = Number(appliedDiscount.value);
+    }
+
+    if (
+        appliedDiscount.maximum_discount !== null &&
+        appliedDiscount.maximum_discount !== undefined
+    ) {
+        discountAmount = Math.min(
+            discountAmount,
+            Number(appliedDiscount.maximum_discount)
         );
     }
 
-    function calculateDiscount(subtotal) {
-        return subtotal * discount;
-    }
+    return Math.min(discountAmount, subtotal);
+}
 
 function calculateTax(amount) {
     return 0;
 }
-    function updateTotals() {
-        const subtotal =
-            calculateSubtotal();
 
-        const discountAmount =
-            calculateDiscount(subtotal);
+function updateTotals() {
 
-        const taxableAmount =
-            Math.max(
-                subtotal - discountAmount,
-                0
-            );
+        const subtotal =
 
-        const tax =
-            calculateTax(taxableAmount);
+            calculateSubtotal();
 
-        const total =
-            taxableAmount + tax;
 
-        if (subtotalElement) {
-            subtotalElement.textContent =
-                formatCurrency(subtotal);
-        }
 
-        if (discountElement) {
-            discountElement.textContent =
-                `-${formatCurrency(discountAmount)}`;
-        }
+        const discountAmount =
 
-        if (taxElement) {
-            taxElement.textContent =
-                formatCurrency(tax);
-        }
+            calculateDiscount(subtotal);
 
-        if (totalElement) {
-            totalElement.textContent =
-                formatCurrency(total);
-        }
 
-        if (processPaymentButton) {
-            processPaymentButton.innerHTML = `
-                <i class="fa-solid fa-credit-card"></i>
-                Process Payment (${formatCurrency(total)})
-            `;
-        }
 
-        calculateChange();
-    }
+        const taxableAmount =
+
+            Math.max(
+
+                subtotal - discountAmount,
+
+                0
+
+            );
+
+
+
+        const tax =
+
+            calculateTax(taxableAmount);
+
+
+
+        const total =
+
+            taxableAmount + tax;
+
+
+
+        if (subtotalElement) {
+
+            subtotalElement.textContent =
+
+                formatCurrency(subtotal);
+
+        }
+
+
+
+        if (discountElement) {
+
+            discountElement.textContent =
+
+                `-${formatCurrency(discountAmount)}`;
+
+        }
+
+
+
+        if (taxElement) {
+
+            taxElement.textContent =
+
+                formatCurrency(tax);
+
+        }
+
+
+
+        if (totalElement) {
+
+            totalElement.textContent =
+
+                formatCurrency(total);
+
+        }
+
+
+
+        if (processPaymentButton) {
+
+            processPaymentButton.innerHTML = `
+
+                <i class="fa-solid fa-credit-card"></i>
+
+                Process Payment (${formatCurrency(total)})
+
+            `;
+
+        }
+
+
+
+        calculateChange();
+
+    }
+
+
 
 async function applyDiscount() {
     if (!discountInput) {
@@ -470,19 +946,19 @@ async function applyDiscount() {
         return;
     }
 
+    const subtotal = calculateSubtotal();
+
+    if (subtotal <= 0) {
+        alert("Please add products to the cart first.");
+        return;
+    }
+
     const csrfToken = document
         .querySelector('meta[name="csrf-token"]')
         ?.getAttribute("content");
 
     if (!csrfToken) {
         alert("Security token is missing. Please refresh the page.");
-        return;
-    }
-
-    const subtotal = calculateSubtotal();
-
-    if (subtotal <= 0) {
-        alert("Add products to the cart before applying a discount.");
         return;
     }
 
@@ -514,7 +990,9 @@ async function applyDiscount() {
             updateTotals();
 
             throw new Error(
-                data.message || "Invalid discount code."
+                data.message ||
+                data.error ||
+                "Invalid discount code."
             );
         }
 
@@ -527,8 +1005,7 @@ async function applyDiscount() {
                 data.maximum_discount !== null
                     ? Number(data.maximum_discount)
                     : null,
-            discount_amount:
-                Number(data.discount_amount) || 0
+            discount_amount: Number(data.discount_amount) || 0
         };
 
         discount =
@@ -539,17 +1016,20 @@ async function applyDiscount() {
         updateTotals();
 
         alert(
-            `Discount ${appliedDiscount.code} applied: ${formatCurrency(
-                appliedDiscount.discount_amount
-            )}`
+            `Discount ${appliedDiscount.code} applied.
+` +
+            `Discount: ${formatCurrency(appliedDiscount.discount_amount)}`
         );
-
     } catch (error) {
         console.error("Discount validation error:", error);
 
+        appliedDiscount = null;
+        discount = 0;
+        updateTotals();
+
         alert(
             error.message ||
-            "Unable to validate the discount code."
+            "Invalid discount code."
         );
     } finally {
         if (applyDiscountButton) {
@@ -560,986 +1040,1969 @@ async function applyDiscount() {
 }
 
 function openPaymentModal() {
-    if (cart.length === 0) {
-        alert("Please add at least one product to the cart.");
-        return;
-    }
 
-    if (!paymentModal) {
-        return;
-    }
+    if (cart.length === 0) {
 
-    const currentTotal = calculateTotal();
+        alert("Please add at least one product to the cart.");
 
-    // Get the amount already entered in the main POS
-    const existingCash = Number(
-        cashReceivedInput?.value || 0
-    );
+        return;
 
-    paymentModal.classList.add("show");
+    }
 
-    paymentModal.setAttribute(
-        "aria-hidden",
-        "false"
-    );
 
-    const receiptTotal =
-        document.getElementById("receiptTotal");
 
-    const receiptMethod =
-        document.getElementById("receiptMethod");
+    if (!paymentModal) {
 
-    const receiptAmountReceived =
-        document.getElementById("receiptAmountReceived");
+        return;
 
-    const receiptChange =
-        document.getElementById("receiptChange");
+    }
 
-    const modalAmount =
-        document.getElementById("modalAmountReceived");
 
-    if (receiptTotal) {
-        receiptTotal.textContent =
-            formatCurrency(currentTotal);
-    }
 
-    if (receiptMethod) {
-        receiptMethod.textContent =
-            paymentMethod === "cash"
-                ? "Cash"
-                : paymentMethod.toUpperCase();
-    }
+    const currentTotal = calculateTotal();
 
-    // Copy the amount from the main POS input
-    if (modalAmount) {
-        modalAmount.value =
-            existingCash > 0
-                ? existingCash
-                : "";
-    }
 
-    if (receiptAmountReceived) {
-        receiptAmountReceived.textContent =
-            formatCurrency(existingCash);
-    }
 
-    calculateChange();
+    // Get the amount already entered in the main POS
 
-    setTimeout(() => {
-        if (modalAmount) {
-            modalAmount.focus();
-            modalAmount.select();
-        }
-    }, 100);
+    const existingCash = Number(
+
+        cashReceivedInput?.value || 0
+
+    );
+
+
+
+    paymentModal.classList.add("show");
+
+
+
+    paymentModal.setAttribute(
+
+        "aria-hidden",
+
+        "false"
+
+    );
+
+
+
+    const receiptTotal =
+
+        document.getElementById("receiptTotal");
+
+
+
+    const receiptMethod =
+
+        document.getElementById("receiptMethod");
+
+
+
+    const receiptAmountReceived =
+
+        document.getElementById("receiptAmountReceived");
+
+
+
+    const receiptChange =
+
+        document.getElementById("receiptChange");
+
+
+
+    const modalAmount =
+
+        document.getElementById("modalAmountReceived");
+
+
+
+    if (receiptTotal) {
+
+        receiptTotal.textContent =
+
+            formatCurrency(currentTotal);
+
+    }
+
+
+
+    if (receiptMethod) {
+
+        receiptMethod.textContent =
+
+            paymentMethod === "cash"
+
+                ? "Cash"
+
+                : paymentMethod.toUpperCase();
+
+    }
+
+
+
+    // Copy the amount from the main POS input
+
+    if (modalAmount) {
+
+        modalAmount.value =
+
+            existingCash > 0
+
+                ? existingCash
+
+                : "";
+
+    }
+
+
+
+    if (receiptAmountReceived) {
+
+        receiptAmountReceived.textContent =
+
+            formatCurrency(existingCash);
+
+    }
+
+
+
+    calculateChange();
+
+
+
+    setTimeout(() => {
+
+        if (modalAmount) {
+
+            modalAmount.focus();
+
+            modalAmount.select();
+
+        }
+
+    }, 100);
+
 }
 
-    function closePayment() {
-        if (!paymentModal) {
-            return;
-        }
 
-        paymentModal.classList.remove("show");
-        paymentModal.setAttribute(
-            "aria-hidden",
-            "true"
-        );
-    }
+
+    function closePayment() {
+
+        if (!paymentModal) {
+
+            return;
+
+        }
+
+
+
+        paymentModal.classList.remove("show");
+
+        paymentModal.setAttribute(
+
+            "aria-hidden",
+
+            "true"
+
+        );
+
+    }
+
+
 
 function calculateChange() {
-    const total = calculateTotal();
 
-    const activeCashInput =
-        modalCashReceivedInput ||
-        cashReceivedInput;
+    const total = calculateTotal();
+
+
+
+    const activeCashInput =
+
+        modalCashReceivedInput ||
+
+        cashReceivedInput;
+
+
 
 const cash = Number(
-    modalCashReceivedInput
-        ? modalCashReceivedInput.value
-        : cashReceivedInput
-            ? cashReceivedInput.value
-            : 0
+
+    modalCashReceivedInput
+
+        ? modalCashReceivedInput.value
+
+        : cashReceivedInput
+
+            ? cashReceivedInput.value
+
+            : 0
+
 );
-    const change =
-        Math.max(
-            cash - total,
-            0
-        );
 
-    if (changeAmountElement) {
-        changeAmountElement.textContent =
-            formatCurrency(change);
-    }
+    const change =
 
-    const receiptChange =
-        document.getElementById("receiptChange");
+        Math.max(
 
-    if (receiptChange) {
-        receiptChange.textContent =
-            formatCurrency(change);
-    }
+            cash - total,
+
+            0
+
+        );
+
+
+
+    if (changeAmountElement) {
+
+        changeAmountElement.textContent =
+
+            formatCurrency(change);
+
+    }
+
+
+
+    const receiptChange =
+
+        document.getElementById("receiptChange");
+
+
+
+    if (receiptChange) {
+
+        receiptChange.textContent =
+
+            formatCurrency(change);
+
+    }
+
 }
-    function calculateTotal() {
-        const subtotal =
-            calculateSubtotal();
 
-        const discountAmount =
-            calculateDiscount(subtotal);
+    function calculateTotal() {
 
-        const taxableAmount =
-            Math.max(
-                subtotal - discountAmount,
-                0
-            );
+        const subtotal =
 
-        const tax =
-            calculateTax(taxableAmount);
+            calculateSubtotal();
 
-        return taxableAmount + tax;
-    }
+
+
+        const discountAmount =
+
+            calculateDiscount(subtotal);
+
+
+
+        const taxableAmount =
+
+            Math.max(
+
+                subtotal - discountAmount,
+
+                0
+
+            );
+
+
+
+        const tax =
+
+            calculateTax(taxableAmount);
+
+
+
+        return taxableAmount + tax;
+
+    }
+
+
 
 async function confirmPayment() {
-    if (cart.length === 0) {
-        alert("Your cart is empty.");
-        return;
-    }
 
-    const total = calculateTotal();
+    if (cart.length === 0) {
 
-    const cash = Number(
-        cashReceivedInput
-            ? cashReceivedInput.value
-            : 0
-    );
+        alert("Your cart is empty.");
 
-    if (paymentMethod === "cash" && cash < total) {
-        alert("Insufficient cash received.");
-        return;
-    }
+        return;
 
-    const csrfToken = document
-        .querySelector('meta[name="csrf-token"]')
-        ?.getAttribute("content");
+    }
 
-    if (!csrfToken) {
-        alert("Security token is missing. Please refresh the page.");
-        return;
-    }
 
-    const cartPayload = cart.map(item => ({
-        id: item.id,
-        qty: Number(item.quantity)
-    }));
 
-    const discountCode =
-        appliedDiscount?.code ||
-        (
-            discountInput
-                ? discountInput.value.trim().toUpperCase()
-                : ""
-        ) ||
-        null;
+    const total = calculateTotal();
 
-    const confirmButton =
-        document.getElementById("confirmPayment");
 
-    if (confirmButton) {
-        confirmButton.disabled = true;
-        confirmButton.innerHTML =
-            '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
-    }
 
-    try {
-        const response = await fetch("/pos/checkout", {
-            method: "POST",
+    const cash = Number(
 
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "X-CSRF-TOKEN": csrfToken,
-                "X-Requested-With": "XMLHttpRequest"
-            },
+        cashReceivedInput
 
-            body: JSON.stringify({
-                cart: cartPayload,
-                discount_code: discountCode,
-                cash_received: cash
-            })
-        });
+            ? cashReceivedInput.value
 
-        const data = await response.json();
+            : 0
 
-        if (!response.ok || !data.success) {
-            throw new Error(
-                data.message ||
-                data.error ||
-                "Payment could not be completed."
-            );
-        }
+    );
 
-        /*
-         * Update receipt information from the SERVER response.
-         */
-        const receiptInvoice =
-            document.getElementById("receiptInvoice");
 
-        const receiptTotal =
-            document.getElementById("receiptTotal");
 
-        const receiptMethod =
-            document.getElementById("receiptMethod");
+    if (paymentMethod === "cash" && cash < total) {
 
-        const receiptAmountReceived =
-            document.getElementById("receiptAmountReceived");
+        alert("Insufficient cash received.");
 
-        const receiptChange =
-            document.getElementById("receiptChange");
+        return;
 
-        if (receiptInvoice) {
-            receiptInvoice.textContent =
-                data.invoice_no || "N/A";
-        }
+    }
 
-        if (receiptTotal) {
-            receiptTotal.textContent =
-                formatCurrency(
-                    Number(data.total_amount || total)
-                );
-        }
 
-        if (receiptMethod) {
-            receiptMethod.textContent =
-                paymentMethod === "cash"
-                    ? "Cash"
-                    : paymentMethod;
-        }
 
-        if (receiptAmountReceived) {
-            receiptAmountReceived.textContent =
-                formatCurrency(
-                    Number(
-                        data.cash_received ||
-                        cash
-                    )
-                );
-        }
+    const csrfToken = document
 
-        if (receiptChange) {
-            receiptChange.textContent =
-                formatCurrency(
-                    Number(
-                        data.change_amount || 0
-                    )
-                );
-        }
+        .querySelector('meta[name="csrf-token"]')
 
-        /*
-         * Show successful receipt state.
-         */
-        const modalTitle =
-            document.getElementById("paymentModalTitle");
+        ?.getAttribute("content");
 
-        const modalMessage =
-            document.getElementById("paymentModalMessage");
 
-        const paymentConfirmation =
-            document.getElementById("paymentConfirmation");
 
-        const paymentModalActions =
-            document.getElementById("paymentModalActions");
+    if (!csrfToken) {
 
-        const receiptActions =
-            document.getElementById("receiptActions");
+        alert("Security token is missing. Please refresh the page.");
 
-        if (modalTitle) {
-            modalTitle.textContent =
-                "Payment Completed";
-        }
+        return;
 
-        if (modalMessage) {
-            modalMessage.textContent =
-                "Transaction processed successfully.";
-        }
+    }
 
-        if (paymentConfirmation) {
-            paymentConfirmation.style.display =
-                "block";
-        }
 
-        if (paymentModalActions) {
-            paymentModalActions.style.display =
-                "none";
-        }
 
-        if (receiptActions) {
-            receiptActions.style.display =
-                "flex";
-            receiptActions.style.flexDirection =
-                "column";
-        }
+    const cartPayload = cart.map(item => ({
 
-        /*
-         * Update local stock only after
-         * the server successfully completed
-         * the transaction.
-         */
-        cart.forEach(item => {
-            const product = posProducts.find(
-                product =>
-                    Number(product.id) === Number(item.id)
-            );
+        id: item.id,
 
-            if (product) {
-                product.stock =
-                    Math.max(
-                        0,
-                        Number(product.stock || 0) -
-                        Number(item.quantity || 0)
-                    );
-            }
-        });
+        qty: Number(item.quantity)
 
-        /*
-         * Keep receipt information for
-         * printing/downloading.
-         */
-        window.lastReceipt = {
-            invoice: data.invoice_no,
-            total: Number(
-                data.total_amount || total
-            ),
-            method:
-                paymentMethod === "cash"
-                    ? "Cash"
-                    : paymentMethod,
-            amountReceived: Number(
-                data.cash_received || cash
-            ),
-            change: Number(
-                data.change_amount || 0
-            )
-        };
+    }));
 
-    } catch (error) {
 
-        console.error(
-            "Payment error:",
-            error
-        );
 
-        alert(
-            error.message ||
-            "Payment failed. Please try again."
-        );
+    const discountCode =
 
-        if (confirmButton) {
-            confirmButton.disabled = false;
+        appliedDiscount?.code ||
 
-            confirmButton.innerHTML =
-                '<i class="fa-solid fa-check"></i> Confirm Payment';
-        }
-    }
+        (
+
+            discountInput
+
+                ? discountInput.value.trim().toUpperCase()
+
+                : ""
+
+        ) ||
+
+        null;
+
+
+
+    const confirmButton =
+
+        document.getElementById("confirmPayment");
+
+
+
+    if (confirmButton) {
+
+        confirmButton.disabled = true;
+
+        confirmButton.innerHTML =
+
+            '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+
+    }
+
+
+
+    try {
+
+        const response = await fetch("/pos/checkout", {
+
+            method: "POST",
+
+
+
+            headers: {
+
+                "Content-Type": "application/json",
+
+                "Accept": "application/json",
+
+                "X-CSRF-TOKEN": csrfToken,
+
+                "X-Requested-With": "XMLHttpRequest"
+
+            },
+
+
+
+            body: JSON.stringify({
+
+                cart: cartPayload,
+
+                discount_code: discountCode,
+
+                cash_received: cash
+
+            })
+
+        });
+
+
+
+        const data = await response.json();
+
+
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+
+                data.message ||
+
+                data.error ||
+
+                "Payment could not be completed."
+
+            );
+
+        }
+
+
+
+        /*
+
+         * Update receipt information from the SERVER response.
+
+         */
+
+        const receiptInvoice =
+
+            document.getElementById("receiptInvoice");
+
+
+
+        const receiptTotal =
+
+            document.getElementById("receiptTotal");
+
+
+
+        const receiptMethod =
+
+            document.getElementById("receiptMethod");
+
+
+
+        const receiptAmountReceived =
+
+            document.getElementById("receiptAmountReceived");
+
+
+
+        const receiptChange =
+
+            document.getElementById("receiptChange");
+
+
+
+        if (receiptInvoice) {
+
+            receiptInvoice.textContent =
+
+                data.invoice_no || "N/A";
+
+        }
+
+
+
+        if (receiptTotal) {
+
+            receiptTotal.textContent =
+
+                formatCurrency(
+
+                    Number(data.total_amount || total)
+
+                );
+
+        }
+
+
+
+        if (receiptMethod) {
+
+            receiptMethod.textContent =
+
+                paymentMethod === "cash"
+
+                    ? "Cash"
+
+                    : paymentMethod;
+
+        }
+
+
+
+        if (receiptAmountReceived) {
+
+            receiptAmountReceived.textContent =
+
+                formatCurrency(
+
+                    Number(
+
+                        data.cash_received ||
+
+                        cash
+
+                    )
+
+                );
+
+        }
+
+
+
+        if (receiptChange) {
+
+            receiptChange.textContent =
+
+                formatCurrency(
+
+                    Number(
+
+                        data.change_amount || 0
+
+                    )
+
+                );
+
+        }
+
+
+
+        /*
+
+         * Show successful receipt state.
+
+         */
+
+        const modalTitle =
+
+            document.getElementById("paymentModalTitle");
+
+
+
+        const modalMessage =
+
+            document.getElementById("paymentModalMessage");
+
+
+
+        const paymentConfirmation =
+
+            document.getElementById("paymentConfirmation");
+
+
+
+        const paymentModalActions =
+
+            document.getElementById("paymentModalActions");
+
+
+
+        const receiptActions =
+
+            document.getElementById("receiptActions");
+
+
+
+        if (modalTitle) {
+
+            modalTitle.textContent =
+
+                "Payment Completed";
+
+        }
+
+
+
+        if (modalMessage) {
+
+            modalMessage.textContent =
+
+                "Transaction processed successfully.";
+
+        }
+
+
+
+        if (paymentConfirmation) {
+
+            paymentConfirmation.style.display =
+
+                "block";
+
+        }
+
+
+
+        if (paymentModalActions) {
+
+            paymentModalActions.style.display =
+
+                "none";
+
+        }
+
+
+
+        if (receiptActions) {
+
+            receiptActions.style.display =
+
+                "flex";
+
+            receiptActions.style.flexDirection =
+
+                "column";
+
+        }
+
+
+
+        /*
+
+         * Update local stock only after
+
+         * the server successfully completed
+
+         * the transaction.
+
+         */
+
+        cart.forEach(item => {
+
+            const product = posProducts.find(
+
+                product =>
+
+                    Number(product.id) === Number(item.id)
+
+            );
+
+
+
+            if (product) {
+
+                product.stock =
+
+                    Math.max(
+
+                        0,
+
+                        Number(product.stock || 0) -
+
+                        Number(item.quantity || 0)
+
+                    );
+
+            }
+
+        });
+
+
+
+        /*
+
+         * Keep receipt information for
+
+         * printing/downloading.
+
+         */
+
+        window.lastReceipt = {
+
+            invoice: data.invoice_no,
+
+            total: Number(
+
+                data.total_amount || total
+
+            ),
+
+            method:
+
+                paymentMethod === "cash"
+
+                    ? "Cash"
+
+                    : paymentMethod,
+
+            amountReceived: Number(
+
+                data.cash_received || cash
+
+            ),
+
+            change: Number(
+
+                data.change_amount || 0
+
+            )
+
+        };
+
+
+
+    } catch (error) {
+
+
+
+        console.error(
+
+            "Payment error:",
+
+            error
+
+        );
+
+
+
+        alert(
+
+            error.message ||
+
+            "Payment failed. Please try again."
+
+        );
+
+
+
+        if (confirmButton) {
+
+            confirmButton.disabled = false;
+
+
+
+            confirmButton.innerHTML =
+
+                '<i class="fa-solid fa-check"></i> Confirm Payment';
+
+        }
+
+    }
+
 }
-    function clearCart() {
-        if (cart.length === 0) {
-            return;
-        }
 
-        if (
-            confirm(
-                "Are you sure you want to clear the current order?"
-            )
-        ) {
-            cart = [];
-            discount = 0;
+    function clearCart() {
 
-            if (discountInput) {
-                discountInput.value = "";
-            }
+        if (cart.length === 0) {
 
-            renderCart();
-            updateTotals();
-        }
-    }
+            return;
 
-    function holdOrder() {
-        if (cart.length === 0) {
-            alert(
-                "There is no order to hold."
-            );
+        }
 
-            return;
-        }
 
-        alert(
-            "Current order has been placed on hold."
-        );
-    }
 
-    function toggleDarkMode() {
-        document.body.classList.toggle(
-            "dark-mode"
-        );
+        if (
 
-        const enabled =
-            document.body.classList.contains(
-                "dark-mode"
-            );
+            confirm(
 
-        localStorage.setItem(
-            "pos-dark-mode",
-            enabled ? "true" : "false"
-        );
-    }
+                "Are you sure you want to clear the current order?"
 
-    function loadDarkMode() {
-        const enabled =
-            localStorage.getItem(
-                "pos-dark-mode"
-            ) === "true";
+            )
 
-        if (enabled) {
-            document.body.classList.add(
-                "dark-mode"
-            );
-        }
-    }
+        ) {
 
-    function setupCategories() {
-        categoryButtons.forEach(button => {
-            button.addEventListener(
-                "click",
-                () => {
-                    categoryButtons.forEach(
-                        item => {
-                            item.classList.remove(
-                                "active"
-                            );
-                        }
-                    );
+            cart = [];
 
-                    button.classList.add(
-                        "active"
-                    );
+            discount = 0;
 
-                    activeCategory =
-                        button.dataset.category;
 
-                    renderProducts();
-                }
-            );
-        });
-    }
 
-    function setupPaymentMethods() {
-        paymentButtons.forEach(button => {
-            button.addEventListener(
-                "click",
-                () => {
-                    paymentButtons.forEach(
-                        item => {
-                            item.classList.remove(
-                                "active"
-                            );
-                        }
-                    );
+            if (discountInput) {
 
-                    button.classList.add(
-                        "active"
-                    );
+                discountInput.value = "";
 
-		     paymentMethod =
-    			button.dataset.payment.toLowerCase();
-                    const cashSection =
-                        document.getElementById(
-                            "cashPaymentSection"
-                        );
+            }
 
-                    if (cashSection) {
-                        cashSection.style.display =
-                            paymentMethod === "cash"
-                                ? "block"
-                                : "none";
-                    }
 
-                    calculateChange();
-                }
-            );
-        });
-    }
+
+            renderCart();
+
+            updateTotals();
+
+        }
+
+    }
+
+
+
+    function holdOrder() {
+
+        if (cart.length === 0) {
+
+            alert(
+
+                "There is no order to hold."
+
+            );
+
+
+
+            return;
+
+        }
+
+
+
+        alert(
+
+            "Current order has been placed on hold."
+
+        );
+
+    }
+
+
+
+    function toggleDarkMode() {
+
+        document.body.classList.toggle(
+
+            "dark-mode"
+
+        );
+
+
+
+        const enabled =
+
+            document.body.classList.contains(
+
+                "dark-mode"
+
+            );
+
+
+
+        localStorage.setItem(
+
+            "pos-dark-mode",
+
+            enabled ? "true" : "false"
+
+        );
+
+    }
+
+
+
+    function loadDarkMode() {
+
+        const enabled =
+
+            localStorage.getItem(
+
+                "pos-dark-mode"
+
+            ) === "true";
+
+
+
+        if (enabled) {
+
+            document.body.classList.add(
+
+                "dark-mode"
+
+            );
+
+        }
+
+    }
+
+
+
+    function setupCategories() {
+
+        categoryButtons.forEach(button => {
+
+            button.addEventListener(
+
+                "click",
+
+                () => {
+
+                    categoryButtons.forEach(
+
+                        item => {
+
+                            item.classList.remove(
+
+                                "active"
+
+                            );
+
+                        }
+
+                    );
+
+
+
+                    button.classList.add(
+
+                        "active"
+
+                    );
+
+
+
+                    activeCategory =
+
+                        button.dataset.category;
+
+
+
+                    renderProducts();
+
+                }
+
+            );
+
+        });
+
+    }
+
+
+
+    function setupPaymentMethods() {
+
+        paymentButtons.forEach(button => {
+
+            button.addEventListener(
+
+                "click",
+
+                () => {
+
+                    paymentButtons.forEach(
+
+                        item => {
+
+                            item.classList.remove(
+
+                                "active"
+
+                            );
+
+                        }
+
+                    );
+
+
+
+                    button.classList.add(
+
+                        "active"
+
+                    );
+
+
+
+             paymentMethod =
+
+                button.dataset.payment.toLowerCase();
+
+                    const cashSection =
+
+                        document.getElementById(
+
+                            "cashPaymentSection"
+
+                        );
+
+
+
+                    if (cashSection) {
+
+                        cashSection.style.display =
+
+                            paymentMethod === "cash"
+
+                                ? "block"
+
+                                : "none";
+
+                    }
+
+
+
+                    calculateChange();
+
+                }
+
+            );
+
+        });
+
+    }
+
+
 
 function setupProductButtons() {
-    const buttons = document.querySelectorAll("[data-add]");
 
-    buttons.forEach(button => {
-        button.addEventListener("click", () => {
-            const productId = Number(button.dataset.add);
+    const buttons = document.querySelectorAll("[data-add]");
 
-            addToCart(productId);
-        });
-    });
+
+
+    buttons.forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            const productId = Number(button.dataset.add);
+
+
+
+            addToCart(productId);
+
+        });
+
+    });
+
 }
 
 
-    function setupSearch() {
-        if (searchInput) {
-            searchInput.addEventListener(
-                "input",
-                event => {
-                    searchTerm =
-                        event.target.value;
 
-                    renderProducts();
-                }
-            );
-        }
 
-        if (barcodeInput) {
-            barcodeInput.addEventListener(
-                "keydown",
-                event => {
-                    if (event.key !== "Enter") {
-                        return;
-                    }
 
-                    const barcode =
-                        barcodeInput.value.trim();
+    function setupSearch() {
 
-                    if (!barcode) {
-                        return;
-                    }
+        if (searchInput) {
 
-                    const product =
-                        products.find(
-                            item =>
-                                item.sku.toLowerCase() ===
-                                barcode.toLowerCase()
-                        );
+            searchInput.addEventListener(
 
-                    if (product) {
-                        addToCart(product.id);
-                    } else {
-                        alert(
-                            "Product not found."
-                        );
-                    }
+                "input",
 
-                    barcodeInput.value = "";
-                }
-            );
-        }
-    }
+                event => {
 
-    function setupViewButtons() {
-        if (gridViewButton) {
-            gridViewButton.addEventListener(
-                "click",
-                () => {
-                    productGrid.classList.remove(
-                        "list-view"
-                    );
+                    searchTerm =
 
-                    gridViewButton.classList.add(
-                        "active"
-                    );
+                        event.target.value;
 
-                    if (listViewButton) {
-                        listViewButton.classList.remove(
-                            "active"
-                        );
-                    }
-                }
-            );
-        }
 
-        if (listViewButton) {
-            listViewButton.addEventListener(
-                "click",
-                () => {
-                    productGrid.classList.add(
-                        "list-view"
-                    );
 
-                    listViewButton.classList.add(
-                        "active"
-                    );
+                    renderProducts();
 
-                    if (gridViewButton) {
-                        gridViewButton.classList.remove(
-                            "active"
-                        );
-                    }
-                }
-            );
-        }
-    }
+                }
+
+            );
+
+        }
+
+
+
+        if (barcodeInput) {
+
+            barcodeInput.addEventListener(
+
+                "keydown",
+
+                event => {
+
+                    if (event.key !== "Enter") {
+
+                        return;
+
+                    }
+
+
+
+                    const barcode =
+
+                        barcodeInput.value.trim();
+
+
+
+                    if (!barcode) {
+
+                        return;
+
+                    }
+
+
+
+                    const product =
+
+                        products.find(
+
+                            item =>
+
+                                item.sku.toLowerCase() ===
+
+                                barcode.toLowerCase()
+
+                        );
+
+
+
+                    if (product) {
+
+                        addToCart(product.id);
+
+                    } else {
+
+                        alert(
+
+                            "Product not found."
+
+                        );
+
+                    }
+
+
+
+                    barcodeInput.value = "";
+
+                }
+
+            );
+
+        }
+
+    }
+
+
+
+    function setupViewButtons() {
+
+        if (gridViewButton) {
+
+            gridViewButton.addEventListener(
+
+                "click",
+
+                () => {
+
+                    productGrid.classList.remove(
+
+                        "list-view"
+
+                    );
+
+
+
+                    gridViewButton.classList.add(
+
+                        "active"
+
+                    );
+
+
+
+                    if (listViewButton) {
+
+                        listViewButton.classList.remove(
+
+                            "active"
+
+                        );
+
+                    }
+
+                }
+
+            );
+
+        }
+
+
+
+        if (listViewButton) {
+
+            listViewButton.addEventListener(
+
+                "click",
+
+                () => {
+
+                    productGrid.classList.add(
+
+                        "list-view"
+
+                    );
+
+
+
+                    listViewButton.classList.add(
+
+                        "active"
+
+                    );
+
+
+
+                    if (gridViewButton) {
+
+                        gridViewButton.classList.remove(
+
+                            "active"
+
+                        );
+
+                    }
+
+                }
+
+            );
+
+        }
+
+    }
+
 function printReceipt() {
-    if (!window.lastReceipt) {
-        alert("No completed payment is available to print.");
-        return;
-    }
 
-    const receipt = window.lastReceipt;
+    if (!window.lastReceipt) {
 
-    const receiptWindow = window.open(
-        "",
-        "_blank",
-        "width=420,height=650"
-    );
+        alert("No completed payment is available to print.");
 
-    if (!receiptWindow) {
-        alert("Please allow pop-ups to print the receipt.");
-        return;
-    }
+        return;
 
-    receiptWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Receipt - ${receipt.invoice}</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    width: 320px;
-                    margin: 30px auto;
-                    color: #111;
-                }
+    }
 
-                h2 {
-                    text-align: center;
-                    margin-bottom: 5px;
-                }
 
-                .center {
-                    text-align: center;
-                }
 
-                .line {
-                    border-top: 1px dashed #777;
-                    margin: 15px 0;
-                }
+    const receipt = window.lastReceipt;
 
-                .row {
-                    display: flex;
-                    justify-content: space-between;
-                    margin: 8px 0;
-                }
 
-                .total {
-                    font-size: 18px;
-                    font-weight: bold;
-                }
 
-                @media print {
-                    body {
-                        margin: 0;
-                    }
-                }
-            </style>
-        </head>
+    const receiptWindow = window.open(
 
-        <body>
+        "",
 
-            <h2>SHINE & SMILE</h2>
+        "_blank",
 
-            <div class="center">
-                Dental Supply POS
-            </div>
+        "width=420,height=650"
 
-            <div class="line"></div>
+    );
 
-            <div class="row">
-                <span>Invoice</span>
-                <strong>${receipt.invoice}</strong>
-            </div>
 
-            <div class="row">
-                <span>Payment</span>
-                <strong>${receipt.method}</strong>
-            </div>
 
-            <div class="line"></div>
+    if (!receiptWindow) {
 
-            <div class="row total">
-                <span>Total</span>
-                <span>${formatCurrency(receipt.total)}</span>
-            </div>
+        alert("Please allow pop-ups to print the receipt.");
 
-            <div class="row">
-                <span>Amount Received</span>
-                <span>${formatCurrency(receipt.amountReceived)}</span>
-            </div>
+        return;
 
-            <div class="row">
-                <span>Change</span>
-                <span>${formatCurrency(receipt.change)}</span>
-            </div>
+    }
 
-            <div class="line"></div>
 
-            <div class="center">
-                Thank you for your purchase!
-            </div>
 
-        </body>
-        </html>
-    `);
+    receiptWindow.document.write(`
 
-    receiptWindow.document.close();
+        <!DOCTYPE html>
 
-    receiptWindow.focus();
+        <html>
 
-    setTimeout(() => {
-        receiptWindow.print();
-    }, 300);
+        <head>
+
+            <title>Receipt - ${receipt.invoice}</title>
+
+            <style>
+
+                body {
+
+                    font-family: Arial, sans-serif;
+
+                    width: 320px;
+
+                    margin: 30px auto;
+
+                    color: #111;
+
+                }
+
+
+
+                h2 {
+
+                    text-align: center;
+
+                    margin-bottom: 5px;
+
+                }
+
+
+
+                .center {
+
+                    text-align: center;
+
+                }
+
+
+
+                .line {
+
+                    border-top: 1px dashed #777;
+
+                    margin: 15px 0;
+
+                }
+
+
+
+                .row {
+
+                    display: flex;
+
+                    justify-content: space-between;
+
+                    margin: 8px 0;
+
+                }
+
+
+
+                .total {
+
+                    font-size: 18px;
+
+                    font-weight: bold;
+
+                }
+
+
+
+                @media print {
+
+                    body {
+
+                        margin: 0;
+
+                    }
+
+                }
+
+            </style>
+
+        </head>
+
+
+
+        <body>
+
+
+
+            <h2>SHINE & SMILE</h2>
+
+
+
+            <div class="center">
+
+                Dental Supply POS
+
+            </div>
+
+
+
+            <div class="line"></div>
+
+
+
+            <div class="row">
+
+                <span>Invoice</span>
+
+                <strong>${receipt.invoice}</strong>
+
+            </div>
+
+
+
+            <div class="row">
+
+                <span>Payment</span>
+
+                <strong>${receipt.method}</strong>
+
+            </div>
+
+
+
+            <div class="line"></div>
+
+
+
+            <div class="row total">
+
+                <span>Total</span>
+
+                <span>${formatCurrency(receipt.total)}</span>
+
+            </div>
+
+
+
+            <div class="row">
+
+                <span>Amount Received</span>
+
+                <span>${formatCurrency(receipt.amountReceived)}</span>
+
+            </div>
+
+
+
+            <div class="row">
+
+                <span>Change</span>
+
+                <span>${formatCurrency(receipt.change)}</span>
+
+            </div>
+
+
+
+            <div class="line"></div>
+
+
+
+            <div class="center">
+
+                Thank you for your purchase!
+
+            </div>
+
+
+
+        </body>
+
+        </html>
+
+    `);
+
+
+
+    receiptWindow.document.close();
+
+
+
+    receiptWindow.focus();
+
+
+
+    setTimeout(() => {
+
+        receiptWindow.print();
+
+    }, 300);
+
 }
+
+
+
 
 
 function downloadReceipt() {
-    if (!window.lastReceipt) {
-        alert("No completed payment is available to download.");
-        return;
-    }
 
-    const receipt = window.lastReceipt;
+    if (!window.lastReceipt) {
 
-    const receiptText =
+        alert("No completed payment is available to download.");
+
+        return;
+
+    }
+
+
+
+    const receipt = window.lastReceipt;
+
+
+
+    const receiptText =
+
 `SHINE & SMILE
+
 Dental Supply POS
+
 --------------------------------
+
 Invoice: ${receipt.invoice}
+
 Payment: ${receipt.method}
+
 --------------------------------
+
 Total: ${formatCurrency(receipt.total)}
+
 Amount Received: ${formatCurrency(receipt.amountReceived)}
+
 Change: ${formatCurrency(receipt.change)}
+
 --------------------------------
+
 Thank you for your purchase!
+
 `;
 
-    const blob = new Blob(
-        [receiptText],
-        {
-            type: "text/plain;charset=utf-8"
-        }
-    );
 
-    const url = URL.createObjectURL(blob);
 
-    const link = document.createElement("a");
+    const blob = new Blob(
 
-    link.href = url;
+        [receiptText],
 
-    link.download =
-        `Receipt-${receipt.invoice}.txt`;
+        {
 
-    document.body.appendChild(link);
+            type: "text/plain;charset=utf-8"
 
-    link.click();
+        }
 
-    link.remove();
+    );
 
-    URL.revokeObjectURL(url);
+
+
+    const url = URL.createObjectURL(blob);
+
+
+
+    const link = document.createElement("a");
+
+
+
+    link.href = url;
+
+
+
+    link.download =
+
+        `Receipt-${receipt.invoice}.txt`;
+
+
+
+    document.body.appendChild(link);
+
+
+
+    link.click();
+
+
+
+    link.remove();
+
+
+
+    URL.revokeObjectURL(url);
+
 }
+
+
+
 
 
 function startNewSale() {
+
 cart = [];
+
 discount = 0;
+
 appliedDiscount = null;
+
 window.lastReceipt = null;
 
-    window.lastReceipt = null;
 
-    if (discountInput) {
-        discountInput.value = "";
-    }
 
-    if (paymentModal) {
-        paymentModal.classList.remove("show");
+    window.lastReceipt = null;
 
-        paymentModal.setAttribute(
-            "aria-hidden",
-            "true"
-        );
-    }
 
-    const paymentModalActions =
-        document.getElementById(
-            "paymentModalActions"
-        );
 
-    const receiptActions =
-        document.getElementById(
-            "receiptActions"
-        );
+    if (discountInput) {
 
-    const paymentConfirmation =
-        document.getElementById(
-            "paymentConfirmation"
-        );
+        discountInput.value = "";
 
-    const modalTitle =
-        document.getElementById(
-            "paymentModalTitle"
-        );
+    }
 
-    const modalMessage =
-        document.getElementById(
-            "paymentModalMessage"
-        );
 
-    if (paymentModalActions) {
-        paymentModalActions.style.display =
-            "block";
-    }
 
-    if (receiptActions) {
-        receiptActions.style.display =
-            "none";
-    }
+    if (paymentModal) {
 
-    if (paymentConfirmation) {
-        paymentConfirmation.style.display =
-            "block";
-    }
+        paymentModal.classList.remove("show");
 
-    if (modalTitle) {
-        modalTitle.textContent =
-            "Confirm Payment";
-    }
 
-    if (modalMessage) {
-        modalMessage.textContent =
-            "Review the payment before completing this transaction.";
-    }
 
-    if (confirmPaymentButton) {
-        confirmPaymentButton.disabled = false;
+        paymentModal.setAttribute(
 
-        confirmPaymentButton.innerHTML =
-            '<i class="fa-solid fa-check"></i> Confirm Payment';
-    }
+            "aria-hidden",
 
-    renderProducts();
-    renderCart();
-    updateTotals();
+            "true"
+
+        );
+
+    }
+
+
+
+    const paymentModalActions =
+
+        document.getElementById(
+
+            "paymentModalActions"
+
+        );
+
+
+
+    const receiptActions =
+
+        document.getElementById(
+
+            "receiptActions"
+
+        );
+
+
+
+    const paymentConfirmation =
+
+        document.getElementById(
+
+            "paymentConfirmation"
+
+        );
+
+
+
+    const modalTitle =
+
+        document.getElementById(
+
+            "paymentModalTitle"
+
+        );
+
+
+
+    const modalMessage =
+
+        document.getElementById(
+
+            "paymentModalMessage"
+
+        );
+
+
+
+    if (paymentModalActions) {
+
+        paymentModalActions.style.display =
+
+            "block";
+
+    }
+
+
+
+    if (receiptActions) {
+
+        receiptActions.style.display =
+
+            "none";
+
+    }
+
+
+
+    if (paymentConfirmation) {
+
+        paymentConfirmation.style.display =
+
+            "block";
+
+    }
+
+
+
+    if (modalTitle) {
+
+        modalTitle.textContent =
+
+            "Confirm Payment";
+
+    }
+
+
+
+    if (modalMessage) {
+
+        modalMessage.textContent =
+
+            "Review the payment before completing this transaction.";
+
+    }
+
+
+
+    if (confirmPaymentButton) {
+
+        confirmPaymentButton.disabled = false;
+
+
+
+        confirmPaymentButton.innerHTML =
+
+            '<i class="fa-solid fa-check"></i> Confirm Payment';
+
+    }
+
+
+
+    renderProducts();
+
+    renderCart();
+
+    updateTotals();
+
 }
-    if (applyDiscountButton) {
-        applyDiscountButton.addEventListener(
-            "click",
-            applyDiscount
-        );
-    }
 
-    if (processPaymentButton) {
-        processPaymentButton.addEventListener(
-            "click",
-            openPaymentModal
-        );
-    }
+    if (applyDiscountButton) {
 
-    if (closePaymentModal) {
-        closePaymentModal.addEventListener(
-            "click",
-            closePayment
-        );
-    }
+        applyDiscountButton.addEventListener(
 
-    if (paymentModal) {
-        paymentModal.addEventListener(
-            "click",
-            (event) => {
-                if (event.target === paymentModal) {
-                    closePayment();
-                }
-            }
-        );
-    }
+            "click",
 
-    if (confirmPaymentButton) {
-        confirmPaymentButton.addEventListener(
-            "click",
-            confirmPayment
-        );
-    }
+            applyDiscount
 
-    if (cashReceivedInput) {
-        cashReceivedInput.addEventListener(
-            "input",
-            calculateChange
-        );
-    }
+        );
+
+    }
+
+
+
+    if (processPaymentButton) {
+
+        processPaymentButton.addEventListener(
+
+            "click",
+
+            openPaymentModal
+
+        );
+
+    }
+
+
+
+    if (closePaymentModal) {
+
+        closePaymentModal.addEventListener(
+
+            "click",
+
+            closePayment
+
+        );
+
+    }
+
+
+
+    if (paymentModal) {
+
+        paymentModal.addEventListener(
+
+            "click",
+
+            (event) => {
+
+                if (event.target === paymentModal) {
+
+                    closePayment();
+
+                }
+
+            }
+
+        );
+
+    }
+
+
+
+    if (confirmPaymentButton) {
+
+        confirmPaymentButton.addEventListener(
+
+            "click",
+
+            confirmPayment
+
+        );
+
+    }
+
+
+
+    if (cashReceivedInput) {
+
+        cashReceivedInput.addEventListener(
+
+            "input",
+
+            calculateChange
+
+        );
+
+    }
+
 if (modalCashReceivedInput) {
-    modalCashReceivedInput.addEventListener(
-        "input",
-        () => {
-            if (cashReceivedInput) {
-                cashReceivedInput.value =
-                    modalCashReceivedInput.value;
-            }
 
-            calculateChange();
+    modalCashReceivedInput.addEventListener(
 
-            const receiptAmountReceived =
-                document.getElementById(
-                    "receiptAmountReceived"
-                );
+        "input",
 
-            if (receiptAmountReceived) {
-                receiptAmountReceived.textContent =
-                    formatCurrency(
-                        Number(
-                            modalCashReceivedInput.value || 0
-                        )
-                    );
-            }
-        }
-    );
+        () => {
+
+            if (cashReceivedInput) {
+
+                cashReceivedInput.value =
+
+                    modalCashReceivedInput.value;
+
+            }
+
+
+
+            calculateChange();
+
+
+
+            const receiptAmountReceived =
+
+                document.getElementById(
+
+                    "receiptAmountReceived"
+
+                );
+
+
+
+            if (receiptAmountReceived) {
+
+                receiptAmountReceived.textContent =
+
+                    formatCurrency(
+
+                        Number(
+
+                            modalCashReceivedInput.value || 0
+
+                        )
+
+                    );
+
+            }
+
+        }
+
+    );
+
 }
 
-    if (clearCartButton) {
-        clearCartButton.addEventListener(
-            "click",
-            clearCart
-        );
-    }
+
+
+    if (clearCartButton) {
+
+        clearCartButton.addEventListener(
+
+            "click",
+
+            clearCart
+
+        );
+
+    }
+
+
 
 if (printReceiptButton) {
-    printReceiptButton.addEventListener(
-        "click",
-        printReceipt
-    );
+
+    printReceiptButton.addEventListener(
+
+        "click",
+
+        printReceipt
+
+    );
+
 }
+
+
 
 if (downloadReceiptButton) {
-    downloadReceiptButton.addEventListener(
-        "click",
-        downloadReceipt
-    );
+
+    downloadReceiptButton.addEventListener(
+
+        "click",
+
+        downloadReceipt
+
+    );
+
 }
+
+
 
 if (newSaleButton) {
-    newSaleButton.addEventListener(
-        "click",
-        startNewSale
-    );
+
+    newSaleButton.addEventListener(
+
+        "click",
+
+        startNewSale
+
+    );
+
 }
 
-    if (darkModeButton) {
-        darkModeButton.addEventListener(
-            "click",
-            toggleDarkMode
-        );
-    }
 
-    setupCategories();
-    setupPaymentMethods();
-    setupSearch();
-    setupViewButtons();
 
-    loadDarkMode();
+    if (darkModeButton) {
 
-    renderProducts();
-    renderCart();
-    updateTotals();
+        darkModeButton.addEventListener(
+
+            "click",
+
+            toggleDarkMode
+
+        );
+
+    }
+
+
+
+    setupCategories();
+
+    setupPaymentMethods();
+
+    setupSearch();
+
+    setupViewButtons();
+
+
+
+    loadDarkMode();
+
+
+
+    renderProducts();
+
+    renderCart();
+
+    updateTotals();
+
 });
