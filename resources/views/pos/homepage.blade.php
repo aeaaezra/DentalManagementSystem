@@ -1,14 +1,23 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>Shine & Smile | Dental Supply POS</title>
-        <link
+
+    <link
         rel="stylesheet"
         href="{{ asset('css/pos/pos_homepage.css') }}"
     >
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
 </head>
 <body>
     <div class="app-shell">
@@ -170,15 +179,15 @@
                 <div class="summary">
                     <div><span>Subtotal</span><strong id="subtotal">₱0.00</strong></div>
                     <div><span>Discount (0%)</span><strong class="discount-value" id="discount">-₱0.00</strong></div>
-                    <div><span>Tax (VAT 8%)</span><strong id="tax">₱0.00</strong></div>
+		    <div><span>Tax</span><strong id="tax">₱0.00</strong></div>
                     <div class="total-row"><span>Total Amount</span><strong id="total">₱0.00</strong></div>
                 </div>
 
                 <div class="payment-title">Select Payment Method</div>
                 <div class="payment-methods">
-                    <button class="payment active" data-payment="Cash"><i class="fa-solid fa-money-bill-wave"></i> Cash</button>
-                    <button class="payment" data-payment="GCash / QR"><i class="fa-solid fa-mobile-screen-button"></i> GCash / QR</button>
-                    <button class="payment" data-payment="Card"><i class="fa-solid fa-credit-card"></i> Card</button>
+                    <button class="payment active" data-payment="cash"><i class="fa-solid fa-money-bill-wave"></i> Cash</button>
+                    <button class="payment" data-payment="gcash"><i class="fa-solid fa-mobile-screen-button"></i> GCash / QR</button>
+                    <button class="payment" data-payment="card"><i class="fa-solid fa-credit-card"></i> Card</button>
                 </div>
 
                 <label class="amount-label">Amount Received</label>
@@ -245,16 +254,29 @@
                 <strong id="receiptMethod">Cash</strong>
             </div>
 
-            <div>
-                <span>Amount Received</span>
-                <strong id="receiptAmountReceived">₱0.00</strong>
-            </div>
+<div>
+    <span>Amount Received</span>
+    <div class="modal-amount-input">
+        <span>₱</span>
+        <input
+            id="modalAmountReceived"
+            type="number"
+            min="0"
+            step="0.01"
+            value="0"
+            placeholder="0.00"
+        >
+    </div>
+</div>
 
-            <div>
-                <span>Change</span>
-                <strong id="receiptChange">₱0.00</strong>
-            </div>
+<div>
+    <span>Change</span>
+    <strong id="receiptChange">₱0.00</strong>
+</div>
+
         </div>
+
+
 
         <div id="paymentModalActions">
 

@@ -1388,3 +1388,65 @@ body.dark .product-card .stock.out {
         height: 150px !important;
     }
 }
+.modal-amount-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 10px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.modal-amount-input > span {
+    font-weight: 700;
+    color: #6b7280;
+}
+
+.modal-amount-input input {
+    width: 100%;
+    border: 0;
+    outline: none;
+    background: transparent;
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.modal-amount-input input:focus {
+    outline: none;
+}
+
+.payment-modal .receipt > div {
+    align-items: center;
+}
+
+/* Product Images */
+.product-image {
+    position: relative;
+    overflow: hidden;
+}
+
+.product-image-file {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+    object-position: center;
+    border-radius: inherit;
+    background: #ffffff;
+}
+
+.product-image-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-image-fallback i {
+    font-size: 58px;
+}
+

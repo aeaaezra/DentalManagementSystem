@@ -1,132 +1,163 @@
-<!-- resources/views/errors/404.blade.php -->
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>404 | Shine & Smile Dental Clinic</title>
+    <title>404 - Page Not Found | Shine & Smile</title>
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
-
-    <style>
-        body {
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(135deg, #ffe4ef, #fff);
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .error-card {
-            width: 90%;
-            max-width: 600px;
-            background: white;
-            border-radius: 20px;
-            padding: 50px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .error-code {
-            font-size: 130px;
-            font-weight: 900;
-            color: #ff69b4;
-            line-height: 1;
-        }
-
-        .logo {
-            font-size: 60px;
-            margin-bottom: 10px;
-        }
-
-        .btn-home {
-            display: inline-block;
-            background: #ff69b4;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 10px;
-            text-decoration: none;
-            cursor: pointer;
-            transition: 0.2s ease;
-            font-size: 16px;
-        }
-
-        .btn-home:hover {
-            background: #ff4fa3;
-            color: white;
-            transform: translateY(-1px);
-        }
-
-        @media (max-width: 576px) {
-            .error-card {
-                padding: 35px 25px;
-            }
-
-            .error-code {
-                font-size: 90px;
-            }
-
-            .logo {
-                font-size: 50px;
-            }
-
-            .error-card h2 {
-                font-size: 24px;
-            }
-
-            .error-card p {
-                font-size: 14px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/errors/404.css') }}">
 </head>
 
 <body>
 
-    <div class="error-card">
+    <main class="error-page">
 
-        <div class="logo">🦷</div>
+        <!-- Decorative background -->
+        <div class="blob blob-top-left"></div>
+        <div class="blob blob-top-right"></div>
+        <div class="blob blob-bottom-left"></div>
+        <div class="blob blob-bottom-right"></div>
 
-        <div class="error-code">404</div>
+        <!-- Sparkles -->
+        <div class="sparkle sparkle-1">✦</div>
+        <div class="sparkle sparkle-2">✦</div>
+        <div class="sparkle sparkle-3">✦</div>
 
-        <h2 class="fw-bold">
-            Page Not Found
-        </h2>
+        <!-- Ceiling lamp -->
+        <div class="clinic-lamp">
+            <div class="lamp-wire"></div>
+            <div class="lamp-head"></div>
+            <div class="lamp-light"></div>
+        </div>
 
-        <p class="text-muted">
-            Sorry, the page you are trying to access does not exist.
-            Please return to the previous page.
-        </p>
+        <section class="error-content">
 
-        <button
-            type="button"
-            class="btn-home"
-            onclick="goBack()"
-        >
-            Return Home
-        </button>
+            <!-- 404 Illustration -->
+            <div class="illustration">
 
-    </div>
+                <div class="number number-left">4</div>
+                <div class="number number-right">4</div>
 
-    <script>
-        function goBack() {
-            if (window.history.length > 1) {
-                window.history.back();
-            } else {
-                window.location.href = '/';
-            }
-        }
-    </script>
+                <!-- Question marks -->
+                <div class="question question-small">?</div>
+                <div class="question question-large">?</div>
+
+                <!-- Tooth mascot -->
+                <div class="tooth-wrapper">
+
+                    <div class="tooth-headband">
+                        <div class="head-mirror">
+                            <div class="mirror-center"></div>
+                        </div>
+                    </div>
+
+                    <div class="tooth">
+
+                        <div class="eyebrow eyebrow-left"></div>
+                        <div class="eyebrow eyebrow-right"></div>
+
+                        <div class="eye eye-left">
+                            <div class="eye-highlight"></div>
+                        </div>
+
+                        <div class="eye eye-right">
+                            <div class="eye-highlight"></div>
+                        </div>
+
+                        <div class="cheek cheek-left"></div>
+                        <div class="cheek cheek-right"></div>
+
+                        <div class="mouth">
+                            <div class="mouth-tongue"></div>
+                        </div>
+
+                        <!-- Tooth arms -->
+                        <div class="tooth-arm arm-left"></div>
+                        <div class="tooth-arm arm-right"></div>
+
+                        <!-- Tooth feet -->
+                        <div class="tooth-foot foot-left"></div>
+                        <div class="tooth-foot foot-right"></div>
+
+                    </div>
+
+                </div>
+
+                <!-- Dental cabinet -->
+                <div class="cabinet">
+                    <div class="cabinet-top"></div>
+                    <div class="cabinet-drawer drawer-1"></div>
+                    <div class="cabinet-drawer drawer-2"></div>
+                    <div class="cabinet-leg leg-left"></div>
+                    <div class="cabinet-leg leg-right"></div>
+                </div>
+
+                <!-- Dental chair -->
+                <div class="dental-chair">
+
+                    <div class="chair-head"></div>
+
+                    <div class="chair-back"></div>
+
+                    <div class="chair-seat"></div>
+
+                    <div class="chair-base"></div>
+
+                    <div class="chair-foot"></div>
+
+                </div>
+
+                <!-- Dental instruments -->
+                <div class="dental-tools">
+                    <div class="tool tool-1"></div>
+                    <div class="tool tool-2"></div>
+                    <div class="tool tool-3"></div>
+                </div>
+
+            </div>
+
+            <!-- Text -->
+            <div class="error-message">
+
+                <h1>
+                    Page <span>Not</span> Found
+                </h1>
+
+                <p>
+                    Oops! The page you're looking for doesn't exist
+                    <br class="desktop-break">
+                    or may have been moved.
+                </p>
+
+                <button
+                    type="button"
+                    class="home-button"
+                    id="goHomeButton"
+                >
+                    <svg
+                        width="22"
+                        height="22"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            d="M3 10.8L12 3L21 10.8V21H14.5V14.5H9.5V21H3V10.8Z"
+                            fill="currentColor"
+                        />
+                    </svg>
+
+                    <span>Go Back Home</span>
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="{{ asset('js/errors/404.js') }}"></script>
 
 </body>
-
 </html>

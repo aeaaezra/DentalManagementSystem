@@ -40,6 +40,8 @@ const paymentModal = document.getElementById("paymentModal");
 
 const cashReceivedInput =
     document.getElementById("amountReceived");
+const modalCashReceivedInput =
+    document.getElementById("modalAmountReceived");
 
 const changeAmountElement =
     document.getElementById("change");
@@ -96,162 +98,170 @@ const listViewButton =
         });
     }
 
-    function renderProducts() {
-        if (!productGrid) {
-            return;
+function renderProducts() {
+    if (!productGrid) return;
+
+    const list = getFilteredProducts();
+
+    if (!list.length) {
+        productGrid.innerHTML = `
+            <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted)">
+                <i class="fa-solid fa-box-open" style="font-size:38px;margin-bottom:12px"></i>
+                <h3>No products found</h3>
+                <p style="font-size:12px;margin-top:5px">
+                    Try another search, brand, or category.
+                </p>
+            </div>
+        `;
+        return;
+    }
+
+    productGrid.innerHTML = list.map((p) => {
+        const out = p.stock <= 0;
+        const low = !out && p.stock <= 10;
+
+        let image = p.image || "";
+
+        if (image && !/^(https?:)?\/\//.test(image)) {
+            if (image.startsWith("storage/")) {
+                image = "/" + image;
+            } else {
+                image = "/storage/" + image.replace(/^\/+/, "");
+            }
         }
 
-        const filteredProducts = getFilteredProducts();
+        return `
+            <article class="product-card">
 
-        productGrid.innerHTML = "";
-
-        if (filteredProducts.length === 0) {
-            productGrid.innerHTML = `
-                <div class="no-products">
-                    <i class="fa-solid fa-box-open"></i>
-                    <h3>No products found</h3>
-                    <p>Try another search or category.</p>
-                </div>
-            `;
-
-            return;
-        }
-
-        filteredProducts.forEach(product => {
-            const card = document.createElement("div");
-
-            card.className = "product-card";
-
-            const outOfStock = product.stock <= 0;
-
-            card.innerHTML = `
                 <div class="product-image">
-                    <i class="fa-solid fa-tooth"></i>
+
+                    ${
+                        image
+                            ? `
+                                <img
+                                    src="${image}"
+                                    alt="${p.name}"
+                                    class="product-image-file"
+                                    loading="lazy"
+                                    onerror="
+                                        this.style.display='none';
+                                        this.nextElementSibling.style.display='flex';
+                                    "
+                                >
+
+                                <div
+                                    class="product-image-fallback"
+                                    style="display:none;"
+                                >
+                                    <i class="fa-solid fa-box"></i>
+                                </div>
+                              `
+                            : `
+                                <div class="product-image-fallback">
+                                    <i class="fa-solid fa-box"></i>
+                                </div>
+                              `
+                    }
+
+                    <button
+                        type="button"
+                        class="product-favorite"
+                        data-favorite="${p.id}"
+                        title="Favorite"
+                    >
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
+
                 </div>
 
-<div class="product-info">
+                <div class="product-info">
 
-    <span class="product-category">
-        ${product.category}
-    </span>
+                    <span class="product-category">
+                        ${p.category}
+                    </span>
 
-    <h3>
-        ${product.name}
-    </h3>
+                    <h3>${p.name}</h3>
 
-    <p class="sku">
-        SKU: ${product.sku}
-    </p>
+                    <div class="sku">
+                        SKU: ${p.sku}
+                    </div>
 
-    <div class="price-row">
+                    <div class="stock ${out ? "out" : low ? "low" : ""}">
+                        <i class="fa-solid fa-circle"></i>
+                        ${
+                            out
+                                ? "Out of Stock"
+                                : low
+                                    ? `Low Stock (${p.stock})`
+                                    : `In Stock (${p.stock})`
+                        }
+                    </div>
 
-        <strong class="price">
-            ${formatCurrency(product.price)}
-        </strong>
+                    <div class="price-row">
+                        <span class="price">
+                            ${formatCurrency(p.price)}
+                        </span>
+                    </div>
 
-        <span class="${outOfStock ? "stock out" : "stock"}">
-            ${
-                outOfStock
-                    ? "Out of stock"
-                    : `${product.stock} pcs`
-            }
-        </span>
+                    <button
+                        type="button"
+                        class="add-button"
+                        data-add="${p.id}"
+                        ${out ? "disabled" : ""}
+                    >
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        ${out ? "Out of Stock" : "Add to Cart"}
+                    </button>
 
-    </div>
+                </div>
 
-    <button
-        class="add-button"
-        data-product-id="${product.id}"
-        ${outOfStock ? "disabled" : ""}
-    >
-        <i class="fa-solid fa-cart-plus"></i>
-        Add to Cart
-    </button>
+            </article>
+        `;
+    }).join("");
+}
 
-	 </div>
-            `;
+function addToCart(productId) {
+    const id = Number(productId);
 
-            productGrid.appendChild(card);
+    const product = products.find(
+        item => Number(item.id) === id
+    );
+
+    if (!product) {
+        console.error("Product not found:", id);
+        return;
+    }
+
+    if (product.stock <= 0) {
+        alert("This product is out of stock.");
+        return;
+    }
+
+    const existingItem = cart.find(
+        item => Number(item.id) === id
+    );
+
+    if (existingItem) {
+        if (existingItem.quantity >= product.stock) {
+            alert(`Only ${product.stock} item(s) available.`);
+            return;
+        }
+
+        existingItem.quantity += 1;
+    } else {
+        cart.push({
+            id: product.id,
+            name: product.name,
+            sku: product.sku,
+            price: product.price,
+            quantity: 1,
+            stock: product.stock
         });
-
-        attachProductButtons();
     }
 
-    function attachProductButtons() {
-        const buttons =
-            document.querySelectorAll(".add-button");
-
-        buttons.forEach(button => {
-            button.addEventListener("click", () => {
-                const productId =
-                    Number(button.dataset.productId);
-
-                addToCart(productId);
-            });
-        });
-    }
-
-    function addToCart(productId) {
-        const product =
-            products.find(item => item.id === productId);
-
-        if (!product || product.stock <= 0) {
-            return;
-        }
-
-        const existingItem =
-            cart.find(item => item.id === productId);
-
-        if (existingItem) {
-            if (existingItem.quantity < product.stock) {
-                existingItem.quantity++;
-            }
-        } else {
-            cart.push({
-                id: product.id,
-                name: product.name,
-                sku: product.sku,
-                price: product.price,
-                quantity: 1
-            });
-        }
-
-        renderCart();
-        updateTotals();
-    }
-
-    function removeFromCart(productId) {
-        cart = cart.filter(item => item.id !== productId);
-
-        renderCart();
-        updateTotals();
-    }
-
-    function changeQuantity(productId, amount) {
-        const item =
-            cart.find(cartItem => cartItem.id === productId);
-
-        if (!item) {
-            return;
-        }
-
-        const product =
-            products.find(productItem => productItem.id === productId);
-
-        item.quantity += amount;
-
-        if (item.quantity <= 0) {
-            removeFromCart(productId);
-            return;
-        }
-
-        if (product && item.quantity > product.stock) {
-            item.quantity = product.stock;
-        }
-
-        renderCart();
-        updateTotals();
-    }
+    renderCart();
+    updateTotals();
+}
 
     function renderCart() {
         if (!cartItems || !cartEmpty) {
@@ -394,10 +404,9 @@ function updateCartCount() {
         return subtotal * discount;
     }
 
-    function calculateTax(amount) {
-        return amount * 0.08;
-    }
-
+function calculateTax(amount) {
+    return 0;
+}
     function updateTotals() {
         const subtotal =
             calculateSubtotal();
@@ -447,39 +456,112 @@ function updateCartCount() {
         calculateChange();
     }
 
-    function applyDiscount() {
-        if (!discountInput) {
-            return;
-        }
+async function applyDiscount() {
+    if (!discountInput) {
+        return;
+    }
 
-        const code =
-            discountInput.value
-                .trim()
-                .toUpperCase();
+    const code = discountInput.value.trim().toUpperCase();
 
-        if (code === "PROMO10") {
-            discount = 0.10;
-        } else if (code === "PROMO20") {
-            discount = 0.20;
-        } else {
+    if (!code) {
+        appliedDiscount = null;
+        discount = 0;
+        updateTotals();
+        return;
+    }
+
+    const csrfToken = document
+        .querySelector('meta[name="csrf-token"]')
+        ?.getAttribute("content");
+
+    if (!csrfToken) {
+        alert("Security token is missing. Please refresh the page.");
+        return;
+    }
+
+    const subtotal = calculateSubtotal();
+
+    if (subtotal <= 0) {
+        alert("Add products to the cart before applying a discount.");
+        return;
+    }
+
+    if (applyDiscountButton) {
+        applyDiscountButton.disabled = true;
+        applyDiscountButton.textContent = "Checking...";
+    }
+
+    try {
+        const response = await fetch("/pos/discount/validate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "X-CSRF-TOKEN": csrfToken,
+                "X-Requested-With": "XMLHttpRequest"
+            },
+            body: JSON.stringify({
+                code: code,
+                subtotal: subtotal
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            appliedDiscount = null;
             discount = 0;
+            updateTotals();
 
-            if (code !== "") {
-                alert(
-                    "Invalid discount code."
-                );
-            }
+            throw new Error(
+                data.message || "Invalid discount code."
+            );
         }
+
+        appliedDiscount = {
+            code: data.code,
+            type: data.type,
+            value: Number(data.value),
+            minimum_amount: Number(data.minimum_amount || 0),
+            maximum_discount:
+                data.maximum_discount !== null
+                    ? Number(data.maximum_discount)
+                    : null,
+            discount_amount:
+                Number(data.discount_amount) || 0
+        };
+
+        discount =
+            subtotal > 0
+                ? appliedDiscount.discount_amount / subtotal
+                : 0;
 
         updateTotals();
+
+        alert(
+            `Discount ${appliedDiscount.code} applied: ${formatCurrency(
+                appliedDiscount.discount_amount
+            )}`
+        );
+
+    } catch (error) {
+        console.error("Discount validation error:", error);
+
+        alert(
+            error.message ||
+            "Unable to validate the discount code."
+        );
+    } finally {
+        if (applyDiscountButton) {
+            applyDiscountButton.disabled = false;
+            applyDiscountButton.textContent = "Apply";
+        }
     }
+}
 
 function openPaymentModal() {
     if (cart.length === 0) {
-        alert(
-            "Please add at least one product to the cart."
-        );
-
+        alert("Please add at least one product to the cart.");
         return;
     }
 
@@ -487,24 +569,19 @@ function openPaymentModal() {
         return;
     }
 
+    const currentTotal = calculateTotal();
+
+    // Get the amount already entered in the main POS
+    const existingCash = Number(
+        cashReceivedInput?.value || 0
+    );
+
     paymentModal.classList.add("show");
 
     paymentModal.setAttribute(
         "aria-hidden",
         "false"
     );
-
-    if (cashReceivedInput) {
-        cashReceivedInput.value = "";
-
-        setTimeout(() => {
-            cashReceivedInput.focus();
-        }, 100);
-    }
-
-    const currentTotal = calculateTotal();
-
-    calculateChange();
 
     const receiptTotal =
         document.getElementById("receiptTotal");
@@ -518,6 +595,9 @@ function openPaymentModal() {
     const receiptChange =
         document.getElementById("receiptChange");
 
+    const modalAmount =
+        document.getElementById("modalAmountReceived");
+
     if (receiptTotal) {
         receiptTotal.textContent =
             formatCurrency(currentTotal);
@@ -527,18 +607,30 @@ function openPaymentModal() {
         receiptMethod.textContent =
             paymentMethod === "cash"
                 ? "Cash"
-                : paymentMethod;
+                : paymentMethod.toUpperCase();
+    }
+
+    // Copy the amount from the main POS input
+    if (modalAmount) {
+        modalAmount.value =
+            existingCash > 0
+                ? existingCash
+                : "";
     }
 
     if (receiptAmountReceived) {
         receiptAmountReceived.textContent =
-            formatCurrency(0);
+            formatCurrency(existingCash);
     }
 
-    if (receiptChange) {
-        receiptChange.textContent =
-            formatCurrency(0);
-    }
+    calculateChange();
+
+    setTimeout(() => {
+        if (modalAmount) {
+            modalAmount.focus();
+            modalAmount.select();
+        }
+    }, 100);
 }
 
     function closePayment() {
@@ -553,29 +645,39 @@ function openPaymentModal() {
         );
     }
 
-    function calculateChange() {
-        const total =
-            calculateTotal();
+function calculateChange() {
+    const total = calculateTotal();
 
-        const cash =
-            Number(
-                cashReceivedInput
-                    ? cashReceivedInput.value
-                    : 0
-            );
+    const activeCashInput =
+        modalCashReceivedInput ||
+        cashReceivedInput;
 
-        const change =
-            Math.max(
-                cash - total,
-                0
-            );
+const cash = Number(
+    modalCashReceivedInput
+        ? modalCashReceivedInput.value
+        : cashReceivedInput
+            ? cashReceivedInput.value
+            : 0
+);
+    const change =
+        Math.max(
+            cash - total,
+            0
+        );
 
-        if (changeAmountElement) {
-            changeAmountElement.textContent =
-                formatCurrency(change);
-        }
+    if (changeAmountElement) {
+        changeAmountElement.textContent =
+            formatCurrency(change);
     }
 
+    const receiptChange =
+        document.getElementById("receiptChange");
+
+    if (receiptChange) {
+        receiptChange.textContent =
+            formatCurrency(change);
+    }
+}
     function calculateTotal() {
         const subtotal =
             calculateSubtotal();
@@ -945,9 +1047,8 @@ async function confirmPayment() {
                         "active"
                     );
 
-                    paymentMethod =
-                        button.dataset.payment;
-
+		     paymentMethod =
+    			button.dataset.payment.toLowerCase();
                     const cashSection =
                         document.getElementById(
                             "cashPaymentSection"
@@ -965,6 +1066,19 @@ async function confirmPayment() {
             );
         });
     }
+
+function setupProductButtons() {
+    const buttons = document.querySelectorAll("[data-add]");
+
+    buttons.forEach(button => {
+        button.addEventListener("click", () => {
+            const productId = Number(button.dataset.add);
+
+            addToCart(productId);
+        });
+    });
+}
+
 
     function setupSearch() {
         if (searchInput) {
@@ -1229,9 +1343,10 @@ Thank you for your purchase!
 
 
 function startNewSale() {
-    cart = [];
-
-    discount = 0;
+cart = [];
+discount = 0;
+appliedDiscount = null;
+window.lastReceipt = null;
 
     window.lastReceipt = null;
 
@@ -1354,6 +1469,33 @@ function startNewSale() {
             calculateChange
         );
     }
+if (modalCashReceivedInput) {
+    modalCashReceivedInput.addEventListener(
+        "input",
+        () => {
+            if (cashReceivedInput) {
+                cashReceivedInput.value =
+                    modalCashReceivedInput.value;
+            }
+
+            calculateChange();
+
+            const receiptAmountReceived =
+                document.getElementById(
+                    "receiptAmountReceived"
+                );
+
+            if (receiptAmountReceived) {
+                receiptAmountReceived.textContent =
+                    formatCurrency(
+                        Number(
+                            modalCashReceivedInput.value || 0
+                        )
+                    );
+            }
+        }
+    );
+}
 
     if (clearCartButton) {
         clearCartButton.addEventListener(
@@ -1362,7 +1504,26 @@ function startNewSale() {
         );
     }
 
+if (printReceiptButton) {
+    printReceiptButton.addEventListener(
+        "click",
+        printReceipt
+    );
+}
 
+if (downloadReceiptButton) {
+    downloadReceiptButton.addEventListener(
+        "click",
+        downloadReceipt
+    );
+}
+
+if (newSaleButton) {
+    newSaleButton.addEventListener(
+        "click",
+        startNewSale
+    );
+}
 
     if (darkModeButton) {
         darkModeButton.addEventListener(
