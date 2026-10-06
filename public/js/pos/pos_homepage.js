@@ -474,36 +474,72 @@ function updateCartCount() {
         updateTotals();
     }
 
-    function openPaymentModal() {
-        if (cart.length === 0) {
-            alert(
-                "Please add at least one product to the cart."
-            );
-
-            return;
-        }
-
-        if (!paymentModal) {
-            return;
-        }
-
-       paymentModal.classList.add("show");
-
-        paymentModal.setAttribute(
-            "aria-hidden",
-            "false"
+function openPaymentModal() {
+    if (cart.length === 0) {
+        alert(
+            "Please add at least one product to the cart."
         );
 
-        if (cashReceivedInput) {
-            cashReceivedInput.value = "";
-
-            setTimeout(() => {
-                cashReceivedInput.focus();
-            }, 100);
-        }
-
-        calculateChange();
+        return;
     }
+
+    if (!paymentModal) {
+        return;
+    }
+
+    paymentModal.classList.add("show");
+
+    paymentModal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+    if (cashReceivedInput) {
+        cashReceivedInput.value = "";
+
+        setTimeout(() => {
+            cashReceivedInput.focus();
+        }, 100);
+    }
+
+    const currentTotal = calculateTotal();
+
+    calculateChange();
+
+    const receiptTotal =
+        document.getElementById("receiptTotal");
+
+    const receiptMethod =
+        document.getElementById("receiptMethod");
+
+    const receiptAmountReceived =
+        document.getElementById("receiptAmountReceived");
+
+    const receiptChange =
+        document.getElementById("receiptChange");
+
+    if (receiptTotal) {
+        receiptTotal.textContent =
+            formatCurrency(currentTotal);
+    }
+
+    if (receiptMethod) {
+        receiptMethod.textContent =
+            paymentMethod === "cash"
+                ? "Cash"
+                : paymentMethod;
+    }
+
+    if (receiptAmountReceived) {
+        receiptAmountReceived.textContent =
+            formatCurrency(0);
+    }
+
+    if (receiptChange) {
+        receiptChange.textContent =
+            formatCurrency(0);
+    }
+}
 
     function closePayment() {
         if (!paymentModal) {
