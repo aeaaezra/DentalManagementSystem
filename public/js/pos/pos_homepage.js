@@ -552,70 +552,248 @@ function updateCartCount() {
         return taxableAmount + tax;
     }
 
-    function confirmPayment() {
-        const total =
-            calculateTotal();
+async function confirmPayment() {
+    if (cart.length === 0) {
+        alert("Your cart is empty.");
+        return;
+    }
 
-        const cash =
-            Number(
-                cashReceivedInput
-                    ? cashReceivedInput.value
-                    : 0
+    const total = calculateTotal();
+
+    const cash = Number(
+        cashReceivedInput
+            ? cashReceivedInput.value
+            : 0
+    );
+
+    if (paymentMethod === "cash" && cash < total) {
+        alert("Insufficient cash received.");
+        return;
+    }
+
+    const csrfToken = document
+        .querySelector('meta[name="csrf-token"]')
+        ?.getAttribute("content");
+
+    if (!csrfToken) {
+        alert("Security token is missing. Please refresh the page.");
+        return;
+    }
+
+    const cartPayload = cart.map(item => ({
+        id: item.id,
+        qty: Number(item.quantity)
+    }));
+
+    const discountCode =
+        appliedDiscount?.code ||
+        (
+            discountInput
+                ? discountInput.value.trim().toUpperCase()
+                : ""
+        ) ||
+        null;
+
+    const confirmButton =
+        document.getElementById("confirmPayment");
+
+    if (confirmButton) {
+        confirmButton.disabled = true;
+        confirmButton.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+    }
+
+    try {
+        const response = await fetch("/pos/checkout", {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "X-CSRF-TOKEN": csrfToken,
+                "X-Requested-With": "XMLHttpRequest"
+            },
+
+            body: JSON.stringify({
+                cart: cartPayload,
+                discount_code: discountCode,
+                cash_received: cash
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message ||
+                data.error ||
+                "Payment could not be completed."
             );
-
-        if (paymentMethod === "cash" && cash < total) {
-            alert(
-                "Insufficient cash received."
-            );
-
-            return;
         }
 
-        const change =
-            paymentMethod === "cash"
-                ? cash - total
-                : 0;
+        /*
+         * Update receipt information from the SERVER response.
+         */
+        const receiptInvoice =
+            document.getElementById("receiptInvoice");
 
-        cart.forEach(item => {
-            const product =
-                products.find(
-                    productItem =>
-                        productItem.id === item.id
+        const receiptTotal =
+            document.getElementById("receiptTotal");
+
+        const receiptMethod =
+            document.getElementById("receiptMethod");
+
+        const receiptAmountReceived =
+            document.getElementById("receiptAmountReceived");
+
+        const receiptChange =
+            document.getElementById("receiptChange");
+
+        if (receiptInvoice) {
+            receiptInvoice.textContent =
+                data.invoice_no || "N/A";
+        }
+
+        if (receiptTotal) {
+            receiptTotal.textContent =
+                formatCurrency(
+                    Number(data.total_amount || total)
                 );
+        }
+
+        if (receiptMethod) {
+            receiptMethod.textContent =
+                paymentMethod === "cash"
+                    ? "Cash"
+                    : paymentMethod;
+        }
+
+        if (receiptAmountReceived) {
+            receiptAmountReceived.textContent =
+                formatCurrency(
+                    Number(
+                        data.cash_received ||
+                        cash
+                    )
+                );
+        }
+
+        if (receiptChange) {
+            receiptChange.textContent =
+                formatCurrency(
+                    Number(
+                        data.change_amount || 0
+                    )
+                );
+        }
+
+        /*
+         * Show successful receipt state.
+         */
+        const modalTitle =
+            document.getElementById("paymentModalTitle");
+
+        const modalMessage =
+            document.getElementById("paymentModalMessage");
+
+        const paymentConfirmation =
+            document.getElementById("paymentConfirmation");
+
+        const paymentModalActions =
+            document.getElementById("paymentModalActions");
+
+        const receiptActions =
+            document.getElementById("receiptActions");
+
+        if (modalTitle) {
+            modalTitle.textContent =
+                "Payment Completed";
+        }
+
+        if (modalMessage) {
+            modalMessage.textContent =
+                "Transaction processed successfully.";
+        }
+
+        if (paymentConfirmation) {
+            paymentConfirmation.style.display =
+                "block";
+        }
+
+        if (paymentModalActions) {
+            paymentModalActions.style.display =
+                "none";
+        }
+
+        if (receiptActions) {
+            receiptActions.style.display =
+                "flex";
+            receiptActions.style.flexDirection =
+                "column";
+        }
+
+        /*
+         * Update local stock only after
+         * the server successfully completed
+         * the transaction.
+         */
+        cart.forEach(item => {
+            const product = posProducts.find(
+                product =>
+                    Number(product.id) === Number(item.id)
+            );
 
             if (product) {
-                product.stock -= item.quantity;
+                product.stock =
+                    Math.max(
+                        0,
+                        Number(product.stock || 0) -
+                        Number(item.quantity || 0)
+                    );
             }
         });
 
-        const invoiceNumber =
-            "INV-" +
-            new Date()
-                .toISOString()
-                .replace(/\D/g, "")
-                .slice(0, 14);
+        /*
+         * Keep receipt information for
+         * printing/downloading.
+         */
+        window.lastReceipt = {
+            invoice: data.invoice_no,
+            total: Number(
+                data.total_amount || total
+            ),
+            method:
+                paymentMethod === "cash"
+                    ? "Cash"
+                    : paymentMethod,
+            amountReceived: Number(
+                data.cash_received || cash
+            ),
+            change: Number(
+                data.change_amount || 0
+            )
+        };
 
-        alert(
-            `Payment successful!\n\n` +
-            `Invoice: ${invoiceNumber}\n` +
-            `Total: ${formatCurrency(total)}\n` +
-            `Change: ${formatCurrency(change)}`
+    } catch (error) {
+
+        console.error(
+            "Payment error:",
+            error
         );
 
-        cart = [];
-        discount = 0;
+        alert(
+            error.message ||
+            "Payment failed. Please try again."
+        );
 
-        if (discountInput) {
-            discountInput.value = "";
+        if (confirmButton) {
+            confirmButton.disabled = false;
+
+            confirmButton.innerHTML =
+                '<i class="fa-solid fa-check"></i> Confirm Payment';
         }
-
-        closePayment();
-
-        renderProducts();
-        renderCart();
-        updateTotals();
     }
-
+}
     function clearCart() {
         if (cart.length === 0) {
             return;
@@ -891,12 +1069,7 @@ function updateCartCount() {
         );
     }
 
-    if (holdOrderButton) {
-        holdOrderButton.addEventListener(
-            "click",
-            holdOrder
-        );
-    }
+
 
     if (darkModeButton) {
         darkModeButton.addEventListener(

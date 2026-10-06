@@ -207,20 +207,100 @@
     </div>
 
     <div class="toast" id="toast"></div>
-    <div class="modal-backdrop" id="paymentModal">
-        <div class="payment-modal">
-            <button class="modal-close" id="closePaymentModal"><i class="fa-solid fa-xmark"></i></button>
-            <div class="modal-icon"><i class="fa-solid fa-circle-check"></i></div>
-            <h2>Payment Completed</h2>
-            <p>Transaction processed successfully.</p>
-            <div class="receipt">
-                <div><span>Invoice</span><strong id="receiptInvoice">INV-000000</strong></div>
-                <div><span>Total</span><strong id="receiptTotal">₱0.00</strong></div>
-                <div><span>Payment</span><strong id="receiptMethod">Cash</strong></div>
-                <div><span>Change</span><strong id="receiptChange">₱0.00</strong></div>
-            </div>
-            <button class="modal-primary" id="newSale">Start New Sale</button>
+   <div class="modal-backdrop" id="paymentModal" aria-hidden="true">
+    <div class="payment-modal">
+
+        <button
+            class="modal-close"
+            id="closePaymentModal"
+            type="button"
+            aria-label="Close payment"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="modal-icon">
+            <i class="fa-solid fa-credit-card"></i>
         </div>
+
+        <h2 id="paymentModalTitle">Confirm Payment</h2>
+
+        <p id="paymentModalMessage">
+            Review the payment before completing this transaction.
+        </p>
+
+        <div class="receipt" id="paymentConfirmation">
+            <div>
+                <span>Invoice</span>
+                <strong id="receiptInvoice">Pending</strong>
+            </div>
+
+            <div>
+                <span>Total</span>
+                <strong id="receiptTotal">₱0.00</strong>
+            </div>
+
+            <div>
+                <span>Payment</span>
+                <strong id="receiptMethod">Cash</strong>
+            </div>
+
+            <div>
+                <span>Amount Received</span>
+                <strong id="receiptAmountReceived">₱0.00</strong>
+            </div>
+
+            <div>
+                <span>Change</span>
+                <strong id="receiptChange">₱0.00</strong>
+            </div>
+        </div>
+
+        <div id="paymentModalActions">
+
+            <button
+                class="modal-primary"
+                id="confirmPayment"
+                type="button"
+            >
+                <i class="fa-solid fa-check"></i>
+                Confirm Payment
+            </button>
+
+        </div>
+
+        <div
+            id="receiptActions"
+            style="display:none; gap:10px; margin-top:12px;"
+        >
+            <button
+                class="modal-primary"
+                id="printReceipt"
+                type="button"
+            >
+                <i class="fa-solid fa-print"></i>
+                Print Receipt
+            </button>
+            <button
+                class="modal-primary"
+                id="downloadReceipt"
+                type="button"
+            >
+                <i class="fa-solid fa-download"></i>
+                Download Receipt
+            </button>
+            <button
+                class="modal-primary"
+                id="newSale"
+                type="button"
+            >
+                <i class="fa-solid fa-plus"></i>
+                Start New Sale
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
     window.posProducts = @json($posProducts);
 </script>
