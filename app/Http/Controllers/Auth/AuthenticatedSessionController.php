@@ -344,7 +344,8 @@ class AuthenticatedSessionController extends Controller
             'dentist' => redirect()->route('dentist.landingpage'),
             'receptionist' => redirect()->route('receptionist.login'),
             'cashier' => redirect()->route('pos.login'),
-            default => redirect()->route('home'),
+	     default => redirect()->route('login'),
+
         };
     }
 }

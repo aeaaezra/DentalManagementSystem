@@ -1,0 +1,128 @@
+                         <div
+                            class="twofa-success"
+                            x-show="success"
+                            x-text="success"
+                        ></div>
+
+
+                        <div class="twofa-actions">
+
+                            <button
+                                type="button"
+                                class="ss-pink-button"
+                                @click="verifyTwoFactor()"
+                                :disabled="verifying || otp.length !== 6"
+                            >
+
+                                <span x-show="!verifying">
+                                    Verify & Enable
+                                </span>
+
+                                <span x-show="verifying">
+                                    Verifying...
+                                </span>
+
+                            </button>
+
+                            <button
+                                type="button"
+                                class="ss-danger-button"
+                                @click="closeModal()"
+                                :disabled="verifying"
+                            >
+                                Cancel
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </template>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const tabs = document.querySelectorAll('[data-settings-tab]');
+    const sections = Array.from(tabs)
+        .map(tab => document.getElementById(tab.dataset.settingsTab))
+        .filter(Boolean);
+
+    if (!tabs.length || !sections.length) {
+        return;
+    }
+
+    function setActiveTab(id) {
+        tabs.forEach(tab => {
+            tab.classList.toggle(
+                'active',
+                tab.dataset.settingsTab === id
+            );
+        });
+
+        const activeTab = document.querySelector(
+            `[data-settings-tab="${id}"]`
+        );
+
+        if (activeTab) {
+            activeTab.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest',
+                inline: 'center'
+            });
+        }
+    }
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            const section = document.getElementById(
+                this.dataset.settingsTab
+            );
+
+            if (!section) {
+                return;
+            }
+
+            const offset = 95;
+            const top =
+                section.getBoundingClientRect().top +
+                window.scrollY -
+                offset;
+
+            window.scrollTo({
+                top,
+                behavior: 'smooth'
+            });
+
+            setActiveTab(this.dataset.settingsTab);
+        });
+    });
+
+    const observer = new IntersectionObserver(
+        entries => {
+            const visible = entries
+                .filter(entry => entry.isIntersecting)
+                .sort(
+                    (a, b) =>
+                        b.intersectionRatio -
+                        a.intersectionRatio
+                );
+
+            if (visible.length) {
+                setActiveTab(visible[0].target.id);
+            }
+        },
+        {
+            rootMargin: '-110px 0px -55% 0px',
+            threshold: [0.1, 0.25, 0.5]
+        }
+    );
+
+    sections.forEach(section => observer.observe(section));

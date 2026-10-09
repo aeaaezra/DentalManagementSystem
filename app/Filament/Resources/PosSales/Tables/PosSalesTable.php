@@ -20,12 +20,13 @@ class PosSalesTable
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('total_amount')
-                    ->money('PHP')
-                    ->sortable(),
+		TextColumn::make('total')
+		    ->money('PHP')
+		    ->sortable(),
 
-                TextColumn::make('cash_received')
-                    ->money('PHP'),
+		TextColumn::make('amount_paid')
+		    ->label('Amount Paid')
+		    ->money('PHP'),
 
                 TextColumn::make('change_amount')
                     ->money('PHP'),

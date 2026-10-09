@@ -1,0 +1,2505 @@
+<x-filament-panels::page>
+
+<style>
+/* =========================================================
+   SHINE & SMILE SETTINGS
+   LIGHT + DARK MODE
+========================================================= */
+
+.settings-page {
+    --ss-primary: #e91e63;
+    --ss-primary-dark: #d81b60;
+    --ss-pink-soft: #fff1f5;
+    --ss-pink-border: #fce7f3;
+    --ss-text: #172033;
+    --ss-muted: #64748b;
+    --ss-card: #ffffff;
+    --ss-input: #ffffff;
+    --ss-border: #e2e8f0;
+    --ss-background: #f8fafc;
+
+    width: 100%;
+    max-width: 1450px;
+    margin: 0 auto;
+    padding-bottom: 50px;
+    color: var(--ss-text);
+}
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+.dark .settings-page {
+    --ss-primary: #ec4899;
+    --ss-primary-dark: #db2777;
+    --ss-pink-soft: rgba(236, 72, 153, 0.10);
+    --ss-pink-border: rgba(236, 72, 153, 0.28);
+    --ss-text: #f8fafc;
+    --ss-muted: #94a3b8;
+    --ss-card: #111827;
+    --ss-input: #172033;
+    --ss-border: #263247;
+    --ss-background: #0f172a;
+}
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.ss-page-header {
+    margin-bottom: 24px;
+    padding: 28px 30px;
+    border: 1px solid var(--ss-pink-border);
+    border-radius: 24px;
+    background:
+        linear-gradient(
+            135deg,
+            var(--ss-pink-soft),
+            var(--ss-card) 55%,
+            var(--ss-pink-soft)
+        );
+    box-shadow: 0 10px 35px rgba(15, 23, 42, .06);
+}
+
+.dark .ss-page-header {
+    box-shadow: 0 15px 40px rgba(0,0,0,.25);
+}
+
+.ss-header-content {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+}
+
+.ss-header-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #e91e63, #ec4899);
+    color: #fff;
+    font-size: 24px;
+    box-shadow: 0 8px 20px rgba(233,30,99,.25);
+}
+
+.ss-page-title {
+    margin: 0;
+    color: var(--ss-text);
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.ss-page-description {
+    margin: 5px 0 0;
+    color: var(--ss-muted);
+    font-size: 14px;
+}
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.ss-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.ss-card {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--ss-border);
+    border-radius: 22px;
+    background: var(--ss-card);
+    box-shadow: 0 7px 25px rgba(15, 23, 42, .05);
+}
+
+.dark .ss-card {
+    box-shadow: 0 12px 35px rgba(0,0,0,.20);
+}
+
+.ss-card-full {
+    grid-column: 1 / -1;
+}
+
+.ss-card-header {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 20px 23px;
+    border-bottom: 1px solid var(--ss-border);
+}
+
+.ss-card-icon {
+    width: 43px;
+    height: 43px;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: var(--ss-pink-soft);
+    color: var(--ss-primary);
+    font-size: 19px;
+}
+
+.ss-card-title {
+    margin: 0;
+    color: var(--ss-text);
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.ss-card-description {
+    margin: 3px 0 0;
+    color: var(--ss-muted);
+    font-size: 12px;
+}
+
+.ss-card-body {
+    padding: 23px;
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.ss-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 17px;
+}
+
+.ss-field-full {
+    grid-column: 1 / -1;
+}
+
+.ss-label {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--ss-text);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.ss-input,
+.ss-select,
+.ss-textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--ss-border);
+    border-radius: 12px;
+    background: var(--ss-input);
+    color: var(--ss-text);
+    padding: 12px 14px;
+    font-size: 14px;
+    outline: none;
+    transition: .2s ease;
+}
+
+.ss-input::placeholder,
+.ss-textarea::placeholder {
+    color: #94a3b8;
+}
+
+.ss-input:focus,
+.ss-select:focus,
+.ss-textarea:focus {
+    border-color: var(--ss-primary);
+    box-shadow: 0 0 0 3px rgba(233,30,99,.10);
+}
+
+.dark .ss-input:focus,
+.dark .ss-select:focus,
+.dark .ss-textarea:focus {
+    box-shadow: 0 0 0 3px rgba(236,72,153,.12);
+}
+
+.ss-textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* =========================================================
+   SAVE BUTTON
+========================================================= */
+
+.ss-save {
+    margin-top: 19px;
+    border: 0;
+    border-radius: 11px;
+    padding: 11px 18px;
+    background: linear-gradient(135deg, #e91e63, #ec4899);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 750;
+    cursor: pointer;
+    box-shadow: 0 7px 18px rgba(233,30,99,.20);
+    transition: .2s ease;
+}
+
+.ss-save:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(233,30,99,.28);
+}
+
+.ss-save:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+/* =========================================================
+   SWITCH
+========================================================= */
+
+.ss-setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--ss-border);
+}
+
+.ss-setting-row:last-child {
+    border-bottom: 0;
+}
+
+.ss-setting-title {
+    color: var(--ss-text);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.ss-setting-description {
+    margin-top: 3px;
+    color: var(--ss-muted);
+    font-size: 12px;
+}
+
+.ss-switch {
+    position: relative;
+    width: 46px;
+    height: 25px;
+    flex-shrink: 0;
+}
+
+.ss-switch input {
+    width: 0;
+    height: 0;
+    opacity: 0;
+}
+
+.ss-slider {
+    position: absolute;
+    inset: 0;
+    cursor: pointer;
+    border-radius: 999px;
+    background: #cbd5e1;
+    transition: .2s;
+}
+
+.ss-slider::before {
+    content: "";
+    position: absolute;
+    left: 3px;
+    top: 3px;
+    width: 19px;
+    height: 19px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,.18);
+    transition: .2s;
+}
+
+.ss-switch input:checked + .ss-slider {
+    background: var(--ss-primary);
+}
+
+.ss-switch input:checked + .ss-slider::before {
+    transform: translateX(21px);
+}
+
+/* =========================================================
+   ADMINISTRATOR PROFILE
+========================================================= */
+
+.ss-profile-upload {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.ss-avatar-wrap {
+    position: relative;
+    width: 128px;
+    height: 128px;
+    flex-shrink: 0;
+}
+
+.ss-avatar,
+.ss-avatar-placeholder {
+    width: 128px;
+    height: 128px;
+    border-radius: 50%;
+}
+
+.ss-avatar {
+    display: block;
+    object-fit: cover;
+    border: 4px solid var(--ss-card);
+    box-shadow:
+        0 0 0 1px var(--ss-border),
+        0 10px 25px rgba(15,23,42,.12);
+}
+
+.ss-avatar-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #e91e63, #ec4899);
+    color: #fff;
+    font-size: 42px;
+    font-weight: 800;
+    border: 4px solid var(--ss-card);
+    box-shadow:
+        0 0 0 1px var(--ss-border),
+        0 10px 25px rgba(15,23,42,.12);
+}
+
+.ss-camera-button {
+    position: absolute;
+    right: 1px;
+    bottom: 3px;
+    width: 37px;
+    height: 37px;
+    border: 3px solid var(--ss-card);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ec4899;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(236,72,153,.30);
+}
+
+.ss-upload-area {
+    flex: 1;
+    min-width: 0;
+    border: 1.5px dashed #f472b6;
+    border-radius: 15px;
+    padding: 18px 20px;
+    background: var(--ss-pink-soft);
+    cursor: pointer;
+    transition: .2s;
+}
+
+.ss-upload-area:hover {
+    border-color: var(--ss-primary);
+    transform: translateY(-1px);
+}
+
+.ss-upload-title {
+    color: var(--ss-primary);
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.ss-upload-description {
+    margin-top: 4px;
+    color: var(--ss-muted);
+    font-size: 12px;
+}
+
+.ss-upload-file {
+    display: none;
+}
+
+.ss-preview {
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ss-muted);
+    font-size: 12px;
+}
+
+.ss-preview img {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+/* =========================================================
+   PASSWORD
+========================================================= */
+
+.ss-password-wrapper {
+    position: relative;
+}
+
+.ss-password-wrapper .ss-input {
+    padding-right: 48px;
+}
+
+.ss-eye {
+    position: absolute;
+    right: 9px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 35px;
+    height: 35px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--ss-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ss-eye:hover {
+    background: var(--ss-pink-soft);
+    color: var(--ss-primary);
+}
+
+.ss-password-strength {
+    margin-top: 9px;
+}
+
+.ss-strength-bar {
+    height: 7px;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--ss-border);
+}
+
+.ss-strength-fill {
+    height: 100%;
+    border-radius: inherit;
+    transition: width .25s ease, background .25s ease;
+}
+
+.ss-strength-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.ss-strength-label {
+    color: var(--ss-muted);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.ss-strength-value {
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.ss-password-help {
+    margin-top: 9px;
+    padding: 11px 13px;
+    border-radius: 11px;
+    background: var(--ss-pink-soft);
+    color: var(--ss-muted);
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.ss-requirements {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 4px 15px;
+    margin-top: 9px;
+}
+
+.ss-requirement {
+    color: var(--ss-muted);
+    font-size: 11px;
+}
+
+.ss-requirement.ok {
+    color: #16a34a;
+    font-weight: 700;
+}
+
+/* =========================================================
+   SECURITY / 2FA
+========================================================= */
+
+.ss-security-box {
+    margin-top: 26px;
+    padding: 19px;
+    border: 1px solid var(--ss-pink-border);
+    border-radius: 17px;
+    background: var(--ss-pink-soft);
+}
+
+.ss-security-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.ss-security-left {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.ss-security-icon {
+    width: 47px;
+    height: 47px;
+    border-radius: 14px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #e91e63, #ec4899);
+    color: #fff;
+    font-size: 20px;
+}
+
+.ss-security-title {
+    color: var(--ss-text);
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.ss-security-description {
+    margin-top: 3px;
+    color: var(--ss-muted);
+    font-size: 12px;
+}
+
+.ss-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 7px;
+    color: #94a3b8;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.ss-status.enabled {
+    color: #16a34a;
+}
+
+.ss-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.ss-pink-button,
+.ss-danger-button {
+    border-radius: 11px;
+    padding: 11px 17px;
+    font-size: 13px;
+    font-weight: 750;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.ss-pink-button {
+    border: 0;
+    background: linear-gradient(135deg, #e91e63, #ec4899);
+    color: #fff;
+    box-shadow: 0 6px 15px rgba(233,30,99,.20);
+}
+
+.ss-pink-button:hover {
+    transform: translateY(-1px);
+}
+
+.ss-pink-button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.ss-danger-button {
+    border: 1px solid #fecaca;
+    background: transparent;
+    color: #dc2626;
+}
+
+.ss-danger-button:hover {
+    background: #fef2f2;
+}
+
+/* =========================================================
+   2FA MODAL
+========================================================= */
+
+.twofa-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    background: rgba(15,23,42,.70);
+    backdrop-filter: blur(5px);
+}
+
+.twofa-modal-wrapper {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.twofa-modal {
+    width: 100%;
+    max-width: 540px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    border-radius: 22px;
+    background: var(--ss-card);
+    color: var(--ss-text);
+    box-shadow: 0 30px 80px rgba(0,0,0,.30);
+}
+
+.twofa-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 21px 23px;
+    border-bottom: 1px solid var(--ss-border);
+}
+
+.twofa-modal-title {
+    margin: 0;
+    color: var(--ss-text);
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.twofa-modal-subtitle {
+    margin: 4px 0 0;
+    color: var(--ss-muted);
+    font-size: 12px;
+}
+
+.twofa-close {
+    width: 35px;
+    height: 35px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--ss-pink-soft);
+    color: var(--ss-muted);
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.twofa-modal-body {
+    padding: 23px;
+}
+
+.twofa-instructions {
+    padding: 14px;
+    border-radius: 12px;
+    background: var(--ss-pink-soft);
+    color: var(--ss-muted);
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.twofa-qr-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+    padding: 14px;
+    width: fit-content;
+    border: 1px solid var(--ss-border);
+    border-radius: 15px;
+    background: #fff;
+}
+
+.twofa-qr-container img {
+    display: block;
+    width: 190px;
+    height: 190px;
+}
+
+.twofa-manual-key {
+    margin-bottom: 18px;
+}
+
+.twofa-manual-key-label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--ss-text);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.twofa-secret-row {
+    display: flex;
+    gap: 8px;
+}
+
+.twofa-secret {
+    flex: 1;
+    min-width: 0;
+    padding: 10px;
+    border: 1px solid var(--ss-border);
+    border-radius: 10px;
+    background: var(--ss-input);
+    color: var(--ss-text);
+    font-family: monospace;
+    font-size: 11px;
+    word-break: break-all;
+}
+
+.twofa-copy-button {
+    border: 1px solid var(--ss-border);
+    border-radius: 10px;
+    padding: 9px 12px;
+    background: var(--ss-input);
+    color: var(--ss-text);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.twofa-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px;
+    border: 1px solid var(--ss-border);
+    border-radius: 11px;
+    background: var(--ss-input);
+    color: var(--ss-text);
+    text-align: center;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: .45em;
+    outline: none;
+}
+
+.twofa-input:focus {
+    border-color: var(--ss-primary);
+    box-shadow: 0 0 0 3px rgba(233,30,99,.10);
+}
+
+.twofa-error,
+.twofa-success {
+    margin-top: 13px;
+    padding: 11px;
+    border-radius: 10px;
+    font-size: 12px;
+}
+
+.twofa-error {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.twofa-success {
+    background: #f0fdf4;
+    color: #16a34a;
+}
+
+.twofa-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 9px;
+    margin-top: 20px;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 950px) {
+    .ss-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ss-card-full {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 650px) {
+    .ss-page-header {
+        padding: 20px;
+    }
+
+    .ss-page-title {
+        font-size: 22px;
+    }
+
+    .ss-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .ss-field-full {
+        grid-column: auto;
+    }
+
+    .ss-card-body {
+        padding: 17px;
+    }
+
+    .ss-card-header {
+        padding: 17px;
+    }
+
+    .ss-profile-upload {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .ss-upload-area {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .ss-security-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .ss-security-content > * {
+        width: 100%;
+    }
+
+    .ss-security-content .ss-pink-button,
+    .ss-security-content .ss-danger-button {
+        width: 100%;
+    }
+
+    .ss-requirements {
+        grid-template-columns: 1fr;
+    }
+
+    .twofa-actions {
+        flex-direction: column-reverse;
+    }
+
+    .twofa-actions button {
+        width: 100%;
+    }
+}
+</style>
+
+
+<div
+    class="settings-page"
+    x-data="{
+        showModal: false,
+        qrCode: '',
+        secret: '',
+        otp: '',
+        error: '',
+        success: '',
+        verifying: false,
+        copied: false,
+
+        openModal() {
+            this.showModal = true
+            this.error = ''
+            this.success = ''
+            this.otp = ''
+            this.qrCode = ''
+            this.secret = ''
+            this.copied = false
+            this.generateTwoFactor()
+        },
+
+        closeModal() {
+            if (this.verifying) return
+
+            this.showModal = false
+            this.error = ''
+            this.success = ''
+            this.otp = ''
+        },
+
+        async generateTwoFactor() {
+            try {
+                const response = await fetch('{{ route('2fa.enable') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN':
+                            document.querySelector('meta[name=csrf-token]')?.content ||
+                            '{{ csrf_token() }}',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                })
+
+                const data = await response.json()
+
+                if (!response.ok || !data.success) {
+                    this.error = data.message || 'Unable to generate the 2FA setup.'
+                    return
+                }
+
+                this.qrCode = data.qrCode || ''
+                this.secret = data.secret || ''
+
+            } catch (error) {
+                console.error(error)
+                this.error = 'Unable to connect to the server.'
+            }
+        },
+
+        async verifyTwoFactor() {
+            if (this.verifying || this.otp.length !== 6) return
+
+            this.verifying = true
+            this.error = ''
+            this.success = ''
+
+            try {
+                const response = await fetch('{{ route('2fa.verify') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN':
+                            document.querySelector('meta[name=csrf-token]')?.content ||
+                            '{{ csrf_token() }}',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        otp: this.otp
+                    })
+                })
+
+                const data = await response.json()
+
+                if (!response.ok || !data.success) {
+                    this.error = data.message || 'Invalid authentication code.'
+                    return
+                }
+
+                this.success =
+                    data.message ||
+                    'Two-factor authentication enabled successfully.'
+
+                setTimeout(() => {
+                    window.location.reload()
+                }, 900)
+
+            } catch (error) {
+                console.error(error)
+                this.error = 'Unable to verify the authentication code.'
+            } finally {
+                this.verifying = false
+            }
+        },
+
+        async copySecret() {
+            if (!this.secret) return
+
+            try {
+                await navigator.clipboard.writeText(this.secret)
+                this.copied = true
+
+                setTimeout(() => {
+                    this.copied = false
+                }, 1800)
+
+            } catch (error) {
+                this.error = 'Unable to copy the secret key.'
+            }
+        }
+    }"
+>
+
+
+    {{-- =========================================================
+         PAGE HEADER
+    ========================================================== --}}
+
+    <div class="ss-page-header">
+
+        <div class="ss-header-content">
+
+            <div class="ss-header-icon">
+                ⚙
+            </div>
+
+            <div>
+                <h1 class="ss-page-title">
+                    System Settings
+                </h1>
+
+                <p class="ss-page-description">
+                    Manage your clinic, appointments, inventory,
+                    POS, security and administrator preferences.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {{-- =========================================================
+         SETTINGS GRID
+    ========================================================== --}}
+
+    <div class="ss-grid">
+
+
+        {{-- =====================================================
+             CLINIC
+        ====================================================== --}}
+
+        <section class="ss-card">
+
+            <div class="ss-card-header">
+
+                <div class="ss-card-icon">
+                    🏢
+                </div>
+
+                <div>
+                    <h2 class="ss-card-title">
+                        Clinic Information
+                    </h2>
+
+                    <p class="ss-card-description">
+                        Basic information about your dental clinic.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="ss-card-body">
+
+                <div class="ss-fields">
+
+                    <div>
+                        <label class="ss-label">
+                            Clinic Name
+                        </label>
+
+                        <input
+                            type="text"
+                            class="ss-input"
+                            wire:model.defer="clinic.name"
+                            placeholder="Shine & Smile Dental Clinic"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="ss-label">
+                            Phone
+                        </label>
+
+                        <input
+                            type="text"
+                            class="ss-input"
+                            wire:model.defer="clinic.phone"
+                            placeholder="+63 900 000 0000"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="ss-label">
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            class="ss-input"
+                            wire:model.defer="clinic.email"
+                            placeholder="clinic@example.com"
+                        >
+                    </div>
+
+                    <div class="ss-field-full">
+                        <label class="ss-label">
+                            Address
+                        </label>
+
+                        <textarea
+                            class="ss-textarea"
+                            wire:model.defer="clinic.address"
+                            placeholder="Clinic address"
+                        ></textarea>
+                    </div>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="ss-save"
+                    wire:click="saveClinic"
+                >
+                    Save Clinic Information
+                </button>
+
+            </div>
+
+        </section>
+
+
+        {{-- =====================================================
+             APPOINTMENTS
+        ====================================================== --}}
+
+        <section class="ss-card">
+
+            <div class="ss-card-header">
+
+                <div class="ss-card-icon">
+                    📅
+                </div>
+
+                <div>
+                    <h2 class="ss-card-title">
+                        Appointment Settings
+                    </h2>
+
+                    <p class="ss-card-description">
+                        Configure appointment scheduling.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="ss-card-body">
+
+                <div class="ss-fields">
+
+                    <div>
+                        <label class="ss-label">
+                            Opening Time
+                        </label>
+
+                        <input
+                            type="time"
+                            class="ss-input"
+                            wire:model.defer="appointment.opening_time"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="ss-label">
+                            Closing Time
+                        </label>
+
+                        <input
+                            type="time"
+                            class="ss-input"
+                            wire:model.defer="appointment.closing_time"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="ss-label">
+                            Appointment Duration
+                        </label>
+
+                        <input
+                            type="number"
+                            min="5"
+                            class="ss-input"
+                            wire:model.defer="appointment.duration"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="ss-label">
+                            Maximum Daily Appointments
+                        </label>
+
+                        <input
+                            type="number"
+                            min="1"
+                            class="ss-input"
+                            wire:model.defer="appointment.max_daily"
+                        >
+                    </div>
+
+                </div>
+
+                <div class="ss-setting-row">
+
+                    <div>
+                        <div class="ss-setting-title">
+                            Online Booking
+                        </div>
+
+                        <div class="ss-setting-description">
+                            Allow patients to book appointments online.
+                        </div>
+                    </div>
+
+                    <label class="ss-switch">
+
+                        <input
+                            type="checkbox"
+                            wire:model.defer="appointment.online_booking"
+                        >
+
+                        <span class="ss-slider"></span>
+
+                    </label>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="ss-save"
+                    wire:click="saveAppointment"
+                >
+                    Save Appointment Settings
+                </button>
+
+            </div>
+
+        </section>
+
+
+        {{-- =====================================================
+             NOTIFICATIONS
+        ====================================================== --}}
+
+        <section class="ss-card">
+
+            <div class="ss-card-header">
+
+                <div class="ss-card-icon">
+                    🔔
+                </div>
+
+                <div>
+                    <h2 class="ss-card-title">
+                        Notifications
+                    </h2>
+
+                    <p class="ss-card-description">
+                        Control important system notifications.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="ss-card-body">
+
+                <div class="ss-setting-row">
+
+                    <div>
+                        <div class="ss-setting-title">
+                            Appointment Reminders
+                        </div>
+
+                        <div class="ss-setting-description">
+                            Remind patients about upcoming appointments.
+                        </div>
+                    </div>
+
+                    <label class="ss-switch">
+                        <input
+                            type="checkbox"
+                            wire:model.defer="notification.appointment_reminder"
+                        >
+                        <span class="ss-slider"></span>
+                    </label>
+
+                </div>
+
+                <div class="ss-setting-row">
+
+                    <div>
+                        <div class="ss-setting-title">
+                            Email Notifications
+                        </div>
+
+                        <div class="ss-setting-description">
+                            Enable important system emails.
+                        </div>
+                    </div>
+
+                    <label class="ss-switch">
+                        <input
+                            type="checkbox"
+                            wire:model.defer="notification.email_notification"
+                        >
+                        <span class="ss-slider"></span>
+                    </label>
+
+                </div>
+
+                <div class="ss-setting-row">
+
+                    <div>
+                        <div class="ss-setting-title">
+                            Low Stock Alerts
+                        </div>
+
+                        <div class="ss-setting-description">
+                            Notify staff when products reach low stock.
+                        </div>
+                    </div>
+
+                    <label class="ss-switch">
+                        <input
+                            type="checkbox"
+                            wire:model.defer="notification.low_stock_alert"
+                        >
+                        <span class="ss-slider"></span>
+                    </label>
+
+                </div>
+
+                <div class="ss-setting-row">
+
+                    <div>
+                        <div class="ss-setting-title">
+                            Expiration Alerts
+                        </div>
+
+                        <div class="ss-setting-description">
+                            Alert staff about products nearing expiration.
+                        </div>
+                    </div>
+
+                    <label class="ss-switch">
+                        <input
+                            type="checkbox"
+                            wire:model.defer="notification.expiration_alert"
+                        >
+                        <span class="ss-slider"></span>
+                    </label>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="ss-save"
+                    wire:click="saveNotification"
+                >
+                    Save Notification Settings
+                </button>
+
+            </div>
+
+        </section>
+
+
+        {{-- =====================================================
+             INVENTORY
+        ====================================================== --}}
+
+        <section class="ss-card">
+
+            <div class="ss-card-header">
+
+                <div class="ss-card-icon">
+                    📦
+                </div>
+
+                <div>
+                    <h2 class="ss-card-title">
+                        Inventory
+                    </h2>
+
+                    <p class="ss-card-description">
+                        Configure stock monitoring.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="ss-card-body">
+
+                <label class="ss-label">
+                    Low Stock Limit
+                </label>
+
+                <input
+                    type="number"
+                    min="0"
+                    class="ss-input"
+                    wire:model.defer="inventory.low_stock_limit"
+                >
+
+                <div class="ss-setting-row">
+
+                    <div>
+                        <div class="ss-setting-title">
+                            Automatic Stock Updates
+                        </div>
+
+                        <div class="ss-setting-description">
+                            Update inventory automatically after transactions.
+                        </div>
+                    </div>
+
+                    <label class="ss-switch">
+                        <input
+                            type="checkbox"
+                            wire:model.defer="inventory.auto_update"
+                        >
+                        <span class="ss-slider"></span>
+                    </label>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="ss-save"
+                    wire:click="saveInventory"
+                >
+                    Save Inventory Settings
+                </button>
+
+            </div>
+
+        </section>
+
+
+        {{-- =====================================================
+             POS
+        ====================================================== --}}
+
+        <section class="ss-card">
+
+            <div class="ss-card-header">
+
+                <div class="ss-card-icon">
+                    🛒
+                </div>
+
+                <div>
+                    <h2 class="ss-card-title">
+                        Point of Sale
+                    </h2>
+
+                    <p class="ss-card-description">
+                        Configure POS and receipt preferences.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="ss-card-body">
+
+                <label class="ss-label">
+                    Tax Rate (%)
+                </label>
+
+                <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    class="ss-input"
+                    wire:model.defer="pos.tax_rate"
+                >
+
+                <div class="ss-setting-row">
+
+                    <div>
+                        <div class="ss-setting-title">
+                            Allow Discounts
+                        </div>
+
+                        <div class="ss-setting-description">
+                            Allow cashiers to apply discounts.
+                        </div>
+                    </div>
+
+                    <label class="ss-switch">
+                        <input
+                            type="checkbox"
+                            wire:model.defer="pos.allow_discount"
+                        >
+                        <span class="ss-slider"></span>
+                    </label>
+
+                </div>
+
+                <div style="margin-top:17px;">
+
+                    <label class="ss-label">
+                        Receipt Footer
+                    </label>
+
+                    <textarea
+                        class="ss-textarea"
+                        wire:model.defer="pos.receipt_footer"
+                    ></textarea>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="ss-save"
+                    wire:click="savePos"
+                >
+                    Save POS Settings
+                </button>
+
+            </div>
+
+        </section>
+
+
+        {{-- =====================================================
+             SYSTEM
+        ====================================================== --}}
+
+        <section class="ss-card">
+
+            <div class="ss-card-header">
+
+                <div class="ss-card-icon">
+                    ⚙️
+                </div>
+
+                <div>
+                    <h2 class="ss-card-title">
+                        System Settings
+                    </h2>
+
+                    <p class="ss-card-description">
+                        Configure system-wide preferences.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="ss-card-body">
+
+                <label class="ss-label">
+                    Timezone
+                </label>
+
+                <select
+                    class="ss-select"
+                    wire:model.defer="system.timezone"
+                >
+                    <option value="Asia/Manila">
+                        Asia/Manila
+                    </option>
+
+                    <option value="UTC">
+                        UTC
+                    </option>
+
+                    <option value="Asia/Singapore">
+                        Asia/Singapore
+                    </option>
+
+                    <option value="Asia/Tokyo">
+                        Asia/Tokyo
+                    </option>
+                </select>
+
+                <div class="ss-setting-row">
+
+                    <div>
+                        <div class="ss-setting-title">
+                            Maintenance Mode
+                        </div>
+
+                        <div class="ss-setting-description">
+                            Temporarily restrict public system access.
+                        </div>
+                    </div>
+
+                    <label class="ss-switch">
+
+                        <input
+                            type="checkbox"
+                            wire:model.defer="system.maintenance_mode"
+                        >
+
+                        <span class="ss-slider"></span>
+
+                    </label>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="ss-save"
+                    wire:click="saveSystem"
+                >
+                    Save System Settings
+                </button>
+
+            </div>
+
+        </section>
+
+
+        {{-- =====================================================
+             FEATURES
+        ====================================================== --}}
+
+        <section class="ss-card">
+
+            <div class="ss-card-header">
+
+                <div class="ss-card-icon">
+                    ✨
+                </div>
+
+                <div>
+                    <h2 class="ss-card-title">
+                        Feature Settings
+                    </h2>
+
+                    <p class="ss-card-description">
+                        Enable or disable optional features.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="ss-card-body">
+
+                @foreach ($features as $key => $value)
+
+                    <div class="ss-setting-row">
+
+                        <div>
+                            <div class="ss-setting-title">
+                                {{ ucwords(str_replace('_', ' ', $key)) }}
+                            </div>
+
+                            <div class="ss-setting-description">
+                                Control this system feature.
+                            </div>
+                        </div>
+
+                        <label class="ss-switch">
+
+                            <input
+                                type="checkbox"
+                                wire:model.defer="features.{{ $key }}"
+                            >
+
+                            <span class="ss-slider"></span>
+
+                        </label>
+
+                    </div>
+
+                @endforeach
+
+                <button
+                    type="button"
+                    class="ss-save"
+                    wire:click="saveFeatures"
+                >
+                    Save Feature Settings
+                </button>
+
+            </div>
+
+        </section>
+
+
+        {{-- =====================================================
+             ADMINISTRATOR PROFILE
+        ====================================================== --}}
+
+        <section class="ss-card ss-card-full">
+
+            <div class="ss-card-header">
+
+                <div class="ss-card-icon">
+                    👤
+                </div>
+
+                <div>
+                    <h2 class="ss-card-title">
+                        Administrator Profile
+                    </h2>
+
+                    <p class="ss-card-description">
+                        Update the administrator account information.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="ss-card-body">
+
+                <div class="ss-profile-upload">
+
+                    <div class="ss-avatar-wrap">
+
+                        @if (auth()->user()->profile_picture)
+
+                            <img
+                                src="{{ asset('storage/' . auth()->user()->profile_picture) }}"
+                                alt="Administrator Profile"
+                                class="ss-avatar"
+                            >
+
+                        @else
+
+                            <div class="ss-avatar-placeholder">
+                                {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
+                            </div>
+
+                        @endif
+
+                        <label
+                            for="admin-profile-image"
+                            class="ss-camera-button"
+                            title="Change profile picture"
+                        >
+                            📷
+                        </label>
+
+                    </div>
+
+
+                    <label
+                        for="admin-profile-image"
+                        class="ss-upload-area"
+                    >
+
+                        <div class="ss-upload-title">
+                            ☁ Change Profile Picture
+                        </div>
+
+                        <div class="ss-upload-description">
+                            JPG, JPEG, PNG or WEBP — maximum 2 MB.
+                        </div>
+
+                        <input
+                            id="admin-profile-image"
+                            type="file"
+                            class="ss-upload-file"
+                            accept="image/jpeg,image/png,image/webp"
+                            wire:model="profileImage"
+                        >
+
+                        @if ($profileImage)
+
+                            <div class="ss-preview">
+
+                                <img
+                                    src="{{ $profileImage->temporaryUrl() }}"
+                                    alt="New profile preview"
+                                >
+
+                                <span>
+                                    New image selected. Click Save Profile to upload it.
+                                </span>
+
+                            </div>
+
+                        @endif
+
+                    </label>
+
+                </div>
+
+
+                <div class="ss-fields">
+
+                    <div>
+
+                        <label class="ss-label">
+                            Name
+                        </label>
+
+                        <input
+                            type="text"
+                            class="ss-input"
+                            wire:model.defer="profile.name"
+                            placeholder="Administrator Name"
+                        >
+
+                    </div>
+
+                    <div>
+
+                        <label class="ss-label">
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            class="ss-input"
+                            wire:model.defer="profile.email"
+                            placeholder="admin@example.com"
+                        >
+
+                    </div>
+
+                </div>
+
+
+		<button
+		    type="button"
+		    class="ss-save"
+		    wire:click="saveProfile"
+		    wire:loading.attr="disabled"
+		>
+		    💾 Save Profile
+		</button>
+
+		@if ($profileImage)
+
+		    <button
+		        type="button"
+		        class="ss-pink-button"
+		        wire:click="saveProfileImage"
+		        wire:loading.attr="disabled"
+		        style="margin-top:19px;margin-left:8px;"
+		    >
+		        📷 Upload New Picture
+		    </button>
+
+		@endif		
+            </div>
+
+        </section>
+
+
+        {{-- =====================================================
+             SECURITY
+        ====================================================== --}}
+
+        <section
+            class="ss-card ss-card-full"
+            x-data="{
+                showCurrent: false,
+                showNew: false,
+                showConfirm: false,
+
+                password: @entangle('security.new_password'),
+
+                get lengthOk() {
+                    return this.password.length >= 8
+                },
+
+                get uppercaseOk() {
+                    return /[A-Z]/.test(this.password)
+                },
+
+                get lowercaseOk() {
+                    return /[a-z]/.test(this.password)
+                },
+
+                get numberOk() {
+                    return /[0-9]/.test(this.password)
+                },
+
+                get symbolOk() {
+                    return /[^A-Za-z0-9]/.test(this.password)
+                },
+
+                get score() {
+                    let score = 0
+
+                    if (this.lengthOk) score++
+                    if (this.uppercaseOk) score++
+                    if (this.lowercaseOk) score++
+                    if (this.numberOk) score++
+                    if (this.symbolOk) score++
+
+                    return score
+                },
+
+                get strength() {
+                    if (!this.password.length) {
+                        return 'Not entered'
+                    }
+
+                    if (this.score <= 2) {
+                        return 'Weak'
+                    }
+
+                    if (this.score === 3) {
+                        return 'Fair'
+                    }
+
+                    if (this.score === 4) {
+                        return 'Good'
+                    }
+
+                    return 'Strong'
+                },
+
+                get strengthWidth() {
+                    return (this.score / 5) * 100
+                },
+
+                get strengthColor() {
+                    if (this.score <= 2) {
+                        return '#ef4444'
+                    }
+
+                    if (this.score === 3) {
+                        return '#f59e0b'
+                    }
+
+                    if (this.score === 4) {
+                        return '#84cc16'
+                    }
+
+                    return '#22c55e'
+                }
+            }"
+        >
+
+            <div class="ss-card-header">
+
+                <div class="ss-card-icon">
+                    🔐
+                </div>
+
+                <div>
+                    <h2 class="ss-card-title">
+                        Security
+                    </h2>
+
+                    <p class="ss-card-description">
+                        Manage your password and two-factor authentication.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="ss-card-body">
+
+                <div class="ss-fields">
+
+                    {{-- CURRENT PASSWORD --}}
+
+                    <div class="ss-field-full">
+
+                        <label class="ss-label">
+                            Current Password
+                        </label>
+
+                        <div class="ss-password-wrapper">
+
+                            <input
+                                :type="showCurrent ? 'text' : 'password'"
+                                class="ss-input"
+                                wire:model.defer="security.current_password"
+                                autocomplete="current-password"
+                                placeholder="Enter your current password"
+                            >
+
+                            <button
+                                type="button"
+                                class="ss-eye"
+                                @click="showCurrent = !showCurrent"
+                                :title="showCurrent ? 'Hide password' : 'Show password'"
+                            >
+                                <span x-show="!showCurrent">👁</span>
+                                <span x-show="showCurrent">🙈</span>
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- NEW PASSWORD --}}
+
+                    <div>
+
+                        <label class="ss-label">
+                            New Password
+                        </label>
+
+                        <div class="ss-password-wrapper">
+
+                            <input
+                                :type="showNew ? 'text' : 'password'"
+                                class="ss-input"
+                                wire:model.defer="security.new_password"
+                                x-model="password"
+                                autocomplete="new-password"
+                                placeholder="Enter new password"
+                            >
+
+                            <button
+                                type="button"
+                                class="ss-eye"
+                                @click="showNew = !showNew"
+                                :title="showNew ? 'Hide password' : 'Show password'"
+                            >
+                                <span x-show="!showNew">👁</span>
+                                <span x-show="showNew">🙈</span>
+                            </button>
+
+                        </div>
+
+
+                        <div class="ss-password-strength">
+
+                            <div class="ss-strength-bar">
+
+                                <div
+                                    class="ss-strength-fill"
+                                    :style="
+                                        'width:' + strengthWidth +
+                                        '%;background:' + strengthColor
+                                    "
+                                ></div>
+
+                            </div>
+
+                            <div class="ss-strength-info">
+
+                                <span class="ss-strength-label">
+                                    Password strength
+                                </span>
+
+                                <span
+                                    class="ss-strength-value"
+                                    :style="'color:' + strengthColor"
+                                    x-text="strength"
+                                ></span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="ss-requirements">
+
+                            <div
+                                class="ss-requirement"
+                                :class="{ 'ok': lengthOk }"
+                            >
+                                <span x-text="lengthOk ? '✓' : '○'"></span>
+                                At least 8 characters
+                            </div>
+
+                            <div
+                                class="ss-requirement"
+                                :class="{ 'ok': uppercaseOk }"
+                            >
+                                <span x-text="uppercaseOk ? '✓' : '○'"></span>
+                                Uppercase letter
+                            </div>
+
+                            <div
+                                class="ss-requirement"
+                                :class="{ 'ok': lowercaseOk }"
+                            >
+                                <span x-text="lowercaseOk ? '✓' : '○'"></span>
+                                Lowercase letter
+                            </div>
+
+                            <div
+                                class="ss-requirement"
+                                :class="{ 'ok': numberOk }"
+                            >
+                                <span x-text="numberOk ? '✓' : '○'"></span>
+                                Number
+                            </div>
+
+                            <div
+                                class="ss-requirement"
+                                :class="{ 'ok': symbolOk }"
+                            >
+                                <span x-text="symbolOk ? '✓' : '○'"></span>
+                                Special character
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- CONFIRM PASSWORD --}}
+
+                    <div>
+
+                        <label class="ss-label">
+                            Confirm New Password
+                        </label>
+
+                        <div class="ss-password-wrapper">
+
+                            <input
+                                :type="showConfirm ? 'text' : 'password'"
+                                class="ss-input"
+                                wire:model.defer="security.new_password_confirmation"
+                                autocomplete="new-password"
+                                placeholder="Confirm new password"
+                            >
+
+                            <button
+                                type="button"
+                                class="ss-eye"
+                                @click="showConfirm = !showConfirm"
+                                :title="showConfirm ? 'Hide password' : 'Show password'"
+                            >
+                                <span x-show="!showConfirm">👁</span>
+                                <span x-show="showConfirm">🙈</span>
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="ss-password-help">
+
+                    <strong>Password security:</strong>
+
+                    Use at least 8 characters with a mixture of uppercase,
+                    lowercase, numbers and special characters.
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="ss-save"
+                    wire:click="changePassword"
+                    wire:loading.attr="disabled"
+                >
+                    🔑 Change Password
+                </button>
+
+
+                {{-- =================================================
+                     TWO FACTOR AUTHENTICATION
+                ================================================== --}}
+
+                <div class="ss-security-box">
+
+                    <div class="ss-security-content">
+
+                        <div class="ss-security-left">
+
+                            <div class="ss-security-icon">
+                                🛡️
+                            </div>
+
+                            <div>
+
+                                <div class="ss-security-title">
+                                    Two-Factor Authentication
+                                </div>
+
+                                <div class="ss-security-description">
+                                    Protect your administrator account with Google Authenticator.
+                                </div>
+
+                                @if (auth()->user()->two_factor_enabled)
+
+                                    <div class="ss-status enabled">
+
+                                        <span class="ss-status-dot"></span>
+
+                                        Enabled
+
+                                    </div>
+
+                                @else
+
+                                    <div class="ss-status">
+
+                                        <span class="ss-status-dot"></span>
+
+                                        Not Enabled
+
+                                    </div>
+
+                                @endif
+
+                            </div>
+
+                        </div>
+
+
+                        @if (auth()->user()->two_factor_enabled)
+
+                            <form
+                                method="POST"
+                                action="{{ route('2fa.disable') }}"
+                            >
+
+                                @csrf
+
+                                @method('DELETE')
+
+                                <button
+                                    type="submit"
+                                    class="ss-danger-button"
+                                    onclick="return confirm('Are you sure you want to disable two-factor authentication?')"
+                                >
+                                    Disable 2FA
+                                </button>
+
+                            </form>
+
+                        @else
+
+                            <button
+                                type="button"
+                                class="ss-pink-button"
+                                @click="openModal()"
+                            >
+                                Enable 2FA
+                            </button>
+
+                        @endif
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    {{-- =========================================================
+         2FA MODAL
+    ========================================================== --}}
+
+    <template x-if="showModal">
+
+        <div>
+
+            <div
+                class="twofa-modal-overlay"
+                @click="closeModal()"
+            ></div>
+
+            <div
+                class="twofa-modal-wrapper"
+                role="dialog"
+                aria-modal="true"
+            >
+
+                <div
+                    class="twofa-modal"
+                    @click.stop
+                >
+
+                    <div class="twofa-modal-header">
+
+                        <div>
+
+                            <h2 class="twofa-modal-title">
+                                Set Up Two-Factor Authentication
+                            </h2>
+
+                            <p class="twofa-modal-subtitle">
+                                Secure your administrator account with Google Authenticator.
+                            </p>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            class="twofa-close"
+                            @click="closeModal()"
+                        >
+                            ×
+                        </button>
+
+                    </div>
+
+
+                    <div class="twofa-modal-body">
+
+                        <div class="twofa-instructions">
+
+                            <strong>1.</strong>
+                            Open Google Authenticator on your phone.
+                            <br>
+
+                            <strong>2.</strong>
+                            Scan the QR code below.
+                            <br>
+
+                            <strong>3.</strong>
+                            Enter the 6-digit verification code.
+
+                        </div>
+
+
+                        <template x-if="qrCode">
+
+                            <div class="twofa-qr-container">
+
+                                <img
+                                    :src="qrCode"
+                                    alt="Google Authenticator QR Code"
+                                >
+
+                            </div>
+
+                        </template>
+
+
+                        <div
+                            x-show="!qrCode && !error"
+                            style="text-align:center;padding:25px;color:#94a3b8;font-size:13px;"
+                        >
+                            Generating secure QR code...
+                        </div>
+
+
+                        <div
+                            class="twofa-manual-key"
+                            x-show="secret"
+                        >
+
+                            <span class="twofa-manual-key-label">
+                                Manual setup key
+                            </span>
+
+                            <div class="twofa-secret-row">
+
+                                <div
+                                    class="twofa-secret"
+                                    x-text="secret"
+                                ></div>
+
+                                <button
+                                    type="button"
+                                    class="twofa-copy-button"
+                                    @click="copySecret()"
+                                >
+                                    <span x-show="!copied">
+                                        Copy
+                                    </span>
+
+                                    <span x-show="copied">
+                                        ✓ Copied
+                                    </span>
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <label
+                            class="ss-label"
+                            for="twofa-authentication-code"
+                        >
+                            Authentication Code
+                        </label>
+
+                        <input
+                            id="twofa-authentication-code"
+                            type="text"
+                            class="twofa-input"
+                            x-model="otp"
+                            maxlength="6"
+                            inputmode="numeric"
+                            autocomplete="one-time-code"
+                            placeholder="000000"
+                            @input="otp = otp.replace(/[^0-9]/g, '').slice(0,6)"
+                            @keydown.enter.prevent="verifyTwoFactor()"
+                        >
+
+
+                        <div
+                            style="
+                                margin-top:7px;
+                                color:#94a3b8;
+                                font-size:11px;
+                                text-align:center;
+                            "
+                        >
+                            Enter the current 6-digit code from Google Authenticator.
+                        </div>
+
+
+                        <div
+                            class="twofa-error"
+                            x-show="error"
+                            x-text="error"
+                        ></div>
+
+
+                        <div
+                            class="twofa-success"
+                            x-show="success"
+                            x-text="success"
+                        ></div>
+
+
+                        <div class="twofa-actions">
+
+                            <button
+                                type="button"
+                                class="ss-pink-button"
+                                @click="verifyTwoFactor()"
+                                :disabled="verifying || otp.length !== 6"
+                            >
+
+                                <span x-show="!verifying">
+                                    Verify & Enable
+                                </span>
+
+                                <span x-show="verifying">
+                                    Verifying...
+                                </span>
+
+                            </button>
+
+                            <button
+                                type="button"
+                                class="ss-danger-button"
+                                @click="closeModal()"
+                                :disabled="verifying"
+                            >
+                                Cancel
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </template>
+
+</div>
+
+</x-filament-panels::page>

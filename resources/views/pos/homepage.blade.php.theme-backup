@@ -1,0 +1,647 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>Shine & Smile | Dental Supply POS</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ asset('css/pos/pos_homepage.css') }}?v={{ time() }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <div class="brand-mark"><i class="fa-solid fa-tooth"></i></div>
+                <div>
+                    <h1>Shine & Smile</h1>
+                    <p>Dental Supply POS</p>
+                </div>
+            </div>
+
+            <div class="brand-tagline">Today, Healthier Smiles Tomorrow</div>
+
+            <nav class="main-nav">
+                <a class="nav-item active" href="#" data-section="POS">
+                    <i class="fa-solid fa-cart-shopping"></i><span>POS</span>
+                </a>
+                <a class="nav-item" href="#" data-section="Sales History">
+                    <i class="fa-regular fa-clipboard"></i><span>Sales History</span>
+                </a>
+                <a class="nav-item" href="#" data-section="Products">
+                    <i class="fa-solid fa-box-open"></i><span>Products</span>
+                </a>
+                <a class="nav-item" href="#" data-section="Inventory">
+                    <i class="fa-solid fa-boxes-stacked"></i><span>Inventory</span>
+                </a>
+                <a class="nav-item" href="#" data-section="Customers">
+                    <i class="fa-solid fa-users"></i><span>Customers</span>
+                </a>
+                <a class="nav-item" href="#" data-section="Reports">
+                    <i class="fa-solid fa-chart-column"></i><span>Reports</span>
+                </a>
+
+		<a class="nav-item" href="{{ route('pos.settings') }}">
+		    <i class="fa-solid fa-gear"></i><span>Settings</span>
+		</a>
+			
+	
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="quality-card">
+                    <div class="quality-icon"><i class="fa-solid fa-tooth"></i></div>
+                    <h3>Quality Supplies<br>Brighter Smiles</h3>
+                    <p>Together for a healthier<br>happier smile.</p>
+                    <div class="wave wave-one"></div>
+                    <div class="wave wave-two"></div>
+                </div>
+
+                <div class="support">
+                    <div class="support-icon"><i class="fa-solid fa-headset"></i></div>
+                    <div>
+                        <strong>Need Help?</strong>
+                        <p>Contact support for assistance.</p>
+                    </div>
+                </div>
+
+                <button class="support-button">
+                    <i class="fa-regular fa-comment"></i>
+                    Contact Support
+                </button>
+
+                <div class="version">© 2026 Shine & Smile Dental Supply POS<br>v1.0.0</div>
+            </div>
+        </aside>
+
+        <main class="workspace">
+            <header class="topbar">
+                <button class="mobile-menu" id="mobileMenu"><i class="fa-solid fa-bars"></i></button>
+
+                <div class="search-wrap">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input id="searchInput" type="search" placeholder="Search products by name, SKU, or barcode...">
+                    <button class="barcode-btn" id="barcodeBtn" title="Scan barcode">
+                        <i class="fa-solid fa-barcode"></i>
+                    </button>
+                </div>
+
+                <div class="top-actions">
+                    <button class="icon-button" id="themeToggle" title="Toggle theme">
+                        <i class="fa-regular fa-sun"></i>
+                    </button>
+                    <button class="icon-button dark-button" id="themeIcon" title="Dark mode">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                    <button class="icon-button notification" title="Notifications">
+                        <i class="fa-regular fa-bell"></i><span>3</span>
+                    </button>
+
+                    <div class="register">
+                        <span>Register #04</span>
+                        <strong><i class="fa-solid fa-circle"></i> Online</strong>
+                    </div>
+
+                    <div class="cashier">
+                        <div class="avatar">CA</div>
+                        <div>
+                            <strong>Mark Andrew</strong>
+                            <span>Cashier</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                </div>
+            </header>
+
+            <section class="content">
+                <div class="category-row" id="categoryRow"></div>
+
+                <div class="filters">
+                    <select id="brandFilter">
+                        <option value="all">All Brands</option>
+                        <option value="DentalPro">DentalPro</option>
+                        <option value="MedCare">MedCare</option>
+                        <option value="OralTech">OralTech</option>
+                    </select>
+
+                    <select id="sortFilter">
+                        <option value="name">Sort by: Name A-Z</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="stock">Stock: High to Low</option>
+                    </select>
+
+                    <div class="view-switch">
+                        <button class="active" id="gridView"><i class="fa-solid fa-grip"></i> Grid</button>
+                        <button id="listView"><i class="fa-solid fa-list"></i> List</button>
+                    </div>
+                </div>
+
+                <div class="product-grid" id="productGrid"></div>
+            </section>
+        </main>
+
+        <aside class="order-panel">
+            <div class="order-header">
+                <div class="order-title">
+                    <div class="order-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+                    <div>
+                        <h2>Current Order <span id="cartCount">0</span></h2>
+                        <p id="selectedText">0 items selected</p>
+                    </div>
+                </div>
+                <button class="clear-btn" id="clearCart"><i class="fa-regular fa-trash-can"></i> Clear All</button>
+            </div>
+
+            <div class="cart-list" id="cartList">
+                <div class="empty-cart">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <h3>Your cart is empty</h3>
+                    <p>Select a product to begin.</p>
+                </div>
+            </div>
+
+<div class="discount-row">
+
+    <div class="discount-icon">
+        <i class="fa-solid fa-tag"></i>
+    </div>
+
+    <input
+        type="text"
+        id="discountCode"
+        placeholder="Enter discount code"
+        autocomplete="off"
+        maxlength="50"
+    >
+
+    <button
+        type="button"
+        id="applyDiscount"
+    >
+        Apply
+    </button>
+
+</div>
+                <div class="summary">
+                    <div><span>Subtotal</span><strong id="subtotal">₱0.00</strong></div>
+                    <div><span>Discount (0%)</span><strong class="discount-value" id="discount">-₱0.00</strong></div>
+		    <div><span>Tax</span><strong id="tax">₱0.00</strong></div>
+                    <div class="total-row"><span>Total Amount</span><strong id="total">₱0.00</strong></div>
+                </div>
+
+                <div class="payment-title">Select Payment Method</div>
+                <div class="payment-methods">
+                    <button class="payment active" data-payment="cash"><i class="fa-solid fa-money-bill-wave"></i> Cash</button>
+                    <button class="payment" data-payment="gcash"><i class="fa-solid fa-mobile-screen-button"></i> GCash / QR</button>
+                    <button class="payment" data-payment="card"><i class="fa-solid fa-credit-card"></i> Card</button>
+                </div>
+
+                <label class="amount-label">Amount Received</label>
+                <div class="amount-input">
+                    <span>₱</span>
+                    <input id="amountReceived" type="number" min="0" step="0.01" value="0.00">
+                </div>
+
+                <div class="change-row">
+                    <span>Change</span>
+                    <strong id="change">₱0.00</strong>
+                </div>
+
+                <button class="process-button" id="processPayment">
+                    Process Payment <span id="paymentTotal">₱0.00</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div class="smile-message">
+                <i class="fa-solid fa-tooth"></i>
+                <span>A portion of every purchase<br>helps create healthier smiles!</span>
+                <i class="fa-solid fa-heart"></i>
+            </div>
+        </aside>
+    </div>
+
+    <div class="toast" id="toast"></div>
+   <div class="modal-backdrop" id="paymentModal" aria-hidden="true">
+    <div class="payment-modal">
+
+        <button
+            class="modal-close"
+            id="closePaymentModal"
+            type="button"
+            aria-label="Close payment"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="modal-icon">
+            <i class="fa-solid fa-credit-card"></i>
+        </div>
+
+        <h2 id="paymentModalTitle">Confirm Payment</h2>
+
+        <p id="paymentModalMessage">
+            Review the payment before completing this transaction.
+        </p>
+
+        <div class="receipt" id="paymentConfirmation">
+            <div>
+                <span>Invoice</span>
+                <strong id="receiptInvoice">Pending</strong>
+            </div>
+
+            <div>
+                <span>Total</span>
+                <strong id="receiptTotal">₱0.00</strong>
+            </div>
+
+            <div>
+                <span>Payment</span>
+                <strong id="receiptMethod">Cash</strong>
+            </div>
+
+<div>
+    <span>Amount Received</span>
+    <div class="modal-amount-input">
+        <span>₱</span>
+        <input
+            id="modalAmountReceived"
+            type="number"
+            min="0"
+            step="0.01"
+            value="0"
+            placeholder="0.00"
+        >
+    </div>
+</div>
+
+<div>
+    <span>Change</span>
+    <strong id="receiptChange">₱0.00</strong>
+</div>
+
+        </div>
+
+
+
+        <div id="paymentModalActions">
+
+            <button
+                class="modal-primary"
+                id="confirmPayment"
+                type="button"
+            >
+                <i class="fa-solid fa-check"></i>
+                Confirm Payment
+            </button>
+
+        </div>
+
+        <div
+            id="receiptActions"
+            style="display:none; gap:10px; margin-top:12px;"
+        >
+            <button
+                class="modal-primary"
+                id="printReceipt"
+                type="button"
+            >
+                <i class="fa-solid fa-print"></i>
+                Print Receipt
+            </button>
+            <button
+                class="modal-primary"
+                id="downloadReceipt"
+                type="button"
+            >
+                <i class="fa-solid fa-download"></i>
+                Download Receipt
+            </button>
+            <button
+                class="modal-primary"
+                id="newSale"
+                type="button"
+            >
+                <i class="fa-solid fa-plus"></i>
+                Start New Sale
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- DISCOUNT SUCCESS MODAL -->
+<div id="discountSuccessModal" class="discount-success-modal">
+
+    <div class="discount-success-backdrop"></div>
+
+    <div class="discount-success-card">
+
+        <button
+            type="button"
+            id="closeDiscountSuccess"
+            class="discount-success-close"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="discount-success-icon">
+            <i class="fa-solid fa-check"></i>
+        </div>
+
+        <h3>Promo Code Applied!</h3>
+
+        <p id="discountSuccessMessage">
+            Your promo code has been successfully applied.
+        </p>
+
+        <div class="discount-success-amount">
+            <span>Discount</span>
+            <strong id="discountSuccessAmount">
+                -₱0.00
+            </strong>
+        </div>
+
+        <button
+            type="button"
+            id="discountSuccessOk"
+            class="discount-success-ok"
+        >
+            OK
+        </button>
+
+    </div>
+
+</div>
+<style>
+/* =========================================================
+   DISCOUNT SUCCESS MODAL - INLINE
+   ========================================================= */
+
+#discountSuccessModal {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+
+    width: 100vw !important;
+    height: 100vh !important;
+
+    display: none !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding: 20px !important;
+    margin: 0 !important;
+
+    box-sizing: border-box !important;
+
+    background: rgba(0, 0, 0, 0.55) !important;
+
+    z-index: 999999 !important;
+
+    overflow: hidden !important;
+}
+
+#discountSuccessModal.active {
+    display: flex !important;
+}
+
+#discountSuccessModal .discount-success-backdrop {
+    position: absolute !important;
+
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    background: rgba(0, 0, 0, 0.55) !important;
+
+    z-index: 1 !important;
+}
+
+#discountSuccessModal .discount-success-card {
+    position: relative !important;
+
+    z-index: 2 !important;
+
+    width: 380px !important;
+    max-width: calc(100vw - 40px) !important;
+
+    margin: auto !important;
+    padding: 30px 26px 26px !important;
+
+    box-sizing: border-box !important;
+
+    background: #ffffff !important;
+
+    border-radius: 20px !important;
+
+    text-align: center !important;
+
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.30) !important;
+
+    animation: discountSuccessIn 0.2s ease !important;
+}
+
+@keyframes discountSuccessIn {
+    from {
+        opacity: 0;
+        transform: scale(0.94) translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+#discountSuccessModal .discount-success-close {
+    position: absolute !important;
+
+    top: 12px !important;
+    right: 12px !important;
+
+    width: 34px !important;
+    height: 34px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border: none !important;
+    border-radius: 9px !important;
+
+    background: #f4f4f5 !important;
+
+    color: #71717a !important;
+
+    cursor: pointer !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+#discountSuccessModal .discount-success-icon {
+    width: 64px !important;
+    height: 64px !important;
+
+    margin: 0 auto 17px !important;
+
+    border-radius: 50% !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    background: #ec4899 !important;
+
+    color: #ffffff !important;
+
+    font-size: 27px !important;
+}
+
+#discountSuccessModal h3 {
+    margin: 0 0 8px !important;
+
+    color: #18181b !important;
+
+    font-size: 21px !important;
+
+    font-weight: 750 !important;
+}
+
+#discountSuccessModal p {
+    margin: 0 0 20px !important;
+
+    color: #71717a !important;
+
+    font-size: 14px !important;
+
+    line-height: 1.5 !important;
+}
+
+#discountSuccessModal .discount-success-amount {
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: space-between !important;
+
+    width: 100% !important;
+
+    padding: 13px 15px !important;
+    margin: 0 0 20px !important;
+
+    box-sizing: border-box !important;
+
+    border-radius: 11px !important;
+
+    background: #fdf2f8 !important;
+
+    border: 1px solid #fbcfe8 !important;
+}
+
+#discountSuccessModal .discount-success-amount span {
+    color: #71717a !important;
+
+    font-size: 13px !important;
+    font-weight: 600 !important;
+}
+
+#discountSuccessModal .discount-success-amount strong {
+    color: #db2777 !important;
+
+    font-size: 17px !important;
+    font-weight: 800 !important;
+}
+
+#discountSuccessModal .discount-success-ok {
+    width: 100% !important;
+    height: 46px !important;
+
+    padding: 0 !important;
+
+    border: none !important;
+    border-radius: 11px !important;
+
+    background: linear-gradient(
+        135deg,
+        #ec4899,
+        #db2777
+    ) !important;
+
+    color: #ffffff !important;
+
+    font-size: 14px !important;
+    font-weight: 700 !important;
+
+    cursor: pointer !important;
+}
+</style>
+<script>
+    window.posProducts = @json($posProducts);
+</script>
+<script src="{{ asset('js/pos/pos_homepage.js') }}?v={{ time() }}"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const themeButtons = [
+        document.getElementById("themeToggle"),
+        document.getElementById("themeIcon")
+    ].filter(Boolean);
+
+    function applyPOSTheme() {
+        const enabled =
+            localStorage.getItem("pos-dark-mode") === "true";
+
+        document.documentElement.classList.toggle(
+            "dark-mode",
+            enabled
+        );
+    }
+
+    function togglePOSTheme() {
+        const enabled =
+            document.documentElement.classList.toggle("dark-mode");
+
+        localStorage.setItem(
+            "pos-dark-mode",
+            enabled ? "true" : "false"
+        );
+    }
+
+    applyPOSTheme();
+
+    themeButtons.forEach(function (button) {
+        button.addEventListener(
+            "click",
+            togglePOSTheme
+        );
+    });
+
+});
+</script>
+
+</body>
+</html></body>
+</html>
+

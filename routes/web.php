@@ -166,6 +166,11 @@ Route::middleware('guest')->group(function () {
 |--------------------------------------------------------------------------
 */
 
+Route::get('/receptionist', function () {
+    return view('receptionist.landing');
+})->name('receptionist.landing');
+
+
 Route::middleware('guest')->group(function () {
 
     Route::get(
@@ -386,6 +391,12 @@ Route::get('/appointments/settings', [
             'homepage'
         ]
     )->name('appointments.homepage');
+
+Route::get(
+    '/products',
+    [POSController::class, 'productsPage']
+)->middleware(['auth', 'role:cashier'])
+ ->name('products');
 
 
     /*
@@ -1012,14 +1023,27 @@ Route::prefix('pos')
     ->name('pos.')
     ->group(function () {
 
+Route::middleware(['auth', 'role:cashier'])
+    ->get(
+        '/inventory/stock-movements',
+        [\App\Http\Controllers\StockMovementsController::class, 'index']
+    )
+    ->name('inventory.stock-movements');
+
+Route::get(
+    '/homepage',
+    [
+        POSController::class,
+        'homepage'
+    ]
+)->middleware(['auth', 'role:cashier'])
+ ->name('homepage');
+
         Route::get(
-            '/homepage',
-            [
-                POSController::class,
-                'homepage'
-            ]
+            '/products',
+            [POSController::class, 'productsPage']
         )->middleware(['auth', 'role:cashier'])
-         ->name('homepage');
+         ->name('products');
 
 Route::get(
     '/sales-history',

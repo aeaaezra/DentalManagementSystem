@@ -36,24 +36,10 @@ class POSController extends Controller
 	    'image' => $product->image,
 	    'unit' => $product->unit,
 	];
-        })->values();
-/**
- * Cashier Sales History
- */
-public function salesHistory()
-{
-    $sales = PosSales::with([
-        'items.product'
-    ])
-        ->where('cashier_id', auth()->id())
-        ->latest()
-        ->paginate(15);
 
-    return view(
-        'pos.sales-history',
-        compact('sales')
-    );
-}
+
+        })->values();
+
         /*
         |--------------------------------------------------------------------------
         | POS Settings
@@ -77,8 +63,54 @@ public function salesHistory()
     }
 
     /**
-     * Validate Discount Code
+     * Cashier Sales History
      */
+
+
+    /**
+     * Cashier Products Catalog
+     */
+    public function productsPage(Request $request)
+    {
+        $query = Products::query()
+            ->where('is_active', true);
+
+        if ($request->filled('search')) {
+            $search = trim($request->input('search'));
+
+            $query->where(function ($q) use ($search) {
+                $q->where('product_name', 'like', "%{$search}%")
+                    ->orWhere('sku', 'like', "%{$search}%")
+                    ->orWhere('barcode', 'like', "%{$search}%")
+                    ->orWhere('brand_name', 'like', "%{$search}%")
+                    ->orWhere('category', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('category')) {
+            $query->where('category', $request->input('category'));
+        }
+
+        $products = $query
+            ->orderBy('product_name')
+            ->paginate(20)
+            ->withQueryString();
+
+        $categories = Products::query()
+            ->where('is_active', true)
+            ->whereNotNull('category')
+            ->where('category', '<>', '')
+            ->distinct()
+            ->orderBy('category')
+            ->pluck('category');
+
+        return view('pos.products', compact(
+            'products',
+            'categories'
+        ));
+    }
+
+
     public function validateDiscount(Request $request)
     {
         $request->validate([

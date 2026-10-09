@@ -92,8 +92,10 @@ class RoleMiddleware
                 ->with('error', 'You do not have access to that page.');
         }
 
-        return redirect()
-            ->route('home')
-            ->with('error', 'You do not have access to that page.');
+
+		return redirect()
+		    ->route('login')
+		    ->with('error', 'You do not have access to that page.');
+
     }
 }

@@ -1,0 +1,246 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Stock Movements | Shine & Smile</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background: #f7f8fc;
+            color: #202637;
+            font-family: Arial, sans-serif;
+        }
+        .header {
+            background: #fff;
+            border-bottom: 1px solid #e8eaf0;
+            padding: 22px 4%;
+        }
+        .header h1 { margin: 0 0 7px; font-size: 25px; }
+        .muted { color: #747b8b; font-size: 13px; }
+        .container { max-width: 1500px; margin: auto; padding: 26px 4%; }
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+        .card, .panel {
+            background: #fff;
+            border: 1px solid #e8eaf0;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .card strong { display: block; font-size: 28px; margin-top: 12px; }
+        .filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+        input, select, button {
+            min-height: 42px;
+            padding: 10px 12px;
+            border: 1px solid #dfe3eb;
+            border-radius: 8px;
+            background: #fff;
+            font: inherit;
+        }
+        input[name="search"] { flex: 1; min-width: 180px; }
+        button {
+            background: #242124;
+            color: white;
+            cursor: pointer;
+            border-color: #242124;
+        }
+        .reset { color: #444; text-decoration: none; padding: 12px 5px; }
+        .table-wrap { overflow-x: auto; }
+        table { border-collapse: collapse; width: 100%; min-width: 1100px; }
+        th, td {
+            text-align: left;
+            padding: 14px 12px;
+            border-bottom: 1px solid #edf0f4;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        th {
+            color: #70788a;
+            background: #fafbfe;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+        .badge {
+            display: inline-block;
+            border-radius: 20px;
+            padding: 5px 9px;
+            background: #f0f1f5;
+            text-transform: capitalize;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .in, .return { background: #e2f8eb; color: #187743; }
+        .out, .expired, .damaged { background: #ffebeb; color: #b42323; }
+        .adjustment { background: #fff2d5; color: #8c5b00; }
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 18px;
+        }
+        .pagination nav p { font-size: 13px; }
+        .pagination nav a, .pagination nav span {
+            display: inline-block;
+            padding: 7px 10px;
+            margin: 2px;
+            border: 1px solid #e0e3eb;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #333;
+            font-size: 12px;
+        }
+        .empty { text-align: center; padding: 40px; color: #747b8b; }
+        @media(max-width: 850px) {
+            .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .container { padding: 18px 12px; }
+            .header { padding: 18px 12px; }
+        }
+        @media(max-width: 420px) {
+            .cards { gap: 8px; }
+            .card { padding: 13px; }
+            .card strong { font-size: 23px; }
+        }
+    </style>
+</head>
+<body>
+<header class="header">
+    <h1>Stock Movements</h1>
+    <div class="muted">Shine & Smile · Inventory history</div>
+</header>
+
+<main class="container">
+    <section class="cards">
+        <div class="card">
+            <span class="muted">Total movements</span>
+            <strong>{{ number_format($summary['total']) }}</strong>
+        </div>
+        <div class="card">
+            <span class="muted">Stock received</span>
+            <strong>{{ number_format($summary['in']) }}</strong>
+        </div>
+        <div class="card">
+            <span class="muted">Stock released</span>
+            <strong>{{ number_format($summary['out']) }}</strong>
+        </div>
+        <div class="card">
+            <span class="muted">Adjustments</span>
+            <strong>{{ number_format($summary['adjustments']) }}</strong>
+        </div>
+    </section>
+
+    <section class="panel">
+        <form method="GET"
+              action="{{ route('pos.inventory.stock-movements') }}"
+              class="filters">
+            <input
+                type="search"
+                name="search"
+                placeholder="Search product, SKU, reference, user..."
+                value="{{ request('search') }}"
+            >
+
+            <select name="type">
+                <option value="">All movement types</option>
+                @foreach (['in', 'out', 'adjustment', 'return', 'expired', 'damaged'] as $type)
+                    <option value="{{ $type }}"
+                        @selected(request('type') === $type)>
+                        {{ ucfirst($type) }}
+                    </option>
+                @endforeach
+            </select>
+
+            <input type="date" name="from" aria-label="From date"
+                   value="{{ request('from') }}">
+            <input type="date" name="to" aria-label="To date"
+                   value="{{ request('to') }}">
+
+            <button type="submit">Filter</button>
+<a class="reset" href="{{ route('pos.inventory.stock-movements') }}">Reset</a>
+        </form>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Product</th>
+                    <th>Movement</th>
+                    <th>Quantity</th>
+                    <th>Unit</th>
+                    <th>Stock before</th>
+                    <th>Stock after</th>
+                    <th>Reference</th>
+                    <th>Recorded by</th>
+                    <th>Notes</th>
+                </tr>
+                </thead>
+                <tbody>
+                @forelse ($movements as $movement)
+                    <tr>
+                        <td>
+                            {{ $movement->movement_date?->format('M d, Y H:i') ?? '—' }}
+                        </td>
+                        <td>
+                            <strong>{{ $movement->product?->product_name ?? 'Deleted product' }}</strong>
+                            <div class="muted">
+                                {{ $movement->product?->sku ?? 'No SKU' }}
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge {{ $movement->movement_type }}">
+                                {{ ucfirst($movement->movement_type) }}
+                            </span>
+                        </td>
+                        <td>{{ number_format($movement->quantity) }}</td>
+                        <td>{{ $movement->product?->unit ?? '—' }}</td>
+                        <td>{{ number_format($movement->stock_before) }}</td>
+                        <td>{{ number_format($movement->stock_after) }}</td>
+                        <td>
+                            {{ $movement->reference_type ?: '—' }}
+                            @if ($movement->reference_id)
+                                #{{ $movement->reference_id }}
+                            @endif
+                        </td>
+                        <td>{{ $movement->creator?->name ?? 'System / Unknown' }}</td>
+                        <td>
+                            {{ \Illuminate\Support\Str::limit($movement->notes ?? '—', 55) }}
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="10" class="empty">
+                            No stock movements match your filters.
+                        </td>
+                    </tr>
+                @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            <span class="muted">
+                Showing {{ $movements->firstItem() ?? 0 }}
+                – {{ $movements->lastItem() ?? 0 }}
+                of {{ $movements->total() }} movements
+            </span>
+            {{ $movements->links() }}
+        </div>
+    </section>
+</main>
+</body>
+</html>
+

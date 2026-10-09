@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products | Shine &amp; Smile POS</title>
+<link rel="stylesheet" href="{{ asset('css/pos/pos-layout.css') }}?v=20261009b">
+<link rel="stylesheet" href="{{ asset('css/pos/products.css') }}?v=20261009b">
+
+</head>
+<body>
+<div class="ss-app-shell">
+    @include('pos.partials.sidebar')
+
+    <div class="ss-main-content">
+        <main class="sh-products-page">
+
+        <header class="sh-products-header">
+            <div>
+                <p class="sh-eyebrow">SHINE &amp; SMILE · POINT OF SALE</p>
+                <h1>Products</h1>
+                <p class="sh-muted">Browse products and check available stock.</p>
+            </div>
+            <a href="{{ route('pos.homepage') }}" class="sh-btn sh-btn-primary">
+                Back to POS
+            </a>
+        </header>
+
+        <section class="sh-products-card">
+            <form method="GET" action="{{ route('pos.products') }}"
+                  class="sh-products-filters">
+                <input type="search" name="search"
+                       value="{{ request('search') }}"
+                       placeholder="Search name, SKU, barcode or brand">
+
+                <select name="category">
+                    <option value="">All categories</option>
+                    @foreach ($categories as $category)
+                        <option value="{{ $category }}"
+                            @selected(request('category') === $category)>
+                            {{ $category }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <button type="submit" class="sh-btn sh-btn-primary">Search</button>
+                <a href="{{ route('pos.products') }}" class="sh-btn sh-btn-light">Reset</a>
+            </form>
+
+            <div class="sh-products-table-wrap">
+                <table class="sh-products-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>SKU</th>
+                            <th>Barcode</th>
+                            <th>Category</th>
+                            <th>Unit</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($products as $product)
+                            <tr>
+                                <td>
+                                    <strong>{{ $product->product_name }}</strong>
+                                    <small>{{ $product->brand_name }}</small>
+                                </td>
+                                <td>{{ $product->sku ?: '—' }}</td>
+                                <td>{{ $product->barcode ?: '—' }}</td>
+                                <td>{{ $product->category ?: 'Uncategorized' }}</td>
+                                <td>{{ $product->unit ?: '—' }}</td>
+                                <td>₱{{ number_format((float) $product->selling_price, 2) }}</td>
+                                <td>{{ (int) $product->quantity }} {{ $product->unit ?: 'units' }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="sh-products-empty">
+                                    No products found. Try resetting your filters.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+
+            <div class="sh-products-pagination">
+                {{ $products->links() }}
+            </div>
+        </section>
+        </main>
+    </div>
+</div>
+
+<script src="{{ asset('js/pos/products.js') }}" defer></script>
+</body>
+</html>
+

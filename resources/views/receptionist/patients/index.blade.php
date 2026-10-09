@@ -18,8 +18,7 @@
     <title>Patients | Receptionist</title>
 
     {{-- Tailwind --}}
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-
+{{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
     {{-- Receptionist Patients CSS --}}
     <link
         rel="stylesheet"

@@ -1,0 +1,29 @@
+ app/Filament/Pages/Settings.php                                           |  103 [32m+[m[31m-[m
+ app/Filament/Resources/Products/Schemas/ProductsForm.php                  |    7 [32m+[m
+ app/Filament/Resources/Products/Tables/ProductsTable.php                  |   14 [32m+[m[31m-[m
+ app/Filament/Resources/StockMovements/Pages/CreateStockMovements.php      |   49 [32m+[m
+ app/Filament/Resources/StockMovements/Schemas/StockMovementsForm.php      |   17 [32m+[m[31m-[m
+ app/Filament/Widgets/LowStockProducts.php                                 |   63 [32m+[m
+ app/Filament/Widgets/PurchaseOrders.php                                   |   45 [32m+[m[31m-[m
+ app/Filament/Widgets/RecentPurchaseOrders.php                             |   59 [32m+[m
+ app/Filament/Widgets/RecentStockMovements.php                             |   50 [32m+[m
+ app/Filament/Widgets/StockAdjustment.php                                  |   58 [32m+[m[31m-[m
+ app/Http/Controllers/POSController.php                                    |   40 [32m+[m[31m-[m
+ app/Http/Controllers/ProductsController.php                               |    2 [32m+[m[31m-[m
+ app/Models/Products.php                                                   |    7 [32m+[m
+ app/Models/User.php                                                       |   19 [32m+[m[31m-[m
+ app/Notifications/OrderSubmitted.php                                      |   66 [32m+[m
+ config/livewire.php                                                       |  282 [32m+++[m
+ database/migrations/2026_10_06_012949_create_discount_codes_table.php     |   55 [32m+[m
+ database/migrations/2026_10_08_033026_add_barcode_to_products_table.php   |   33 [32m+[m
+ public/css/appointment/landing.css                                        |   69 [32m+[m
+ public/css/pos/pos_homepage.css                                           | 2451 [32m+++++++++++++++++++++++++[m[31m-[m
+ public/js/pos/pos_homepage.js                                             | 2256 [32m++++++++++++++++++++[m[31m----[m
+ resources/views/appointments/appointment-welcome.blade.php                |  306 [32m++++[m
+ resources/views/filament/pages/settings.blade.php                         | 3472 [32m+++++++++++++++++++++++++[m[31m------------[m
+ resources/views/legal/privacy-policy.blade.php                            |    0
+ resources/views/legal/terms-and-conditions.blade.php                      |    0
+ resources/views/pos/homepage.blade.php                                    | 1277 [32m+++++++++++++[m[31m-[m
+ resources/views/vendor/filament-panels/components/layout/simple.blade.php |   27 [32m+[m[31m-[m
+ routes/web.php                                                            |   48 [32m+[m
+ 28 files changed, 9162 insertions(+), 1713 deletions(-)
