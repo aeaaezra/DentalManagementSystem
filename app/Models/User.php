@@ -3,14 +3,16 @@
 namespace App\Models;
 
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser, HasAvatar
 {
     use HasFactory;
     use Notifiable;
@@ -21,6 +23,7 @@ class User extends Authenticatable implements FilamentUser
         'email',
         'password',
         'role',
+        'profile_picture',
         'appointment_reminders',
         'promotional_emails',
     ];
@@ -41,6 +44,20 @@ class User extends Authenticatable implements FilamentUser
             'appointment_reminders' => 'boolean',
             'promotional_emails' => 'boolean',
         ];
+    }
+
+    /**
+     * Get the profile picture used by Filament.
+     */
+    public function getFilamentAvatarUrl(): ?string
+    {
+        if (!$this->profile_picture) {
+            return null;
+        }
+
+        return Storage::disk('public')->url(
+            $this->profile_picture
+        );
     }
 
     public function canAccessPanel(Panel $panel): bool

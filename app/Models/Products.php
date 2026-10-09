@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Suppliers;
 
 class Products extends Model
 {
@@ -11,6 +12,7 @@ class Products extends Model
     protected $fillable = [
         'supplier_id',
         'sku',
+        'barcode',
         'product_name',
         'brand_name',
         'category',
@@ -33,4 +35,9 @@ class Products extends Model
         'expiration_date' => 'date',
         'is_active' => 'boolean',
     ];
+
+    public function supplier()
+    {
+        return $this->belongsTo(Suppliers::class, 'supplier_id');
+    }
 }

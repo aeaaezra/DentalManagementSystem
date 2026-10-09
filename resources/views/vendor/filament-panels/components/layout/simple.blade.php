@@ -200,26 +200,25 @@
 
         /* Main card */
 
-        .login-container {
-            width: 100%;
-            max-width: 470px;
+		.login-container {
+		    width: 100%;
+		    max-width: 400px;
 
-            background: rgba(255, 255, 255, 0.96);
+		    background: rgba(255, 255, 255, 0.96);
 
-            border: 1px solid rgba(244, 114, 182, 0.18);
+		    border: 1px solid rgba(244, 114, 182, 0.18);
 
-            border-radius: 28px;
+		    border-radius: 24px;
 
-            padding: 42px;
+		    padding: 30px;
 
-            box-shadow:
-                0 25px 60px rgba(190, 24, 93, 0.10),
-                0 10px 25px rgba(15, 23, 42, 0.06);
+		    box-shadow:
+		        0 20px 45px rgba(190, 24, 93, 0.10),
+		        0 8px 20px rgba(15, 23, 42, 0.06);
 
-            position: relative;
-            overflow: hidden;
-        }
-
+		    position: relative;
+		    overflow: hidden;
+		}
         /* Decorative bottom shapes */
 
         .login-container::before {

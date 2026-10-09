@@ -10,11 +10,14 @@ document.addEventListener("DOMContentLoaded", () => {
             id: Number(product.id),
             name: product.name ?? "Unnamed Product",
             sku: product.sku ?? "",
+	    barcode: product.barcode ?? "",    
             category: product.category ?? "Uncategorized",
             brand: product.brand ?? "",
             price: Number(product.price) || 0,
             stock: Number(product.stock) || 0,
-            image: product.image ?? ""
+	    image: product.image ?? "",
+	    unit: product.unit ?? "Unit"
+
         }))
         : [];
 
@@ -49,8 +52,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchInput =
         document.getElementById("searchInput");
 
-    const barcodeInput =
-        document.getElementById("barcodeBtn");
+    const barcodeButton =
+	document.getElementById("barcodeBtn");
 
     const subtotalElement =
         document.getElementById("subtotal");
@@ -103,8 +106,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const newSaleButton =
         document.getElementById("newSale");
 
-    const darkModeButton =
-        document.getElementById("themeToggle");
 
     const clearCartButton =
         document.getElementById("clearCart");
@@ -285,14 +286,6 @@ document.addEventListener("DOMContentLoaded", () => {
                                     `
                             }
 
-                            <button
-                                type="button"
-                                class="product-favorite"
-                                data-favorite="${product.id}"
-                                title="Favorite"
-                            >
-                                <i class="fa-regular fa-heart"></i>
-                            </button>
 
                         </div>
 
@@ -415,14 +408,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
             existingItem.quantity += 1;
         } else {
-            cart.push({
-                id: product.id,
-                name: product.name,
-                sku: product.sku,
-                price: product.price,
-                quantity: 1,
-                stock: product.stock
-            });
+
+	cart.push({
+	    id: product.id,
+	    name: product.name,
+	    sku: product.sku,
+	    barcode: product.barcode,
+	    brand: product.brand,
+	    price: product.price,
+	    quantity: 1,
+	    stock: product.stock,
+	    image: product.image,
+	    unit: product.unit
+	});
+
         }
 
         renderCart();
@@ -511,107 +510,172 @@ document.addEventListener("DOMContentLoaded", () => {
     |--------------------------------------------------------------------------
     */
 
-    function renderCart() {
-        if (!cartItems || !cartEmpty) {
-            return;
-        }
+function renderCart() {
 
-        cartItems.innerHTML = "";
+    if (!cartItems) {
+        return;
+    }
 
-        if (cart.length === 0) {
-            cartEmpty.style.display =
-                "flex";
+    cartItems.innerHTML = "";
 
-            updateCartCount();
+    if (cart.length === 0) {
 
-            return;
-        }
+        cartEmpty.style.display = "flex";
 
-        cartEmpty.style.display =
-            "none";
+        updateCartCount();
 
-        cart.forEach(item => {
-            const cartItem =
-                document.createElement("div");
+        return;
+    }
 
-            cartItem.className =
-                "cart-item";
+    cartEmpty.style.display = "none";
 
-            cartItem.innerHTML = `
-                <div class="cart-item-info">
+    cart.forEach(item => {
 
-                    <h4>
-                        ${item.name}
-                    </h4>
+        const cartItem =
+            document.createElement("div");
 
-                    <span>
-                        ${item.sku}
-                    </span>
+        cartItem.className = "cart-item";
 
-                    <strong>
-                        ${formatCurrency(item.price)}
-                    </strong>
+const productImage =
+    item.image
+	? `/storage/${item.image}`
+        : "";
 
-                </div>
+        cartItem.innerHTML = `
 
-                <div class="cart-item-controls">
+            <div class="cart-product-card">
 
-                    <button
-                        class="quantity-button"
-                        data-action="decrease"
-                        data-id="${item.id}"
-                        type="button"
-                    >
-                        <i
-                            class="fa-solid fa-minus"
-                        ></i>
-                    </button>
+                <div class="cart-product-top">
 
-                    <span class="quantity">
-                        ${item.quantity}
-                    </span>
+                    <div class="cart-product-image">
 
-                    <button
-                        class="quantity-button"
-                        data-action="increase"
-                        data-id="${item.id}"
-                        type="button"
-                    >
-                        <i
-                            class="fa-solid fa-plus"
-                        ></i>
-                    </button>
+                        ${
+                            productImage
+                                ? `
+                                    <img
+                                        src="${productImage}"
+                                        alt="${item.name}"
+                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                    >
+
+                                    <div
+                                        class="cart-product-image-fallback"
+                                        style="display:none;"
+                                    >
+                                        <i class="fa-solid fa-box"></i>
+                                    </div>
+                                `
+                                : `
+                                    <div class="cart-product-image-fallback">
+                                        <i class="fa-solid fa-box"></i>
+                                    </div>
+                                `
+                        }
+
+                    </div>
+
+                    <div class="cart-product-details">
+
+                        <h3>
+                            ${item.name}
+                        </h3>
+
+                        <span class="cart-product-sku">
+                            ${item.sku}
+                        </span>
+
+                        <span class="cart-product-unit">
+                            ${item.unit || "Unit"}
+                        </span>
+
+                    </div>
 
                     <button
                         class="remove-cart-button"
                         data-action="remove"
                         data-id="${item.id}"
                         type="button"
+                        title="Remove item"
                     >
-                        <i
-                            class="fa-solid fa-trash"
-                        ></i>
+                        <i class="fa-solid fa-trash"></i>
                     </button>
 
                 </div>
 
-                <div class="cart-item-total">
-                    ${formatCurrency(
-                        item.price *
-                        item.quantity
-                    )}
+
+                <div class="cart-product-bottom">
+
+                    <div class="cart-quantity-controls">
+
+                        <button
+                            class="quantity-button"
+                            data-action="decrease"
+                            data-id="${item.id}"
+                            type="button"
+                            title="Decrease quantity"
+                        >
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+
+                        <span class="quantity">
+                            ${item.quantity}
+                        </span>
+
+                        <button
+                            class="quantity-button"
+                            data-action="increase"
+                            data-id="${item.id}"
+                            type="button"
+                            title="Increase quantity"
+                        >
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+
+                    </div>
+
+
+                    <div class="cart-product-price">
+
+                        <span>
+                            Price
+                        </span>
+
+                        <strong>
+                            ${formatCurrency(item.price)}
+                        </strong>
+
+                    </div>
+
                 </div>
-            `;
 
-            cartItems.appendChild(
-                cartItem
-            );
-        });
 
-        attachCartButtons();
-        updateCartCount();
-    }
+                <div class="cart-product-subtotal">
 
+                    <span>
+                        Subtotal
+                    </span>
+
+                    <strong>
+                        ${
+                            formatCurrency(
+                                item.price *
+                                item.quantity
+                            )
+                        }
+                    </strong>
+
+                </div>
+
+            </div>
+        `;
+
+        cartItems.appendChild(cartItem);
+    });
+
+    attachCartButtons();
+
+    updateCartCount();
+}
     /*
     |--------------------------------------------------------------------------
     | CART BUTTONS
@@ -853,6 +917,47 @@ document.addEventListener("DOMContentLoaded", () => {
         calculateChange();
     }
 
+function showDiscountSuccessModal(code, amount) {
+    const modal = document.getElementById(
+        "discountSuccessModal"
+    );
+
+    if (!modal) {
+        console.error(
+            "discountSuccessModal element not found."
+        );
+
+        return;
+    }
+
+    const message =
+        document.getElementById(
+            "discountSuccessMessage"
+        );
+
+    const amountElement =
+        document.getElementById(
+            "discountSuccessAmount"
+        );
+
+    if (message) {
+        message.textContent =
+            `${code} has been successfully applied.`;
+    }
+
+    if (amountElement) {
+        amountElement.textContent =
+            `-${formatCurrency(amount)}`;
+    }
+
+    modal.classList.add("active");
+
+    console.log(
+        "Discount success modal opened:",
+        code,
+        amount
+    );
+}
     /*
     |--------------------------------------------------------------------------
     | APPLY DISCOUNT
@@ -988,14 +1093,48 @@ document.addEventListener("DOMContentLoaded", () => {
                       subtotal
                     : 0;
 
+
             updateTotals();
 
-            alert(
-                `Discount ${appliedDiscount.code} applied.\n` +
-                `Discount: ${formatCurrency(
-                    appliedDiscount.discount_amount
-                )}`
-            );
+            const successModal =
+                document.getElementById(
+                    "discountSuccessModal"
+                );
+
+            const successMessage =
+                document.getElementById(
+                    "discountSuccessMessage"
+                );
+
+            const successAmount =
+                document.getElementById(
+                    "discountSuccessAmount"
+                );
+
+            if (successModal) {
+
+                if (successMessage) {
+                    successMessage.textContent =
+                        `${appliedDiscount.code} has been successfully applied.`;
+                }
+
+                if (successAmount) {
+                    successAmount.textContent =
+                        `-${formatCurrency(
+                            appliedDiscount.discount_amount
+                        )}`;
+                }
+
+                successModal.classList.add("active");
+
+            } else {
+
+                console.error(
+                    "discountSuccessModal was not found in the page."
+                );
+
+            }
+
 
         } catch (error) {
             console.error(
@@ -1644,37 +1783,6 @@ document.addEventListener("DOMContentLoaded", () => {
     |--------------------------------------------------------------------------
     */
 
-    function toggleDarkMode() {
-        document.body.classList.toggle(
-            "dark-mode"
-        );
-
-        const enabled =
-            document.body.classList.contains(
-                "dark-mode"
-            );
-
-        localStorage.setItem(
-            "pos-dark-mode",
-            enabled
-                ? "true"
-                : "false"
-        );
-    }
-
-    function loadDarkMode() {
-        const enabled =
-            localStorage.getItem(
-                "pos-dark-mode"
-            ) === "true";
-
-        if (enabled) {
-            document.body.classList.add(
-                "dark-mode"
-            );
-        }
-    }
-
     /*
     |--------------------------------------------------------------------------
     | CATEGORIES
@@ -1806,64 +1914,70 @@ document.addEventListener("DOMContentLoaded", () => {
     |--------------------------------------------------------------------------
     */
 
-    function setupSearch() {
-        if (searchInput) {
-            searchInput.addEventListener(
-                "input",
-                event => {
-                    searchTerm =
-                        event.target.value;
+function setupSearch() {
+    if (searchInput) {
+        searchInput.addEventListener(
+            "input",
+            event => {
+                searchTerm =
+                    event.target.value;
 
-                    renderProducts();
-                }
-            );
-        }
-
-        if (barcodeInput) {
-            barcodeInput.addEventListener(
-                "keydown",
-                event => {
-                    if (
-                        event.key !==
-                        "Enter"
-                    ) {
-                        return;
-                    }
-
-                    const barcode =
-                        barcodeInput.value
-                            .trim();
-
-                    if (!barcode) {
-                        return;
-                    }
-
-                    const product =
-                        products.find(
-                            item =>
-                                item.sku
-                                    .toLowerCase() ===
-                                barcode
-                                    .toLowerCase()
-                        );
-
-                    if (product) {
-                        addToCart(
-                            product.id
-                        );
-                    } else {
-                        alert(
-                            "Product not found."
-                        );
-                    }
-
-                    barcodeInput.value =
-                        "";
-                }
-            );
-        }
+                renderProducts();
+            }
+        );
     }
 
+    if (barcodeButton && searchInput) {
+        barcodeButton.addEventListener(
+            "click",
+            () => {
+                searchInput.focus();
+                searchInput.select();
+            }
+        );
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener(
+            "keydown",
+            event => {
+                if (event.key !== "Enter") {
+                    return;
+                }
+
+                const barcode =
+                    searchInput.value.trim();
+
+                if (!barcode) {
+                    return;
+                }
+
+                const product =
+                    products.find(
+                        item =>
+                            String(item.barcode || "")
+                                .toLowerCase() ===
+                            barcode.toLowerCase()
+                    );
+
+                if (product) {
+                    addToCart(
+                        product.id
+                    );
+
+                    searchInput.value = "";
+                    searchTerm = "";
+
+                    renderProducts();
+                } else {
+                    alert(
+                        `Product with barcode "${barcode}" not found.`
+                    );
+                }
+            }
+        );
+    }
+}
     /*
     |--------------------------------------------------------------------------
     | GRID / LIST VIEW
@@ -1926,236 +2040,1291 @@ document.addEventListener("DOMContentLoaded", () => {
     |--------------------------------------------------------------------------
     */
 
-    function printReceipt() {
-        if (!window.lastReceipt) {
-            alert(
-                "No completed payment is available to print."
-            );
-
-            return;
-        }
-
-        const receipt =
-            window.lastReceipt;
-
-        const receiptWindow =
-            window.open(
-                "",
-                "_blank",
-                "width=420,height=650"
-            );
-
-        if (!receiptWindow) {
-            alert(
-                "Please allow pop-ups to print the receipt."
-            );
-
-            return;
-        }
-
-        receiptWindow.document.write(`
-            <!DOCTYPE html>
-
-            <html>
-
-            <head>
-
-                <title>
-                    Receipt - ${receipt.invoice}
-                </title>
-
-                <style>
-
-                    body {
-                        font-family: Arial, sans-serif;
-                        width: 320px;
-                        margin: 30px auto;
-                        color: #111;
-                    }
-
-                    h2 {
-                        text-align: center;
-                        margin-bottom: 5px;
-                    }
-
-                    .center {
-                        text-align: center;
-                    }
-
-                    .line {
-                        border-top: 1px dashed #777;
-                        margin: 15px 0;
-                    }
-
-                    .row {
-                        display: flex;
-                        justify-content: space-between;
-                        margin: 8px 0;
-                    }
-
-                    .total {
-                        font-size: 18px;
-                        font-weight: bold;
-                    }
-
-                    @media print {
-                        body {
-                            margin: 0;
-                        }
-                    }
-
-                </style>
-
-            </head>
-
-            <body>
-
-                <h2>
-                    SHINE & SMILE
-                </h2>
-
-                <div class="center">
-                    Dental Supply POS
-                </div>
-
-                <div class="line"></div>
-
-                <div class="row">
-                    <span>Invoice</span>
-                    <strong>
-                        ${receipt.invoice}
-                    </strong>
-                </div>
-
-                <div class="row">
-                    <span>Payment</span>
-                    <strong>
-                        ${receipt.method}
-                    </strong>
-                </div>
-
-                <div class="line"></div>
-
-                <div class="row total">
-                    <span>Total</span>
-                    <span>
-                        ${formatCurrency(
-                            receipt.total
-                        )}
-                    </span>
-                </div>
-
-                <div class="row">
-                    <span>
-                        Amount Received
-                    </span>
-
-                    <span>
-                        ${formatCurrency(
-                            receipt.amountReceived
-                        )}
-                    </span>
-                </div>
-
-                <div class="row">
-                    <span>Change</span>
-
-                    <span>
-                        ${formatCurrency(
-                            receipt.change
-                        )}
-                    </span>
-                </div>
-
-                <div class="line"></div>
-
-                <div class="center">
-                    Thank you for your purchase!
-                </div>
-
-            </body>
-
-            </html>
-        `);
-
-        receiptWindow.document.close();
-
-        receiptWindow.focus();
-
-        setTimeout(() => {
-            receiptWindow.print();
-        }, 300);
+function printReceipt() {
+    if (!window.lastReceipt) {
+        alert("No completed payment is available to print.");
+        return;
     }
 
+    const receipt = window.lastReceipt;
+
+    const escapeHtml = (value) => {
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    };
+
+    /*
+    |--------------------------------------------------------------------------
+    | RECEIPT ITEMS
+    |--------------------------------------------------------------------------
+    */
+
+    const receiptItems =
+        Array.isArray(receipt.items)
+            ? receipt.items
+            : Array.isArray(window.lastReceiptItems)
+                ? window.lastReceiptItems
+                : [];
+
+    const itemsHtml = receiptItems.length
+        ? receiptItems.map(item => {
+            const name =
+                item.name ??
+                item.product_name ??
+                "Product";
+
+            const quantity =
+                Number(
+                    item.quantity ?? 0
+                );
+
+            const price =
+                Number(
+                    item.price ??
+                    item.unit_price ??
+                    0
+                );
+
+            const subtotal =
+                Number(
+                    item.subtotal ??
+                    price * quantity
+                );
+
+            return `
+                <div class="item">
+                    <div class="item-name">
+                        ${escapeHtml(name)}
+                    </div>
+
+                    <div class="item-details">
+                        <span>
+                            ${quantity} x ${formatCurrency(price)}
+                        </span>
+
+                        <strong>
+                            ${formatCurrency(subtotal)}
+                        </strong>
+                    </div>
+                </div>
+            `;
+        }).join("")
+        : `
+            <div class="item">
+                <div class="item-name">
+                    Purchase
+                </div>
+
+                <div class="item-details">
+                    <span></span>
+                    <strong>
+                        ${formatCurrency(receipt.total)}
+                    </strong>
+                </div>
+            </div>
+        `;
+
+    const receiptWindow = window.open(
+        "",
+        "_blank",
+        "width=400,height=700"
+    );
+
+    if (!receiptWindow) {
+        alert(
+            "Please allow pop-ups to print the receipt."
+        );
+        return;
+    }
+
+    const dateText =
+        receipt.date ??
+        new Date().toLocaleString(
+            "en-PH",
+            {
+                dateStyle: "medium",
+                timeStyle: "short"
+            }
+        );
+
+    receiptWindow.document.write(`
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+        Receipt - ${escapeHtml(receipt.invoice)}
+    </title>
+
+    <style>
+
+        /*
+        =========================================================
+        80MM THERMAL RECEIPT
+        =========================================================
+        */
+
+        @page {
+            size: 80mm auto;
+            margin: 0;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 80mm;
+            margin: 0;
+            padding: 0;
+            background: #ffffff;
+        }
+
+        body {
+            width: 80mm;
+
+            padding: 5mm 4mm;
+
+            color: #000000;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            font-size: 11px;
+            line-height: 1.35;
+
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .receipt {
+            width: 100%;
+            max-width: 72mm;
+            margin: 0 auto;
+        }
+
+        /*
+        =========================================================
+        HEADER
+        =========================================================
+        */
+
+        .header {
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .logo {
+            width: 42px;
+            height: 42px;
+
+            margin: 0 auto 5px;
+
+            border: 2px solid #000;
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 21px;
+            font-weight: 900;
+        }
+
+        .store-name {
+            font-size: 17px;
+            font-weight: 900;
+
+            letter-spacing: 0.3px;
+        }
+
+        .store-type {
+            margin-top: 2px;
+
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .store-message {
+            margin-top: 3px;
+
+            font-size: 9px;
+        }
+
+        /*
+        =========================================================
+        DIVIDERS
+        =========================================================
+        */
+
+        .divider {
+            border-top: 1px dashed #000;
+
+            margin: 7px 0;
+        }
+
+        .double-divider {
+            border-top: 2px solid #000;
+
+            margin: 7px 0;
+        }
+
+        /*
+        =========================================================
+        TRANSACTION INFORMATION
+        =========================================================
+        */
+
+        .info-row {
+            display: flex;
+
+            justify-content: space-between;
+
+            gap: 8px;
+
+            margin: 2px 0;
+        }
+
+        .info-label {
+            font-weight: 600;
+        }
+
+        .info-value {
+            text-align: right;
+
+            font-weight: 700;
+
+            overflow-wrap: anywhere;
+        }
+
+        /*
+        =========================================================
+        ITEMS
+        =========================================================
+        */
+
+        .items-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            font-size: 9px;
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+
+            margin-bottom: 4px;
+        }
+
+        .item {
+            margin: 5px 0;
+        }
+
+        .item-name {
+            font-size: 11px;
+
+            font-weight: 700;
+
+            overflow-wrap: anywhere;
+        }
+
+        .item-details {
+            display: flex;
+
+            justify-content: space-between;
+
+            gap: 8px;
+
+            margin-top: 1px;
+
+            font-size: 10px;
+        }
+
+        .item-details span {
+            color: #222;
+        }
+
+        .item-details strong {
+            font-weight: 800;
+        }
+
+        /*
+        =========================================================
+        TOTALS
+        =========================================================
+        */
+
+        .total-row {
+            display: flex;
+
+            justify-content: space-between;
+
+            gap: 8px;
+
+            margin: 3px 0;
+
+            font-size: 11px;
+        }
+
+        .total-row strong {
+            font-weight: 800;
+
+            text-align: right;
+        }
+
+        .grand-total {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin: 5px 0;
+
+            font-size: 16px;
+
+            font-weight: 900;
+        }
+
+        /*
+        =========================================================
+        FOOTER
+        =========================================================
+        */
+
+        .footer {
+            text-align: center;
+
+            margin-top: 9px;
+
+            font-size: 10px;
+        }
+
+        .thank-you {
+            font-size: 12px;
+
+            font-weight: 800;
+
+            margin-bottom: 3px;
+        }
+
+        .footer-small {
+            font-size: 9px;
+
+            margin-top: 3px;
+        }
+
+        .barcode {
+            margin: 9px auto 5px;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 14px;
+
+            letter-spacing: 1px;
+
+            text-align: center;
+        }
+
+        /*
+        =========================================================
+        PRINT
+        =========================================================
+        */
+
+        @media print {
+
+            html,
+            body {
+                width: 80mm;
+
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                padding: 4mm;
+            }
+
+            .receipt {
+                width: 100%;
+                max-width: none;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="receipt">
+
+        <!-- HEADER -->
+
+        <div class="header">
+
+            <div class="logo">
+                S&S
+            </div>
+
+            <div class="store-name">
+                SHINE & SMILE
+            </div>
+
+            <div class="store-type">
+                Dental Supply POS
+            </div>
+
+            <div class="store-message">
+                Quality Supplies • Brighter Smiles
+            </div>
+
+        </div>
+
+
+        <div class="double-divider"></div>
+
+
+        <!-- TRANSACTION INFO -->
+
+        <div class="info-row">
+            <span class="info-label">
+                Invoice
+            </span>
+
+            <span class="info-value">
+                ${escapeHtml(receipt.invoice)}
+            </span>
+        </div>
+
+
+        <div class="info-row">
+            <span class="info-label">
+                Date
+            </span>
+
+            <span class="info-value">
+                ${escapeHtml(dateText)}
+            </span>
+        </div>
+
+
+        <div class="info-row">
+            <span class="info-label">
+                Payment
+            </span>
+
+            <span class="info-value">
+                ${escapeHtml(receipt.method)}
+            </span>
+        </div>
+
+
+        <div class="divider"></div>
+
+
+        <!-- ITEMS -->
+
+        <div class="items-header">
+            <span>
+                ITEM
+            </span>
+
+            <span>
+                AMOUNT
+            </span>
+        </div>
+
+
+        ${itemsHtml}
+
+
+        <div class="divider"></div>
+
+
+        <!-- TOTALS -->
+
+        <div class="total-row">
+            <span>
+                Subtotal
+            </span>
+
+            <strong>
+                ${formatCurrency(
+                    receipt.subtotal ??
+                    receipt.total
+                )}
+            </strong>
+        </div>
+
+
+        <div class="total-row">
+            <span>
+                Discount
+            </span>
+
+            <strong>
+                ${formatCurrency(
+                    receipt.discount ?? 0
+                )}
+            </strong>
+        </div>
+
+
+        <div class="total-row">
+            <span>
+                Tax
+            </span>
+
+            <strong>
+                ${formatCurrency(
+                    receipt.tax ?? 0
+                )}
+            </strong>
+        </div>
+
+
+        <div class="double-divider"></div>
+
+
+        <div class="grand-total">
+            <span>
+                TOTAL
+            </span>
+
+            <span>
+                ${formatCurrency(receipt.total)}
+            </span>
+        </div>
+
+
+        <div class="double-divider"></div>
+
+
+        <!-- PAYMENT -->
+
+        <div class="total-row">
+            <span>
+                Amount Received
+            </span>
+
+            <strong>
+                ${formatCurrency(
+                    receipt.amountReceived
+                )}
+            </strong>
+        </div>
+
+
+        <div class="total-row">
+            <span>
+                Change
+            </span>
+
+            <strong>
+                ${formatCurrency(
+                    receipt.change
+                )}
+            </strong>
+        </div>
+
+
+        <div class="divider"></div>
+
+
+        <!-- FOOTER -->
+
+        <div class="footer">
+
+            <div class="thank-you">
+                Thank you for your purchase!
+            </div>
+
+            <div>
+                Please come again.
+            </div>
+
+            <div class="footer-small">
+                This serves as your official receipt.
+            </div>
+
+            <div class="barcode">
+                *${escapeHtml(receipt.invoice)}*
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
+    `);
+
+    receiptWindow.document.close();
+
+    receiptWindow.focus();
+
+    setTimeout(() => {
+        receiptWindow.print();
+    }, 500);
+}
     /*
     |--------------------------------------------------------------------------
     | DOWNLOAD RECEIPT
     |--------------------------------------------------------------------------
     */
 
-    function downloadReceipt() {
-        if (!window.lastReceipt) {
-            alert(
-                "No completed payment is available to download."
-            );
-
-            return;
-        }
-
-        const receipt =
-            window.lastReceipt;
-
-        const receiptText =
-`SHINE & SMILE
-Dental Supply POS
---------------------------------
-Invoice: ${receipt.invoice}
-Payment: ${receipt.method}
---------------------------------
-Total: ${formatCurrency(receipt.total)}
-Amount Received: ${formatCurrency(receipt.amountReceived)}
-Change: ${formatCurrency(receipt.change)}
---------------------------------
-Thank you for your purchase!
-`;
-
-        const blob =
-            new Blob(
-                [receiptText],
-                {
-                    type:
-                        "text/plain;charset=utf-8"
-                }
-            );
-
-        const url =
-            URL.createObjectURL(
-                blob
-            );
-
-        const link =
-            document.createElement(
-                "a"
-            );
-
-        link.href = url;
-
-        link.download =
-            `Receipt-${receipt.invoice}.txt`;
-
-        document.body.appendChild(
-            link
+function downloadReceipt() {
+    if (!window.lastReceipt) {
+        alert(
+            "No completed payment is available to download."
         );
 
-        link.click();
-
-        link.remove();
-
-        URL.revokeObjectURL(
-            url
-        );
+        return;
     }
 
+    const receipt =
+        window.lastReceipt;
+
+    const escapeHtml = (value) => {
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    };
+
+    const receiptItems =
+        Array.isArray(receipt.items)
+            ? receipt.items
+            : Array.isArray(window.lastReceiptItems)
+                ? window.lastReceiptItems
+                : [];
+
+    const itemsHtml = receiptItems.length
+        ? receiptItems.map(item => {
+            const name =
+                item.name ??
+                item.product_name ??
+                "Product";
+
+            const quantity =
+                Number(item.quantity ?? 0);
+
+            const price =
+                Number(
+                    item.price ??
+                    item.unit_price ??
+                    0
+                );
+
+            const subtotal =
+                Number(
+                    item.subtotal ??
+                    price * quantity
+                );
+
+            return `
+                <div class="item">
+
+                    <div class="item-name">
+                        ${escapeHtml(name)}
+                    </div>
+
+                    <div class="item-details">
+
+                        <span>
+                            ${quantity} x
+                            ${formatCurrency(price)}
+                        </span>
+
+                        <strong>
+                            ${formatCurrency(subtotal)}
+                        </strong>
+
+                    </div>
+
+                </div>
+            `;
+        }).join("")
+        : `
+            <div class="item">
+
+                <div class="item-name">
+                    Purchase
+                </div>
+
+                <div class="item-details">
+
+                    <span></span>
+
+                    <strong>
+                        ${formatCurrency(
+                            receipt.total
+                        )}
+                    </strong>
+
+                </div>
+
+            </div>
+        `;
+
+    const dateText =
+        receipt.date ??
+        new Date().toLocaleString(
+            "en-PH",
+            {
+                dateStyle: "medium",
+                timeStyle: "short"
+            }
+        );
+
+    const receiptWindow =
+        window.open(
+            "",
+            "_blank",
+            "width=400,height=700"
+        );
+
+    if (!receiptWindow) {
+        alert(
+            "Please allow pop-ups to download the receipt."
+        );
+
+        return;
+    }
+
+    receiptWindow.document.write(`
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+        Receipt-${escapeHtml(receipt.invoice)}
+    </title>
+
+    <style>
+
+        @page {
+            size: 80mm auto;
+            margin: 0;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 80mm;
+
+            margin: 0;
+            padding: 0;
+
+            background: #ffffff;
+        }
+
+        body {
+            width: 80mm;
+
+            padding: 5mm 4mm;
+
+            color: #000000;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            font-size: 11px;
+
+            line-height: 1.35;
+
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .receipt {
+            width: 100%;
+            max-width: 72mm;
+
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+
+            margin-bottom: 8px;
+        }
+
+        .logo {
+            width: 42px;
+            height: 42px;
+
+            margin: 0 auto 5px;
+
+            border: 2px solid #000;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 20px;
+
+            font-weight: 900;
+        }
+
+        .store-name {
+            font-size: 17px;
+
+            font-weight: 900;
+
+            letter-spacing: .3px;
+        }
+
+        .store-type {
+            margin-top: 2px;
+
+            font-size: 10px;
+
+            font-weight: 600;
+        }
+
+        .store-message {
+            margin-top: 3px;
+
+            font-size: 9px;
+        }
+
+        .divider {
+            border-top: 1px dashed #000;
+
+            margin: 7px 0;
+        }
+
+        .double-divider {
+            border-top: 2px solid #000;
+
+            margin: 7px 0;
+        }
+
+        .info-row {
+            display: flex;
+
+            justify-content: space-between;
+
+            gap: 8px;
+
+            margin: 2px 0;
+        }
+
+        .info-label {
+            font-weight: 600;
+        }
+
+        .info-value {
+            text-align: right;
+
+            font-weight: 700;
+
+            overflow-wrap: anywhere;
+        }
+
+        .items-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            font-size: 9px;
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+
+            margin-bottom: 4px;
+        }
+
+        .item {
+            margin: 5px 0;
+        }
+
+        .item-name {
+            font-size: 11px;
+
+            font-weight: 700;
+
+            overflow-wrap: anywhere;
+        }
+
+        .item-details {
+            display: flex;
+
+            justify-content: space-between;
+
+            gap: 8px;
+
+            margin-top: 1px;
+
+            font-size: 10px;
+        }
+
+        .item-details strong {
+            font-weight: 800;
+
+            text-align: right;
+        }
+
+        .total-row {
+            display: flex;
+
+            justify-content: space-between;
+
+            gap: 8px;
+
+            margin: 3px 0;
+
+            font-size: 11px;
+        }
+
+        .total-row strong {
+            font-weight: 800;
+
+            text-align: right;
+        }
+
+        .grand-total {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin: 5px 0;
+
+            font-size: 16px;
+
+            font-weight: 900;
+        }
+
+        .footer {
+            text-align: center;
+
+            margin-top: 9px;
+
+            font-size: 10px;
+        }
+
+        .thank-you {
+            font-size: 12px;
+
+            font-weight: 800;
+
+            margin-bottom: 3px;
+        }
+
+        .footer-small {
+            font-size: 9px;
+
+            margin-top: 3px;
+        }
+
+        .barcode {
+            margin: 9px auto 5px;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 12px;
+
+            letter-spacing: 1px;
+
+            text-align: center;
+        }
+
+        @media print {
+
+            html,
+            body {
+                width: 80mm;
+
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                padding: 4mm;
+            }
+
+            .receipt {
+                width: 100%;
+
+                max-width: none;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="receipt">
+
+        <div class="header">
+
+            <div class="logo">
+                S&S
+            </div>
+
+            <div class="store-name">
+                SHINE & SMILE
+            </div>
+
+            <div class="store-type">
+                Dental Supply POS
+            </div>
+
+            <div class="store-message">
+                Quality Supplies • Brighter Smiles
+            </div>
+
+        </div>
+
+
+        <div class="double-divider"></div>
+
+
+        <div class="info-row">
+
+            <span class="info-label">
+                Invoice
+            </span>
+
+            <span class="info-value">
+                ${escapeHtml(
+                    receipt.invoice
+                )}
+            </span>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <span class="info-label">
+                Date
+            </span>
+
+            <span class="info-value">
+                ${escapeHtml(
+                    dateText
+                )}
+            </span>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <span class="info-label">
+                Payment
+            </span>
+
+            <span class="info-value">
+                ${escapeHtml(
+                    receipt.method
+                )}
+            </span>
+
+        </div>
+
+
+        <div class="divider"></div>
+
+
+        <div class="items-header">
+
+            <span>
+                ITEM
+            </span>
+
+            <span>
+                AMOUNT
+            </span>
+
+        </div>
+
+
+        ${itemsHtml}
+
+
+        <div class="divider"></div>
+
+
+        <div class="total-row">
+
+            <span>
+                Subtotal
+            </span>
+
+            <strong>
+                ${formatCurrency(
+                    receipt.subtotal ??
+                    receipt.total
+                )}
+            </strong>
+
+        </div>
+
+
+        <div class="total-row">
+
+            <span>
+                Discount
+            </span>
+
+            <strong>
+                ${formatCurrency(
+                    receipt.discount ?? 0
+                )}
+            </strong>
+
+        </div>
+
+
+        <div class="total-row">
+
+            <span>
+                Tax
+            </span>
+
+            <strong>
+                ${formatCurrency(
+                    receipt.tax ?? 0
+                )}
+            </strong>
+
+        </div>
+
+
+        <div class="double-divider"></div>
+
+
+        <div class="grand-total">
+
+            <span>
+                TOTAL
+            </span>
+
+            <span>
+                ${formatCurrency(
+                    receipt.total
+                )}
+            </span>
+
+        </div>
+
+
+        <div class="double-divider"></div>
+
+
+        <div class="total-row">
+
+            <span>
+                Amount Received
+            </span>
+
+            <strong>
+                ${formatCurrency(
+                    receipt.amountReceived
+                )}
+            </strong>
+
+        </div>
+
+
+        <div class="total-row">
+
+            <span>
+                Change
+            </span>
+
+            <strong>
+                ${formatCurrency(
+                    receipt.change
+                )}
+            </strong>
+
+        </div>
+
+
+        <div class="divider"></div>
+
+
+        <div class="footer">
+
+            <div class="thank-you">
+                Thank you for your purchase!
+            </div>
+
+            <div>
+                Please come again.
+            </div>
+
+            <div class="footer-small">
+                This serves as your official receipt.
+            </div>
+
+            <div class="barcode">
+                *${escapeHtml(
+                    receipt.invoice
+                )}*
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
+    `);
+
+    receiptWindow.document.close();
+
+    receiptWindow.focus();
+
+    setTimeout(() => {
+
+        receiptWindow.print();
+
+    }, 500);
+}
     /*
     |--------------------------------------------------------------------------
     | NEW SALE
@@ -2270,13 +3439,15 @@ Thank you for your purchase!
     | EVENT LISTENERS
     |--------------------------------------------------------------------------
     */
+    
+    
+if (applyDiscountButton) {
+    applyDiscountButton.addEventListener(
+        "click",
+        applyDiscount
+    );
+}
 
-    if (applyDiscountButton) {
-        applyDiscountButton.addEventListener(
-            "click",
-            applyDiscount
-        );
-    }
 
     if (processPaymentButton) {
         processPaymentButton.addEventListener(
@@ -2377,12 +3548,7 @@ Thank you for your purchase!
         );
     }
 
-    if (darkModeButton) {
-        darkModeButton.addEventListener(
-            "click",
-            toggleDarkMode
-        );
-    }
+
 
     /*
     |--------------------------------------------------------------------------
@@ -2400,7 +3566,6 @@ Thank you for your purchase!
 
     setupProductButtons();
 
-    loadDarkMode();
 
     renderProducts();
 
@@ -2408,3 +3573,360 @@ Thank you for your purchase!
 
     updateTotals();
 });
+/* =========================================================
+   PROMO CODE MODAL
+   ========================================================= */
+
+const promoModal =
+    document.getElementById("promoModal");
+
+const promoCodeInput =
+    document.getElementById("promoCodeInput");
+
+const applyPromoButton =
+    document.getElementById("applyPromoButton");
+
+const cancelPromoButton =
+    document.getElementById("cancelPromoButton");
+
+const closePromoModalButton =
+    document.getElementById("closePromoModal");
+
+const promoModalMessage =
+    document.getElementById("promoModalMessage");
+
+const promoModalBackdrop =
+    document.querySelector(".promo-modal-backdrop");
+
+
+function openPromoModal() {
+    if (!promoModal) {
+        return;
+    }
+
+    promoModal.classList.add("active");
+
+    if (promoModalMessage) {
+        promoModalMessage.textContent = "";
+        promoModalMessage.className =
+            "promo-modal-message";
+    }
+
+    if (promoCodeInput) {
+        promoCodeInput.value = "";
+
+        setTimeout(() => {
+            promoCodeInput.focus();
+        }, 100);
+    }
+}
+
+
+function closePromoModal() {
+    if (!promoModal) {
+        return;
+    }
+
+    promoModal.classList.remove("active");
+}
+
+
+function showPromoMessage(message, type = "error") {
+    if (!promoModalMessage) {
+        return;
+    }
+
+    promoModalMessage.textContent = message;
+
+    promoModalMessage.className =
+        `promo-modal-message ${type}`;
+}
+
+
+async function applyPromoCode() {
+
+    if (!promoCodeInput) {
+        return;
+    }
+
+    const code =
+        promoCodeInput.value.trim().toUpperCase();
+
+    if (!code) {
+        showPromoMessage(
+            "Please enter a promo code.",
+            "error"
+        );
+
+        promoCodeInput.focus();
+
+        return;
+    }
+
+    const subtotal =
+        typeof calculateSubtotal === "function"
+            ? calculateSubtotal()
+            : 0;
+
+    if (subtotal <= 0) {
+        showPromoMessage(
+            "Add a product to the cart before applying a promo code.",
+            "error"
+        );
+
+        return;
+    }
+
+    if (applyPromoButton) {
+        applyPromoButton.disabled = true;
+
+        applyPromoButton.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin"></i> Checking...';
+    }
+
+    try {
+
+        const csrfToken =
+            document.querySelector(
+                'meta[name="csrf-token"]'
+            )?.getAttribute("content");
+
+        const response =
+            await fetch(
+                "/pos/discount/validate",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+
+                        "Accept":
+                            "application/json",
+
+                        "X-CSRF-TOKEN":
+                            csrfToken || ""
+                    },
+
+                    body: JSON.stringify({
+                        code: code,
+                        subtotal: subtotal
+                    })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok || !data.success) {
+
+            showPromoMessage(
+                data.message ||
+                "Invalid or unavailable promo code.",
+                "error"
+            );
+
+            return;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | SAVE DISCOUNT
+        |--------------------------------------------------------------------------
+        */
+
+        appliedDiscount = {
+            code: data.code,
+            type: data.type,
+            value: Number(data.value || 0),
+            minimum_amount:
+                Number(data.minimum_amount || 0),
+            maximum_discount:
+                data.maximum_discount !== null
+                    ? Number(data.maximum_discount)
+                    : null,
+            discount_amount:
+                Number(data.discount_amount || 0)
+        };
+
+        /*
+        |--------------------------------------------------------------------------
+        | UPDATE TOTALS
+        |--------------------------------------------------------------------------
+        */
+
+        if (typeof updateTotals === "function") {
+            updateTotals();
+        }
+
+        showPromoMessage(
+            `Promo applied! You saved ${formatCurrency(
+                Number(data.discount_amount || 0)
+            )}.`,
+            "success"
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | CLOSE AFTER SUCCESS
+        |--------------------------------------------------------------------------
+        */
+
+        setTimeout(() => {
+            closePromoModal();
+        }, 900);
+
+    } catch (error) {
+
+        console.error(
+            "Promo validation error:",
+            error
+        );
+
+        showPromoMessage(
+            "Unable to validate the promo code. Please try again.",
+            "error"
+        );
+
+    } finally {
+
+        if (applyPromoButton) {
+            applyPromoButton.disabled = false;
+
+            applyPromoButton.innerHTML =
+                '<i class="fa-solid fa-check"></i> Apply Promo';
+        }
+    }
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| OPEN PROMO MODAL
+|--------------------------------------------------------------------------
+|
+| This supports your existing promo button if it has:
+| id="promoButton"
+|
+*/
+
+const promoButton =
+    document.getElementById("promoButton");
+
+if (promoButton) {
+    promoButton.addEventListener(
+        "click",
+        openPromoModal
+    );
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| MODAL BUTTONS
+|--------------------------------------------------------------------------
+*/
+
+if (applyPromoButton) {
+    applyPromoButton.addEventListener(
+        "click",
+        applyPromoCode
+    );
+}
+
+if (cancelPromoButton) {
+    cancelPromoButton.addEventListener(
+        "click",
+        closePromoModal
+    );
+}
+
+if (closePromoModalButton) {
+    closePromoModalButton.addEventListener(
+        "click",
+        closePromoModal
+    );
+}
+
+if (promoModalBackdrop) {
+    promoModalBackdrop.addEventListener(
+        "click",
+        closePromoModal
+    );
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| ENTER KEY
+|--------------------------------------------------------------------------
+*/
+
+if (promoCodeInput) {
+    promoCodeInput.addEventListener(
+        "keydown",
+        event => {
+
+            if (event.key === "Enter") {
+                event.preventDefault();
+
+                applyPromoCode();
+            }
+
+        }
+    );
+}
+const discountSuccessModal =
+    document.getElementById(
+        "discountSuccessModal"
+    );
+
+const closeDiscountSuccess =
+    document.getElementById(
+        "closeDiscountSuccess"
+    );
+
+const discountSuccessOk =
+    document.getElementById(
+        "discountSuccessOk"
+    );
+
+if (closeDiscountSuccess) {
+    closeDiscountSuccess.addEventListener(
+        "click",
+        () => {
+            discountSuccessModal?.classList.remove(
+                "active"
+            );
+        }
+    );
+}
+
+if (discountSuccessOk) {
+    discountSuccessOk.addEventListener(
+        "click",
+        () => {
+            discountSuccessModal?.classList.remove(
+                "active"
+            );
+        }
+    );
+}
+
+if (discountSuccessModal) {
+    const backdrop =
+        discountSuccessModal.querySelector(
+            ".discount-success-backdrop"
+        );
+
+    if (backdrop) {
+        backdrop.addEventListener(
+            "click",
+            () => {
+                discountSuccessModal.classList.remove(
+                    "active"
+                );
+            }
+        );
+    }
+}

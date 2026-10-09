@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Products;
 use Illuminate\Http\Request;
 
-class POSController extends Controller
+class ProductsController extends Controller
 {
     /**
      * Display POS homepage.

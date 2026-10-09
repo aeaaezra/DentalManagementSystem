@@ -21,10 +21,11 @@ class ProductsTable
                     ->label('ID')
                     ->sortable(),
 
-                ImageColumn::make('image')
-                    ->label('Product Image')
-                    ->stacked()
-                    ->circular(),
+		ImageColumn::make('image')
+		    ->label('Product Image')
+		    ->disk('public')
+		    ->square()
+		    ->size(60),
 
                 TextColumn::make('supplier.supplier_name')
                     ->label('Supplier')
@@ -46,6 +47,11 @@ class ProductsTable
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
+
+		TextColumn::make('barcode')
+		    ->label('Barcode')
+		    ->searchable()
+		    ->sortable(),
 
                 TextColumn::make('category')
                     ->label('Category')

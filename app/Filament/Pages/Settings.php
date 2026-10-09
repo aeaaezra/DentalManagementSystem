@@ -8,10 +8,16 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Livewire\WithFileUploads;
 use UnitEnum;
 
 class Settings extends Page
 {
+    use WithFileUploads;
+
+    public $profileImage;
+
     protected static string|UnitEnum|null $navigationGroup = 'Settings';
 
     protected static ?string $navigationLabel = 'System Settings';
@@ -32,18 +38,30 @@ class Settings extends Page
 
     public array $notification = [];
 
-    public array $inventory = [];
+	public array $inventory = [];
 
-    public array $pos = [];
+	public array $pos = [];
 
-    public array $system = [];
+	public array $system = [];
 
-    public array $security = [];
+	public array $features = [];
 
-    public array $profile = [];
+	public array $security = [];
+ 
+   public array $profile = [];
+
+    public array $activeSessions = [];
 
     public function mount(): void
     {
+$this->features = [
+    'online_booking' => Setting::getValue('features', 'online_booking', '1'),
+    'email_notifications' => Setting::getValue('features', 'email_notifications', '1'),
+    'sms_notifications' => Setting::getValue('features', 'sms_notifications', '0'),
+    'inventory_management' => Setting::getValue('features', 'inventory_management', '1'),
+    'pos_system' => Setting::getValue('features', 'pos_system', '1'),
+    'patient_portal' => Setting::getValue('features', 'patient_portal', '1'),
+];
         $user = Auth::user();
 
         $this->clinic = [
@@ -166,6 +184,32 @@ class Settings extends Page
             ),
         ];
 
+	$this->features = [
+    'appointments_enabled' => Setting::getValue(
+        'features',
+        'appointments_enabled',
+        '1'
+    ),
+
+    'inventory_enabled' => Setting::getValue(
+        'features',
+        'inventory_enabled',
+        '1'
+    ),
+
+    'pos_enabled' => Setting::getValue(
+        'features',
+        'pos_enabled',
+        '1'
+    ),
+
+    'online_ordering_enabled' => Setting::getValue(
+        'features',
+        'online_ordering_enabled',
+        '1'
+    ),
+];
+
         $this->profile = [
             'name' => $user?->name ?? '',
             'email' => $user?->email ?? '',
@@ -178,6 +222,45 @@ class Settings extends Page
         ];
     }
 
+
+	public function saveProfileImage(): void
+{
+    $this->validate([
+        'profileImage' => [
+            'required',
+            'image',
+            'mimes:jpg,jpeg,png,webp',
+            'max:2048',
+        ],
+    ]);
+
+    $user = Auth::user();
+
+    if (!$user) {
+        return;
+    }
+
+    if ($user->profile_picture) {
+        Storage::disk('public')->delete(
+            $user->profile_picture
+        );
+    }
+
+    $path = $this->profileImage->store(
+        'profile_pictures',
+        'public'
+    );
+
+    $user->update([
+        'profile_picture' => $path,
+    ]);
+
+    $this->profileImage = null;
+
+    $this->success(
+        'Administrator profile picture updated successfully.'
+    );
+}
     /*
     |--------------------------------------------------------------------------
     | MODAL
@@ -299,6 +382,16 @@ class Settings extends Page
 
         $this->success('POS settings saved successfully.');
     }
+
+public function saveFeatures(): void
+{
+    foreach ($this->features as $key => $value) {
+        Setting::setValue('features', $key, $value);
+    }
+
+    $this->success('Feature settings saved successfully.');
+}
+	
 
     /*
     |--------------------------------------------------------------------------

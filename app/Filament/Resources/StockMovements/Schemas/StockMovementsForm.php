@@ -22,6 +22,7 @@ class StockMovementsForm
                     ->required(),
 
                 Select::make('movement_type')
+                    ->label('Movement Type')
                     ->options([
                         'in' => 'Stock In',
                         'out' => 'Stock Out',
@@ -33,6 +34,7 @@ class StockMovementsForm
                     ->required(),
 
                 Select::make('reference_type')
+                    ->label('Reference Type')
                     ->options([
                         'manual' => 'Manual',
                         'order' => 'Order',
@@ -48,26 +50,31 @@ class StockMovementsForm
                     ->numeric()
                     ->nullable(),
 
-                TextInput::make('quantity')
-                    ->numeric()
-                    ->required()
-                    ->minValue(1),
-
+		TextInput::make('quantity')
+		    ->label('Quantity / Actual Stock for Adjustment')
+		    ->numeric()
+		    ->required()
+		    ->minValue(1),
+		
                 TextInput::make('stock_before')
+                    ->label('Stock Before')
                     ->numeric()
                     ->disabled()
                     ->dehydrated(),
 
                 TextInput::make('stock_after')
+                    ->label('Stock After')
                     ->numeric()
                     ->disabled()
                     ->dehydrated(),
 
                 DateTimePicker::make('movement_date')
+                    ->label('Movement Date')
                     ->default(now())
                     ->required(),
 
                 Textarea::make('notes')
+                    ->label('Notes / Reason')
                     ->rows(3)
                     ->columnSpanFull(),
             ]);

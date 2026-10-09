@@ -66,3 +66,72 @@
                 }
             }
         }
+/* ==========================================================
+   FOOTER - LEGAL LINKS
+========================================================== */
+
+.ss-footer-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 3rem;
+}
+
+.ss-footer-grid h4 {
+    margin-bottom: 1.2rem;
+}
+
+.ss-footer-grid ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.ss-footer-grid li {
+    margin-bottom: 0.8rem;
+}
+
+.ss-footer-grid a {
+    color: var(--c-silver);
+    text-decoration: none;
+    transition: color 0.25s ease;
+}
+
+.ss-footer-grid a:hover {
+    color: #ffffff;
+}
+
+.ss-footer-bottom a {
+    color: var(--c-silver);
+    text-decoration: none;
+    transition: color 0.25s ease;
+}
+
+.ss-footer-bottom a:hover {
+    color: #ffffff;
+}
+
+/* Tablet */
+
+@media (max-width: 900px) {
+
+    .ss-footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 2.5rem;
+    }
+
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+
+    .ss-footer-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .ss-footer-bottom {
+        text-align: center;
+    }
+
+}

@@ -24,18 +24,36 @@ class POSController extends Controller
             ->get();
 
         $posProducts = $products->map(function ($product) {
-            return [
-                'id' => $product->id,
-                'name' => $product->product_name,
-                'sku' => $product->sku,
-                'category' => $product->category,
-                'brand' => $product->brand_name,
-                'price' => (float) $product->selling_price,
-                'stock' => (int) $product->quantity,
-                'image' => $product->image,
-            ];
+	return [
+	    'id' => $product->id,
+	    'name' => $product->product_name,
+	    'sku' => $product->sku,
+	    'barcode' => $product->barcode,
+	    'category' => $product->category,
+	    'brand' => $product->brand_name,
+	    'price' => (float) $product->selling_price,
+	    'stock' => (int) $product->quantity,
+	    'image' => $product->image,
+	    'unit' => $product->unit,
+	];
         })->values();
+/**
+ * Cashier Sales History
+ */
+public function salesHistory()
+{
+    $sales = PosSales::with([
+        'items.product'
+    ])
+        ->where('cashier_id', auth()->id())
+        ->latest()
+        ->paginate(15);
 
+    return view(
+        'pos.sales-history',
+        compact('sales')
+    );
+}
         /*
         |--------------------------------------------------------------------------
         | POS Settings

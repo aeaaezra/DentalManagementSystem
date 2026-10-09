@@ -214,7 +214,35 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
 
+Route::get('/notifications/data', function () {
+
+    $notifications = Auth::user()
+        ->notifications()
+        ->latest()
+        ->limit(20)
+        ->get();
+
+    return response()->json([
+        'success' => true,
+        'notifications' => $notifications->map(function ($notification) {
+            return [
+                'id' => $notification->id,
+                'title' => $notification->data['title'] ?? 'Notification',
+                'message' => $notification->data['message'] ?? '',
+                'type' => $notification->type,
+                'read' => !is_null($notification->read_at),
+                'created_at' => $notification->created_at?->toISOString(),
+                'data' => $notification->data,
+            ];
+        })->values(),
+        'unread_count' => Auth::user()
+            ->unreadNotifications()
+            ->count(),
+    ]);
+})->name('notifications.data');
+
     Route::get('/dashboard', function () {
+
 
         $user = auth()->user();
 
@@ -993,6 +1021,15 @@ Route::prefix('pos')
         )->middleware(['auth', 'role:cashier'])
          ->name('homepage');
 
+Route::get(
+    '/sales-history',
+    [
+        POSController::class,
+        'salesHistory'
+    ]
+)->middleware(['auth', 'role:cashier'])
+ ->name('sales-history');
+
         Route::post(
             '/checkout',
             [
@@ -1435,4 +1472,15 @@ Route::post('/notifications/{notification}/read', function ($notificationId) {
 
 })->middleware('auth')->name('notifications.read');
 
+// ==========================================================
+// LEGAL PAGES
+// ==========================================================
+
+Route::view('/privacy-policy', 'legal.privacy-policy')
+    ->name('privacy.policy');
+
+Route::view('/terms-and-conditions', 'legal.terms-and-conditions')
+    ->name('terms.conditions');
+
 require __DIR__ . '/auth.php';
+

@@ -45,6 +45,13 @@ class ProductsForm
                                     ->required()
                                     ->maxLength(100),
 
+				TextInput::make('barcode')
+				    ->label('Barcode')
+				    ->maxLength(100)
+				    ->unique(ignoreRecord: true)
+				    ->helperText('Scan or enter the product barcode.'),
+
+
                                 TextInput::make('product_name')
                                     ->label('Product Name')
                                     ->required()
