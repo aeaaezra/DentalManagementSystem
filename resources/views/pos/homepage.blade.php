@@ -45,17 +45,17 @@
 
     {{-- Sales History --}}
     <a
-class="nav-item {{ request()->routeIs('pos.sales-history') ? 'active' : '' }}"
-href="{{ route('pos.sales-history') }}">
-
+        class="nav-item"
+        href="{{ url('/admin/pos-sales') }}"
+    >
         <i class="fa-regular fa-clipboard"></i>
         <span>Sales History</span>
     </a>
 
     {{-- Products --}}
     <a
-class="nav-item {{ request()->routeIs('pos.products') ? 'active' : '' }}"
-href="{{ route('pos.products') }}"
+        class="nav-item"
+        href="{{ url('/admin/products') }}"
     >
         <i class="fa-solid fa-box-open"></i>
         <span>Products</span>
@@ -63,18 +63,28 @@ href="{{ route('pos.products') }}"
 
     {{-- Inventory --}}
     <a
-class="nav-item"
-href="{{ url('/admin/stock-movements') }}"
+        class="nav-item"
+        href="{{ url('/admin/stock-movements') }}"
     >
         <i class="fa-solid fa-boxes-stacked"></i>
         <span>Inventory</span>
     </a>
 
+    {{-- Customers --}}
+    <a
+        class="nav-item"
+        href="#"
+        onclick="return false;"
+        title="Customer management page is not available yet"
+    >
+        <i class="fa-solid fa-users"></i>
+        <span>Customers</span>
+    </a>
 
     {{-- Reports --}}
     <a
-class="nav-item"
-href="{{ url('/admin/reports') }}"
+        class="nav-item"
+        href="{{ url('/admin/reports') }}"
     >
         <i class="fa-solid fa-chart-column"></i>
         <span>Reports</span>
@@ -762,7 +772,9 @@ href="{{ url('/admin/reports') }}"
 }
 </style>
 <script>
-    window.posProducts = @json($posProducts);
+
+window.posProducts = @json($posProducts);
+window.posVatRate = @json($vatRate);
 </script>
 <script src="{{ asset('js/pos/pos_homepage.js') }}?v={{ time() }}"></script>
 
@@ -1501,4 +1513,3 @@ document.addEventListener("DOMContentLoaded", function () {
 </body>
 </html></body>
 </html>
-

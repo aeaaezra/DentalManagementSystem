@@ -1,0 +1,423 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\DiscountCode;
+use App\Models\PosSaleItems;
+use App\Models\PosSales;
+use App\Models\Products;
+use App\Models\Setting;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
+class POSController extends Controller
+{
+    /**
+     * POS homepage.
+     */
+    public function homepage()
+    {
+        $products = Products::where('is_active', true)
+            ->orderBy('product_name')
+            ->get();
+
+        $posProducts = $products->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->product_name,
+                'sku' => $product->sku,
+                'barcode' => $product->barcode,
+                'category' => $product->category,
+                'brand' => $product->brand_name,
+                'price' => (float) $product->selling_price,
+                'stock' => (int) $product->quantity,
+                'image' => $product->image,
+                'unit' => $product->unit,
+            ];
+        })->values();
+
+        $posTheme = Setting::where('group', 'pos')
+            ->where('key', 'theme')
+            ->value('value') ?? 'light';
+
+        $registerNumber = Setting::where('group', 'pos')
+            ->where('key', 'register_number')
+            ->value('value') ?? '01';
+
+        $vatRate = (float) (Setting::where('group', 'pos')
+            ->where('key', 'vat_rate')
+            ->value('value') ?? 12);
+
+        return view('pos.homepage', compact(
+            'products',
+            'posProducts',
+            'posTheme',
+            'registerNumber',
+            'vatRate'
+        ));
+    }
+
+    /**
+     * Cashier sales history.
+     */
+    public function salesHistory()
+    {
+        $sales = PosSales::with(['items.product'])
+            ->where('cashier_id', auth()->id())
+            ->latest()
+            ->paginate(15);
+
+        return view('pos.sales-history', compact('sales'));
+    }
+
+    /**
+     * Validate a discount code for the current subtotal.
+     * The checkout method revalidates the code before applying it.
+     */
+    public function validateDiscount(Request $request)
+    {
+        $validated = $request->validate([
+            'code' => 'required|string|max:50',
+            'subtotal' => 'required|numeric|min:0',
+        ]);
+
+        $code = strtoupper(trim($validated['code']));
+        $subtotal = round((float) $validated['subtotal'], 2);
+
+        $discountCode = DiscountCode::whereRaw('UPPER(code) = ?', [$code])->first();
+
+        if (!$discountCode) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid discount code.',
+            ], 422);
+        }
+
+        if (!$discountCode->is_active) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This discount code is inactive.',
+            ], 422);
+        }
+
+        if ($discountCode->starts_at && now()->lt($discountCode->starts_at)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This discount code is not active yet.',
+            ], 422);
+        }
+
+        if ($discountCode->expires_at && now()->gt($discountCode->expires_at)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This discount code has expired.',
+            ], 422);
+        }
+
+        if (
+            $discountCode->usage_limit !== null &&
+            $discountCode->used_count >= $discountCode->usage_limit
+        ) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This discount code has reached its usage limit.',
+            ], 422);
+        }
+
+        if ($subtotal < (float) $discountCode->minimum_amount) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Minimum purchase amount is ₱'
+                    . number_format((float) $discountCode->minimum_amount, 2) . '.',
+            ], 422);
+        }
+
+        if ($discountCode->type === 'percentage') {
+            $discountAmount = $subtotal * ((float) $discountCode->value / 100);
+        } else {
+            $discountAmount = (float) $discountCode->value;
+        }
+
+        if ($discountCode->maximum_discount !== null) {
+            $discountAmount = min(
+                $discountAmount,
+                (float) $discountCode->maximum_discount
+            );
+        }
+
+        $discountAmount = round(min(max($discountAmount, 0), $subtotal), 2);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Discount applied successfully.',
+            'code' => $discountCode->code,
+            'type' => $discountCode->type,
+            'value' => (float) $discountCode->value,
+            'minimum_amount' => (float) $discountCode->minimum_amount,
+            'maximum_discount' => $discountCode->maximum_discount !== null
+                ? (float) $discountCode->maximum_discount
+                : null,
+            'discount_amount' => number_format($discountAmount, 2, '.', ''),
+        ]);
+    }
+
+    /**
+     * Process checkout and return receipt data.
+     *
+     * Assumption: selling_price is VAT-exclusive and all products in this
+     * transaction are standard-rated at the configured VAT rate. If products
+     * can be VAT-exempt or zero-rated, add product-level tax classification
+     * before using this calculation for those products.
+     */
+    public function checkout(Request $request)
+    {
+        $validated = $request->validate([
+            'cart' => 'required|array|min:1',
+            'cart.*.id' => 'required|integer',
+            'cart.*.qty' => 'required|integer|min:1',
+            'cash_received' => 'required|numeric|min:0',
+            'discount_code' => 'nullable|string|max:50',
+        ]);
+
+        try {
+            $result = DB::transaction(function () use ($validated) {
+                $cartItems = [];
+                $subtotal = 0.0;
+
+                // Re-fetch and lock each product; never trust prices from JS.
+                foreach ($validated['cart'] as $item) {
+                    $productId = (int) $item['id'];
+                    $quantity = (int) $item['qty'];
+
+                    $product = Products::whereKey($productId)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$product) {
+                        throw new \RuntimeException(
+                            "Product with ID {$productId} was not found."
+                        );
+                    }
+
+                    if (!$product->is_active) {
+                        throw new \RuntimeException(
+                            "{$product->product_name} is inactive."
+                        );
+                    }
+
+                    if ((int) $product->quantity < $quantity) {
+                        throw new \RuntimeException(
+                            "Insufficient stock for {$product->product_name}. "
+                            . "Available: {$product->quantity}, requested: {$quantity}."
+                        );
+                    }
+
+                    $price = round((float) $product->selling_price, 2);
+                    $itemSubtotal = round($price * $quantity, 2);
+
+                    $cartItems[] = [
+                        'product' => $product,
+                        'quantity' => $quantity,
+                        'price' => $price,
+                        'subtotal' => $itemSubtotal,
+                    ];
+
+                    $subtotal += $itemSubtotal;
+                }
+
+                $subtotal = round($subtotal, 2);
+                $discountAmount = 0.0;
+                $discountCode = null;
+                $enteredDiscountCode = strtoupper(trim(
+                    (string) ($validated['discount_code'] ?? '')
+                ));
+
+                // Revalidate and lock the discount during checkout.
+                if ($enteredDiscountCode !== '') {
+                    $discountCode = DiscountCode::whereRaw(
+                        'UPPER(code) = ?',
+                        [$enteredDiscountCode]
+                    )->lockForUpdate()->first();
+
+                    if (!$discountCode) {
+                        throw new \RuntimeException('Invalid discount code.');
+                    }
+
+                    if (!$discountCode->is_active) {
+                        throw new \RuntimeException('This discount code is inactive.');
+                    }
+
+                    if ($discountCode->starts_at && now()->lt($discountCode->starts_at)) {
+                        throw new \RuntimeException('This discount code is not active yet.');
+                    }
+
+                    if ($discountCode->expires_at && now()->gt($discountCode->expires_at)) {
+                        throw new \RuntimeException('This discount code has expired.');
+                    }
+
+                    if (
+                        $discountCode->usage_limit !== null &&
+                        $discountCode->used_count >= $discountCode->usage_limit
+                    ) {
+                        throw new \RuntimeException(
+                            'This discount code has reached its usage limit.'
+                        );
+                    }
+
+                    if ($subtotal < (float) $discountCode->minimum_amount) {
+                        throw new \RuntimeException(
+                            'Minimum purchase amount for this discount is ₱'
+                            . number_format((float) $discountCode->minimum_amount, 2) . '.'
+                        );
+                    }
+
+                    if ($discountCode->type === 'percentage') {
+                        $discountAmount = $subtotal * ((float) $discountCode->value / 100);
+                    } else {
+                        $discountAmount = (float) $discountCode->value;
+                    }
+
+                    if ($discountCode->maximum_discount !== null) {
+                        $discountAmount = min(
+                            $discountAmount,
+                            (float) $discountCode->maximum_discount
+                        );
+                    }
+
+                    $discountAmount = round(
+                        min(max($discountAmount, 0), $subtotal),
+                        2
+                    );
+                }
+
+                // Configured VAT rate. Default is 12%; validate configuration.
+                $vatRate = (float) (Setting::where('group', 'pos')
+                    ->where('key', 'vat_rate')
+                    ->value('value') ?? 12);
+
+                if (!is_finite($vatRate) || $vatRate < 0 || $vatRate > 100) {
+                    throw new \RuntimeException('Invalid POS VAT rate configuration.');
+                }
+
+                $taxableAmount = round(max($subtotal - $discountAmount, 0), 2);
+                $tax = round($taxableAmount * ($vatRate / 100), 2);
+                $totalAmount = round($taxableAmount + $tax, 2);
+
+                $cashReceived = round((float) $validated['cash_received'], 2);
+
+                if ($cashReceived < $totalAmount) {
+                    throw new \RuntimeException(
+                        'Insufficient payment. Required: ₱'
+                        . number_format($totalAmount, 2)
+                        . ', received: ₱' . number_format($cashReceived, 2) . '.'
+                    );
+                }
+
+                $changeAmount = round($cashReceived - $totalAmount, 2);
+                $invoiceNo = 'INV-' . now()->format('YmdHis') . '-'
+                    . strtoupper(Str::random(4));
+
+                $sale = PosSales::create([
+                    'invoice_no' => $invoiceNo,
+                    'cashier_id' => auth()->id(),
+                    'subtotal' => $subtotal,
+                    'discount' => $discountAmount,
+                    'tax' => $tax,
+                    'total' => $totalAmount,
+                    'amount_paid' => $cashReceived,
+                    'change_amount' => $changeAmount,
+                    'payment_status' => 'paid',
+                    'status' => 'completed',
+                ]);
+
+                foreach ($cartItems as $item) {
+                    $product = $item['product'];
+
+                    PosSaleItems::create([
+                        'pos_sale_id' => $sale->id,
+                        'product_id' => $product->id,
+                        'quantity' => $item['quantity'],
+                        'price' => $item['price'],
+                        'unit_price' => $item['price'],
+                        'subtotal' => $item['subtotal'],
+                    ]);
+
+                    $product->decrement('quantity', $item['quantity']);
+                }
+
+                if ($discountCode) {
+                    $discountCode->increment('used_count');
+                }
+
+                $receiptItems = collect($cartItems)->map(function ($item) {
+                    $product = $item['product'];
+
+                    return [
+                        'id' => $product->id,
+                        'name' => $product->product_name,
+                        'sku' => $product->sku,
+                        'barcode' => $product->barcode,
+                        'unit' => $product->unit,
+                        'quantity' => $item['quantity'],
+                        'price' => number_format($item['price'], 2, '.', ''),
+                        'subtotal' => number_format($item['subtotal'], 2, '.', ''),
+                    ];
+                })->values();
+
+                $receiptSettings = Setting::where('group', 'pos')
+                    ->pluck('value', 'key')
+                    ->all();
+
+                return [
+                    'sale' => $sale,
+                    'subtotal' => $subtotal,
+                    'discount' => $discountAmount,
+                    'tax' => $tax,
+                    'vat_rate' => $vatRate,
+                    'vatable_sales' => $taxableAmount,
+                    'total' => $totalAmount,
+                    'cash_received' => $cashReceived,
+                    'change' => $changeAmount,
+                    'items' => $receiptItems,
+                    'settings' => $receiptSettings,
+                    'discount_code' => $discountCode ? $discountCode->code : null,
+                ];
+            });
+
+            /** @var \App\Models\PosSales $sale */
+            $sale = $result['sale'];
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment successful.',
+                'invoice_no' => $sale->invoice_no,
+                'sale_id' => $sale->id,
+                'subtotal' => number_format($result['subtotal'], 2, '.', ''),
+                'discount' => number_format($result['discount'], 2, '.', ''),
+                'tax' => number_format($result['tax'], 2, '.', ''),
+                'vat_rate' => number_format($result['vat_rate'], 2, '.', ''),
+                'vatable_sales' => number_format($result['vatable_sales'], 2, '.', ''),
+                'total_amount' => number_format($result['total'], 2, '.', ''),
+                'cash_received' => number_format($result['cash_received'], 2, '.', ''),
+                'change_amount' => number_format($result['change'], 2, '.', ''),
+                'payment_status' => 'paid',
+                'discount_code' => $result['discount_code'],
+                'transaction_date' => optional($sale->created_at)->format('Y-m-d h:i:s A')
+                    ?? now()->format('Y-m-d h:i:s A'),
+                'items' => $result['items'],
+                'receipt_settings' => $result['settings'],
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Payment failed.',
+                'error' => config('app.debug')
+                    ? $e->getMessage()
+                    : 'The sale could not be completed. Please check the POS logs.',
+            ], 422);
+        }
+    }
+}
