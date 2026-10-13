@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
             id: Number(product.id),
             name: product.name ?? "Unnamed Product",
             sku: product.sku ?? "",
-	    barcode: product.barcode ?? "",    
+	    barcode: product.barcode ?? "",
             category: product.category ?? "Uncategorized",
             brand: product.brand ?? "",
             price: Number(product.price) || 0,
@@ -849,73 +849,74 @@ const productImage =
     |--------------------------------------------------------------------------
     */
 
-    function calculateTax(amount) {
+
+function calculateTax(amount) {
+    const rate = Number(window.posVatRate ?? 12);
+
+    if (!Number.isFinite(rate) || rate < 0 || rate > 100) {
         return 0;
     }
 
-    /*
+    const grossAmount = Math.max(Number(amount) || 0, 0);
+
+    return Math.round(
+        (grossAmount * rate / (100 + rate)) * 100
+    ) / 100;
+}
+/*
     |--------------------------------------------------------------------------
     | TOTALS
     |--------------------------------------------------------------------------
     */
 
-    function updateTotals() {
-        const subtotal =
-            calculateSubtotal();
 
-        const discountAmount =
-            calculateDiscount(
-                subtotal
-            );
+function updateTotals() {
+    const subtotal = calculateSubtotal();
 
-        const taxableAmount =
-            Math.max(
-                subtotal -
-                discountAmount,
-                0
-            );
+    const discountAmount = calculateDiscount(subtotal);
 
-        const tax =
-            calculateTax(
-                taxableAmount
-            );
+    // Product prices already include VAT.
+    const taxableAmount = Math.max(
+        subtotal - discountAmount,
+        0
+    );
 
-        const total =
-            taxableAmount + tax;
+    // Extract the VAT included in the price.
+    const tax = calculateTax(taxableAmount);
 
-        if (subtotalElement) {
-            subtotalElement.textContent =
-                formatCurrency(
-                    subtotal
-                );
-        }
+    // Do not add VAT again.
+    const total = taxableAmount;
 
-        if (discountElement) {
-            discountElement.textContent =
-                `-${formatCurrency(
-                    discountAmount
-                )}`;
-        }
-
-        if (taxElement) {
-            taxElement.textContent =
-                formatCurrency(tax);
-        }
-
-        if (totalElement) {
-            totalElement.textContent =
-                formatCurrency(total);
-        }
-
-        if (processPaymentButton) {
-            processPaymentButton.innerHTML = `
-                <i class="fa-solid fa-credit-card"></i>
-                Process Payment (${formatCurrency(total)})
-            `;
-        }
-
-        calculateChange();
+    if (subtotalElement) {
+        subtotalElement.textContent =
+            formatCurrency(subtotal);
     }
+
+    if (discountElement) {
+        discountElement.textContent =
+            `-${formatCurrency(discountAmount)}`;
+    }
+
+    if (taxElement) {
+        taxElement.textContent =
+            formatCurrency(tax);
+    }
+
+    if (totalElement) {
+        totalElement.textContent =
+            formatCurrency(total);
+    }
+
+    if (processPaymentButton) {
+        processPaymentButton.innerHTML = `
+            <i class="fa-solid fa-credit-card"></i>
+            Process Payment (${formatCurrency(total)})
+        `;
+    }
+
+    calculateChange();
+}
+
 
 function showDiscountSuccessModal(code, amount) {
     const modal = document.getElementById(
@@ -1185,11 +1186,7 @@ function showDiscountSuccessModal(code, amount) {
         const currentTotal =
             calculateTotal();
 
-        const existingCash =
-            Number(
-                cashReceivedInput?.value ||
-                0
-            );
+        const existingCash =  Number(  cashReceivedInput?.value || 0  );
 
         paymentModal.classList.add(
             "show"
@@ -1330,29 +1327,17 @@ function showDiscountSuccessModal(code, amount) {
     |--------------------------------------------------------------------------
     */
 
-    function calculateTotal() {
-        const subtotal =
-            calculateSubtotal();
 
-        const discountAmount =
-            calculateDiscount(
-                subtotal
-            );
+function calculateTotal() {
+    const subtotal = calculateSubtotal();
+    const discountAmount = calculateDiscount(subtotal);
 
-        const taxableAmount =
-            Math.max(
-                subtotal -
-                discountAmount,
-                0
-            );
-
-        const tax =
-            calculateTax(
-                taxableAmount
-            );
-
-        return taxableAmount + tax;
-    }
+    // Selling prices already include 12% VAT.
+    // Do not add VAT again to the customer total.
+    return Math.round(
+        Math.max(subtotal - discountAmount, 0) * 100
+    ) / 100;
+}
 
     /*
     |--------------------------------------------------------------------------
@@ -1372,12 +1357,11 @@ function showDiscountSuccessModal(code, amount) {
         const total =
             calculateTotal();
 
-        const cash =
-            Number(
-                cashReceivedInput
-                    ? cashReceivedInput.value
-                    : 0
-            );
+    const cashInput =
+        modalCashReceivedInput || cashReceivedInput;
+
+    const cash = Number(cashInput?.value || 0);
+
 
         if (
             paymentMethod === "cash" &&
@@ -1671,33 +1655,32 @@ function showDiscountSuccessModal(code, amount) {
             |--------------------------------------------------------------------------
             */
 
-            window.lastReceipt = {
-                invoice:
-                    data.invoice_no,
 
-                total:
-                    Number(
-                        data.total_amount ||
-                        total
-                    ),
+window.lastReceipt = {
+    invoice: data.invoice_no ?? "",
+    total: Number(data.total_amount ?? total),
+    subtotal: Number(data.subtotal ?? calculateSubtotal()),
+    discount: Number(data.discount ?? 0),
+    tax: Number(data.tax ?? 0),
+    vatRate: Number(data.vat_rate ?? window.posVatRate ?? 12),
 
-                method:
-                    paymentMethod === "cash"
-                        ? "Cash"
-                        : paymentMethod,
+    method: paymentMethod === "cash"
+        ? "Cash"
+        : paymentMethod,
 
-                amountReceived:
-                    Number(
-                        data.cash_received ||
-                        cash
-                    ),
+    amountReceived: Number(data.cash_received ?? cash),
+    change: Number(data.change_amount ?? 0),
 
-                change:
-                    Number(
-                        data.change_amount ||
-                        0
-                    )
-            };
+    date: data.transaction_date
+        ?? new Date().toLocaleString("en-PH"),
+
+    items: Array.isArray(data.items)
+        ? data.items
+        : [],
+
+    settings: data.receipt_settings ?? {}
+};
+
 
         } catch (error) {
             console.error(
@@ -2041,59 +2024,77 @@ function setupSearch() {
     */
 
 function printReceipt() {
-    if (!window.lastReceipt) {
+    const receipt = window.lastReceipt;
+
+    if (!receipt) {
         alert("No completed payment is available to print.");
         return;
     }
 
-    const receipt = window.lastReceipt;
-
-    const escapeHtml = (value) => {
-        return String(value ?? "")
+    const escapeHtml = (value) =>
+        String(value ?? "")
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
-    };
 
-    /*
-    |--------------------------------------------------------------------------
-    | RECEIPT ITEMS
-    |--------------------------------------------------------------------------
-    */
+    const money = (value) =>
+        formatCurrency(Number(value ?? 0));
 
-    const receiptItems =
-        Array.isArray(receipt.items)
-            ? receipt.items
-            : Array.isArray(window.lastReceiptItems)
-                ? window.lastReceiptItems
-                : [];
+    const receiptItems = Array.isArray(receipt.items)
+        ? receipt.items
+        : [];
+
+    const subtotal = Number(receipt.subtotal ?? receipt.total ?? 0);
+    const discount = Number(receipt.discount ?? 0);
+    const vat = Number(receipt.tax ?? 0);
+    const vatRate = Number(receipt.vatRate ?? window.posVatRate ?? 12);
+    const total = Number(receipt.total ?? 0);
+    const cashReceived = Number(receipt.amountReceived ?? 0);
+    const change = Number(receipt.change ?? Math.max(cashReceived - total, 0));
+
+    const settings = receipt.settings ?? {};
+
+    const clinicName =
+        settings.clinic_name ??
+        settings.store_name ??
+        "SHINE & SMILE";
+
+    const address =
+        settings.address ??
+        settings.clinic_address ??
+        "";
+
+    const phone =
+        settings.phone ??
+        settings.contact_number ??
+        "";
+
+    const dateText =
+        receipt.date ??
+        new Date().toLocaleString("en-PH");
 
     const itemsHtml = receiptItems.length
-        ? receiptItems.map(item => {
+        ? receiptItems.map((item) => {
             const name =
                 item.name ??
                 item.product_name ??
                 "Product";
 
-            const quantity =
-                Number(
-                    item.quantity ?? 0
-                );
+            const quantity = Number(item.quantity ?? 0);
 
-            const price =
-                Number(
-                    item.price ??
-                    item.unit_price ??
-                    0
-                );
+            const price = Number(
+                item.price ??
+                item.unit_price ??
+                0
+            );
 
-            const subtotal =
-                Number(
-                    item.subtotal ??
-                    price * quantity
-                );
+            const lineTotal = Number(
+                item.subtotal ??
+                item.total ??
+                price * quantity
+            );
 
             return `
                 <div class="item">
@@ -2103,11 +2104,11 @@ function printReceipt() {
 
                     <div class="item-details">
                         <span>
-                            ${quantity} x ${formatCurrency(price)}
+                            ${quantity} x ${money(price)}
                         </span>
 
                         <strong>
-                            ${formatCurrency(subtotal)}
+                            ${money(lineTotal)}
                         </strong>
                     </div>
                 </div>
@@ -2115,15 +2116,10 @@ function printReceipt() {
         }).join("")
         : `
             <div class="item">
-                <div class="item-name">
-                    Purchase
-                </div>
-
+                <div class="item-name">Purchase</div>
                 <div class="item-details">
                     <span></span>
-                    <strong>
-                        ${formatCurrency(receipt.total)}
-                    </strong>
+                    <strong>${money(total)}</strong>
                 </div>
             </div>
         `;
@@ -2131,558 +2127,398 @@ function printReceipt() {
     const receiptWindow = window.open(
         "",
         "_blank",
-        "width=400,height=700"
+        "width=420,height=700"
     );
 
     if (!receiptWindow) {
-        alert(
-            "Please allow pop-ups to print the receipt."
-        );
+        alert("Allow pop-ups in your browser to print the receipt.");
         return;
     }
 
-    const dateText =
-        receipt.date ??
-        new Date().toLocaleString(
-            "en-PH",
-            {
-                dateStyle: "medium",
-                timeStyle: "short"
-            }
-        );
+    receiptWindow.document.open();
 
     receiptWindow.document.write(`
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Receipt - ${escapeHtml(receipt.invoice)}</title>
 
-    <title>
-        Receipt - ${escapeHtml(receipt.invoice)}
-    </title>
+<style>
+    @page {
+        size: 80mm auto;
+        margin: 0;
+    }
 
-    <style>
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
 
-        /*
-        =========================================================
-        80MM THERMAL RECEIPT
-        =========================================================
-        */
+    html,
+    body {
+        width: 72mm;
+        max-width: 72mm;
+        margin: 0;
+        padding: 0;
+        background: #fff;
+    }
 
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 10px;
+        line-height: 1.35;
+        color: #000;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .receipt {
+        display: block;
+        width: 68mm;
+        min-width: 0;
+        max-width: 68mm;
+        margin: 0;
+        padding: 3mm 1mm;
+        box-sizing: border-box;
+        overflow-wrap: anywhere;
+    }
+
+    .receipt * {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 4mm;
+    }
+
+    .header h2 {
+        margin: 0 0 1.5mm;
+        font-size: 16px;
+        font-weight: 800;
+        overflow-wrap: anywhere;
+    }
+
+    .header p {
+        margin: 1mm 0;
+        font-size: 9px;
+    }
+
+    .receipt-title {
+        margin: 3mm 0;
+        text-align: center;
+        font-size: 12px;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+
+    .info-row,
+    .total-row,
+    .grand-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1mm;
+        width: 100%;
+        margin: 1.5mm 0;
+    }
+
+    .info-label,
+    .total-row span,
+    .grand-total span {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .info-value,
+    .total-row strong,
+    .grand-total strong {
+        flex: 0 1 auto;
+        min-width: 0;
+        max-width: 58%;
+        text-align: right;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .divider {
+        border-top: 1px dashed #000;
+        margin: 3mm 0;
+    }
+
+    .items-header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 21mm;
+        gap: 1mm;
+        padding: 2mm 0;
+        border-top: 1px dashed #000;
+        border-bottom: 1px dashed #000;
+        font-weight: bold;
+    }
+
+    .items-header span:last-child {
+        text-align: right;
+    }
+
+    .item {
+        width: 100%;
+        padding: 2mm 0;
+        border-bottom: 1px dotted #aaa;
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .item-name {
+        width: 100%;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .item-details {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 21mm;
+        gap: 1mm;
+        width: 100%;
+        margin-top: 1mm;
+    }
+
+    .item-details > * {
+        min-width: 0;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .item-details strong {
+        text-align: right;
+    }
+
+    .totals {
+        width: 100%;
+        margin-top: 3mm;
+    }
+
+    .grand-total {
+        padding: 2mm 0;
+        margin-top: 2mm;
+        border-top: 1px solid #000;
+        border-bottom: 1px solid #000;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .grand-total strong {
+        flex-shrink: 0;
+        max-width: 55%;
+        text-align: right;
+    }
+
+    .payment-section {
+        width: 100%;
+        margin-top: 3mm;
+    }
+
+    .footer {
+        margin-top: 5mm;
+        text-align: center;
+        font-size: 9px;
+        overflow-wrap: anywhere;
+    }
+
+    .footer p {
+        margin: 1.5mm 0;
+    }
+
+    .invoice-code {
+        margin-top: 3mm;
+        font-weight: bold;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    @media print {
         @page {
             size: 80mm auto;
             margin: 0;
         }
 
-        * {
-            box-sizing: border-box;
-        }
-
         html,
         body {
-            width: 80mm;
-            margin: 0;
-            padding: 0;
-            background: #ffffff;
-        }
-
-        body {
-            width: 80mm;
-
-            padding: 5mm 4mm;
-
-            color: #000000;
-
-            font-family:
-                Arial,
-                Helvetica,
-                sans-serif;
-
-            font-size: 11px;
-            line-height: 1.35;
-
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
+            width: 72mm !important;
+            max-width: 72mm !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: visible !important;
         }
 
         .receipt {
-            width: 100%;
-            max-width: 72mm;
-            margin: 0 auto;
+            display: block !important;
+            width: 68mm !important;
+            min-width: 0 !important;
+            max-width: 68mm !important;
+            margin: 0 !important;
+            padding: 3mm 1mm !important;
+            box-sizing: border-box !important;
+            overflow: visible !important;
         }
 
-        /*
-        =========================================================
-        HEADER
-        =========================================================
-        */
-
-        .header {
-            text-align: center;
-            margin-bottom: 8px;
+        .item,
+        .totals,
+        .payment-section {
+            break-inside: avoid;
+            page-break-inside: avoid;
         }
 
-        .logo {
-            width: 42px;
-            height: 42px;
-
-            margin: 0 auto 5px;
-
-            border: 2px solid #000;
-            border-radius: 50%;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            font-size: 21px;
-            font-weight: 900;
-        }
-
-        .store-name {
-            font-size: 17px;
-            font-weight: 900;
-
-            letter-spacing: 0.3px;
-        }
-
-        .store-type {
-            margin-top: 2px;
-
-            font-size: 10px;
-            font-weight: 600;
-        }
-
-        .store-message {
-            margin-top: 3px;
-
-            font-size: 9px;
-        }
-
-        /*
-        =========================================================
-        DIVIDERS
-        =========================================================
-        */
-
-        .divider {
-            border-top: 1px dashed #000;
-
-            margin: 7px 0;
-        }
-
-        .double-divider {
-            border-top: 2px solid #000;
-
-            margin: 7px 0;
-        }
-
-        /*
-        =========================================================
-        TRANSACTION INFORMATION
-        =========================================================
-        */
-
-        .info-row {
-            display: flex;
-
-            justify-content: space-between;
-
-            gap: 8px;
-
-            margin: 2px 0;
-        }
-
-        .info-label {
-            font-weight: 600;
-        }
-
-        .info-value {
-            text-align: right;
-
-            font-weight: 700;
-
-            overflow-wrap: anywhere;
-        }
-
-        /*
-        =========================================================
-        ITEMS
-        =========================================================
-        */
-
-        .items-header {
-            display: flex;
-
-            justify-content: space-between;
-
-            font-size: 9px;
-
-            font-weight: 800;
-
-            text-transform: uppercase;
-
-            margin-bottom: 4px;
-        }
-
-        .item {
-            margin: 5px 0;
-        }
-
-        .item-name {
-            font-size: 11px;
-
-            font-weight: 700;
-
-            overflow-wrap: anywhere;
-        }
-
+        .total-row,
+        .grand-total,
         .item-details {
-            display: flex;
-
-            justify-content: space-between;
-
-            gap: 8px;
-
-            margin-top: 1px;
-
-            font-size: 10px;
+            break-inside: avoid;
+            page-break-inside: avoid;
         }
-
-        .item-details span {
-            color: #222;
-        }
-
-        .item-details strong {
-            font-weight: 800;
-        }
-
-        /*
-        =========================================================
-        TOTALS
-        =========================================================
-        */
-
-        .total-row {
-            display: flex;
-
-            justify-content: space-between;
-
-            gap: 8px;
-
-            margin: 3px 0;
-
-            font-size: 11px;
-        }
-
-        .total-row strong {
-            font-weight: 800;
-
-            text-align: right;
-        }
-
-        .grand-total {
-            display: flex;
-
-            justify-content: space-between;
-
-            align-items: center;
-
-            margin: 5px 0;
-
-            font-size: 16px;
-
-            font-weight: 900;
-        }
-
-        /*
-        =========================================================
-        FOOTER
-        =========================================================
-        */
-
-        .footer {
-            text-align: center;
-
-            margin-top: 9px;
-
-            font-size: 10px;
-        }
-
-        .thank-you {
-            font-size: 12px;
-
-            font-weight: 800;
-
-            margin-bottom: 3px;
-        }
-
-        .footer-small {
-            font-size: 9px;
-
-            margin-top: 3px;
-        }
-
-        .barcode {
-            margin: 9px auto 5px;
-
-            font-family:
-                "Courier New",
-                monospace;
-
-            font-size: 14px;
-
-            letter-spacing: 1px;
-
-            text-align: center;
-        }
-
-        /*
-        =========================================================
-        PRINT
-        =========================================================
-        */
-
-        @media print {
-
-            html,
-            body {
-                width: 80mm;
-
-                margin: 0;
-                padding: 0;
-            }
-
-            body {
-                padding: 4mm;
-            }
-
-            .receipt {
-                width: 100%;
-                max-width: none;
-            }
-
-        }
-
-    </style>
+    }
+</style>
 
 </head>
 
 <body>
+    <main class="receipt">
 
-    <div class="receipt">
+        <header class="header">
+            <h2>${escapeHtml(clinicName)}</h2>
 
-        <!-- HEADER -->
+            ${address
+                ? `<p>${escapeHtml(address)}</p>`
+                : ""}
 
-        <div class="header">
+            ${phone
+                ? `<p>Tel: ${escapeHtml(phone)}</p>`
+                : ""}
 
-            <div class="logo">
-                S&S
+            <p>Dental Supplies & Services</p>
+        </header>
+
+        <div class="receipt-title">SALES RECEIPT</div>
+
+        <section class="receipt-info">
+            <div class="info-row">
+                <span class="info-label">Invoice No.</span>
+                <strong class="info-value">
+                    ${escapeHtml(receipt.invoice || "N/A")}
+                </strong>
             </div>
 
-            <div class="store-name">
-                SHINE & SMILE
+            <div class="info-row">
+                <span class="info-label">Date</span>
+                <span class="info-value">
+                    ${escapeHtml(dateText)}
+                </span>
             </div>
 
-            <div class="store-type">
-                Dental Supply POS
+            <div class="info-row">
+                <span class="info-label">Payment Method</span>
+                <strong class="info-value">
+                    ${escapeHtml(receipt.method || "Cash")}
+                </strong>
             </div>
-
-            <div class="store-message">
-                Quality Supplies • Brighter Smiles
-            </div>
-
-        </div>
-
-
-        <div class="double-divider"></div>
-
-
-        <!-- TRANSACTION INFO -->
-
-        <div class="info-row">
-            <span class="info-label">
-                Invoice
-            </span>
-
-            <span class="info-value">
-                ${escapeHtml(receipt.invoice)}
-            </span>
-        </div>
-
-
-        <div class="info-row">
-            <span class="info-label">
-                Date
-            </span>
-
-            <span class="info-value">
-                ${escapeHtml(dateText)}
-            </span>
-        </div>
-
-
-        <div class="info-row">
-            <span class="info-label">
-                Payment
-            </span>
-
-            <span class="info-value">
-                ${escapeHtml(receipt.method)}
-            </span>
-        </div>
-
+        </section>
 
         <div class="divider"></div>
 
-
-        <!-- ITEMS -->
-
-        <div class="items-header">
-            <span>
-                ITEM
-            </span>
-
-            <span>
-                AMOUNT
-            </span>
-        </div>
-
-
-        ${itemsHtml}
-
-
-        <div class="divider"></div>
-
-
-        <!-- TOTALS -->
-
-        <div class="total-row">
-            <span>
-                Subtotal
-            </span>
-
-            <strong>
-                ${formatCurrency(
-                    receipt.subtotal ??
-                    receipt.total
-                )}
-            </strong>
-        </div>
-
-
-        <div class="total-row">
-            <span>
-                Discount
-            </span>
-
-            <strong>
-                ${formatCurrency(
-                    receipt.discount ?? 0
-                )}
-            </strong>
-        </div>
-
-
-        <div class="total-row">
-            <span>
-                Tax
-            </span>
-
-            <strong>
-                ${formatCurrency(
-                    receipt.tax ?? 0
-                )}
-            </strong>
-        </div>
-
-
-        <div class="double-divider"></div>
-
-
-        <div class="grand-total">
-            <span>
-                TOTAL
-            </span>
-
-            <span>
-                ${formatCurrency(receipt.total)}
-            </span>
-        </div>
-
-
-        <div class="double-divider"></div>
-
-
-        <!-- PAYMENT -->
-
-        <div class="total-row">
-            <span>
-                Amount Received
-            </span>
-
-            <strong>
-                ${formatCurrency(
-                    receipt.amountReceived
-                )}
-            </strong>
-        </div>
-
-
-        <div class="total-row">
-            <span>
-                Change
-            </span>
-
-            <strong>
-                ${formatCurrency(
-                    receipt.change
-                )}
-            </strong>
-        </div>
-
-
-        <div class="divider"></div>
-
-
-        <!-- FOOTER -->
-
-        <div class="footer">
-
-            <div class="thank-you">
-                Thank you for your purchase!
+        <section class="items">
+            <div class="items-header">
+                <span>Item / Quantity</span>
+                <span>Amount</span>
             </div>
 
-            <div>
-                Please come again.
+            ${itemsHtml}
+        </section>
+
+        <section class="totals">
+            <div class="total-row">
+                <span>Subtotal</span>
+                <strong>${money(subtotal)}</strong>
             </div>
 
-            <div class="footer-small">
-                This serves as your official receipt.
+            ${discount > 0 ? `
+                <div class="total-row">
+                    <span>Discount</span>
+                    <strong>-${money(discount)}</strong>
+                </div>
+            ` : ""}
+
+            <div class="total-row">
+                <span>VAT Included (${vatRate}%)</span>
+                <strong>${money(vat)}</strong>
             </div>
 
-            <div class="barcode">
-                *${escapeHtml(receipt.invoice)}*
+            <div class="total-row">
+                <span>VAT-exclusive Sales</span>
+                <strong>${money(Math.max(subtotal - discount - vat, 0))}</strong>
             </div>
 
-        </div>
+            <div class="grand-total">
+                <span>TOTAL</span>
+                <strong>${money(total)}</strong>
+            </div>
+        </section>
 
-    </div>
+        <section class="payment-section">
+            <div class="total-row">
+                <span>Cash Received</span>
+                <strong>${money(cashReceived)}</strong>
+            </div>
 
+            <div class="total-row">
+                <span>Change</span>
+                <strong>${money(change)}</strong>
+            </div>
+
+            <div class="total-row">
+                <span>Payment Status</span>
+                <strong>PAID</strong>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="divider"></div>
+
+            <p>Thank you for your purchase!</p>
+            <p>Please keep this receipt for your records.</p>
+
+            <div class="invoice-code">
+                ${escapeHtml(receipt.invoice || "")}
+            </div>
+
+            <p>*** END OF RECEIPT ***</p>
+        </footer>
+
+    </main>
+
+    <script>
+        window.onload = function () {
+            window.focus();
+            setTimeout(function () {
+                window.print();
+            }, 300);
+        };
+
+        window.onafterprint = function () {
+            window.close();
+        };
+    <\/script>
 </body>
 </html>
     `);
 
     receiptWindow.document.close();
-
-    receiptWindow.focus();
-
-    setTimeout(() => {
-        receiptWindow.print();
-    }, 500);
 }
-    /*
+
+/*
     |--------------------------------------------------------------------------
     | DOWNLOAD RECEIPT
     |--------------------------------------------------------------------------
@@ -3439,8 +3275,8 @@ function downloadReceipt() {
     | EVENT LISTENERS
     |--------------------------------------------------------------------------
     */
-    
-    
+
+
 if (applyDiscountButton) {
     applyDiscountButton.addEventListener(
         "click",
