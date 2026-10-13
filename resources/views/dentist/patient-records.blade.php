@@ -2950,7 +2950,8 @@
 </script>
 
 <script
-    src="{{ asset('js/dentist/dentist-patientrecords.js') }}"
+src="{{ asset('js/dentist/dentist-patientrecords.js') }}?v={{ filemtime(public_path('js/dentist/dentist-patientrecords.js')) }}"
+
     defer
 ></script>
 

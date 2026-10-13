@@ -588,21 +588,17 @@ if (
     }
 }
 
-const appointments =
-    patient.appointments || [];
+const validAppointments = Array.isArray(patient.appointments)
+    ? [...patient.appointments]
+    : [];
 
-        validAppointments.sort(
-            (a, b) =>
-                new Date(
-                    b.appointment_date
-                ) -
-                new Date(
-                    a.appointment_date
-                )
-        );
+validAppointments.sort(
+    (a, b) =>
+        new Date(b.appointment_date) -
+        new Date(a.appointment_date)
+);
 
-        const lastVisit =
-            validAppointments[0];
+const lastVisit = validAppointments[0];
 
         setText(
             "recordPatientLastVisit",
@@ -620,7 +616,7 @@ const appointments =
         );
 
         renderAppointments(
-            appointments
+	 validAppointments
         );
 
         renderPrescriptions(
