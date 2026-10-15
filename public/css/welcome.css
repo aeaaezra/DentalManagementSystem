@@ -795,21 +795,22 @@ img { max-width: 100%; display: block; }
   padding: 4.5rem 0 2rem;
 }
 
+```css
 .ss-footer-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2.5rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
 }
-
-
 
 @media (min-width: 800px) {
-    .ss-footer-grid {
-        grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
-        gap: 2rem;
-        align-items: start;
+    footer.ss-footer .ss-footer-grid {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)) !important;
+        gap: 2rem !important;
+        align-items: start !important;
     }
 }
+
 
 
 
