@@ -631,21 +631,25 @@
     </div>
 
 </section>
-{{-- ==========================================================
-     FOOTER
-========================================================== --}}
-
+<!-- FOOTER -->
 <footer class="ss-footer">
     <div class="ss-container">
+
         <div class="ss-footer-grid">
 
-            <div>
-                <div class="ss-footer-brand">Shine & Smile</div>
+            {{-- BRAND --}}
+            <div class="ss-footer-brand-column">
+                <div class="ss-footer-brand">
+                    Shine &amp; Smile
+                </div>
+
                 <p>Dental Management System</p>
             </div>
 
-            <div>
+            {{-- QUICK LINKS --}}
+            <div class="ss-footer-column">
                 <h4>Quick Links</h4>
+
                 <ul>
                     <li><a href="#home">Home</a></li>
                     <li><a href="#about">About</a></li>
@@ -654,328 +658,51 @@
                 </ul>
             </div>
 
-            <div>
+            {{-- ACCOUNT --}}
+            <div class="ss-footer-column">
                 <h4>Account</h4>
+
                 <ul>
-                    <li><a href="{{ route('appointments.login') }}">Login</a></li>
-                    <li><a href="{{ route('appointments.create') }}">Book Appointment</a></li>
+                    <li>
+                        <a href="{{ route('appointments.login') }}">
+                            Login
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('appointments.create') }}">
+                            Book Appointment
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            {{-- LEGAL --}}
+            <div class="ss-footer-column">
+                <h4>Legal</h4>
+
+                <ul>
+                    <li>
+                        <a href="{{ route('privacy.policy') }}">
+                            Privacy Policy
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('terms.conditions') }}">
+                            Terms &amp; Conditions
+                        </a>
+                    </li>
                 </ul>
             </div>
 
         </div>
 
         <div class="ss-footer-bottom">
-            &copy; 2026 Shine & Smile Dental Management System. All Rights Reserved.
+            &copy; {{ date('Y') }} Shine &amp; Smile Dental Management System.
+            All Rights Reserved.
         </div>
+
     </div>
-
-	<div>
-	    <h3 class="footer-title">LEGAL</h3>
-
-	    <ul class="footer-links">
-	        <li>
-	            <a href="{{ route('privacy.policy') }}">
-	                Privacy Policy
-	            </a>
-	        </li>
-
-	        <li>
-	            <a href="{{ route('terms.conditions') }}">
-	                Terms & Conditions
-	            </a>
-	        </li>
-	    </ul>
-	</div>
-
-<footer class="ss-footer">
-    <div class="ss-container">
-        <div class="ss-footer-grid">
-
-            <div>
-                <div class="ss-footer-brand">Shine & Smile</div>
-                <p>Dental Management System</p>
-            </div>
-
-            <div>
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#services">Services</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </div>
-
-            <div>
-                <h4>Account</h4>
-                <ul>
-                    <li><a href="{{ route('appointments.login') }}">Login</a></li>
-                    <li><a href="{{ route('appointments.create') }}">Book Appointment</a></li>
-                </ul>
-            </div>
-
-        </div>
-
-        <div class="ss-footer-bottom">
-            &copy; 2026 Shine & Smile Dental Management System. All Rights Reserved.
-        </div>
-    </div>
-
-	<div>
-	    <h3 class="footer-title">LEGAL</h3>
-
-	    <ul class="footer-links">
-	        <li>
-	            <a href="{{ route('privacy.policy') }}">
-	                Privacy Policy
-	            </a>
-	        </li>
-
-	        <li>
-	            <a href="{{ route('terms.conditions') }}">
-	                Terms & Conditions
-	            </a>
-	        </li>
-	    </ul>
-	</div>
-
-<footer class="ss-footer">
-    <div class="ss-container">
-        <div class="ss-footer-grid">
-
-            <div>
-                <div class="ss-footer-brand">Shine & Smile</div>
-                <p>Dental Management System</p>
-            </div>
-
-            <div>
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#services">Services</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </div>
-
-            <div>
-                <h4>Account</h4>
-                <ul>
-                    <li><a href="{{ route('appointments.login') }}">Login</a></li>
-                    <li><a href="{{ route('appointments.create') }}">Book Appointment</a></li>
-                </ul>
-            </div>
-
-        </div>
-
-        <div class="ss-footer-bottom">
-            &copy; 2026 Shine & Smile Dental Management System. All Rights Reserved.
-        </div>
-    </div>
-
-	<div>
-	    <h3 class="footer-title">LEGAL</h3>
-
-	    <ul class="footer-links">
-	        <li>
-	            <a href="{{ route('privacy.policy') }}">
-	                Privacy Policy
-	            </a>
-	        </li>
-
-	        <li>
-	            <a href="{{ route('terms.conditions') }}">
-	                Terms & Conditions
-	            </a>
-	        </li>
-	    </ul>
-	</div>
-
-<footer class="ss-footer">
-    <div class="ss-container">
-        <div class="ss-footer-grid">
-
-            <div>
-                <div class="ss-footer-brand">Shine & Smile</div>
-                <p>Dental Management System</p>
-            </div>
-
-            <div>
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#services">Services</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </div>
-
-            <div>
-                <h4>Account</h4>
-                <ul>
-                    <li><a href="{{ route('appointments.login') }}">Login</a></li>
-                    <li><a href="{{ route('appointments.create') }}">Book Appointment</a></li>
-                </ul>
-            </div>
-
-        </div>
-
-        <div class="ss-footer-bottom">
-            &copy; 2026 Shine & Smile Dental Management System. All Rights Reserved.
-        </div>
-    </div>
-
-	<div>
-	    <h3 class="footer-title">LEGAL</h3>
-
-	    <ul class="footer-links">
-	        <li>
-	            <a href="{{ route('privacy.policy') }}">
-	                Privacy Policy
-	            </a>
-	        </li>
-
-	        <li>
-	            <a href="{{ route('terms.conditions') }}">
-	                Terms & Conditions
-	            </a>
-	        </li>
-	    </ul>
-	</div>
-
-<footer class="ss-footer">
-    <div class="ss-container">
-        <div class="ss-footer-grid">
-
-            <div>
-                <div class="ss-footer-brand">Shine & Smile</div>
-                <p>Dental Management System</p>
-            </div>
-
-            <div>
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#services">Services</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </div>
-
-            <div>
-                <h4>Account</h4>
-                <ul>
-                    <li><a href="{{ route('appointments.login') }}">Login</a></li>
-                    <li><a href="{{ route('appointments.create') }}">Book Appointment</a></li>
-                </ul>
-            </div>
-
-        </div>
-
-        <div class="ss-footer-bottom">
-            &copy; 2026 Shine & Smile Dental Management System. All Rights Reserved.
-        </div>
-    </div>
-
-	<div>
-	    <h3 class="footer-title">LEGAL</h3>
-
-	    <ul class="footer-links">
-	        <li>
-	            <a href="{{ route('privacy.policy') }}">
-	                Privacy Policy
-	            </a>
-	        </li>
-
-	        <li>
-	            <a href="{{ route('terms.conditions') }}">
-	                Terms & Conditions
-	            </a>
-	        </li>
-	    </ul>
-	</div>
-
-<footer class="ss-footer">
-<div class="ss-footer-grid">
-
-    {{-- BRAND --}}
-    <div>
-        <div class="ss-footer-brand">
-            Shine & Smile
-        </div>
-
-        <p>
-            Dental Management System
-        </p>
-    </div>
-
-
-    {{-- QUICK LINKS --}}
-    <div>
-        <h4>Quick Links</h4>
-
-        <ul>
-            <li>
-                <a href="#home">Home</a>
-            </li>
-
-            <li>
-                <a href="#about">About</a>
-            </li>
-
-            <li>
-                <a href="#services">Services</a>
-            </li>
-
-            <li>
-                <a href="#contact">Contact</a>
-            </li>
-        </ul>
-    </div>
-
-
-    {{-- ACCOUNT --}}
-    <div>
-        <h4>Account</h4>
-
-        <ul>
-            <li>
-                <a href="{{ route('appointments.login') }}">
-                    Login
-                </a>
-            </li>
-
-            <li>
-                <a href="{{ route('appointments.create') }}">
-                    Book Appointment
-                </a>
-            </li>
-        </ul>
-    </div>
-
-
-    {{-- LEGAL --}}
-    <div>
-        <h4>Legal</h4>
-
-        <ul>
-            <li>
-                <a href="{{ route('privacy.policy') }}">
-                    Privacy Policy
-                </a>
-            </li>
-
-            <li>
-                <a href="{{ route('terms.conditions') }}">
-                    Terms & Conditions
-                </a>
-            </li>
-        </ul>
-    </div>
-
-</div>
 </footer>
-
 <script src="{{ asset('js/appointment/welcome.js') }}"></script>
 
 </body>

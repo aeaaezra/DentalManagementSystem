@@ -69,15 +69,39 @@
 /* ==========================================================
    FOOTER - LEGAL LINKS
 ========================================================== */
+/* FOOTER LAYOUT */
+.ss-footer {
+    display: block;
+    width: 100%;
+    padding: 64px 0 24px;
+    background: #080808;
+    color: #f5f5f5;
+    box-sizing: border-box;
+}
+
+.ss-footer .ss-container {
+    width: min(100% - 48px, 1400px);
+    margin-inline: auto;
+}
 
 .ss-footer-grid {
     display: grid;
     grid-template-columns: 1.4fr 1fr 1fr 1fr;
     gap: 3rem;
+    align-items: start;
+}
+
+.ss-footer-grid > div {
+    min-width: 0;
 }
 
 .ss-footer-grid h4 {
-    margin-bottom: 1.2rem;
+    margin: 0 0 1.2rem;
+    color: #f5f5f5;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
 }
 
 .ss-footer-grid ul {
@@ -87,51 +111,64 @@
 }
 
 .ss-footer-grid li {
-    margin-bottom: 0.8rem;
+    margin: 0 0 0.8rem;
 }
 
 .ss-footer-grid a {
-    color: var(--c-silver);
+    color: var(--c-silver, #a3a3a3);
     text-decoration: none;
-    transition: color 0.25s ease;
+    transition: color 0.2s ease;
 }
 
 .ss-footer-grid a:hover {
     color: #ffffff;
 }
 
-.ss-footer-bottom a {
-    color: var(--c-silver);
-    text-decoration: none;
-    transition: color 0.25s ease;
-}
-
-.ss-footer-bottom a:hover {
+.ss-footer-brand {
+    margin-bottom: 1rem;
     color: #ffffff;
+    font-family: 'Fraunces', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
 }
 
-/* Tablet */
+.ss-footer-brand-column p {
+    margin: 0;
+    color: var(--c-silver, #a3a3a3);
+}
+
+.ss-footer-bottom {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.10);
+    color: #858585;
+    font-size: 0.875rem;
+    text-align: center;
+}
 
 @media (max-width: 900px) {
-
     .ss-footer-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 2.5rem;
     }
-
 }
 
-/* Mobile */
-
 @media (max-width: 600px) {
+    .ss-footer {
+        padding-top: 40px;
+    }
+
+    .ss-footer .ss-container {
+        width: calc(100% - 32px);
+    }
 
     .ss-footer-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
         gap: 2rem;
     }
 
     .ss-footer-bottom {
-        text-align: center;
+        margin-top: 28px;
+        line-height: 1.7;
     }
-
 }
