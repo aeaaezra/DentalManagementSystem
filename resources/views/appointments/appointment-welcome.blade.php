@@ -646,10 +646,8 @@
                 <p>Dental Management System</p>
             </div>
 
-            {{-- QUICK LINKS --}}
             <div class="ss-footer-column">
-                <h4>Quick Links</h4>
-
+                <h4>QUICK LINKS</h4>
                 <ul>
                     <li><a href="#home">Home</a></li>
                     <li><a href="#about">About</a></li>
@@ -658,51 +656,31 @@
                 </ul>
             </div>
 
-            {{-- ACCOUNT --}}
             <div class="ss-footer-column">
-                <h4>Account</h4>
-
+                <h4>ACCOUNT</h4>
                 <ul>
-                    <li>
-                        <a href="{{ route('appointments.login') }}">
-                            Login
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('appointments.create') }}">
-                            Book Appointment
-                        </a>
-                    </li>
+                    <li><a href="{{ route('appointments.login') }}">Login</a></li>
+                    <li><a href="{{ route('appointments.create') }}">Book Appointment</a></li>
                 </ul>
             </div>
 
-            {{-- LEGAL --}}
             <div class="ss-footer-column">
-                <h4>Legal</h4>
-
+                <h4>LEGAL</h4>
                 <ul>
-                    <li>
-                        <a href="{{ route('privacy.policy') }}">
-                            Privacy Policy
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('terms.conditions') }}">
-                            Terms &amp; Conditions
-                        </a>
-                    </li>
+                    <li><a href="{{ route('privacy.policy') }}">Privacy Policy</a></li>
+                    <li><a href="{{ route('terms.conditions') }}">Terms &amp; Conditions</a></li>
                 </ul>
             </div>
 
         </div>
 
         <div class="ss-footer-bottom">
-            &copy; {{ date('Y') }} Shine &amp; Smile Dental Management System.
-            All Rights Reserved.
+            &copy; 2026 Shine &amp; Smile Dental Management System. All Rights Reserved.
         </div>
 
     </div>
 </footer>
+
 <script src="{{ asset('js/appointment/welcome.js') }}"></script>
 
 </body>
