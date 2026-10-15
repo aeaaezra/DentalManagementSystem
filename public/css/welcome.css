@@ -802,6 +802,7 @@ img { max-width: 100%; display: block; }
     gap: 2.5rem;
 }
 
+
 @media (min-width: 800px) {
     footer.ss-footer .ss-footer-grid {
         display: grid !important;
@@ -809,7 +810,13 @@ img { max-width: 100%; display: block; }
         gap: 2rem !important;
         align-items: start !important;
     }
+
+    footer.ss-footer .ss-footer-column:last-child {
+        grid-column: 4;
+        grid-row: 1;
+    }
 }
+
 
 
 
