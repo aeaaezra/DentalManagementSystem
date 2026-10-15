@@ -795,7 +795,7 @@ img { max-width: 100%; display: block; }
   padding: 4.5rem 0 2rem;
 }
 
-```css
+
 .ss-footer-grid {
     display: grid;
     grid-template-columns: 1fr;
