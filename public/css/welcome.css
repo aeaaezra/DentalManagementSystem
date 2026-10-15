@@ -802,15 +802,18 @@ img { max-width: 100%; display: block; }
 }
 
 
+
 @media (min-width: 800px) {
-  .ss-footer-grid {
-    grid-template-columns: 1.4fr 1fr 1fr 1fr;
-    align-items: start;
-    gap: 2rem;
-  }
+    .ss-footer-grid {
+        grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
+        gap: 2rem;
+        align-items: start;
+    }
 }
 
-}
+
+
+
 
 .ss-footer-brand {
   font-family: var(--font-display);
