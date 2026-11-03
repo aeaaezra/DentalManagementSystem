@@ -2,31 +2,74 @@
 
 namespace App\Filament\Resources\Orders\Tables;
 
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
+use App\Models\Orders;
+use App\Models\Products;
+use App\Models\ProductVariant;
+use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\BulkActionGroup;
+use Filament\Notifications\Notification;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 class OrdersTable
 {
+    private static function notifyOrderCustomer(Orders $order, string $title, string $message): void
+    {
+        $email = $order->customer?->email;
+
+        if (! $email) {
+            return;
+        }
+
+        $user = User::where('email', $email)->first();
+
+        if (! $user) {
+            return;
+        }
+
+        $user->notify(new \App\Notifications\OrderStatusNotification(
+            $title,
+            $message,
+            [
+                'order_id' => $order->getKey(),
+                'order_number' => $order->order_number,
+            ]
+        ));
+    }
+
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('order_no')
+                TextColumn::make('order_number')
                     ->label('Order No.')
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('customer_name')
-                    ->searchable(),
+                TextColumn::make('customer.full_name')
+                    ->label('Customer')
+                    ->searchable(query: function ($query, string $search) {
+                        $query->whereHas('customer', function ($customerQuery) use ($search) {
+                            $customerQuery
+                                ->where('first_name', 'like', "%{$search}%")
+                                ->orWhere('last_name', 'like', "%{$search}%")
+                                ->orWhere('email', 'like', "%{$search}%");
+                        });
+                    }),
 
                 TextColumn::make('contact_number')
                     ->label('Contact'),
 
-                TextColumn::make('total_amount')
+                TextColumn::make('final_amount')
+                    ->label('Total')
                     ->money('PHP'),
 
                 TextColumn::make('payment_method')
@@ -35,11 +78,12 @@ class OrdersTable
                 TextColumn::make('payment_status')
                     ->badge(),
 
-                TextColumn::make('status')
+                TextColumn::make('order_status')
+                    ->label('Order Status')
                     ->badge()
                     ->colors([
                         'warning' => 'pending',
-                        'info' => 'approved',
+                        'info' => 'confirmed',
                         'gray' => 'preparing',
                         'success' => 'completed',
                         'danger' => 'cancelled',
@@ -49,17 +93,449 @@ class OrdersTable
                     ->dateTime(),
             ])
             ->filters([
-                SelectFilter::make('status')
+                SelectFilter::make('order_status')
+                    ->label('Order Status')
                     ->options([
                         'pending' => 'Pending',
-                        'approved' => 'Approved',
+                        'confirmed' => 'Confirmed',
                         'preparing' => 'Preparing',
                         'completed' => 'Completed',
                         'cancelled' => 'Cancelled',
                     ]),
             ])
             ->recordActions([
-                EditAction::make(),
+                ActionGroup::make([
+                    Action::make('accept')
+                    ->label('Accept')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Accept this order?')
+                    ->modalDescription('This will change the order status from pending to confirmed.')
+                    ->visible(fn (Orders $record): bool => $record->order_status === 'pending' && ($record->cancellation_status ?? 'none') !== 'requested')
+                    ->action(function (Orders $record): void {
+                        $updated = DB::table('orders')
+                            ->where('id', $record->getKey())
+                            ->where('order_status', 'pending')
+                            ->update([
+                                'order_status' => 'confirmed',
+                                'delivery_stage' => 'order_confirmed',
+                                'updated_at' => now(),
+                            ]);
+
+                        if (! $updated) {
+                            Notification::make()
+                                ->warning()
+                                ->title('Order was not changed')
+                                ->body('This order is no longer pending. Refresh the table.')
+                                ->send();
+
+                            return;
+                        }
+
+                        $order = Orders::with(['customer', 'items.product', 'items.variant'])
+                            ->find($record->getKey());
+
+                        if ($order) {
+                            self::notifyOrderCustomer(
+                                $order,
+                                'Order confirmed',
+                                'Your order ' . $order->order_number . ' has been confirmed.'
+                            );
+                        }
+
+                        $email = $order?->customer?->email;
+
+                        if (! $email) {
+                            Notification::make()
+                                ->warning()
+                                ->title('Order accepted, email not sent')
+                                ->body('The order is confirmed, but the customer has no registered email address.')
+                                ->send();
+
+                            return;
+                        }
+
+                        try {
+                            Mail::send('emails.orders.confirmed', ['order' => $order], function ($message) use ($email, $order): void {
+                                $message->to($email)
+                                    ->subject('Order Confirmed - ' . $order->order_number);
+                            });
+
+                            Notification::make()
+                                ->success()
+                                ->title('Order accepted')
+                                ->body('The order was confirmed and the confirmation email was sent.')
+                                ->send();
+                        } catch (Throwable $exception) {
+                            report($exception);
+
+                            Notification::make()
+                                ->warning()
+                                ->title('Order accepted, email failed')
+                                ->body('The order was confirmed, but the email could not be sent. Check your mail configuration and Laravel logs.')
+                                ->send();
+                        }
+                    }),
+
+                Action::make('decline')
+                    ->label('Decline')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalHeading('Decline this order?')
+                    ->modalDescription('This will mark the order as cancelled. Stock and payment status will not be changed automatically.')
+                    ->visible(fn (Orders $record): bool => $record->order_status === 'pending' && ($record->cancellation_status ?? 'none') !== 'requested')
+                    ->action(function (Orders $record): void {
+                        $updated = DB::table('orders')
+                            ->where('id', $record->getKey())
+                            ->where('order_status', 'pending')
+                            ->update([
+                                'order_status' => 'cancelled',
+                                'updated_at' => now(),
+                            ]);
+
+                        if (! $updated) {
+                            Notification::make()
+                                ->warning()
+                                ->title('Order was not changed')
+                                ->body('This order is no longer pending. Refresh the table.')
+                                ->send();
+
+                            return;
+                        }
+
+                        $order = Orders::with(['customer', 'items.product', 'items.variant'])
+                            ->find($record->getKey());
+
+                        if ($order) {
+                            self::notifyOrderCustomer(
+                                $order,
+                                'Order cancelled',
+                                'Your order ' . $order->order_number . ' was cancelled by the clinic.'
+                            );
+                        }
+
+                        $email = $order?->customer?->email;
+
+                        if (! $email) {
+                            Notification::make()
+                                ->warning()
+                                ->title('Order declined, email not sent')
+                                ->body('The order is cancelled, but the customer has no registered email address.')
+                                ->send();
+
+                            return;
+                        }
+
+                        try {
+                            Mail::send('emails.orders.declined', ['order' => $order], function ($message) use ($email, $order): void {
+                                $message->to($email)
+                                    ->subject('Order Update - ' . $order->order_number);
+                            });
+
+                            Notification::make()
+                                ->success()
+                                ->title('Order declined')
+                                ->body('The order was cancelled and the customer was emailed.')
+                                ->send();
+                        } catch (Throwable $exception) {
+                            report($exception);
+
+                            Notification::make()
+                                ->warning()
+                                ->title('Order declined, email failed')
+                                ->body('The order was cancelled, but the email could not be sent. Check your mail configuration and Laravel logs.')
+                                ->send();
+                        }
+                    }),
+
+                Action::make('approveCancellation')
+                    ->label('Approve Cancellation')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Approve this cancellation?')
+                    ->modalDescription('This will cancel the order and restore the stock for its items. Stock will be restored only once.')
+                    ->visible(fn (Orders $record): bool =>
+                        ($record->cancellation_status ?? 'none') === 'requested'
+                    )
+                    ->action(function (Orders $record): void {
+                        try {
+                            $result = DB::transaction(function () use ($record): string {
+                                $order = Orders::whereKey($record->getKey())
+                                    ->lockForUpdate()
+                                    ->firstOrFail();
+
+                                if (($order->cancellation_status ?? 'none') !== 'requested') {
+                                    return 'already_reviewed';
+                                }
+
+                                if ($order->order_status !== 'pending') {
+                                    return 'not_pending';
+                                }
+
+                                $items = DB::table('order_items')
+                                    ->where('order_id', $order->getKey())
+                                    ->get();
+
+                                if ($items->isEmpty()) {
+                                    return 'no_items';
+                                }
+
+                                foreach ($items as $item) {
+                                    $quantity = (int) $item->quantity;
+
+                                    if ($quantity < 1) {
+                                        throw new \RuntimeException(
+                                            'Invalid order item quantity for order ' . $order->order_number
+                                        );
+                                    }
+
+                                    if ($item->variant_id !== null) {
+                                        $variant = ProductVariant::whereKey($item->variant_id)
+                                            ->lockForUpdate()
+                                            ->firstOrFail();
+
+                                        if ((int) $variant->product_id !== (int) $item->product_id) {
+                                            throw new \RuntimeException(
+                                                'Order item variant does not match its product.'
+                                            );
+                                        }
+
+                                        $variant->quantity = (int) $variant->quantity + $quantity;
+                                        $variant->save();
+                                    } else {
+                                        $product = Products::whereKey($item->product_id)
+                                            ->lockForUpdate()
+                                            ->firstOrFail();
+
+                                        $product->quantity = (int) $product->quantity + $quantity;
+                                        $product->save();
+                                    }
+                                }
+
+                                $order->order_status = 'cancelled';
+                                $order->cancellation_status = 'approved';
+                                $order->save();
+
+                                return 'approved';
+                            });
+
+                            if ($result !== 'approved') {
+                                Notification::make()
+                                    ->warning()
+                                    ->title('Cancellation not approved')
+                                    ->body(match ($result) {
+                                        'already_reviewed' => 'This cancellation request has already been reviewed.',
+                                        'not_pending' => 'The order is no longer pending.',
+                                        'no_items' => 'No order items were found. No stock was changed.',
+                                        default => 'The order could not be updated.',
+                                    })
+                                    ->send();
+
+                                return;
+                            }
+
+                            $approvedOrder = Orders::with('customer')->find($record->getKey());
+
+                            if ($approvedOrder) {
+                                self::notifyOrderCustomer(
+                                    $approvedOrder,
+                                    'Cancellation approved',
+                                    'Your cancellation request for order ' . $approvedOrder->order_number . ' was approved.'
+                                );
+                            }
+
+                            Notification::make()
+                                ->success()
+                                ->title('Cancellation approved')
+                                ->body('The order was cancelled and its item stock was restored.')
+                                ->send();
+                        } catch (Throwable $exception) {
+                            report($exception);
+
+                            Notification::make()
+                                ->danger()
+                                ->title('Cancellation approval failed')
+                                ->body('The transaction was rolled back. Check the Laravel logs before retrying.')
+                                ->send();
+                        }
+                    }),
+
+                Action::make('rejectCancellation')
+                    ->label('Reject Cancellation')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalHeading('Reject this cancellation request?')
+                    ->modalDescription('The order will remain pending and its stock will not be changed.')
+                    ->visible(fn (Orders $record): bool =>
+                        ($record->cancellation_status ?? 'none') === 'requested'
+                    )
+                    ->action(function (Orders $record): void {
+                        $result = DB::transaction(function () use ($record): string {
+                            $order = Orders::whereKey($record->getKey())
+                                ->lockForUpdate()
+                                ->firstOrFail();
+
+                            if (($order->cancellation_status ?? 'none') !== 'requested') {
+                                return 'already_reviewed';
+                            }
+
+                            if ($order->order_status !== 'pending') {
+                                return 'not_pending';
+                            }
+
+                            $order->cancellation_status = 'rejected';
+                            $order->save();
+
+                            return 'rejected';
+                        });
+
+                        if ($result !== 'rejected') {
+                            Notification::make()
+                                ->warning()
+                                ->title('Cancellation not rejected')
+                                ->body(
+                                    $result === 'already_reviewed'
+                                        ? 'This cancellation request has already been reviewed.'
+                                        : 'The order is no longer pending.'
+                                )
+                                ->send();
+
+                            return;
+                        }
+
+                        Notification::make()
+                            ->success()
+                            ->title('Cancellation request rejected')
+                            ->body('The order remains pending and stock was not changed.')
+                            ->send();
+                    }),
+
+                Action::make('advanceDelivery')
+                    ->label(function (Orders $record): string {
+                        $nextStages = [
+                            'order_confirmed' => 'Order Packed',
+                            'order_packed' => 'Parcel Picked Up',
+                            'parcel_picked_up' => 'Sorting Facility',
+                            'sorting_facility' => 'In Transit',
+                            'in_transit' => 'Out for Delivery',
+                            'out_for_delivery' => 'Order Delivered',
+                        ];
+
+                        $next = $nextStages[$record->delivery_stage ?? 'order_confirmed'] ?? null;
+
+                        return $next ? 'Mark as ' . $next : 'Delivery Completed';
+                    })
+                    ->icon('heroicon-o-truck')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Advance delivery status?')
+                    ->modalDescription('This will move the order to the next delivery stage.')
+                    ->visible(fn (Orders $record): bool =>
+                        $record->order_status === 'confirmed'
+                        && in_array(
+                            $record->delivery_stage ?? 'order_confirmed',
+                            [
+                                'order_confirmed',
+                                'order_packed',
+                                'parcel_picked_up',
+                                'sorting_facility',
+                                'in_transit',
+                                'out_for_delivery',
+                            ],
+                            true
+                        )
+                        && ($record->cancellation_status ?? 'none') !== 'requested'
+                    )
+                    ->action(function (Orders $record): void {
+                        $nextStages = [
+                            'order_confirmed' => 'order_packed',
+                            'order_packed' => 'parcel_picked_up',
+                            'parcel_picked_up' => 'sorting_facility',
+                            'sorting_facility' => 'in_transit',
+                            'in_transit' => 'out_for_delivery',
+                            'out_for_delivery' => 'order_delivered',
+                        ];
+
+                        $updatedStage = null;
+
+                        $updated = DB::transaction(function () use ($record, $nextStages, &$updatedStage): bool {
+                            $order = Orders::whereKey($record->getKey())
+                                ->lockForUpdate()
+                                ->firstOrFail();
+
+                            $current = $order->delivery_stage ?? 'order_confirmed';
+
+                            if (
+                                $order->order_status !== 'confirmed'
+                                || ($order->cancellation_status ?? 'none') === 'requested'
+                                || ! isset($nextStages[$current])
+                            ) {
+                                return false;
+                            }
+
+                            $order->delivery_stage = $nextStages[$current];
+                            $order->save();
+                            $updatedStage = $order->delivery_stage;
+
+                            return true;
+                        });
+
+                        if (! $updated) {
+                            Notification::make()
+                                ->warning()
+                                ->title('Delivery status not updated')
+                                ->body('Check the order status, delivery stage, and cancellation request.')
+                                ->send();
+
+                            return;
+                        }
+
+                        $deliveryOrder = Orders::with('customer')->find($record->getKey());
+
+                        if ($deliveryOrder && $updatedStage) {
+                            $stageLabels = [
+                                'order_packed' => 'Order packed',
+                                'parcel_picked_up' => 'Parcel picked up',
+                                'sorting_facility' => 'Arrived at sorting facility',
+                                'in_transit' => 'Order in transit',
+                                'out_for_delivery' => 'Out for delivery',
+                                'order_delivered' => 'Order delivered',
+                            ];
+
+                            self::notifyOrderCustomer(
+                                $deliveryOrder,
+                                'Delivery update',
+                                'Your order ' . $deliveryOrder->order_number . ': ' .
+                                    ($stageLabels[$updatedStage] ?? 'Delivery status updated') . '.'
+                            );
+                        }
+
+                        Notification::make()
+                            ->success()
+                            ->title('Delivery status updated')
+                            ->body('The order has advanced to the next delivery stage.')
+                            ->send();
+                    }),
+
+                Action::make('print')
+                    ->label('Print Details')
+                    ->icon('heroicon-o-printer')
+                    ->color('info')
+                    ->modalHeading('Print Order Details')
+                    ->modalWidth('5xl')
+                    ->modalContent(fn (Orders $record) => view(
+                        'filament.resources.orders.print-modal',
+                        ['order' => $record]
+                    ))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close'),
+
+                    EditAction::make(),
+                ])->icon('heroicon-m-ellipsis-vertical')->label('')->button(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

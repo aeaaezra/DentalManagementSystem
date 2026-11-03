@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Shine & Smile Dental | Your Smile. Our Technology.</title>
+    <title>Shine & Smile Dental Clinic | Your Smile. Our Technology.</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -36,7 +36,8 @@
             <a href="#about">About</a>
             <a href="#services">Services</a>
             <a href="#doctors">Doctors</a>
-            <a href="#contact">Contact</a>
+            <a href="#location">Location</a>
+	    <a href="#contact">Contact</a>
         </div>
 
         <div class="ss-nav-actions">
@@ -91,10 +92,15 @@
             Experience smarter, simpler, and more connected dental care — from booking to treatment, all in one place.
         </p>
 
-        <div class="ss-hero-actions">
-            <a href="{{ route('appointments.login') }}" class="ss-btn ss-btn--solid">Book an Appointment</a>
+<div class="ss-hero-actions">
+    <button
+        type="button"
+        class="ss-btn ss-btn--solid"
+        data-open-appointment-modal>
+        Book an Appointment
+    </button>
+</div>
 
-        </div>
     </div>
 
     <div class="ss-scroll-cue" aria-hidden="true">
@@ -154,14 +160,14 @@
         <div class="ss-services-grid">
             @php
                 $services = [
-                    ['01', 'General Dentistry', 'Routine exams, cleanings, and preventive care to keep every visit simple.'],
-                    ['02', 'Orthodontics', 'Braces and alignment plans built around your bite and your timeline.'],
-                    ['03', 'Dental Cleaning', 'Professional cleaning that clears plaque and tartar beyond daily brushing.'],
-                    ['04', 'Restorative Dentistry', 'Fillings, crowns, and repairs that bring damaged teeth back to full function.'],
+                    ['01', 'Consultation', 'Routine exams, cleanings, and preventive care to keep every visit simple.'],
+                    ['02', 'Crowns and Briges', 'Braces and alignment plans built around your bite and your timeline.'],
+                    ['03', 'Dental Whitening', 'Professional cleaning that clears plaque and tartar beyond daily brushing.'],
+                    ['04', 'Esthetics', 'Fillings, crowns, and repairs that bring damaged teeth back to full function.'],
                     ['05', 'Endodontics', 'Root canal therapy focused on saving teeth and easing pain fast.'],
-                    ['06', 'Prosthodontics', 'Bridges, dentures, and implants for a complete, confident smile.'],
-                    ['07', 'Oral Surgery', 'Extractions and surgical care handled with precision and comfort in mind.'],
-                    ['08', 'Cosmetic Dentistry', 'Whitening, veneers, and bonding designed around how you want to smile.'],
+                    ['06', 'Implant Supported Restorations', 'Bridges, dentures, and implants for a complete, confident smile.'],
+                    ['07', 'Oral Prophalyxis', 'Extractions and surgical care handled with precision and comfort in mind.'],
+                    ['08', 'Oral Surgery', 'Whitening, veneers, and bonding designed around how you want to smile.'],
                 ];
             @endphp
 
@@ -193,8 +199,17 @@
             <span class="is-accent">Shine?</span>
         </h2>
         <p class="ss-reveal">Book your dental appointment in just a few steps.</p>
-        <a href="{{ route('appointments.create') }}" class="ss-btn ss-btn--solid ss-reveal">Book an Appointment</a>
-    </div>
+    
+<div class="ss-hero-actions">
+    <button
+        type="button"
+        class="ss-btn ss-btn--solid"
+        data-open-appointment-modal>
+        Book an Appointment
+    </button>
+</div
+
+	</div>
 </section>
 
 {{-- ==========================================================
@@ -273,7 +288,8 @@
                     </div>
                 @endforeach
             @else
-                @foreach(['Dr. Reyes' => 'General Dentistry', 'Dr. Santos' => 'Orthodontics', 'Dr. Dela Cruz' => 'Cosmetic Dentistry'] as $name => $spec)
+                @foreach(['Dr. Vivian C. Suarez' => 'General Dentistry', 'Dr. Chiarra Alyssa C. Suarez' => 'Orthodontics', 'Dr. Charmy Soncio' => 'Cosmetic Dentistry', 'Dr. Myrna Balogo
+ ' => 'Esthethic' ] as $name => $spec)
                     <div class="ss-doctor-card ss-reveal">
                         <div class="ss-doctor-avatar">{{ substr($name, 4, 1) }}</div>
                         <h3>{{ $name }}</h3>
@@ -416,10 +432,16 @@
         <p class="ss-reveal" style="margin-top:1.5rem;color:var(--c-silver);max-width:36ch;">
             Take the first step toward better dental care.
         </p>
-        <div class="ss-final-cta-actions">
-            <a href="{{ route('appointments.create') }}" class="ss-btn ss-btn--solid ss-reveal">Book an Appointment</a>
-            <a href="{{ route('appointments.login') }}" class="ss-btn ss-btn--ghost ss-reveal">Login</a>
-        </div>
+
+<div class="ss-hero-actions">
+    <button
+        type="button"
+        class="ss-btn ss-btn--solid"
+        data-open-appointment-modal>
+        Book an Appointment
+    </button>
+</div
+
     </div>
 </section>
 
@@ -455,7 +477,7 @@
                 <div class="ss-contact-info-item">
                     <div>
                         <span class="ss-label">Hours</span>
-                        <p>Mon – Fri: 8AM – 6PM<br>Saturday: 9AM – 2PM</p>
+                        <p>Mon – Fri: 8AM – 4PM<br>Saturday: 9AM – 4PM</p>
                     </div>
                 </div>
 
@@ -682,6 +704,155 @@
 </footer>
 
 <script src="{{ asset('js/appointment/welcome.js') }}"></script>
+
+
+{{-- Full appointment booking modal --}}
+<div id="ssAppointmentModal" class="ss-appointment-modal"
+     aria-hidden="true">
+    <div class="ss-appointment-backdrop" data-close-appointment-modal></div>
+
+    <section class="ss-appointment-dialog" role="dialog"
+             aria-modal="true" aria-labelledby="ssAppointmentTitle">
+        <header class="ss-appointment-header">
+            <div>
+                <span class="ss-appointment-eyebrow">SHINE &amp; SMILE DENTAL CLINIC</span>
+                <h2 id="ssAppointmentTitle">Book an Appointment</h2>
+                <p>Complete your patient information and appointment details.</p>
+            </div>
+            <button type="button" class="ss-appointment-close"
+                    data-close-appointment-modal aria-label="Close modal">&times;</button>
+        </header>
+
+        <iframe id="ssAppointmentFrame"
+                class="ss-appointment-frame"
+                src="about:blank"
+                data-src="{{ route('appointments.guest.create') }}"
+                title="Dental appointment booking form"></iframe>
+    </section>
+</div>
+
+<style>
+.ss-appointment-modal {
+    position: fixed; inset: 0; z-index: 2147483000;
+    display: none; align-items: center; justify-content: center;
+    padding: 18px;
+}
+.ss-appointment-modal.is-open { display: flex; }
+.ss-appointment-backdrop {
+    position: absolute; inset: 0;
+    background: rgba(24, 12, 20, .74);
+    backdrop-filter: blur(5px);
+}
+.ss-appointment-dialog {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column;
+    width: min(1440px, 100%);
+    height: min(94vh, 1050px); height: min(94dvh, 1050px);
+    overflow: hidden; background: #fff;
+    border: 1px solid #f1dce5; border-radius: 22px;
+    box-shadow: 0 28px 100px rgba(0,0,0,.3);
+    animation: ssAppointmentEnter .2s ease-out;
+}
+.ss-appointment-header {
+    flex-shrink: 0; display: flex; align-items: center;
+    justify-content: space-between; gap: 18px;
+    padding: 18px 26px; background: white;
+    border-bottom: 1px solid #f3e5eb;
+}
+.ss-appointment-eyebrow {
+    color: #df2366; font-size: 10px;
+    font-weight: 700; letter-spacing: .16em;
+}
+.ss-appointment-header h2 {
+    margin: 5px 0; color: #24202a;
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(20px, 2vw, 28px);
+}
+.ss-appointment-header p {
+    margin: 0; color: #77717c; font-size: 13px;
+}
+.ss-appointment-close {
+    flex-shrink: 0; width: 42px; height: 42px;
+    border: 1px solid #f0dce5; border-radius: 50%;
+    background: #fff5f9; color: #d91f62;
+    font-size: 29px; line-height: 1; cursor: pointer;
+}
+.ss-appointment-close:hover { background: #df2366; color: white; }
+.ss-appointment-frame {
+    display: block; flex: 1; width: 100%;
+    min-height: 0; border: 0; background: white;
+}
+body.ss-appointment-modal-open { overflow: hidden; }
+@keyframes ssAppointmentEnter {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@media(max-width:640px) {
+    .ss-appointment-modal { padding: 0; }
+    .ss-appointment-dialog {
+        width: 100%; height: 100%; height: 100dvh;
+        border: 0; border-radius: 0;
+    }
+    .ss-appointment-header { padding: 14px; gap: 10px; }
+    .ss-appointment-header p { max-width: 250px; font-size: 12px; }
+    .ss-appointment-close { width: 38px; height: 38px; }
+}
+@media(prefers-reduced-motion:reduce) {
+    .ss-appointment-dialog { animation: none; }
+}
+</style>
+
+<script>
+(function () {
+    const modal = document.getElementById('ssAppointmentModal');
+    if (!modal || modal.dataset.initialized) return;
+    modal.dataset.initialized = 'true';
+
+    const frame = document.getElementById('ssAppointmentFrame');
+    let previousFocus = null;
+
+    function openModal() {
+        previousFocus = document.activeElement;
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('ss-appointment-modal-open');
+
+        if (frame && frame.getAttribute('src') === 'about:blank') {
+            frame.setAttribute('src', frame.dataset.src);
+        }
+
+        modal.querySelector('.ss-appointment-close').focus();
+    }
+
+    function closeModal() {
+        modal.classList.remove('is-open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('ss-appointment-modal-open');
+
+        if (previousFocus) previousFocus.focus();
+    }
+
+    document.querySelectorAll('[data-open-appointment-modal]')
+        .forEach(button => button.addEventListener('click', openModal));
+
+    modal.querySelectorAll('[data-close-appointment-modal]')
+        .forEach(button => button.addEventListener('click', closeModal));
+
+    // Allow the same-origin appointment iframe to request closing this modal.
+    window.addEventListener('message', event => {
+        if (event.origin !== window.location.origin) return;
+        if (event.data && event.data.type === 'ss-appointment-close') {
+            closeModal();
+        }
+    });
+
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && modal.classList.contains('is-open')) {
+            closeModal();
+        }
+    });
+})();
+</script>
 
 </body>
 </html>

@@ -10,22 +10,41 @@ class Orders extends Model
     protected $table = 'orders';
 
     protected $fillable = [
-        'order_no',
-        'customer_name',
-        'contact_number',
-        'address',
+        'order_number',
+        'customer_id',
+        'order_date',
         'total_amount',
+        'shipping_fee',
+        'discount_amount',
+        'final_amount',
         'payment_method',
         'payment_status',
-        'status',
+        'order_status',
+        'delivery_stage',
+        'delivery_address',
+        'contact_number',
+        'notes',
+        'cancellation_status',
+        'cancellation_reason',
+        'cancellation_requested_at',
     ];
 
     protected $casts = [
+        'order_date' => 'datetime',
+        'cancellation_requested_at' => 'datetime',
         'total_amount' => 'decimal:2',
+        'shipping_fee' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
+        'final_amount' => 'decimal:2',
     ];
 
     public function items(): HasMany
     {
         return $this->hasMany(OrderItems::class, 'order_id');
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'customer_id');
     }
 }

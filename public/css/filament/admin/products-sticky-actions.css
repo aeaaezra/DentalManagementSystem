@@ -1,0 +1,86 @@
+/* Sticky action column for the Filament Products table only. */
+.fi-ta-content-ctn:has(table.fi-ta-table th.fi-ta-header-cell-product-name)
+  table.fi-ta-table thead th.fi-ta-actions-header-cell {
+    position: sticky;
+    right: 0;
+    z-index: 12;
+    background-color: var(--gray-50, #f9fafb);
+    box-shadow: -5px 0 8px -5px rgb(0 0 0 / 20%);
+}
+
+.fi-ta-content-ctn:has(table.fi-ta-table th.fi-ta-header-cell-product-name)
+  table.fi-ta-table tbody tr > td:last-child:has(.fi-ta-actions) {
+    position: sticky;
+    right: 0;
+    z-index: 10;
+    background-color: var(--gray-50, #f9fafb);
+    box-shadow: -5px 0 8px -5px rgb(0 0 0 / 20%);
+}
+
+/* Preserve a suitable background in dark mode. */
+.dark .fi-ta-content-ctn:has(table.fi-ta-table th.fi-ta-header-cell-product-name)
+  table.fi-ta-table thead th.fi-ta-actions-header-cell,
+.dark .fi-ta-content-ctn:has(table.fi-ta-table th.fi-ta-header-cell-product-name)
+  table.fi-ta-table tbody tr > td:last-child:has(.fi-ta-actions) {
+    background-color: var(--gray-900, #111827);
+}
+
+/* Keep the Orders Actions column pinned to the right while scrolling. */
+.fi-ta-content-ctn:has(table.fi-ta-table th.fi-ta-header-cell-order-number)
+  table.fi-ta-table thead th.fi-ta-actions-header-cell {
+    position: sticky !important;
+    right: 0 !important;
+    z-index: 12;
+    background: var(--gray-50, #f9fafb);
+    box-shadow: -5px 0 8px -5px rgb(0 0 0 / 25%);
+}
+
+.fi-ta-content-ctn:has(table.fi-ta-table th.fi-ta-header-cell-order-number)
+  table.fi-ta-table tbody tr > td:last-child:has(.fi-ta-actions) {
+    position: sticky !important;
+    right: 0 !important;
+    z-index: 10;
+    background: var(--gray-50, #f9fafb);
+    box-shadow: -5px 0 8px -5px rgb(0 0 0 / 25%);
+}
+
+.dark .fi-ta-content-ctn:has(table.fi-ta-table th.fi-ta-header-cell-order-number)
+  table.fi-ta-table thead th.fi-ta-actions-header-cell,
+.dark .fi-ta-content-ctn:has(table.fi-ta-table th.fi-ta-header-cell-order-number)
+  table.fi-ta-table tbody tr > td:last-child:has(.fi-ta-actions) {
+    background: var(--gray-900, #111827);
+}
+
+/* Keep the Appointments Actions column pinned to the right while scrolling. */
+.fi-ta-content-ctn:has(th.fi-ta-header-cell-appointment-date) th.fi-ta-actions-header-cell,
+.fi-ta-content-ctn:has(th.fi-ta-header-cell-appointment-date) td:has(.fi-ta-actions) {
+    position: sticky !important;
+    right: 0 !important;
+    z-index: 20;
+    background: var(--gray-50, #f9fafb);
+    box-shadow: -5px 0 8px -5px rgb(0 0 0 / 25%);
+}
+
+.dark .fi-ta-content-ctn:has(th.fi-ta-header-cell-appointment-date) th.fi-ta-actions-header-cell,
+.dark .fi-ta-content-ctn:has(th.fi-ta-header-cell-appointment-date) td:has(.fi-ta-actions) {
+    background: var(--gray-900, #111827);
+}
+
+/* Fix: keep the Orders Actions column sticky on the right. */
+.fi-ta-content-ctn:has(th.fi-ta-header-cell-order-number)
+  th.fi-ta-actions-header-cell,
+.fi-ta-content-ctn:has(th.fi-ta-header-cell-order-number)
+  td:has(.fi-ta-actions) {
+    position: sticky !important;
+    right: 0 !important;
+    z-index: 20 !important;
+    background: var(--gray-50, #f9fafb) !important;
+    box-shadow: -5px 0 8px -5px rgb(0 0 0 / 25%);
+}
+
+.dark .fi-ta-content-ctn:has(th.fi-ta-header-cell-order-number)
+  th.fi-ta-actions-header-cell,
+.dark .fi-ta-content-ctn:has(th.fi-ta-header-cell-order-number)
+  td:has(.fi-ta-actions) {
+    background: var(--gray-900, #111827) !important;
+}

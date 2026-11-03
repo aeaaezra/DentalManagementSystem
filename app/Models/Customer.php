@@ -10,55 +10,36 @@ class Customer extends Model
     use HasFactory;
 
     protected $fillable = [
-        'customer_code',
         'first_name',
         'last_name',
-        'middle_name',
-        'phone',
         'email',
+        'password',
+        'phone',
         'address',
-        'birthdate',
-        'gender',
-        'is_active',
-        'notes'
     ];
 
-    protected $casts = [
-        'birthdate' => 'date',
-        'is_active' => 'boolean'
+    protected $hidden = [
+        'password',
+        'remember_token',
     ];
 
-    /*
-    |--------------------------------------------------------------------------
-    | RELATIONSHIPS
-    |--------------------------------------------------------------------------
-    */
-
-    // CUSTOMER CARTS
     public function carts()
     {
         return $this->hasMany(Cart::class);
     }
 
-    // CUSTOMER SALES
     public function sales()
     {
         return $this->hasMany(PosSales::class, 'customer_id');
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | ACCESSORS
-    |--------------------------------------------------------------------------
-    */
+    public function orders()
+    {
+        return $this->hasMany(Orders::class, 'customer_id');
+    }
 
-    // FULL NAME
     public function getFullNameAttribute()
     {
-        return trim(
-            $this->first_name . ' ' .
-            $this->middle_name . ' ' .
-            $this->last_name
-        );
+        return trim(($this->first_name ?? '') . ' ' . ($this->last_name ?? ''));
     }
 }

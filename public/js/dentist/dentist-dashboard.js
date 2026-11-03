@@ -640,3 +640,189 @@ function initializeLogoutModal() {
 document.addEventListener("DOMContentLoaded", function () {
     initializeLogoutModal();
 });
+
+
+
+/* Patient details modal: fetch and safely render the existing JSON endpoint. */
+document.addEventListener("DOMContentLoaded", () => {
+    const modal = document.getElementById("patientDetailsModal");
+    const content = document.getElementById("patientDetailsContent");
+    const title = document.getElementById("patientDetailsTitle");
+    const subtitle = document.getElementById("patientDetailsSubtitle");
+
+    if (!modal || !content) return;
+
+    const text = (value) => {
+        if (value === null || value === undefined || value === "") return "Not provided";
+        if (typeof value === "boolean") return value ? "Yes" : "No";
+        if (typeof value === "object") return "Details available";
+        return String(value);
+    };
+
+    const addField = (grid, label, value) => {
+        const field = document.createElement("div");
+        field.className = "patient-details-field";
+        const caption = document.createElement("span");
+        caption.textContent = label;
+        const valueNode = document.createElement("strong");
+        valueNode.textContent = text(value);
+        field.append(caption, valueNode);
+        grid.appendChild(field);
+    };
+
+    const addSection = (heading, fields) => {
+        const section = document.createElement("section");
+        section.className = "patient-details-section";
+        const h3 = document.createElement("h3");
+        h3.textContent = heading;
+        section.appendChild(h3);
+
+        const grid = document.createElement("div");
+        grid.className = "patient-details-grid";
+        fields.forEach(([label, value]) => addField(grid, label, value));
+        section.appendChild(grid);
+        content.appendChild(section);
+    };
+
+    const formatDate = (value) => {
+        if (!value) return "Not available";
+        const date = new Date(value);
+        return Number.isNaN(date.getTime())
+            ? text(value)
+            : date.toLocaleString(undefined, {
+                year: "numeric", month: "short", day: "numeric"
+            });
+    };
+
+    const addEntries = (heading, entries, getFields) => {
+        const section = document.createElement("section");
+        section.className = "patient-details-section";
+        const h3 = document.createElement("h3");
+        h3.textContent = heading;
+        section.appendChild(h3);
+
+        const list = document.createElement("div");
+        list.className = "patient-details-list";
+
+        if (!Array.isArray(entries) || entries.length === 0) {
+            const empty = document.createElement("p");
+            empty.className = "patient-details-muted";
+            empty.textContent = "No records available.";
+            list.appendChild(empty);
+        } else {
+            entries.forEach((entry) => {
+                const card = document.createElement("div");
+                card.className = "patient-details-entry";
+                getFields(entry).forEach(([label, value]) => {
+                    const p = document.createElement("p");
+                    const strong = document.createElement("strong");
+                    strong.textContent = label + ": ";
+                    p.append(strong, document.createTextNode(text(value)));
+                    card.appendChild(p);
+                });
+                list.appendChild(card);
+            });
+        }
+
+        section.appendChild(list);
+        content.appendChild(section);
+    };
+
+    const closeModal = () => {
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+    };
+
+    modal.querySelectorAll("[data-patient-modal-close]").forEach((button) => {
+        button.addEventListener("click", closeModal);
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && modal.classList.contains("is-open")) {
+            closeModal();
+        }
+    });
+
+    document.querySelectorAll(".patient-view-button[data-patient-url]").forEach((button) => {
+        button.addEventListener("click", async () => {
+            modal.classList.add("is-open");
+            modal.setAttribute("aria-hidden", "false");
+            document.body.style.overflow = "hidden";
+            title.textContent = "Patient Details";
+            subtitle.textContent = "Loading patient record...";
+            content.replaceChildren();
+            const loading = document.createElement("p");
+            loading.textContent = "Loading patient record...";
+            content.appendChild(loading);
+
+            try {
+                const response = await fetch(button.dataset.patientUrl, {
+                    headers: { "Accept": "application/json" },
+                    credentials: "same-origin"
+                });
+                if (!response.ok) throw new Error("Unable to load patient record (HTTP " + response.status + ").");
+
+                const result = await response.json();
+                if (!result.success || !result.patient) {
+                    throw new Error("The server returned an unexpected patient record.");
+                }
+
+                const p = result.patient;
+                content.replaceChildren();
+                title.textContent = text(p.patient_name);
+                subtitle.textContent = "Patient ID: " + text(p.id);
+
+                addSection("Personal Information", [
+                    ["Patient ID", p.id], ["Full Name", p.patient_name],
+                    ["Age", p.age], ["Sex", p.sex],
+                    ["Civil Status", p.civil_status], ["Phone", p.tel_no],
+                    ["Email", p.email], ["Occupation", p.occupation],
+                    ["Address", p.address], ["Record Created", formatDate(p.created_at)]
+                ]);
+
+                addSection("Medical History", [
+                    ["Heart Condition", p.heart_condition],
+                    ["Heart Condition Details", p.heart_condition_details],
+                    ["Allergy", p.allergy], ["Allergy Details", p.allergy_details],
+                    ["Diabetes", p.diabetes], ["Diabetes Details", p.diabetes_details],
+                    ["Hypertension", p.hypertension],
+                    ["Hypertension Details", p.hypertension_details],
+                    ["Bleeding Tendency", p.bleeding_tendency],
+                    ["Bleeding Details", p.bleeding_tendency_details],
+                    ["Asthma", p.asthma], ["Asthma Details", p.asthma_details],
+                    ["Other Conditions", p.other_conditions]
+                ]);
+
+                addSection("Recent and Upcoming Visits", [
+                    ["Last Visit", p.last_visit ? formatDate(p.last_visit.date) : "None recorded"],
+                    ["Last Visit Status", p.last_visit?.status],
+                    ["Upcoming Appointment", p.upcoming_appointment ? formatDate(p.upcoming_appointment.date) : "None scheduled"],
+                    ["Upcoming Time", p.upcoming_appointment?.time],
+                    ["Upcoming Status", p.upcoming_appointment?.status]
+                ]);
+
+                addEntries("Appointments", p.appointments, (a) => [
+                    ["Date", formatDate(a.appointment_date)],
+                    ["Time", a.appointment_time],
+                    ["Status", a.status],
+                    ["Service", a.service_name || a.service || a.service_type]
+                ]);
+
+                addEntries("Odontograms", p.odontograms, (o) => [
+                    ["Record ID", o.id],
+                    ["Date", formatDate(o.created_at || o.updated_at)],
+                    ["Notes", o.notes || o.description],
+                    ["Status", o.status]
+                ]);
+            } catch (error) {
+                content.replaceChildren();
+                const message = document.createElement("p");
+                message.className = "patient-details-error";
+                message.textContent = error.message || "Could not load patient details. Please try again.";
+                content.appendChild(message);
+                subtitle.textContent = "Unable to load record";
+            }
+        });
+    });
+});

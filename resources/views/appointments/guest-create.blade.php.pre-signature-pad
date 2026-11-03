@@ -1,0 +1,473 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Book an Appointment | Shine &amp; Smile</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 24px;
+            font-family: Arial, sans-serif;
+            color: #333;
+            background: #fff8fb;
+        }
+        .container {
+            max-width: 760px;
+            margin: auto;
+            padding: 28px;
+            background: white;
+            border: 1px solid #f5c9dd;
+            border-radius: 18px;
+        }
+        h1 { color: #d63384; margin-top: 0; }
+        .intro { color: #666; line-height: 1.5; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+        .field { margin-bottom: 16px; }
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 600;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font: inherit;
+            background: white;
+        }
+        textarea { min-height: 90px; resize: vertical; }
+        .error {
+            padding: 12px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+            background: #fff0f0;
+            color: #a40000;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            border: 0;
+            border-radius: 9px;
+            background: #d63384;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover { background: #b9256e; }
+        @media (max-width: 560px) {
+            body { padding: 12px; }
+            .container { padding: 18px; }
+            .grid { grid-template-columns: 1fr; gap: 0; }
+        }
+
+        .booking-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+            gap: 20px;
+            align-items: start;
+        }
+        .service-info {
+            margin: 8px 0 0;
+            color: #777;
+            font-size: 13px;
+        }
+        .guest-time-slots {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 9px;
+            min-height: 45px;
+        }
+        .guest-time-slots .slot-btn {
+            width: 100%;
+            padding: 11px 8px;
+            border: 1px solid #198754;
+            border-radius: 7px;
+            background: #198754;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .guest-time-slots .slot-btn:hover,
+        .guest-time-slots .slot-btn.active {
+            background: #146c43;
+            border-color: #146c43;
+        }
+        .guest-time-slots .slot-btn:focus-visible {
+            outline: 3px solid #8bd5ad;
+            outline-offset: 2px;
+        }
+        .guest-time-slots .slot-btn:disabled {
+            background: #e9ecef;
+            border-color: #d7dce0;
+            color: #737b82;
+            cursor: not-allowed;
+            opacity: 1;
+        }
+        .slot-message {
+            grid-column: 1 / -1;
+            margin: 0;
+            padding: 12px;
+            border-radius: 8px;
+            background: #f7f7f7;
+            color: #666;
+            font-size: 13px;
+        }
+        .slot-selection {
+            min-height: 18px;
+            margin: 9px 0 0;
+            color: #198754;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        @media (max-width: 560px) {
+            .booking-grid { grid-template-columns: 1fr; gap: 0; }
+            .guest-time-slots { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Book an Appointment</h1>
+    <p class="intro">
+        Complete the form below to request a dental appointment.
+        You do not need to create an account. Your appointment will be
+        pending until the clinic reviews it.
+    </p>
+
+    @if ($errors->any())
+        <div class="error">
+            <strong>Please check the following:</strong>
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form method="POST" action="{{ route('appointments.guest.store') }}">
+        @csrf
+
+        <h3>Patient Information</h3>
+        <div class="grid">
+            <div class="field">
+                <label for="patient_name">Full name *</label>
+                <input id="patient_name" name="patient_name"
+                       value="{{ old('patient_name') }}" maxlength="255" required>
+            </div>
+            <div class="field">
+                <label for="tel_no">Mobile number</label>
+                <input id="tel_no" name="tel_no" type="tel"
+                       value="{{ old('tel_no') }}"
+                       placeholder="09XXXXXXXXX">
+            </div>
+            <div class="field">
+                <label for="age">Age</label>
+                <input id="age" name="age" type="number" min="1"
+                       value="{{ old('age') }}">
+            </div>
+            <div class="field">
+                <label for="sex">Sex</label>
+                <select id="sex" name="sex">
+                    <option value="">Select</option>
+                    <option value="Male" @selected(old('sex') === 'Male')>Male</option>
+                    <option value="Female" @selected(old('sex') === 'Female')>Female</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="civil_status">Civil status</label>
+                <select id="civil_status" name="civil_status">
+                    <option value="">Select</option>
+                    @foreach (['Single','Married','Widowed','Separated'] as $status)
+                        <option value="{{ $status }}"
+                            @selected(old('civil_status') === $status)>
+                            {{ $status }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="field">
+                <label for="occupation">Occupation</label>
+                <select id="occupation" name="occupation">
+                    <option value="">Select Occupation</option>
+                    @foreach ([
+                        'Student',
+                        'Employed',
+                        'Self-Employed',
+                        'Business Owner',
+                        'Government Employee',
+                        'Private Employee',
+                        'Unemployed',
+                        'Retired',
+                        'Other'
+                    ] as $occupationOption)
+                        <option value="{{ $occupationOption }}"
+                            @selected(old('occupation') === $occupationOption)>
+                            {{ $occupationOption }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="address">Address</label>
+            <textarea id="address" name="address">{{ old('address') }}</textarea>
+        </div>
+
+        <h3>Appointment Details</h3>
+        <div class="field">
+            <label for="service_id">Dental Service *</label>
+            <select id="service_id" name="service_id" required>
+                <option value="">Select a dental service</option>
+                @foreach ($services as $service)
+                    <option value="{{ $service->id }}"
+                        data-price="{{ number_format((float) $service->price, 2, '.', '') }}"
+                        data-duration="{{ (int) ($service->duration_minutes ?? 0) }}"
+                        @selected((string) old('service_id') === (string) $service->id)>
+                        {{ $service->service_name }} — ₱{{ number_format((float) $service->price, 2) }} ({{ (int) ($service->duration_minutes ?? 0) }} minutes)
+                    </option>
+                @endforeach
+            </select>
+            <p id="guest-service-info" class="service-info">Choose a service to see its price and duration.</p>
+        </div>
+
+        <div class="booking-grid">
+            <div class="field">
+                <label for="appointment_date">Appointment Date *</label>
+                <input id="appointment_date" name="appointment_date"
+                       type="date" min="{{ now()->toDateString() }}"
+                       value="{{ old('appointment_date') }}" required>
+            </div>
+
+            <div class="field">
+                <label>Available Time Slots *</label>
+                <div id="guest-time-slots" class="guest-time-slots" aria-live="polite">
+                    <p class="slot-message">Select a dental service and date to see available times.</p>
+                </div>
+                <input type="hidden" id="appointment_time" name="appointment_time"
+                       value="{{ old('appointment_time') }}" required>
+                <input type="hidden" id="end_time" name="end_time" value="">
+                <p id="guest-slot-selection" class="slot-selection">No time selected.</p>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="reason">Reason for appointment *</label>
+            <textarea id="reason" name="reason" required>{{ old('reason') }}</textarea>
+        </div>
+
+        <h3>Medical Information</h3>
+        @foreach ([
+            'heart_condition' => 'Heart condition',
+            'allergy' => 'Allergies',
+            'diabetes' => 'Diabetes',
+            'hypertension' => 'Hypertension',
+            'bleeding_tendency' => 'Bleeding tendency',
+            'asthma' => 'Asthma'
+        ] as $field => $label)
+            <div class="field">
+                <label>
+                    <input style="width:auto" type="checkbox" name="{{ $field }}"
+                           value="1" @checked(old($field))>
+                    {{ $label }}
+                </label>
+                <input name="{{ $field }}_details"
+                       value="{{ old($field . '_details') }}"
+                       placeholder="Details, if applicable">
+            </div>
+        @endforeach
+
+        <div class="field">
+            <label for="other_conditions">Other medical conditions</label>
+            <textarea id="other_conditions" name="other_conditions">{{ old('other_conditions') }}</textarea>
+        </div>
+
+        <div class="field">
+            <label for="patient_signature">Patient signature (optional)</label>
+            <input id="patient_signature" name="patient_signature"
+                   value="{{ old('patient_signature') }}">
+        </div>
+
+        <button type="submit">Submit Appointment Request</button>
+    </form>
+</div>
+
+<script id="guest-slot-script">
+document.addEventListener('DOMContentLoaded', function () {
+    const service = document.getElementById('service_id');
+    const date = document.getElementById('appointment_date');
+    const slotsBox = document.getElementById('guest-time-slots');
+    const timeInput = document.getElementById('appointment_time');
+    const endInput = document.getElementById('end_time');
+    const selectionText = document.getElementById('guest-slot-selection');
+    const serviceInfo = document.getElementById('guest-service-info');
+    const oldTime = timeInput.value;
+
+    function showMessage(message) {
+        slotsBox.replaceChildren();
+        const p = document.createElement('p');
+        p.className = 'slot-message';
+        p.textContent = message;
+        slotsBox.appendChild(p);
+    }
+
+    function clearSelection() {
+        timeInput.value = '';
+        endInput.value = '';
+        selectionText.textContent = 'No time selected.';
+    }
+
+    function updateServiceInfo() {
+        const option = service.options[service.selectedIndex];
+        if (!option || !option.value) {
+            serviceInfo.textContent = 'Choose a service to see its price and duration.';
+            return;
+        }
+
+        const price = Number(option.dataset.price || 0);
+        const duration = Number(option.dataset.duration || 0);
+        serviceInfo.textContent =
+            'Price: ₱' + price.toLocaleString('en-PH', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }) + ' · Duration: ' + duration + ' minutes';
+    }
+
+    async function loadGuestSlots() {
+        clearSelection();
+
+        if (!service.value) {
+            showMessage('Select a dental service first.');
+            return;
+        }
+
+        if (!date.value) {
+            showMessage('Choose an appointment date to see available times.');
+            return;
+        }
+
+        const option = service.options[service.selectedIndex];
+        if (!Number(option.dataset.duration || 0)) {
+            showMessage('This service has no valid duration. Please contact the clinic.');
+            return;
+        }
+
+        showMessage('Loading available time slots…');
+
+        try {
+            const url = new URL('/available-slots', window.location.origin);
+            url.searchParams.set('date', date.value);
+            url.searchParams.set('service_id', service.value);
+
+            const response = await fetch(url.toString(), {
+                headers: { 'Accept': 'application/json' }
+            });
+
+            if (!response.ok) {
+                throw new Error('Availability request failed.');
+            }
+
+            const data = await response.json();
+            slotsBox.replaceChildren();
+
+            if (!Array.isArray(data) || data.length === 0) {
+                showMessage('No time slots are available for this service and date.');
+                return;
+            }
+
+            let oldTimeFound = false;
+
+            data.forEach(function (slot) {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'slot-btn';
+                button.textContent = slot.time;
+                button.disabled = !slot.available;
+                button.setAttribute(
+                    'aria-label',
+                    slot.time + (slot.available ? ', available' : ', unavailable')
+                );
+
+                if (!slot.available) {
+                    button.title = 'This time is unavailable';
+                }
+
+                if (slot.available) {
+                    button.addEventListener('click', function () {
+                        slotsBox.querySelectorAll('.slot-btn.active').forEach(function (active) {
+                            active.classList.remove('active');
+                        });
+
+                        button.classList.add('active');
+                        timeInput.value = slot.start;
+                        endInput.value = slot.end;
+                        selectionText.textContent =
+                            'Selected: ' + slot.time + ' · ' +
+                            Number(slot.duration || 0) + ' minutes';
+                    });
+
+                    if (oldTime && slot.start === oldTime) {
+                        oldTimeFound = true;
+                        button.classList.add('active');
+                        timeInput.value = slot.start;
+                        endInput.value = slot.end;
+                        selectionText.textContent =
+                            'Selected: ' + slot.time + ' · ' +
+                            Number(slot.duration || 0) + ' minutes';
+                    }
+                }
+
+                slotsBox.appendChild(button);
+            });
+
+            if (oldTime && !oldTimeFound) {
+                clearSelection();
+                selectionText.textContent =
+                    'Your previous time is no longer available. Please choose another.';
+            }
+        } catch (error) {
+            showMessage('Unable to load time slots. Please refresh and try again.');
+        }
+    }
+
+    service.addEventListener('change', function () {
+        updateServiceInfo();
+        loadGuestSlots();
+    });
+
+    date.addEventListener('change', loadGuestSlots);
+
+    const form = service.closest('form');
+    form.addEventListener('submit', function (event) {
+        if (!timeInput.value || !endInput.value) {
+            event.preventDefault();
+            selectionText.textContent = 'Please select an available time slot.';
+            slotsBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
+
+    updateServiceInfo();
+
+    if (service.value && date.value) {
+        loadGuestSlots();
+    } else {
+        showMessage('Select a dental service and date to see available times.');
+    }
+});
+</script>
+
+</body>
+</html>
+

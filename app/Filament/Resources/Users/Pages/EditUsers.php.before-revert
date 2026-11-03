@@ -1,0 +1,69 @@
+
+<?php
+
+namespace App\Filament\Resources\Users\Pages;
+
+use App\Filament\Resources\Users\UsersResource;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\ViewAction;
+use Filament\Resources\Pages\EditRecord;
+
+class EditUsers extends EditRecord
+{
+    protected static string $resource = UsersResource::class;
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $data['selected_roles'] = $this->record
+            ->getRoleNames()
+            ->values()
+            ->all();
+
+        return $data;
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $roles = $data['selected_roles'] ?? [];
+
+        unset($data['selected_roles']);
+
+        $priority = [
+            'admin',
+            'cashier',
+            'dentist',
+            'receptionist',
+            'patient',
+            'customer',
+            'staff',
+        ];
+
+        foreach ($priority as $role) {
+            if (in_array($role, $roles, true)) {
+                $data['role'] = $role;
+                break;
+            }
+        }
+
+        return $data;
+    }
+
+    protected function afterSave(): void
+    {
+        $roles = $this->form->getState()['selected_roles'] ?? [];
+
+        $this->record->syncRoles($roles);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            ViewAction::make(),
+            DeleteAction::make(),
+            ForceDeleteAction::make(),
+            RestoreAction::make(),
+        ];
+    }
+}

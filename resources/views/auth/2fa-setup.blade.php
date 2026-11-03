@@ -223,7 +223,16 @@
 
                 }
 
-                qrCode.innerHTML = data.qrCode;
+                // Render the QR data URL as an image, not as text.
+                qrCode.replaceChildren();
+
+                const qrImage = document.createElement("img");
+                qrImage.src = data.qrCode;
+                qrImage.alt = "Google Authenticator setup QR code";
+                qrImage.width = 220;
+                qrImage.height = 220;
+                qrImage.className = "mx-auto block";
+                qrCode.appendChild(qrImage);
 
                 secretKey.textContent = data.secret;
 

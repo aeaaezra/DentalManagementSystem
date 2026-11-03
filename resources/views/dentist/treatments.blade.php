@@ -1,9 +1,4 @@
-{{-- ============================================================
-     DENTIST TREATMENTS
-     resources/views/dentist/treatments.blade.php
-============================================================ --}}
-
-<!DOCTYPE html>
+Plann<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -26,7 +21,7 @@
 
     <link
         rel="stylesheet"
-        href="{{ asset('css/dentists/dentist-treatments.css') }}"
+href="{{ asset('css/dentists/dentist-treatments.css') }}?v=20261103-modalwide"
     >
 
 </head>
@@ -1360,7 +1355,7 @@
                     <div>
 
                         <span>
-                            Planned
+			Pending
                         </span>
 
                         <strong id="plannedCount">
@@ -1416,7 +1411,7 @@
                     </option>
 
                     <option value="planned">
-                        Planned
+                        Pending
                     </option>
 
                     <option value="in_progress">
@@ -1943,52 +1938,67 @@
                             Tooth Number
                         </label>
 
-                        <select
-                            id="formTooth"
-                        >
-
-                            <option value="">
-                                Select tooth...
-                            </option>
-
-                            @foreach([
-                                '11','12','13','14','15','16','17','18',
-                                '21','22','23','24','25','26','27','28',
-                                '31','32','33','34','35','36','37','38',
-                                '41','42','43','44','45','46','47','48'
-                            ] as $tooth)
-
-                                <option value="{{ $tooth }}">
-                                    Tooth {{ $tooth }}
-                                </option>
-
-                            @endforeach
-
-                        </select>
+                        <div id="formTooth" class="treatment-tooth-selector">
+    @foreach([
+        'Upper right' => ['18','17','16','15','14','13','12','11'],
+        'Upper left'  => ['21','22','23','24','25','26','27','28'],
+        'Lower right' => ['48','47','46','45','44','43','42','41'],
+        'Lower left'  => ['31','32','33','34','35','36','37','38']
+    ] as $quadrant => $teeth)
+        <div class="treatment-tooth-quadrant">
+            <strong>{{ $quadrant }}</strong>
+            <div class="treatment-tooth-options">
+                @foreach($teeth as $tooth)
+                    <label>
+                        <input type="checkbox" name="tooth_numbers[]" value="{{ $tooth }}">
+                        {{ $tooth }}
+                    </label>
+                @endforeach
+            </div>
+        </div>
+    @endforeach
+</div>
 
                     </div>
 
 
                     {{-- TREATMENT --}}
+{{-- Multi-category treatment selector --}}
+<input type="hidden" id="formTreatment" value="">
 
-                    <div class="form-group">
+<div class="treatment-builder" id="treatmentBuilder">
+    <div class="treatment-builder__heading">
+        <div>
+            <h3>Treatment Details</h3>
+            <p>Select one or more categories and procedures.</p>
+        </div>
+    </div>
 
-                        <label>
-                            Treatment
-                            <span>*</span>
-                        </label>
+    <div id="treatmentCategoryRows"></div>
 
-                        <input
-                            type="text"
-                            id="formTreatment"
-                            placeholder="e.g. Dental Filling"
-                            required
-                        >
+    <button type="button" class="treatment-add-category" id="addTreatmentCategory">
+        <span aria-hidden="true">＋</span> Add Category
+    </button>
 
-                    </div>
+    <div class="treatment-selected">
+        <div class="treatment-selected__heading">
+            <strong>Selected Treatments</strong>
+            <span id="selectedTreatmentCount">0</span>
+        </div>
 
-                </div>
+        <div id="selectedTreatmentList" class="treatment-selected__list">
+            <p class="treatment-empty">No procedures selected yet.</p>
+        </div>
 
+        <div class="treatment-total">
+            <span>Total Amount</span>
+            <strong id="treatmentTotal">₱0.00</strong>
+        </div>
+    </div>
+
+    {{-- Submitted with the existing treatment form --}}
+    <input type="hidden" name="selected_procedures" id="selectedProceduresInput">
+</div>	
 
                 <div class="form-grid two">
 
@@ -2026,7 +2036,7 @@
                         >
 
                             <option value="planned">
-                                Planned
+                                Pending
                             </option>
 
                             <option value="in_progress">
@@ -2521,11 +2531,274 @@
     };
 
 </script>
-
+<script>
+    window.procedureCatalog = @json($procedureCatalog);
+</script>
 
 <script
-    src="{{ asset('js/dentist/dentist-treatments.js') }}"
+    src="{{ asset('js/dentist/dentist-treatments.js') }}?v=20261103-3
 ></script>
+<script>
+(function () {
+    const catalog = Array.isArray(window.procedureCatalog) ? window.procedureCatalog : [];
+    const rows = document.getElementById('treatmentCategoryRows');
+    const addButton = document.getElementById('addTreatmentCategory');
+    const selectedList = document.getElementById('selectedTreatmentList');
+    const selectedCount = document.getElementById('selectedTreatmentCount');
+    const totalDisplay = document.getElementById('treatmentTotal');
+    const hiddenInput = document.getElementById('selectedProceduresInput');
 
+    if (!rows || !addButton) return;
+
+    function refreshSummary() {
+        const selected = [];
+        let total = 0;
+
+        rows.querySelectorAll('.treatment-category-row').forEach(row => {
+            const categorySelect = row.querySelector('.treatment-category-select');
+            const category = catalog.find(item => String(item.id) === categorySelect?.value);
+
+            row.querySelectorAll('.procedure-checkbox:checked').forEach(box => {
+                const procedure = (category?.procedures || []).find(
+                    item => String(item.id) === box.value
+                );
+
+                if (procedure) {
+                    selected.push({
+                        id: procedure.id,
+                        name: procedure.name,
+                        category: category.name,
+                        price: Number(procedure.price || 0)
+                    });
+                    total += Number(procedure.price || 0);
+                }
+            });
+        });
+
+        if (hiddenInput) hiddenInput.value = JSON.stringify(selected);
+        if (selectedCount) selectedCount.textContent = selected.length;
+        if (totalDisplay) {
+            totalDisplay.textContent = '₱' + total.toLocaleString('en-PH', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        if (selectedList) {
+            selectedList.innerHTML = selected.length
+                ? selected.map(item => `
+                    <div class="treatment-selected-item">
+                        <span>${item.name}<br><small>${item.category}</small></span>
+                        <strong>₱${item.price.toFixed(2)}</strong>
+                    </div>
+                `).join('')
+                : '<p class="treatment-empty">No procedures selected yet.</p>';
+        }
+    }
+
+    function addCategoryRow() {
+        const row = document.createElement('div');
+        row.className = 'treatment-category-row';
+
+        row.innerHTML = `
+            <div class="treatment-category-fields">
+                <div class="treatment-field">
+                    <label>Category *</label>
+                    <select class="treatment-category-select">
+                        <option value="">Select category...</option>
+                        ${catalog.map(category =>
+                            `<option value="${category.id}">${category.name}</option>`
+                        ).join('')}
+                    </select>
+                </div>
+                <div class="treatment-field">
+                    <label>Procedure(s) *</label>
+                    <div class="procedure-checkbox-list">
+                        <span class="procedure-checkbox-placeholder">Select a category first</span>
+                    </div>
+                </div>
+                <button type="button" class="treatment-remove-category"
+                        aria-label="Remove category">×</button>
+            </div>
+        `;
+
+        rows.appendChild(row);
+
+        const categorySelect = row.querySelector('.treatment-category-select');
+        const procedureList = row.querySelector('.procedure-checkbox-list');
+
+        categorySelect.addEventListener('change', () => {
+            const category = catalog.find(item => String(item.id) === categorySelect.value);
+            procedureList.innerHTML = '';
+
+            if (!category || !Array.isArray(category.procedures) || !category.procedures.length) {
+                procedureList.innerHTML =
+                    '<span class="procedure-checkbox-placeholder">No procedures available</span>';
+                refreshSummary();
+                return;
+            }
+
+            category.procedures.forEach(procedure => {
+                const label = document.createElement('label');
+                label.className = 'procedure-checkbox-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'procedure-checkbox';
+                checkbox.value = procedure.id;
+                checkbox.addEventListener('change', refreshSummary);
+
+                const name = document.createElement('span');
+                name.textContent = `${procedure.name} — ₱${Number(procedure.price || 0).toFixed(2)}`;
+
+                label.append(checkbox, name);
+                procedureList.appendChild(label);
+            });
+
+            refreshSummary();
+        });
+
+        row.querySelector('.treatment-remove-category').addEventListener('click', () => {
+            row.remove();
+            refreshSummary();
+        });
+    }
+
+    addButton.addEventListener('click', event => {
+        event.preventDefault();
+        addCategoryRow();
+    });
+
+    addCategoryRow();
+})();
+</script>
+<script>
+(function () {
+    const container = document.getElementById('treatmentCategoryRows');
+    if (!container) return;
+
+    function convertProcedureSelect(select) {
+        if (select.dataset.checkboxReady === '1') return;
+        if (!select.multiple) return;
+
+        select.dataset.checkboxReady = '1';
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'procedure-checkbox-list';
+
+        function renderCheckboxes() {
+            wrapper.innerHTML = '';
+
+            Array.from(select.options).forEach(option => {
+                if (!option.value) return;
+
+                const label = document.createElement('label');
+                label.className = 'procedure-checkbox-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = option.value;
+                checkbox.checked = option.selected;
+                checkbox.disabled = option.disabled;
+
+                const text = document.createElement('span');
+                text.textContent = option.textContent;
+
+                checkbox.addEventListener('change', () => {
+                    option.selected = checkbox.checked;
+                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+
+                label.append(checkbox, text);
+                wrapper.appendChild(label);
+            });
+        }
+
+        renderCheckboxes();
+
+        select.addEventListener('change', renderCheckboxes);
+        select.hidden = true;
+        select.insertAdjacentElement('afterend', wrapper);
+    }
+
+    function scan() {
+        container.querySelectorAll('select[multiple]').forEach(convertProcedureSelect);
+    }
+
+    scan();
+
+    new MutationObserver(scan).observe(container, {
+        childList: true,
+        subtree: true
+    });
+})();
+</script>
 </body>
 </html>
+
+
+<style>
+.treatment-tooth-selector {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+.treatment-tooth-quadrant {
+    border: 1px solid #d9dce3;
+    border-radius: 8px;
+    padding: 8px;
+    min-width: 0;
+}
+.treatment-tooth-quadrant > strong {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 6px;
+}
+.treatment-tooth-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+.treatment-tooth-options label {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 3px 5px;
+    border: 1px solid #d9dce3;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+}
+.treatment-tooth-options input {
+    margin: 0;
+}
+@media (max-width: 600px) {
+    .treatment-tooth-selector { grid-template-columns: 1fr; }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const totalDisplay = document.getElementById('treatmentTotal');
+    const costInput = document.getElementById('formCost');
+
+    if (!totalDisplay || !costInput) return;
+
+    function syncTreatmentCost() {
+        const amount = Number(
+            totalDisplay.textContent.replace(/[^\d.-]/g, '')
+        ) || 0;
+
+        costInput.value = amount.toFixed(2);
+    }
+
+    // Update immediately and whenever the selected-procedure total changes.
+    syncTreatmentCost();
+
+    new MutationObserver(syncTreatmentCost).observe(totalDisplay, {
+        childList: true,
+        characterData: true,
+        subtree: true
+    });
+});
+</script>

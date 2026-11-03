@@ -36,7 +36,7 @@
 
     <link
         rel="stylesheet"
-        href="{{ asset('css/customer/orders.css') }}"
+        href="{{ asset('css/customer/orders.css') }}?v=header-scroll-fix-1"
     >
 
 </head>
@@ -83,7 +83,7 @@
 
             <a
                 href="{{ route('customer.products') }}"
-                class="nav-link"
+                style="border: 1px solid #ffc2d9 !important; border-radius: 11px !important;" class="nav-link"
             >
                 Products
             </a>
@@ -91,7 +91,7 @@
 
             <a
                 href="{{ route('customer.orders') }}"
-                class="nav-link active"
+                style="border: 1px solid #ffc2d9 !important; border-radius: 11px !important;" class="nav-link active"
             >
                 My Orders
             </a>
@@ -123,43 +123,33 @@
 
 
 
-            {{-- PROFILE --}}
+            {{-- PROFILE DROPDOWN --}}
+            <div class="orders-profile-wrap" id="ordersProfileWrap">
+                <button type="button" class="customer-profile orders-profile-toggle"
+                        id="ordersProfileToggle" aria-expanded="false"
+                        aria-controls="ordersProfileMenu">
+                    <span class="profile-avatar">
+                        {{ strtoupper(substr(auth()->user()->name ?? 'C', 0, 1)) }}
+                    </span>
+                    <span class="profile-info">
+                        <strong>{{ auth()->user()->name ?? 'Customer' }}</strong>
+                        <small>Customer</small>
+                    </span>
+                    <span aria-hidden="true">⌄</span>
+                </button>
 
-            <div class="customer-profile">
-
-                <div class="profile-avatar">
-
-                    {{
-                        strtoupper(
-                            substr(
-                                auth()->user()->name ?? 'C',
-                                0,
-                                1
-                            )
-                        )
-                    }}
-
+                <div class="orders-profile-menu" id="ordersProfileMenu" hidden>
+                    <div class="orders-profile-info">
+                        <strong>{{ auth()->user()->name ?? 'Customer' }}</strong>
+                        <small>{{ auth()->user()->email ?? '' }}</small>
+                    </div>
+                    <a href="{{ route('customer.profile') }}">♟ &nbsp; Profile</a>
+                    <a href="{{ route('customer.settings') }}">⚙ &nbsp; Settings</a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit">↪ &nbsp; Logout</button>
+                    </form>
                 </div>
-
-
-                <div class="profile-info">
-
-                    <strong>
-
-                        {{
-                            auth()->user()->name
-                            ?? 'Customer'
-                        }}
-
-                    </strong>
-
-
-                    <small>
-                        Customer
-                    </small>
-
-                </div>
-
             </div>
 
         </div>
@@ -506,55 +496,47 @@
 
             {{-- TRACKER --}}
 
-            <div class="order-tracker">
-
-
-                <div class="tracker-step active">
-
-                    <div class="tracker-circle">
-                        ✓
-                    </div>
-
-                    <span>
-                        Ordered
-                    </span>
-
+            <div class="order-tracker" id="orderDeliveryTracker">
+                <div class="tracker-step">
+                    <div class="tracker-circle">1</div>
+                    <span>Order Packed</span>
                 </div>
-
 
                 <div class="tracker-line"></div>
 
-
                 <div class="tracker-step">
-
-                    <div class="tracker-circle">
-                        2
-                    </div>
-
-                    <span>
-                        Processing
-                    </span>
-
+                    <div class="tracker-circle">2</div>
+                    <span>Parcel Picked Up</span>
                 </div>
-
 
                 <div class="tracker-line"></div>
 
-
                 <div class="tracker-step">
-
-                    <div class="tracker-circle">
-                        3
-                    </div>
-
-                    <span>
-                        Completed
-                    </span>
-
+                    <div class="tracker-circle">3</div>
+                    <span>Sorting Facility</span>
                 </div>
 
+                <div class="tracker-line"></div>
+
+                <div class="tracker-step">
+                    <div class="tracker-circle">4</div>
+                    <span>In Transit</span>
+                </div>
+
+                <div class="tracker-line"></div>
+
+                <div class="tracker-step">
+                    <div class="tracker-circle">5</div>
+                    <span>Out for Delivery</span>
+                </div>
+
+                <div class="tracker-line"></div>
+
+                <div class="tracker-step">
+                    <div class="tracker-circle">6</div>
+                    <span>Order Delivered</span>
+                </div>
             </div>
-
 
 
             {{-- ITEMS --}}
@@ -658,8 +640,163 @@
          JAVASCRIPT
     ========================================================== --}}
 
-    <script src="{{ asset('js/customer/orders.js') }}"></script>
 
-</body>
+
+    <script>
+        window.customerOrdersData = {{ Illuminate\Support\Js::from($customerOrdersData) }};
+    </script>
+    <script src="{{ asset('js/customer/orders.js') }}?v={{ filemtime(public_path('js/customer/orders.js')) }}"></script>
+
+
+<!-- Pink Cancellation Success Modal -->
+<div id="cancellationSuccessModal" class="cancel-success-overlay"
+     aria-hidden="true">
+    <div class="cancel-success-card" role="dialog" aria-modal="true"
+         aria-labelledby="cancelSuccessTitle"
+         aria-describedby="cancelSuccessMessage">
+        <div class="cancel-success-icon" aria-hidden="true">✓</div>
+        <h2 id="cancelSuccessTitle">Request Submitted!</h2>
+        <p id="cancelSuccessMessage">
+            Your cancellation request was submitted for admin review.
+        </p>
+        <button type="button" id="cancelSuccessOk"
+                class="cancel-success-button">OK</button>
+    </div>
+</div>
+
+<!-- Cancellation Request Modal -->
+<div id="cancellationModal" class="cancellation-modal-overlay" aria-hidden="true">
+    <div class="cancellation-modal cancellation-form-card" role="dialog" aria-modal="true"
+         aria-labelledby="cancellationTitle">
+        <button type="button" class="cancellation-close" id="cancellationClose"
+                aria-label="Close">&times;</button>
+        <div class="cancellation-icon" aria-hidden="true">🦷</div>
+        <h2 id="cancellationTitle">Cancel Order</h2>
+        <p class="cancel-form-intro">Please tell us why you want to cancel this order.</p>
+
+        <div id="cancelOrderSummary" class="cancel-order-summary" aria-live="polite"></div>
+
+        <fieldset class="cancel-reasons">
+            <legend>Reason for cancellation</legend>
+            <label><input type="radio" name="cancellation_reason_choice" value="Changed my mind"> Changed my mind</label>
+            <label><input type="radio" name="cancellation_reason_choice" value="Ordered by mistake"> Ordered by mistake</label>
+            <label><input type="radio" name="cancellation_reason_choice" value="Found a better price"> Found a better price</label>
+            <label><input type="radio" name="cancellation_reason_choice" value="Delivery takes too long"> Delivery takes too long</label>
+            <label><input type="radio" name="cancellation_reason_choice" value="Need to change my order"> Need to change my order</label>
+            <label><input type="radio" name="cancellation_reason_choice" value="Other"> Other</label>
+        </fieldset>
+
+        <div id="cancelOtherReasonWrap" class="cancel-other-reason" hidden>
+            <label for="cancellationReason">Please provide a reason</label>
+            <textarea id="cancellationReason" placeholder="Enter your reason..."
+                      maxlength="1000"></textarea>
+        </div>
+
+        <p id="cancellationFormError" class="cancel-form-error" role="alert" hidden></p>
+
+        <div class="cancellation-modal-actions">
+            <button type="button" id="cancellationCancel"
+                    class="cancellation-btn cancellation-btn-outline">Keep Order</button>
+            <button type="button" id="cancellationSubmit"
+                    class="cancellation-btn cancellation-btn-primary">Submit Request</button>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<style>
+#headerCartCount {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 19px;
+    height: 19px;
+    padding: 0 5px;
+    margin-left: 3px;
+    border-radius: 999px;
+    background: #ed1763 !important;
+    color: #fff !important;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+}
+</style>
+
+
+<style>
+.orders-profile-wrap { position: relative; }
+.orders-profile-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #f6c9dc;
+    border-radius: 13px;
+    padding: 7px 12px;
+    background: #fff7fb;
+    color: #25202a;
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+}
+.orders-profile-toggle .profile-info { display: flex; flex-direction: column; }
+.orders-profile-toggle .profile-info strong { font-size: 12px; }
+.orders-profile-toggle .profile-info small { font-size: 10px; }
+.orders-profile-menu {
+    position: absolute;
+    z-index: 2000;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 230px;
+    overflow: hidden;
+    border-radius: 12px;
+    background: #1e293b;
+    color: #fff;
+    box-shadow: 0 14px 32px rgba(15,23,42,.25);
+}
+.orders-profile-menu[hidden] { display: none !important; }
+.orders-profile-info { padding: 18px 15px 12px; border-bottom: 1px solid #475569; }
+.orders-profile-info strong, .orders-profile-info small { display: block; overflow-wrap: anywhere; }
+.orders-profile-info small { margin-top: 5px; color: #cbd5e1; font-size: 11px; }
+.orders-profile-menu a, .orders-profile-menu form button {
+    display: block;
+    width: 100%;
+    padding: 12px 15px;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    text-align: left;
+    text-decoration: none;
+    font: inherit;
+    cursor: pointer;
+}
+.orders-profile-menu a:hover, .orders-profile-menu form button:hover { background: #334155; }
+.orders-profile-menu form { border-top: 1px solid #475569; }
+.orders-profile-menu form button { color: #fb7185; }
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const wrap = document.getElementById('ordersProfileWrap');
+    const toggle = document.getElementById('ordersProfileToggle');
+    const menu = document.getElementById('ordersProfileMenu');
+    if (!wrap || !toggle || !menu) return;
+
+    toggle.addEventListener('click', function () {
+        const opening = menu.hidden;
+        menu.hidden = !opening;
+        toggle.setAttribute('aria-expanded', String(opening));
+    });
+
+    document.addEventListener('click', function (event) {
+        if (!wrap.contains(event.target)) {
+            menu.hidden = true;
+            toggle.setAttribute('aria-expanded', 'false');
+        }
+    });
+});
+</script>
+\n</body>
 
 </html>

@@ -1386,13 +1386,12 @@
 
 
                                 <a
-                                    href="{{ route(
-                                        'dentist.patient-records.show',
-                                        $patient->id
-                                    ) }}"
-                                    class="patient-view-button"
-                                    title="View patient"
-                                >
+    href="{{ route('dentist.patient-records.show', $patient->id) }}"
+    class="patient-view-button"
+    title="View patient record"
+    aria-label="View patient record"
+>
+
 
                                     <svg viewBox="0 0 24 24" fill="none">
 
@@ -1895,6 +1894,28 @@
      JAVASCRIPT CONFIG
 ========================================================== --}}
 
+
+<div id="patientDetailsModal" class="patient-details-modal"
+     aria-hidden="true">
+    <div class="patient-details-backdrop" data-patient-modal-close></div>
+    <section class="patient-details-dialog" role="dialog"
+             aria-modal="true" aria-labelledby="patientDetailsTitle">
+        <header class="patient-details-header">
+            <div>
+                <h2 id="patientDetailsTitle">Patient Details</h2>
+                <p id="patientDetailsSubtitle">Complete patient record</p>
+            </div>
+            <button type="button" class="patient-details-close"
+                    aria-label="Close patient details"
+                    data-patient-modal-close>&times;</button>
+        </header>
+        <div id="patientDetailsContent" class="patient-details-content"
+             aria-live="polite">
+            <p>Loading patient record...</p>
+        </div>
+    </section>
+</div>
+
 <script>
 
     window.DentistDashboard = {
@@ -1921,7 +1942,7 @@
 
 
 <script
-    src="{{ asset('js/dentist/dentist-dashboard.js') }}"
+    src="{{ asset('js/dentist/dentist-dashboard.js') }}?v={{ filemtime(public_path('js/dentist/dentist-dashboard.js')) }}"
     defer
 ></script>
 

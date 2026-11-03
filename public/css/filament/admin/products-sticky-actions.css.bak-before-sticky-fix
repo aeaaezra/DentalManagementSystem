@@ -1,0 +1,53 @@
+/* Sticky action column for the Filament Products table only. */
+.fi-ta-content-ctn:has(table.fi-ta-table th.fi-ta-header-cell-product-name)
+  table.fi-ta-table thead th.fi-ta-actions-header-cell {
+    position: sticky;
+    right: 0;
+    z-index: 12;
+    background-color: var(--gray-50, #f9fafb);
+    box-shadow: -5px 0 8px -5px rgb(0 0 0 / 20%);
+}
+
+.fi-ta-content-ctn:has(table.fi-ta-table th.fi-ta-header-cell-product-name)
+  table.fi-ta-table tbody tr > td:last-child:has(.fi-ta-actions) {
+    position: sticky;
+    right: 0;
+    z-index: 10;
+    background-color: var(--gray-50, #f9fafb);
+    box-shadow: -5px 0 8px -5px rgb(0 0 0 / 20%);
+}
+
+/* Preserve a suitable background in dark mode. */
+.dark .fi-ta-content-ctn:has(table.fi-ta-table th.fi-ta-header-cell-product-name)
+  table.fi-ta-table thead th.fi-ta-actions-header-cell,
+.dark .fi-ta-content-ctn:has(table.fi-ta-table th.fi-ta-header-cell-product-name)
+  table.fi-ta-table tbody tr > td:last-child:has(.fi-ta-actions) {
+    background-color: var(--gray-900, #111827);
+}
+
+/* Sticky action column for the Filament Appointments table only. */
+.fi-ta-content-ctn:has(table.fi-ta-table th.fi-ta-header-cell-appointment-date)
+  table.fi-ta-table thead th.fi-ta-actions-header-cell {
+    position: sticky;
+    right: 0;
+    z-index: 12;
+    background-color: var(--gray-50, #f9fafb);
+    box-shadow: -5px 0 8px -5px rgb(0 0 0 / 20%);
+}
+
+.fi-ta-content-ctn:has(table.fi-ta-table th.fi-ta-header-cell-appointment-date)
+  table.fi-ta-table tbody tr > td:last-child:has(.fi-ta-actions) {
+    position: sticky;
+    right: 0;
+    z-index: 10;
+    background-color: var(--gray-50, #f9fafb);
+    box-shadow: -5px 0 8px -5px rgb(0 0 0 / 20%);
+}
+
+/* Preserve the sticky column background in dark mode. */
+.dark .fi-ta-content-ctn:has(table.fi-ta-table th.fi-ta-header-cell-appointment-date)
+  table.fi-ta-table thead th.fi-ta-actions-header-cell,
+.dark .fi-ta-content-ctn:has(table.fi-ta-table th.fi-ta-header-cell-appointment-date)
+  table.fi-ta-table tbody tr > td:last-child:has(.fi-ta-actions) {
+    background-color: var(--gray-900, #111827);
+}

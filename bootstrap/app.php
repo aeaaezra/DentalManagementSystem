@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use App\Http\Middleware\GlobalRateLimit;
 use Spatie\Permission\Middleware\RoleMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -15,6 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
     )
 
     ->withMiddleware(function (Middleware $middleware): void {
+
+        // Apply rate limiting after the web session middleware runs.
+        $middleware->web(append: [GlobalRateLimit::class]);
+
+        // Apply a general rate limit to incoming HTTP requests.
 
         /*
         |--------------------------------------------------------------------------
@@ -40,6 +46,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
             if ($request->is('appointments/*')) {
                 return route('appointments.login');
+            }
+
+            if ($request->is('customer/*')) {
+                return route('customer.login');
             }
 
             return route('login');

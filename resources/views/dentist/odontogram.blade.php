@@ -1248,43 +1248,30 @@
                      TOOTH DETAILS
                 ================================================== -->
 
-                <aside class="tooth-details-card">
+                <div id="toothConditionModal"
+     class="tooth-condition-modal hidden"
+     aria-hidden="true"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="toothConditionModalTitle">
 
+    <div class="tooth-condition-modal-overlay"></div>
 
-                    <div class="details-header">
+    <div class="tooth-condition-modal-content">
 
-                        <div>
+        <div class="tooth-condition-modal-header">
+            <h3 id="toothConditionModalTitle">Update Tooth Condition</h3>
+            <button type="button"
+                    id="closeToothConditionModal"
+                    class="close-tooth-modal"
+                    aria-label="Close">&times;</button>
+        </div>
 
-                            <span>
-                                SELECTED TOOTH
-                            </span>
-
-                            <h3 id="selectedToothNumber">
-                                No Tooth Selected
-                            </h3>
-
-                        </div>
-
-
-                        <div class="tooth-status-icon">
-
-                            <svg viewBox="0 0 64 64" fill="none">
-
-                                <path
-                                    d="M18 10C11 12 8 19 10 27C12 34 15 39 17 48C18 53 20 56 24 56C28 56 29 51 30 46C31 42 33 42 34 46C35 51 36 56 40 56C44 56 46 53 47 48C49 39 52 34 54 27C56 19 53 12 46 10C41 8 37 11 32 12C27 11 23 8 18 10Z"
-                                    stroke="currentColor"
-                                    stroke-width="3"
-                                    stroke-linejoin="round"
-                                />
-
-                            </svg>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="details-body">
+        <div class="selected-tooth-text">
+            Selected tooth:
+            <strong id="selectedToothNumber">No Tooth Selected</strong>
+        </div>
+<div class="tooth-condition-modal-body">
 
 
                         <!-- CURRENT CONDITION -->
@@ -1532,9 +1519,10 @@
 
                         </div>
 
+                    
                     </div>
-
-                </aside>
+    </div>
+</div>
 
             </div>
 

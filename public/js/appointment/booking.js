@@ -163,21 +163,16 @@ async function loadSlots(date) {
     }
 
 
-    const serviceSelect =
-        document.getElementById(
-            "service_id"
-        );
+    const selectedProcedures = Array.from(
+        document.querySelectorAll(
+            '#procedure-options input[name="service_procedure_ids[]"]:checked'
+        )
+    );
 
-    if (
-        !serviceSelect ||
-        !serviceSelect.value
-    ) {
-
+    if (!selectedProcedures.length) {
         container.innerHTML =
-            '<p class="text-gray-500">Please select a dental service first.</p>';
-
+            '<p class="text-gray-500">Please select a dental procedure first.</p>';
         return;
-
     }
 
 
@@ -187,10 +182,14 @@ async function loadSlots(date) {
             '<p class="text-gray-500">Loading available slots...</p>';
 
 
-        const response =
-            await fetch(
-                `/available-slots?date=${encodeURIComponent(date)}&service_id=${encodeURIComponent(serviceSelect.value)}`
-            );
+        const params = new URLSearchParams();
+        params.set("date", date);
+
+        selectedProcedures.forEach(function (checkbox) {
+            params.append("service_procedure_ids[]", checkbox.value);
+        });
+
+        const response = await fetch(`/available-slots?${params.toString()}`);
 
 
         if (!response.ok) {
@@ -1731,40 +1730,117 @@ document.addEventListener("keydown", function (event) {
 
 
         // ========================================================
-        // SERVICE CHANGE
+        
+        // ========================================================
+        // CATEGORY AND PROCEDURE SELECTION
         // ========================================================
 
-        const serviceSelect =
-            document.getElementById(
-                "service_id"
+        const categorySelect = document.getElementById("service_category_id");
+        const procedureOptions = document.getElementById("procedure-options");
+        const procedureInfo = document.getElementById("procedure-info");
+
+        function updateProcedureOptions(resetSelection = false) {
+            if (!categorySelect || !procedureOptions) return;
+
+            const categoryId = categorySelect.value;
+
+            const procedureLabels = procedureOptions.querySelectorAll(
+                ".procedure-checkbox-option"
             );
 
+            procedureLabels.forEach(function (label) {
+                const matches = label.dataset.category === categoryId;
+                const checkbox = label.querySelector(
+                    'input[name="service_procedure_ids[]"]'
+                );
 
-        if (serviceSelect) {
+                label.classList.toggle("is-category-visible", matches);
 
-            serviceSelect.addEventListener(
-                "change",
-                function () {
+                if (checkbox) {
+                    checkbox.disabled = !matches;
 
-                    const dateInput =
-                        document.getElementById(
-                            "date"
-                        );
-
-                    if (
-                        dateInput &&
-                        dateInput.value
-                    ) {
-
-                        loadSlots(
-                            dateInput.value
-                        );
-
+                    if (resetSelection || !matches) {
+                        checkbox.checked = false;
                     }
-
                 }
+            });
+
+            updateProcedureInfo();
+        }
+
+        function updateProcedureInfo() {
+            if (!procedureOptions || !procedureInfo) return;
+
+            const selected = procedureOptions.querySelectorAll(
+                'input[name="service_procedure_ids[]"]:checked'
             );
 
+            let totalPrice = 0;
+            let totalDuration = 0;
+
+            selected.forEach(function (checkbox) {
+                totalPrice += Number(checkbox.dataset.price || 0);
+                totalDuration += Number(checkbox.dataset.duration || 0);
+            });
+
+            if (!selected.length) {
+                procedureInfo.textContent =
+                    "Select a procedure to see its price and duration.";
+                return;
+            }
+
+            procedureInfo.textContent =
+                "Total Price: ₱" +
+                totalPrice.toLocaleString("en-PH", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }) +
+                " · Total Duration: " +
+                totalDuration +
+                " minutes";
+        }
+
+        function refreshAppointmentSlots() {
+            const start = document.getElementById("start_time");
+            const end = document.getElementById("end_time");
+            const slots = document.getElementById("slots");
+
+            if (start) start.value = "";
+            if (end) end.value = "";
+
+            if (slots) {
+                slots.innerHTML =
+                    "<small>Select a date and procedure to see available slots.</small>";
+            }
+
+            const dateInput = document.getElementById("date");
+            const hasSelectedProcedure = procedureOptions?.querySelector(
+                'input[name="service_procedure_ids[]"]:checked'
+            );
+
+            if (dateInput?.value && hasSelectedProcedure) {
+                loadSlots(dateInput.value);
+            }
+        }
+
+        if (categorySelect && procedureOptions) {
+            updateProcedureOptions(false);
+
+            categorySelect.addEventListener("change", function () {
+                updateProcedureOptions(true);
+                refreshAppointmentSlots();
+            });
+
+            procedureOptions.addEventListener("change", function (event) {
+                if (
+                    event.target.matches(
+                        'input[name="service_procedure_ids[]"]'
+                    )
+                ) {
+                    updateProcedureInfo();
+                    refreshAppointmentSlots();
+                }
+            });
         }
 
 

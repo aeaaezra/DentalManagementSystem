@@ -1561,3 +1561,818 @@ a {
     }
 
 }
+
+/* =========================================================
+   SHINE & SMILE — PROFILE TABS AND FORM DESIGN
+========================================================= */
+
+.profile-tabs {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 24px 0 18px;
+    padding: 7px;
+    background: #fff;
+    border: 1px solid #f3dce6;
+    border-radius: 14px;
+    box-shadow: 0 5px 20px rgba(125, 48, 83, 0.05);
+}
+
+.profile-tab {
+    appearance: none;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    padding: 12px 20px;
+    background: transparent;
+    color: #6f5260;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease,
+                box-shadow .2s ease, transform .2s ease;
+}
+
+.profile-tab:hover {
+    background: #fff1f6;
+    color: #a52d65;
+}
+
+.profile-tab.active {
+    color: #fff;
+    background: linear-gradient(135deg, #d94b88, #ad3674);
+    box-shadow: 0 4px 12px rgba(173, 54, 116, .22);
+}
+
+.profile-tab:focus-visible {
+    outline: 3px solid #f2a8c8;
+    outline-offset: 3px;
+}
+
+.profile-layout {
+    display: block;
+    min-width: 0;
+}
+
+.profile-main-card,
+.profile-side-card {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 28px;
+    background: #fff;
+    border: 1px solid #f1dce5;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(125, 48, 83, .06);
+}
+
+.profile-card-header,
+.side-card-header {
+    margin-bottom: 24px;
+}
+
+.profile-card-header h3,
+.side-card-header h3 {
+    color: #29202a;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -.3px;
+}
+
+.profile-card-header p {
+    color: #81717b;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.information-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.information-item {
+    min-width: 0;
+    padding: 16px;
+    background: #fff9fb;
+    border: 1px solid #f3e3ea;
+    border-radius: 13px;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.information-item:focus-within {
+    border-color: #df80ad;
+    box-shadow: 0 0 0 3px rgba(217, 75, 136, .09);
+}
+
+.information-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.information-content label {
+    color: #493641;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.information-content input,
+.information-content textarea {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    padding: 12px 13px;
+    border: 1px solid #e8d6df;
+    border-radius: 9px;
+    outline: none;
+    background: #fff;
+    color: #30242b;
+    font: inherit;
+    font-size: 14px;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.information-content input:focus,
+.information-content textarea:focus {
+    border-color: #cc4f8a;
+    box-shadow: 0 0 0 3px rgba(204, 79, 138, .1);
+}
+
+.information-content textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.profile-save-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 22px;
+    padding: 12px 24px;
+    border: 0;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #d94b88, #ad3674);
+    color: #fff;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 5px 14px rgba(173, 54, 116, .2);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.profile-save-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(173, 54, 116, .25);
+}
+
+.profile-success,
+.profile-errors {
+    margin-bottom: 18px;
+    padding: 13px 15px;
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+.profile-success {
+    border: 1px solid #b8e6cd;
+    background: #f0fff6;
+    color: #176b43;
+}
+
+.profile-errors {
+    border: 1px solid #f2c4ce;
+    background: #fff4f6;
+    color: #a12c47;
+}
+
+.profile-side-card[hidden],
+[data-profile-panel][hidden] {
+    display: none !important;
+}
+
+@media (max-width: 650px) {
+    .profile-tabs {
+        gap: 5px;
+        padding: 5px;
+    }
+
+    .profile-tab {
+        flex: 1 1 auto;
+        padding: 11px 12px;
+        font-size: 13px;
+    }
+
+    .profile-main-card,
+    .profile-side-card {
+        padding: 19px;
+        border-radius: 14px;
+    }
+
+    .information-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .information-item {
+        padding: 13px;
+    }
+
+    .profile-save-button {
+        width: 100%;
+    }
+}
+
+/* =====================================================
+   SHINE & SMILE — PROFESSIONAL CUSTOMER PROFILE
+===================================================== */
+
+.profile-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 24px 0 18px;
+    padding: 0 0 12px;
+    border-bottom: 2px solid #f6c4da;
+}
+
+.profile-tab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 15px 26px;
+    border: 1px solid #f5d5e3;
+    border-radius: 14px;
+    background: rgba(255,255,255,.92);
+    color: #302039;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 650;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.profile-tab svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.profile-tab:hover {
+    background: #fff0f6;
+    border-color: #e9a0c1;
+    transform: translateY(-1px);
+}
+
+.profile-tab.active {
+    color: #fff;
+    background: linear-gradient(120deg, #f65b9a, #a82e76);
+    border-color: transparent;
+    box-shadow: 0 7px 18px rgba(192, 52, 120, .2);
+}
+
+.profile-panel[hidden],
+[data-profile-panel][hidden] {
+    display: none !important;
+}
+
+.profile-layout {
+    display: block;
+    min-width: 0;
+}
+
+.profile-main-card {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 38px;
+    background: rgba(255,255,255,.96);
+    border: 1px solid #f7d9e7;
+    border-radius: 22px;
+    box-shadow: 0 14px 40px rgba(135, 47, 88, .07);
+}
+
+.profile-card-header {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    margin-bottom: 32px;
+}
+
+.profile-tooth-icon {
+    display: flex;
+    flex: 0 0 92px;
+    align-items: center;
+    justify-content: center;
+    width: 92px;
+    height: 92px;
+    border-radius: 22px;
+    background: linear-gradient(145deg, #ffe8f2, #fbd7e8);
+    box-shadow: 0 8px 20px rgba(204, 68, 130, .08);
+}
+
+.profile-tooth-icon svg {
+    width: 55px;
+    height: 55px;
+    fill: none;
+    stroke: #c33e83;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.profile-heading-text {
+    min-width: 0;
+}
+
+.profile-heading-text h3 {
+    margin: 0 0 7px;
+    color: #19172f;
+    font-size: clamp(22px, 3vw, 36px);
+    font-weight: 750;
+    letter-spacing: -.8px;
+}
+
+.profile-heading-text p {
+    margin: 0;
+    color: #7e8498;
+    font-size: 16px;
+}
+
+.profile-header-note {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+    color: #b43778;
+}
+
+.profile-header-note > span {
+    font-size: 36px;
+}
+
+.profile-header-note p {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.information-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.information-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    min-width: 0;
+    padding: 22px;
+    border: 1px solid #f8dce9;
+    border-radius: 17px;
+    background: linear-gradient(135deg, #fffafd, #fff7fb);
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.information-item:focus-within {
+    border-color: #dc79a8;
+    box-shadow: 0 0 0 4px rgba(217, 75, 136, .08);
+}
+
+.field-icon {
+    display: flex;
+    flex: 0 0 48px;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #fde0ed;
+    color: #c43e82;
+}
+
+.field-icon svg {
+    width: 23px;
+    height: 23px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.information-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+}
+
+.information-content label {
+    color: #252039;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.information-content input,
+.information-content textarea {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    padding: 14px 16px;
+    border: 1px solid #d9d0d9;
+    border-radius: 11px;
+    background: #fff;
+    color: #252039;
+    font: inherit;
+    font-size: 15px;
+    outline: none;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.information-content input:focus,
+.information-content textarea:focus {
+    border-color: #cf4f91;
+    box-shadow: 0 0 0 4px rgba(207, 79, 145, .1);
+}
+
+.information-content input::placeholder,
+.information-content textarea::placeholder {
+    color: #9299aa;
+}
+
+.information-content textarea {
+    min-height: 108px;
+    resize: vertical;
+}
+
+.profile-save-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 17px;
+    min-width: 310px;
+    margin-top: 30px;
+    padding: 19px 26px;
+    border: 0;
+    border-radius: 15px;
+    background: linear-gradient(110deg, #f65398, #a72d75);
+    color: #fff;
+    font: inherit;
+    font-size: 17px;
+    font-weight: 750;
+    cursor: pointer;
+    box-shadow: 0 10px 22px rgba(179, 47, 115, .2);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.profile-save-button svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.profile-save-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(179, 47, 115, .27);
+}
+
+.save-arrow {
+    margin-left: auto;
+    font-size: 27px;
+    font-weight: 400;
+}
+
+.profile-success,
+.profile-errors {
+    margin-bottom: 22px;
+    padding: 14px 17px;
+    border-radius: 12px;
+}
+
+.profile-success {
+    background: #effcf5;
+    border: 1px solid #b7e6cd;
+    color: #176b43;
+}
+
+.profile-errors {
+    background: #fff2f5;
+    border: 1px solid #f2c4d1;
+    color: #a12c47;
+}
+
+.profile-side-card {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 30px;
+    background: #fff;
+    border: 1px solid #f7d9e7;
+    border-radius: 22px;
+    box-shadow: 0 14px 40px rgba(135, 47, 88, .07);
+}
+
+@media (max-width: 850px) {
+    .profile-header-note {
+        display: none;
+    }
+
+    .profile-main-card {
+        padding: 25px;
+    }
+
+    .information-grid {
+        gap: 14px;
+    }
+
+    .information-item {
+        gap: 12px;
+        padding: 16px;
+    }
+}
+
+@media (max-width: 600px) {
+    .profile-tabs {
+        gap: 7px;
+    }
+
+    .profile-tab {
+        flex: 1 1 auto;
+        gap: 6px;
+        padding: 12px 10px;
+        font-size: 12px;
+    }
+
+    .profile-tab svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .profile-main-card,
+    .profile-side-card {
+        padding: 18px;
+        border-radius: 16px;
+    }
+
+    .profile-card-header {
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 24px;
+    }
+
+    .profile-tooth-icon {
+        flex-basis: 54px;
+        width: 54px;
+        height: 54px;
+        border-radius: 15px;
+    }
+
+    .profile-tooth-icon svg {
+        width: 34px;
+        height: 34px;
+    }
+
+    .profile-heading-text h3 {
+        font-size: 21px;
+        letter-spacing: -.3px;
+    }
+
+    .profile-heading-text p {
+        font-size: 13px;
+    }
+
+    .information-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .information-item {
+        padding: 15px;
+    }
+
+    .information-content label {
+        font-size: 14px;
+    }
+
+    .information-content input,
+    .information-content textarea {
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    .profile-save-button {
+        width: 100%;
+        min-width: 0;
+        padding: 16px;
+        font-size: 15px;
+    }
+}
+
+/* FINAL FIX — SHINE & SMILE PROFILE */
+.profile-page {
+    width: min(100% - 48px, 1500px) !important;
+    margin-inline: auto;
+}
+
+.profile-tabs {
+    display: flex !important;
+    align-items: center;
+    gap: 12px !important;
+    padding: 0 0 12px !important;
+    margin: 24px 0 18px !important;
+    border-bottom: 2px solid #f6c4da !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.profile-tab {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 12px !important;
+    min-height: 54px;
+    padding: 14px 25px !important;
+    border: 1px solid #f5d5e3 !important;
+    border-radius: 14px !important;
+    background: #fff !important;
+    color: #302039 !important;
+    font-size: 15px !important;
+    font-weight: 650;
+}
+
+.profile-tab.active {
+    background: linear-gradient(120deg, #f65b9a, #a82e76) !important;
+    color: #fff !important;
+    border-color: transparent !important;
+    box-shadow: 0 7px 18px rgba(192, 52, 120, .2) !important;
+}
+
+.profile-tab svg {
+    display: block !important;
+    width: 22px !important;
+    height: 22px !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 2;
+}
+
+.profile-layout {
+    display: block !important;
+    width: 100%;
+}
+
+.profile-main-card,
+.profile-side-card {
+    box-sizing: border-box;
+    width: 100% !important;
+    padding: 36px !important;
+    border: 1px solid #f7d9e7 !important;
+    border-radius: 22px !important;
+    background: #fff !important;
+    box-shadow: 0 14px 40px rgba(135, 47, 88, .07) !important;
+}
+
+.profile-card-header {
+    display: flex !important;
+    align-items: center;
+    gap: 22px;
+    margin-bottom: 32px !important;
+}
+
+.profile-tooth-icon {
+    display: flex !important;
+    flex: 0 0 92px !important;
+    align-items: center;
+    justify-content: center;
+    width: 92px !important;
+    height: 92px !important;
+    overflow: hidden;
+    border-radius: 22px;
+    background: linear-gradient(145deg, #ffe8f2, #fbd7e8) !important;
+}
+
+.profile-tooth-icon svg {
+    display: block !important;
+    width: 55px !important;
+    height: 55px !important;
+    fill: none !important;
+    stroke: #c33e83 !important;
+    stroke-width: 3;
+}
+
+.profile-heading-text {
+    min-width: 0;
+}
+
+.profile-heading-text h3 {
+    margin: 0 0 7px;
+    color: #19172f;
+    font-size: clamp(22px, 3vw, 36px);
+}
+
+.information-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 22px !important;
+}
+
+.information-item {
+    display: flex !important;
+    align-items: flex-start;
+    gap: 18px !important;
+    min-width: 0;
+    padding: 22px !important;
+    border: 1px solid #f8dce9 !important;
+    border-radius: 17px !important;
+    background: #fffafd !important;
+}
+
+.information-content {
+    display: flex !important;
+    flex: 1;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+}
+
+.information-content input,
+.information-content textarea {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100%;
+    padding: 14px 16px !important;
+    border: 1px solid #d9d0d9 !important;
+    border-radius: 11px !important;
+    background: #fff !important;
+    font-size: 15px !important;
+}
+
+.profile-save-button {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    min-width: 310px;
+    min-height: 68px;
+    margin-top: 30px !important;
+    padding: 18px 26px !important;
+    border: 0 !important;
+    border-radius: 15px !important;
+    background: linear-gradient(110deg, #f65398, #a72d75) !important;
+    color: #fff !important;
+    font-size: 17px !important;
+}
+
+.profile-save-button svg {
+    width: 24px !important;
+    height: 24px !important;
+    fill: none !important;
+    stroke: currentColor !important;
+}
+
+.profile-panel[hidden],
+[data-profile-panel][hidden] {
+    display: none !important;
+}
+
+@media (max-width: 650px) {
+    .profile-page {
+        width: calc(100% - 24px) !important;
+    }
+
+    .profile-main-card,
+    .profile-side-card {
+        padding: 18px !important;
+    }
+
+    .information-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .profile-tooth-icon {
+        flex-basis: 58px !important;
+        width: 58px !important;
+        height: 58px !important;
+    }
+
+    .profile-tooth-icon svg {
+        width: 36px !important;
+        height: 36px !important;
+    }
+
+    .profile-save-button {
+        width: 100%;
+        min-width: 0;
+    }
+}

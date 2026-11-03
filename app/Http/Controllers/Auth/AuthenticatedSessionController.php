@@ -87,7 +87,7 @@ class AuthenticatedSessionController extends Controller
 
         if ($loginRoute === 'customer.login.store') {
 
-            if (!$user->hasRole('customer')) {
+            if (!$user->hasRole('customer') || $user->hasAnyRole(['admin', 'dentist', 'cashier', 'receptionist']) || $user->role === 'staff') {
                 Auth::logout();
 
                 return back()

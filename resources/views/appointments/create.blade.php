@@ -9,10 +9,94 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="{{ asset('css/appointment/patient-theme.css') }}">
-<link rel="stylesheet" href="{{ asset('css/appointment/booking.css') }}">
-    <script src="{{ asset('js/patient-theme.js') }}"></script>
+<link rel="stylesheet" href="{{ asset('css/appointment/booking.css') }}?v={{ filemtime(public_path('css/appointment/booking.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/appointment/mobile-sidebar-fix.css') }}?v=clean-appointment-20261019">
+    <script src="{{ asset('js/appointment/patient-theme.js') }}"></script>
 
-    </head>
+    
+<style>
+/* FORCE MOBILE DRAWER POSITION */
+@media (max-width: 767px) {
+    #mobileSidebar {
+        position: fixed !important;
+        inset: 0 auto 0 0 !important;
+        width: min(280px, 82vw) !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+        background: #090909 !important;
+        z-index: 2147483000 !important;
+        overflow-y: auto !important;
+        transform: translateX(-110%) !important;
+        visibility: hidden !important;
+    }
+
+    body.mobile-sidebar-open #mobileSidebar {
+        transform: translateX(0) !important;
+        visibility: visible !important;
+    }
+
+    #mobileSidebarOverlay {
+        position: fixed !important;
+        inset: 0 !important;
+        z-index: 2147482999 !important;
+    }
+
+    body.mobile-sidebar-open #mobileSidebarOverlay {
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+    }
+
+    #mobileSidebar .mobile-sidebar-profile {
+        display: flex !important;
+        flex: 0 0 auto !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 76px !important;
+        padding: 12px 34px 12px 12px !important;
+        margin: 0 0 16px !important;
+        gap: 12px !important;
+        box-sizing: border-box !important;
+    }
+
+    #mobileSidebar .mobile-sidebar-profile img.mobile-sidebar-avatar {
+        display: block !important;
+        flex: 0 0 48px !important;
+        width: 48px !important;
+        height: 48px !important;
+        min-width: 48px !important;
+        min-height: 48px !important;
+        max-width: 48px !important;
+        max-height: 48px !important;
+        object-fit: cover !important;
+        border-radius: 50% !important;
+    }
+
+    #mobileSidebar .mobile-sidebar-user {
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        font-size: 14px !important;
+        line-height: 1.4 !important;
+    }
+
+    #mobileSidebar .mobile-sidebar-links {
+        flex: 0 0 auto !important;
+    }
+
+    #mobileSidebar .mobile-sidebar-bottom {
+        margin-top: auto !important;
+    }
+}
+</style>
+
+</head>
     <body>
 
 
@@ -20,7 +104,16 @@
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
 
             <!-- Logo + Burger -->
-            <div class="relative flex items-center gap-4">
+            <div class="relative flex items-center gap-3">
+
+                <button
+                    type="button"
+                    id="mobileSidebarToggle"
+                    aria-label="Open navigation menu"
+                    aria-controls="mobileSidebar"
+                    aria-expanded="false"
+                    class="mobile-navbar-toggle"
+                >☰</button>
 
                 <div class="text-2xl font-bold text-[#E91E63]">
                     Shine & Smile
@@ -704,7 +797,7 @@
             class="flex items-center gap-2 focus:outline-none">
 
         <img
-        src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : asset('images/default-profile.png') }}"
+        src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : asset('images/default-profile.svg') }}"
         alt="Profile"
         class="w-10 h-10 rounded-full border-2 border-pink-500 object-cover">
 
@@ -917,10 +1010,22 @@
 
             </div>
                 <div class="form-group">
-                    <label>Contact Number</label>
-                    <input type="text"
+                    <label for="tel_no">Contact Number</label>
+                    <input
+                        type="tel"
+                        id="tel_no"
                         name="tel_no"
-                        value="{{ old('tel_no') }}">
+                        inputmode="tel"
+                        autocomplete="tel"
+                        maxlength="18"
+                        placeholder="09171234567"
+                        aria-describedby="tel_no_help"
+                        value="{{ old('tel_no') }}"
+                    >
+                    <small id="tel_no_help">Enter a Philippine mobile number, e.g. 09171234567 or +639171234567.</small>
+                    @error('tel_no')
+                        <small style="color: #dc2626;">{{ $message }}</small>
+                    @enderror
                 </div>
 
             <div class="form-group">
@@ -1214,29 +1319,36 @@
                 Appointment Details
             </h3>
 <div class="form-group">
-
-    <label for="service_id">Dental Service</label>
-
-    <select name="service_id" id="service_id" required>
-
-        <option value="">Select Service</option>
-
-        @foreach($services as $service)
-
-            <option
-                value="{{ $service->id }}"
-                data-duration="{{ $service->duration_minutes ?? 0 }}"
-                data-price="{{ $service->price }}"
-            >
-                {{ $service->service_name }}
-                (₱{{ number_format($service->price, 2) }}
-                - {{ $service->duration_minutes ?? 0 }} minutes)
+    <label for="service_category_id">Service Category</label>
+    <select name="service_category_id" id="service_category_id" required>
+        <option value="">Select Category</option>
+        @foreach($serviceCategories as $category)
+            <option value="{{ $category->id }}"
+                @selected((string) old('service_category_id') === (string) $category->id)>
+                {{ $category->category_name }}
             </option>
-
         @endforeach
-
     </select>
+</div>
 
+<div class="form-group">
+    <label for="service_procedure_id">Dental Procedure</label>
+    <div id="procedure-options" class="procedure-checkbox-list">
+        @foreach($serviceCategories as $category)
+            @foreach($category->procedures as $procedure)
+                <label class="procedure-checkbox-option" data-category="{{ $category->id }}">
+                    <input
+                        type="checkbox"
+                        name="service_procedure_ids[]"
+                        value="{{ $procedure->id }}"
+                        data-price="{{ number_format((float) $procedure->price, 2, '.', '') }}"
+                        data-duration="{{ (int) ($procedure->duration_minutes ?? 0) }}">
+                    <span>{{ $procedure->procedure_name }}</span>
+                </label>
+            @endforeach
+        @endforeach
+    </div>
+    <small id="procedure-info">Select a procedure to see its price and duration.</small>
 </div>
 
             <div class="form-grid">
@@ -1868,7 +1980,42 @@
 
 
 
-    <script src="{{ asset('js/appointment/booking.js') }}"></script>
-    <script src="{{ asset('js/appointment/patient-theme.js') }}"></script>
-    </body>
+    <script src="{{ asset('js/appointment/booking.js') }}?v={{ filemtime(public_path('js/appointment/booking.js')) }}"></script>
+
+    
+<!-- Mobile navigation drawer -->
+<div id="mobileSidebarOverlay" class="mobile-sidebar-overlay" aria-hidden="true"></div>
+
+<aside id="mobileSidebar" class="mobile-sidebar"
+       aria-hidden="true" aria-label="Mobile navigation">
+    <div class="mobile-sidebar-profile">
+        <img class="mobile-sidebar-avatar"
+             src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : asset('images/default-profile.svg') }}"
+             alt="Profile">
+        <div class="mobile-sidebar-user">
+            <strong>{{ Auth::user()->name }}</strong>
+            <span>Patient</span>
+        </div>
+        <button type="button" id="closeMobileSidebar"
+                class="mobile-sidebar-close" aria-label="Close menu">&times;</button>
+    </div>
+
+    <nav class="mobile-sidebar-links" aria-label="Mobile menu">
+        <a href="{{ route('appointments.homepage') }}">⌂ Home</a>
+        <a href="{{ route('appointments.create') }}">▣ Appointments</a>
+        <a href="{{ route('faq') }}">ⓘ FAQ's</a>
+        <a href="{{ route('appointments.history') }}">◷ History</a>
+    </nav>
+
+    <div class="mobile-sidebar-bottom">
+        <a href="{{ route('appointments.settings') }}">⚙ Settings</a>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit">↪ Logout</button>
+        </form>
+    </div>
+</aside>
+
+<script src="{{ asset('js/appointment/mobile-sidebar.js') }}"></script>
+</body>
     </html>

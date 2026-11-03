@@ -44,47 +44,34 @@
     </a>
 
     {{-- Sales History --}}
-    <a
-        class="nav-item"
-        href="{{ url('/admin/pos-sales') }}"
-    >
-        <i class="fa-regular fa-clipboard"></i>
-        <span>Sales History</span>
-    </a>
-
+<a
+    class="nav-item"
+    href="{{ route('pos.sales-history') }}"
+>
+    <i class="fa-regular fa-clipboard"></i>
+    <span>Sales History</span>
+</a>
     {{-- Products --}}
-    <a
-        class="nav-item"
-        href="{{ url('/admin/products') }}"
-    >
-        <i class="fa-solid fa-box-open"></i>
-        <span>Products</span>
-    </a>
-
+<a
+    class="nav-item"
+    href="{{ route('pos.products') }}"
+>
+    <i class="fa-solid fa-box-open"></i>
+    <span>Products</span>
+</a>
     {{-- Inventory --}}
-    <a
-        class="nav-item"
-        href="{{ url('/admin/stock-movements') }}"
-    >
-        <i class="fa-solid fa-boxes-stacked"></i>
-        <span>Inventory</span>
-    </a>
-
-    {{-- Customers --}}
-    <a
-        class="nav-item"
-        href="#"
-        onclick="return false;"
-        title="Customer management page is not available yet"
-    >
-        <i class="fa-solid fa-users"></i>
-        <span>Customers</span>
-    </a>
+<a
+    class="nav-item"
+    href="{{ route('pos.inventory.stock-movements') }}"
+>
+    <i class="fa-solid fa-boxes-stacked"></i>
+    <span>Inventory</span>
+</a>
 
     {{-- Reports --}}
     <a
         class="nav-item"
-        href="{{ url('/admin/reports') }}"
+        href="{{ route('pos.reports') }}"
     >
         <i class="fa-solid fa-chart-column"></i>
         <span>Reports</span>
@@ -259,7 +246,7 @@
         <div class="cashier-dropdown-divider"></div>
 
         <a
-            href="{{ route('pos.profile') }}"
+            href="{{ route('pos.settings') }}"
             class="cashier-dropdown-item"
         >
             <i class="fa-regular fa-user"></i>

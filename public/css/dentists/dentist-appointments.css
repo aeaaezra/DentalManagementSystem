@@ -3727,3 +3727,507 @@ a {
         flex-direction: column-reverse;
     }
 }
+.patient-record-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.patient-record-modal.show {
+    display: flex;
+}
+
+.patient-record-backdrop {
+    background: rgba(255, 240, 245, 0.35) !important;
+    backdrop-filter: blur(3px);
+}
+.patient-record-panel {
+    position: relative;
+    width: min(760px, 100%);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    background: var(--surface, #fff);
+    color: var(--text, #172033);
+    border-radius: 16px;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, .25);
+}
+
+.patient-record-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border, #e5e7eb);
+}
+
+.patient-record-header span {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    color: var(--primary, #7c3aed);
+}
+
+.patient-record-header h2 {
+    margin: 5px 0 0;
+    font-size: 20px;
+}
+
+.patient-record-close {
+    border: 0;
+    background: transparent;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.patient-record-content {
+    padding: 22px 24px;
+}
+
+.patient-record-content h3 {
+    margin: 24px 0 12px;
+}
+
+.patient-record-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.patient-record-field {
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 10px;
+}
+
+.patient-record-field span {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 11px;
+    color: var(--muted, #64748b);
+}
+
+.patient-record-field strong {
+    overflow-wrap: anywhere;
+    font-size: 13px;
+}
+
+@media (max-width: 600px) {
+    .patient-record-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* Patient record modal */
+.patient-record-modal{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:20px}
+.patient-record-modal.show{display:flex}
+.patient-record-backdrop{position:absolute;inset:0;
+
+   background: rgba(255, 192, 203, 0.35) !important;
+backdrop-filter:blur(3px)}
+.patient-record-panel{position:relative;z-index:1;width:min(760px,100%);max-height:calc(100vh - 40px);overflow-y:auto;background:var(--surface,#fff);color:var(--text,#172033);border-radius:16px;box-shadow:0 24px 70px rgba(0,0,0,.25)}
+.patient-record-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 24px;border-bottom:1px solid #e5e7eb}
+.patient-record-header span{font-size:11px;font-weight:700;letter-spacing:.08em;color:#7c3aed}
+.patient-record-header h2{margin:5px 0 0;font-size:21px}
+.patient-record-close{border:0;background:transparent;font-size:28px;cursor:pointer}
+.patient-record-content{padding:24px}
+.patient-record-content h3{margin:24px 0 12px}
+.patient-record-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.patient-record-field{min-width:0;padding:12px;border:1px solid #e5e7eb;border-radius:10px}
+.patient-record-field span{display:block;margin-bottom:5px;color:#64748b;font-size:12px}
+.patient-record-field strong{display:block;overflow-wrap:anywhere;font-size:14px}
+@media(max-width:600px){.patient-record-modal{padding:10px}.patient-record-grid{grid-template-columns:1fr}.patient-record-content,.patient-record-header{padding:16px}}
+
+/* Patient Record Modal */
+.patient-record-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.patient-record-modal.show {
+    display: flex;
+}
+
+.patient-record-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 192, 203, 0.35) !important;
+    backdrop-filter: blur(3px);
+
+}
+.patient-record-panel {
+    position: relative;
+    z-index: 1;
+    width: min(760px, 100%);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    background: #fff;
+    color: #172033;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.25);
+}
+
+.patient-record-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.patient-record-header span {
+    color: #db2777;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+}
+
+.patient-record-header h2 {
+    margin: 5px 0 0;
+    font-size: 21px;
+    font-weight: 700;
+}
+
+.patient-record-close {
+    border: 0;
+    background: #f3f4f6;
+    color: #475569;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    font-size: 25px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.patient-record-close:hover {
+    background: #fce7f3;
+    color: #be185d;
+}
+
+.patient-record-content {
+    padding: 24px;
+}
+
+.patient-record-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.patient-record-field {
+    min-width: 0;
+    padding: 13px 14px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+.patient-record-field span {
+    display: block;
+    margin-bottom: 5px;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.patient-record-field strong {
+    display: block;
+    color: #172033;
+    font-size: 14px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.patient-record-content h3 {
+    margin: 24px 0 12px;
+    color: #172033;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+@media (max-width: 600px) {
+    .patient-record-modal {
+        padding: 10px;
+    }
+
+    .patient-record-header,
+    .patient-record-content {
+        padding: 16px;
+    }
+
+    .patient-record-grid {
+        grid-template-columns: 1fr;
+    }
+}
+/* Patient record modal backdrop — light pink, 35% opacity */
+.patient-record-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 999999 !important;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(255, 192, 203, 0.35) !important;
+    backdrop-filter: blur(3px);
+}
+
+.patient-record-modal.show {
+    display: flex !important;
+}
+
+.patient-record-backdrop {
+    position: absolute;
+    inset: 0;
+}
+
+.patient-record-panel {
+    position: relative;
+    z-index: 1;
+    width: min(760px, 95vw);
+    max-height: 90vh;
+    overflow: auto;
+    background: #fff;
+    color: #172033;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.25);
+}
+
+.patient-record-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.patient-record-field {
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+.patient-record-field span {
+    display: block;
+    margin-bottom: 5px;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.patient-record-field strong {
+    display: block;
+    overflow-wrap: anywhere;
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+    .patient-record-modal { padding: 10px; }
+    .patient-record-panel { padding: 16px; }
+    .patient-record-grid { grid-template-columns: 1fr; }
+}
+
+
+/* Professional Patient Record Modal */
+.patient-record-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 999999 !important;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+background: transparent !important;
+    backdrop-filter: blur(5px);
+}
+
+.patient-record-modal.show {
+    display: flex !important;
+}
+
+.patient-record-panel {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    width: min(900px, 96vw);
+    max-height: min(88vh, 900px);
+    overflow: hidden;
+    background: #fff;
+    color: #172033;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    box-shadow: 0 28px 80px rgba(15, 23, 42, .30);
+}
+
+.patient-record-header {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 24px 30px;
+    background: #fff;
+    border-bottom: 1px solid #e8edf3;
+}
+
+.patient-record-header span {
+    display: block;
+    margin-bottom: 6px;
+    color: #9f3159;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .14em;
+}
+
+.patient-record-header h2 {
+    margin: 0;
+    color: #172033;
+    font-size: clamp(21px, 2.4vw, 28px);
+    font-weight: 750;
+    line-height: 1.25;
+}
+
+.patient-record-close {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #f8fafc;
+    color: #475569;
+    font-size: 25px;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease;
+}
+
+.patient-record-close:hover {
+    background: #9f3159;
+    color: #fff;
+}
+
+.patient-record-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 28px 30px 32px;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+
+.patient-record-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.patient-record-field {
+    min-width: 0;
+    padding: 16px 18px;
+    border: 1px solid #e2e8f0;
+    border-radius: 13px;
+    background: #f8fafc;
+}
+
+.patient-record-field span {
+    display: block;
+    margin-bottom: 7px;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.patient-record-field strong {
+    display: block;
+    color: #172033;
+    font-size: 15px;
+    font-weight: 650;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.patient-record-content h3 {
+    margin: 30px 0 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e8edf3;
+    color: #172033;
+    font-size: 17px;
+    font-weight: 750;
+}
+
+@media (max-width: 600px) {
+    .patient-record-modal {
+        padding: 10px;
+    }
+
+    .patient-record-panel {
+        width: 100%;
+        max-height: 94vh;
+        border-radius: 16px;
+    }
+
+    .patient-record-header {
+        padding: 18px;
+    }
+
+    .patient-record-content {
+        padding: 18px;
+    }
+
+    .patient-record-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .patient-record-field {
+        padding: 13px 15px;
+    }
+}
+.patient-record-backdrop {
+    background: rgba(255, 220, 230, 0.75) !important;
+    backdrop-filter: blur(5px);
+}
+
+/* Light pink dentist patient-record backdrop */
+#patientRecordModal.patient-record-modal.show {
+    background: transparent !important;
+}
+
+#patientRecordModal .patient-record-backdrop {
+    background: rgba(255, 220, 230, 0.35) !important;
+    backdrop-filter: blur(3px) brightness(1.5) !important;
+}
+/* Force the patient-record overlay to light pink */
+#patientRecordModal.patient-record-modal.show {
+    background: rgba(255, 192, 203, 0.80) !important;
+    backdrop-filter: blur(4px) !important;
+}
+
+#patientRecordModal .patient-record-backdrop {
+    background: transparent !important;
+}
+/* Patient record backdrop — match appointment details modal */
+#patientRecordModal.patient-record-modal.show {
+    background: rgba(100, 108, 120, 0.62) !important;
+    backdrop-filter: blur(4px) !important;
+}
+
+#patientRecordModal .patient-record-backdrop {
+    background: transparent !important;
+    backdrop-filter: none !important;
+}
+

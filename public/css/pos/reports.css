@@ -1,0 +1,409 @@
+.report-page {
+    --report-pink: #e75d91;
+    --report-ink: #302b35;
+    --report-muted: #89838f;
+    --report-border: #f0eaf0;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 30px;
+    color: var(--report-ink);
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+.report-page * { box-sizing: border-box; }
+.report-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+.report-eyebrow {
+    display: inline-block;
+    margin-bottom: 7px;
+    color: var(--report-pink);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.6px;
+}
+.report-heading h1 {
+    margin: 0;
+    font-size: clamp(25px, 3vw, 33px);
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+.report-heading p, .panel-heading p {
+    margin: 7px 0 0;
+    color: var(--report-muted);
+    font-size: 13px;
+}
+.report-date-pill {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 15px;
+    border: 1px solid var(--report-border);
+    border-radius: 12px;
+    background: #fff;
+    color: #625b67;
+    font-size: 12px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+.report-date-pill i { color: var(--report-pink); }
+.report-filters {
+    display: flex;
+    align-items: end;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 23px;
+    padding: 18px;
+    border: 1px solid var(--report-border);
+    border-radius: 16px;
+    background: #fff;
+}
+.filter-field { display: flex; min-width: 165px; flex-direction: column; gap: 7px; }
+.filter-field label { color: #6d6572; font-size: 12px; font-weight: 700; }
+.filter-field select, .filter-field input {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 1px solid #e9e2e9;
+    border-radius: 9px;
+    outline: none;
+    background: #fff;
+    color: #39313d;
+    font: inherit;
+    font-size: 13px;
+}
+.filter-field select:focus, .filter-field input:focus {
+    border-color: var(--report-pink);
+    box-shadow: 0 0 0 3px rgba(231, 93, 145, .10);
+}
+.custom-dates { display: none; flex-wrap: wrap; gap: 12px; }
+.custom-dates.is-visible { display: flex; }
+.custom-dates .filter-field { min-width: 150px; }
+.report-apply {
+    min-height: 42px;
+    padding: 0 17px;
+    border: 0;
+    border-radius: 9px;
+    background: var(--report-pink);
+    color: #fff;
+    font-weight: 750;
+    font-size: 12px;
+    cursor: pointer;
+    transition: transform .15s, background .15s;
+}
+.report-apply:hover { background: #d84a80; transform: translateY(-1px); }
+.report-apply i { margin-right: 7px; }
+.report-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 17px;
+    margin-bottom: 22px;
+}
+.report-stat {
+    min-width: 0;
+    padding: 21px;
+    border: 1px solid var(--report-border);
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 5px 20px rgba(46, 28, 48, .025);
+}
+.stat-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.stat-top > span:first-child { color: #77707c; font-size: 12px; font-weight: 700; }
+.stat-icon {
+    display: grid;
+    width: 39px;
+    height: 39px;
+    flex: 0 0 39px;
+    place-items: center;
+    border-radius: 12px;
+}
+.stat-icon.pink { background: #fff0f6; color: #e75d91; }
+.stat-icon.purple { background: #f2edff; color: #9273df; }
+.stat-icon.blue { background: #eaf4ff; color: #5395db; }
+.stat-icon.orange { background: #fff2e7; color: #e99a50; }
+.stat-value { overflow-wrap: anywhere; margin-top: 17px; font-size: clamp(22px, 2.2vw, 29px); font-weight: 800; letter-spacing: -.7px; }
+.stat-caption { margin-top: 7px; color: #9a939f; font-size: 11px; }
+.report-main-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr); gap: 20px; margin-bottom: 22px; }
+.report-panel {
+    min-width: 0;
+    padding: 22px;
+    border: 1px solid var(--report-border);
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 5px 20px rgba(46, 28, 48, .025);
+}
+.panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 20px; }
+.panel-heading h2 { margin: 0; font-size: 16px; font-weight: 800; }
+.panel-heading p { font-size: 12px; }
+.panel-tag { display: inline-flex; align-items: center; gap: 7px; color: #77707c; font-size: 11px; white-space: nowrap; }
+.panel-tag i { color: var(--report-pink); font-size: 8px; }
+.panel-heading-icon { display: grid; width: 36px; height: 36px; place-items: center; border-radius: 11px; background: #fff1f6; color: var(--report-pink); }
+.chart-wrap { position: relative; width: 100%; height: 285px; }
+.top-product { display: flex; align-items: center; gap: 12px; padding: 15px 0; border-bottom: 1px solid #f4eff4; }
+.top-product:last-child { border-bottom: 0; }
+.product-rank { display: grid; width: 33px; height: 33px; flex: 0 0 33px; place-items: center; border-radius: 10px; background: #fff1f6; color: #d84a80; font-size: 12px; font-weight: 800; }
+.top-product-info { display: flex; min-width: 0; flex: 1; flex-direction: column; gap: 5px; }
+.top-product-info strong { overflow: hidden; color: #3c3541; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.top-product-info span { color: #98919d; font-size: 11px; }
+.product-revenue { color: #4c414f; font-size: 11px; white-space: nowrap; }
+.report-empty { display: flex; min-height: 160px; align-items: center; justify-content: center; flex-direction: column; gap: 8px; color: #a59ca8; text-align: center; }
+.report-empty i { font-size: 25px; }
+.report-empty p { font-size: 12px; }
+.transactions-panel { padding-bottom: 8px; }
+.view-all-link { color: #d84a80; font-size: 12px; font-weight: 750; text-decoration: none; white-space: nowrap; }
+.view-all-link:hover { text-decoration: underline; }
+.report-table-wrap { overflow-x: auto; }
+.report-table { width: 100%; border-collapse: collapse; text-align: left; white-space: nowrap; }
+.report-table th { padding: 13px 14px; background: #fcf9fc; color: #8d8491; font-size: 10px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; }
+.report-table td { padding: 16px 14px; border-bottom: 1px solid #f3eef3; color: #655d69; font-size: 12px; }
+.report-table tbody tr:last-child td { border-bottom: 0; }
+.report-table tbody tr:hover { background: #fffafd; }
+.report-table .invoice-cell { color: #3b303e; font-weight: 800; }
+.report-table .total-cell { color: #302b35; font-weight: 800; }
+.status-pill { display: inline-block; padding: 5px 9px; border-radius: 20px; background: #f0f1f4; color: #66616d; font-size: 10px; font-weight: 750; }
+.status-pill.completed, .status-pill.paid, .status-pill.success { background: #e7f8ef; color: #238454; }
+.status-pill.pending, .status-pill.unpaid { background: #fff3df; color: #a36a16; }
+.status-pill.cancelled, .status-pill.failed, .status-pill.void { background: #fff0f0; color: #c34c55; }
+.table-empty { padding: 32px !important; color: #9b929f !important; text-align: center; }
+.report-footer { display: flex; align-items: center; gap: 8px; padding: 18px 2px 0; color: #99919e; font-size: 11px; }
+.report-footer i { color: #c4a1b1; }
+@media (max-width: 1100px) {
+    .report-stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .report-main-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 650px) {
+    .report-page { padding: 18px 12px; }
+    .report-heading { align-items: flex-start; flex-direction: column; }
+    .report-date-pill { white-space: normal; }
+    .report-filters { align-items: stretch; flex-direction: column; padding: 14px; }
+    .filter-field { min-width: 0; width: 100%; }
+    .custom-dates { width: 100%; }
+    .custom-dates .filter-field { min-width: 0; flex: 1 1 130px; }
+    .report-apply { width: 100%; }
+    .report-stat-grid { gap: 10px; }
+    .report-stat { padding: 14px; }
+    .stat-icon { width: 32px; height: 32px; flex-basis: 32px; }
+    .stat-value { font-size: 21px; }
+    .stat-caption { line-height: 1.5; }
+    .report-panel { padding: 15px; }
+    .chart-wrap { height: 230px; }
+    .panel-heading { align-items: flex-start; }
+    .view-all-link { font-size: 11px; }
+}
+
+/* ===== Reports layout and table improvements ===== */
+
+/* Keep report cards clearly separated */
+.report-card,
+.reports-card,
+.report-panel,
+.chart-card,
+.filter-card,
+.summary-card {
+    border: 1px solid #eadfe8 !important;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 3px 12px rgba(48, 24, 43, 0.04);
+}
+
+/* Reporting period filter */
+.filter-card,
+.report-filters,
+.filters-card {
+    border: 1px solid #eadfe8;
+    border-radius: 14px;
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 22px;
+}
+
+/* Table container: horizontal scrolling on small screens */
+.table-wrapper,
+.table-responsive,
+.transactions-table-wrapper,
+.report-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #eadfe8;
+    border-radius: 12px;
+    background: #fff;
+}
+
+/* Reports tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    color: #302538;
+}
+
+table thead th {
+    padding: 15px 18px;
+    background: #fff5fa;
+    color: #574354;
+    border-bottom: 2px solid #eadfe8;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+table tbody td {
+    padding: 15px 18px;
+    border-bottom: 1px solid #f0e7ef;
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+table tbody tr:hover {
+    background: #fff9fc;
+}
+
+/* Inputs and dropdowns */
+select,
+input[type="date"],
+input[type="text"] {
+    border: 1px solid #e7d8e4;
+    border-radius: 9px;
+    background: #fff;
+    padding: 10px 12px;
+    outline: none;
+}
+
+select:focus,
+input[type="date"]:focus,
+input[type="text"]:focus {
+    border-color: #ed5792;
+    box-shadow: 0 0 0 3px rgba(237, 87, 146, 0.12);
+}
+
+/* Pink report action buttons */
+.report-content button,
+.reports-content button,
+.report-filters button,
+.filter-card button {
+    border-radius: 9px;
+    font-weight: 600;
+}
+
+/* Responsive layout */
+@media (max-width: 768px) {
+    .report-card,
+    .reports-card,
+    .report-panel,
+    .chart-card {
+        border-radius: 12px;
+    }
+
+    table {
+        min-width: 650px;
+    }
+
+    table thead th,
+    table tbody td {
+        padding: 12px;
+    }
+}
+
+/* Recent transactions table */
+.transactions-panel {
+    border: 1px solid #eadfe8;
+    border-radius: 16px;
+    background: #fff;
+    padding: 22px;
+    margin-top: 22px;
+    box-shadow: 0 4px 14px rgba(48, 24, 43, 0.04);
+}
+
+.transactions-panel .panel-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.report-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #eadfe8;
+    border-radius: 12px;
+}
+
+.report-table {
+    width: 100%;
+    min-width: 700px;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+.report-table thead th {
+    background: #fff3f8;
+    color: #5c4355;
+    border-bottom: 2px solid #eadfe8;
+    padding: 15px 16px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.report-table tbody td {
+    padding: 15px 16px;
+    border-bottom: 1px solid #f0e7ef;
+    color: #514454;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.report-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.report-table tbody tr:hover {
+    background: #fff9fc;
+}
+
+.report-table .invoice-cell {
+    color: #cf3978;
+    font-weight: 700;
+}
+
+.report-table .total-cell {
+    color: #302538;
+    font-weight: 700;
+}
+
+.report-table .table-empty {
+    padding: 32px 16px;
+    text-align: center;
+    color: #887989;
+}
+
+.report-table .status-pill {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    background: #f4eef5;
+    color: #65536b;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+@media (max-width: 768px) {
+    .transactions-panel {
+        padding: 14px;
+    }
+
+    .transactions-panel .panel-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

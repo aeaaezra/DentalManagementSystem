@@ -4,7 +4,10 @@ namespace App\Notifications;
 
 use App\Notifications\Concerns\ChecksNotificationPreferences;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+
+use Illuminate\Support\Facades\URL;
 
 class AppointmentApproved extends Notification
 {
@@ -24,24 +27,71 @@ class AppointmentApproved extends Notification
             return [];
         }
 
-        return ['database'];
+        if ($notifiable instanceof \Illuminate\Notifications\AnonymousNotifiable) {
+            return ['mail'];
+        }
+
+        $channels = ['database'];
+
+        if (! empty($notifiable->email)) {
+            $channels[] = 'mail';
+        }
+
+        return $channels;
+    }
+
+    public function toMail(object $notifiable): MailMessage
+    {
+        $date = $this->appointment->appointment_date
+            ? $this->appointment->appointment_date->format('F d, Y')
+            : 'Not specified';
+
+        $time = $this->appointment->appointment_time
+            ?: 'Not specified';
+
+        return (new MailMessage)
+            ->subject('Appointment Confirmed - Shine & Smile Dental')
+            ->greeting('Hello ' . (
+                $notifiable instanceof \Illuminate\Notifications\AnonymousNotifiable
+                    ? ($this->appointment->patient?->patient_name ?? 'Patient')
+                    : ($notifiable->name ?? 'Patient')
+            ) . ',')
+            ->line('Good news! Your dental appointment has been confirmed by Shine & Smile Dental.')
+            ->line('Appointment date: ' . $date)
+            ->line('Appointment time: ' . $time)
+            ->line('Please arrive on time for your scheduled appointment.')
+            ->when(
+                $this->appointment->patient?->user === null
+                    && filter_var(
+                        $this->appointment->patient_email,
+                        FILTER_VALIDATE_EMAIL
+                    ),
+                function (MailMessage $mail) {
+                    $cancelUrl = URL::temporarySignedRoute(
+                        'appointments.guest.cancel.form',
+                        now()->addDays(7),
+                        ['appointment' => $this->appointment->getKey()]
+                    );
+
+                    $mail
+                        ->line('If you need to cancel, you can submit a cancellation request using the secure link below. This link expires in 7 days. Your appointment will not be cancelled until the clinic reviews your request.')
+                        ->action('Request Appointment Cancellation', $cancelUrl);
+                }
+            )
+            ->line('If you have questions, please contact our clinic.')
+            ->salutation('Thank you, Shine & Smile Dental');
     }
 
     public function toDatabase(object $notifiable): array
     {
         return [
             'title' => 'Appointment Approved',
-
             'message' => 'Your dental appointment has been approved by the clinic.',
-
             'appointment_id' => $this->appointment->id,
-
             'appointment_date' => $this->appointment->appointment_date
                 ? $this->appointment->appointment_date->format('F d, Y')
                 : null,
-
             'appointment_time' => $this->appointment->appointment_time,
-
             'status' => $this->appointment->status,
         ];
     }

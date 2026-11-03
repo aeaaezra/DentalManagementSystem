@@ -1,0 +1,52 @@
+
+<?php
+
+namespace App\Filament\Resources\Users\Schemas;
+
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Schemas\Schema;
+
+class UsersForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+
+                TextInput::make('name')
+                    ->label('Name')
+                    ->required(),
+
+                TextInput::make('email')
+                    ->label('Email')
+                    ->email()
+                    ->required(),
+
+                TextInput::make('password')
+                    ->label('Password')
+                    ->password()
+                    ->revealable()
+                    ->required(),
+
+                Select::make('selected_roles')
+                    ->label('Roles')
+                    ->options([
+                        'admin' => 'Admin',
+                        'staff' => 'Staff',
+                        'dentist' => 'Dentist',
+                        'patient' => 'Patient',
+                        'customer' => 'Customer',
+                        'cashier' => 'Cashier',
+                        'receptionist' => 'Receptionist',
+                    ])
+                    ->multiple()
+                    ->required()
+                    ->native(false)
+                    ->searchable()
+                    ->helperText(
+                        'Select one or more roles for this account.'
+                    ),
+            ]);
+    }
+}

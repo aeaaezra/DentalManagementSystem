@@ -1,0 +1,547 @@
+<?php
+
+namespace App\Filament\Resources\Appointments\Tables;
+
+use App\Models\Appointments;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use App\Notifications\AppointmentApproved;
+use App\Notifications\AppointmentDeclined;
+use App\Notifications\AppointmentCancelled;
+use App\Notifications\AppointmentStatusNotification;
+use Illuminate\Support\Facades\Notification;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+
+class AppointmentsTable
+{
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->columns([
+                ImageColumn::make('patient.user.profile_picture')
+                    ->label('Photo')
+                    ->disk('public')
+                    ->circular()
+                    ->defaultImageUrl(asset('images/default-profile.svg')),
+
+                TextColumn::make('patient.patient_name')
+                    ->label('Patient Name')
+                    ->searchable()
+                    ->sortable(),
+
+                TextColumn::make('patient_email')
+                    ->label('Patient Email')
+                    ->state(fn (Appointments $record): ?string => $record->patient_email)
+                    ->searchable()
+                    ->copyable()
+                    ->placeholder('—')
+                    ->toggleable(),
+
+                TextColumn::make('service.service_name')
+                    ->label('Service')
+                    ->searchable()
+                    ->sortable(),
+
+                TextColumn::make('patient.tel_no')
+                    ->label('Contact Number')
+                    ->searchable(),
+
+                TextColumn::make('appointment_date')
+                    ->label('Date')
+                    ->date()
+                    ->sortable(),
+
+                TextColumn::make('appointment_time')
+                    ->label('Time')
+                    ->time()
+                    ->sortable(),
+
+                TextColumn::make('reason')
+                    ->limit(30)
+                    ->searchable(),
+
+                TextColumn::make('status')
+                    ->badge()
+                    ->colors([
+                        'warning' => 'pending',
+                        'success' => 'confirmed',
+                        'info' => 'completed',
+                        'danger' => 'cancelled',
+                        'gray' => 'cancellation_requested',
+                        'warning' => 'reschedule_requested',
+                    ]),
+
+                TextColumn::make('amount')
+                    ->money('PHP')
+                    ->sortable(),
+
+                TextColumn::make('deposit')
+                    ->money('PHP')
+                    ->sortable(),
+
+                TextColumn::make('balance')
+                    ->money('PHP')
+                    ->sortable(),
+            ])
+
+            ->filters([
+                SelectFilter::make('status')
+                    ->options([
+                        'pending' => 'Pending',
+                        'confirmed' => 'Confirmed',
+                        'cancellation_requested' => 'Cancellation Requested',
+                        'reschedule_requested' => 'Reschedule Requested',
+                        'completed' => 'Completed',
+                        'cancelled' => 'Cancelled',
+                    ]),
+            ])
+
+            ->recordActions([
+                ActionGroup::make([
+
+                /*
+                |--------------------------------------------------------------------------
+                | View
+                |--------------------------------------------------------------------------
+                */
+
+                ViewAction::make(),
+
+                /*
+                |--------------------------------------------------------------------------
+                | Edit
+                |--------------------------------------------------------------------------
+                */
+
+                EditAction::make(),
+
+                /*
+                |--------------------------------------------------------------------------
+                | Confirm Appointment
+                |--------------------------------------------------------------------------
+                */
+
+                Action::make('confirm')
+                    ->label('Confirm')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->visible(
+                        fn (Appointments $record): bool =>
+                            $record->status === 'pending'
+                    )
+                    ->action(function (Appointments $record): void {
+
+                        // Change appointment status
+                        $record->update([
+                            'status' => 'confirmed',
+                        ]);
+
+                        // Notify registered patients or email guest patients.
+                        if ($record->patient?->user !== null) {
+                            $record->patient->user->notify(
+                                new AppointmentApproved($record)
+                            );
+                        } elseif (filter_var($record->patient_email, FILTER_VALIDATE_EMAIL)) {
+                            Notification::route('mail', $record->patient_email)
+                                ->notify(new AppointmentApproved($record));
+                        }
+                    }),
+
+                /*
+                |--------------------------------------------------------------------------
+                | Decline Appointment
+                |--------------------------------------------------------------------------
+                */
+
+                Action::make('decline')
+                    ->label('Decline')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->visible(
+                        fn (Appointments $record): bool =>
+                            $record->status === 'pending'
+                    )
+                    ->action(function (Appointments $record): void {
+
+                        // Change appointment status
+                        $record->update([
+                            'status' => 'cancelled',
+                        ]);
+
+                        // Notify registered patients or email guest patients.
+                        if ($record->patient?->user !== null) {
+                            $record->patient->user->notify(
+                                new AppointmentDeclined($record)
+                            );
+                        } elseif (filter_var($record->patient_email, FILTER_VALIDATE_EMAIL)) {
+                            Notification::route('mail', $record->patient_email)
+                                ->notify(new AppointmentDeclined($record));
+                        }
+                    }),
+
+                /*
+                |--------------------------------------------------------------------------
+                | Confirm Cancellation
+                |--------------------------------------------------------------------------
+                */
+
+                Action::make('confirmCancellation')
+                    ->label('Confirm Cancellation')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalHeading('Confirm Appointment Cancellation')
+                    ->modalDescription(
+                        'Are you sure you want to approve this cancellation request? The appointment will be permanently marked as cancelled.'
+                    )
+                    ->visible(
+                        fn (Appointments $record): bool =>
+                            $record->status === 'cancellation_requested'
+                    )
+                    ->action(function (Appointments $record): void {
+
+                        // Change status to cancelled
+                        $record->update([
+                            'status' => 'cancelled',
+                        ]);
+
+                        // Notify the patient
+                        if (
+                            $record->patient !== null &&
+                            $record->patient->user !== null
+                        ) {
+                            $record->patient->user->notify(
+                                new AppointmentCancelled($record)
+                            );
+                        }
+
+                        if (
+                            $record->patient !== null &&
+                            $record->patient->user === null &&
+                            filter_var($record->patient_email, FILTER_VALIDATE_EMAIL)
+                        ) {
+                            \Illuminate\Support\Facades\Notification::route(
+                                'mail',
+                                $record->patient_email
+                            )->notify(
+                                new \App\Notifications\GuestCancellationDecision(
+                                    $record,
+                                    'approved'
+                                )
+                            );
+                        }
+
+                    }),
+
+                /*
+                |--------------------------------------------------------------------------
+                | Decline Cancellation
+                |--------------------------------------------------------------------------
+                */
+
+                Action::make('declineCancellation')
+                    ->label('Decline Cancellation')
+                    ->icon('heroicon-o-arrow-uturn-left')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Decline Cancellation Request')
+                    ->modalDescription(
+                        'Are you sure you want to decline this cancellation request? The appointment will remain confirmed.'
+                    )
+                    ->visible(
+                        fn (Appointments $record): bool =>
+                            $record->status === 'cancellation_requested'
+                    )
+                    ->action(function (Appointments $record): void {
+
+                        // Return appointment to confirmed
+                        $record->update([
+                            'status' => 'confirmed',
+                        ]);
+
+                        // Notify the patient
+                        if (
+                            $record->patient !== null &&
+                            $record->patient->user !== null
+                        ) {
+                            $record->patient->user->notify(
+                                new AppointmentStatusNotification(
+                                    'confirmed',
+                                    $record->appointment_date
+                                        ? $record->appointment_date->format('F d, Y')
+                                        : null,
+                                    $record
+                                )
+                            );
+                        }
+
+                        if (
+                            $record->patient !== null &&
+                            $record->patient->user === null &&
+                            filter_var($record->patient_email, FILTER_VALIDATE_EMAIL)
+                        ) {
+                            \Illuminate\Support\Facades\Notification::route(
+                                'mail',
+                                $record->patient_email
+                            )->notify(
+                                new \App\Notifications\GuestCancellationDecision(
+                                    $record,
+                                    'declined'
+                                )
+                            );
+                        }
+
+                    }),
+
+                /*
+                |--------------------------------------------------------------------------
+                | Delete
+                |--------------------------------------------------------------------------
+                */
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Approve Reschedule Request
+                |--------------------------------------------------------------------------
+                */
+
+                Action::make('approveReschedule')
+                    ->label('Approve Reschedule')
+                    ->icon('heroicon-o-calendar-days')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Approve Reschedule Request')
+                    ->modalDescription(
+                        'The proposed date and time will replace the original appointment only if the slot is still available.'
+                    )
+                    ->visible(
+                        fn (Appointments $record): bool =>
+                            $record->status === 'reschedule_requested'
+                    )
+                    ->action(function (Appointments $record): void {
+                        $result = DB::transaction(function () use ($record): string {
+                            $locked = Appointments::query()
+                                ->whereKey($record->getKey())
+                                ->lockForUpdate()
+                                ->first();
+
+                            if (
+                                ! $locked ||
+                                $locked->status !== 'reschedule_requested' ||
+                                ! $locked->reschedule_date ||
+                                ! $locked->reschedule_time ||
+                                ! $locked->reschedule_end_time
+                            ) {
+                                return 'invalid';
+                            }
+
+                            $date = Carbon::parse($locked->reschedule_date)->toDateString();
+                            $start = Carbon::parse(
+                                $date . ' ' . $locked->reschedule_time
+                            );
+                            $proposedEnd = Carbon::parse(
+                                $date . ' ' . $locked->reschedule_end_time
+                            );
+                            $duration = (int) ($locked->service?->duration_minutes ?? 0);
+
+                            if ($duration <= 0) {
+                                return 'invalid';
+                            }
+
+                            $expectedEnd = $start->copy()->addMinutes($duration);
+                            $clinicStart = Carbon::parse($date . ' 08:00:00');
+                            $clinicEnd = Carbon::parse($date . ' 17:00:00');
+                            $minutesFromOpening =
+                                ((int) $start->format('H') * 60 + (int) $start->format('i')) - 480;
+
+                            if (
+                                $start->lt($clinicStart) ||
+                                $expectedEnd->gt($clinicEnd) ||
+                                $start->lessThanOrEqualTo(now()) ||
+                                $start->format('s') !== '00' ||
+                                $minutesFromOpening < 0 ||
+                                $minutesFromOpening % $duration !== 0 ||
+                                ! $proposedEnd->equalTo($expectedEnd)
+                            ) {
+                                return 'invalid';
+                            }
+
+                            $activeStatuses = ['cancelled', 'declined'];
+
+                            $others = Appointments::query()
+                                ->whereDate('appointment_date', $date)
+                                ->where('id', '!=', $locked->getKey())
+                                ->whereNotIn('status', $activeStatuses)
+                                ->with('service')
+                                ->lockForUpdate()
+                                ->get();
+
+                            if ($others->count() >= 20) {
+                                return 'unavailable';
+                            }
+
+                            foreach ($others as $other) {
+                                if (! $other->appointment_time) {
+                                    continue;
+                                }
+
+                                $otherStart = Carbon::parse(
+                                    $date . ' ' . $other->appointment_time
+                                );
+
+                                $otherDuration = (int) (
+                                    $other->service?->duration_minutes ?? 0
+                                );
+
+                                $otherEnd = $other->end_time
+                                    ? Carbon::parse($date . ' ' . $other->end_time)
+                                    : $otherStart->copy()->addMinutes(
+                                        $otherDuration > 0 ? $otherDuration : $duration
+                                    );
+
+                                if (
+                                    $otherStart->lt($expectedEnd) &&
+                                    $otherEnd->gt($start)
+                                ) {
+                                    return 'unavailable';
+                                }
+                            }
+
+                            $locked->update([
+                                'appointment_date' => $date,
+                                'appointment_time' => $start->format('H:i:s'),
+                                'end_time' => $expectedEnd->format('H:i:s'),
+                                'status' => 'confirmed',
+                                'reschedule_date' => null,
+                                'reschedule_time' => null,
+                                'reschedule_end_time' => null,
+                                'reschedule_reason' => null,
+                            ]);
+
+                            return 'approved';
+                        });
+
+                        if ($result !== 'approved') {
+                            \Filament\Notifications\Notification::make()
+                                ->title(
+                                    $result === 'unavailable'
+                                        ? 'Proposed slot is no longer available'
+                                        : 'Reschedule request is invalid'
+                                )
+                                ->body(
+                                    $result === 'unavailable'
+                                        ? 'The original appointment was not changed. Ask the guest to submit another request.'
+                                        : 'The original appointment was not changed. Check the proposed date, time, and service duration.'
+                                )
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
+
+                        $record->refresh();
+
+                        if (filter_var($record->patient_email, FILTER_VALIDATE_EMAIL)) {
+                            Notification::route('mail', $record->patient_email)
+                                ->notify(new \App\Notifications\GuestRescheduleDecision(
+                                    $record,
+                                    'approved'
+                                ));
+                        }
+
+                        \Filament\Notifications\Notification::make()
+                            ->title('Reschedule approved')
+                            ->success()
+                            ->send();
+                    }),
+
+                /*
+                |--------------------------------------------------------------------------
+                | Decline Reschedule Request
+                |--------------------------------------------------------------------------
+                */
+
+                Action::make('declineReschedule')
+                    ->label('Decline Reschedule')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalHeading('Decline Reschedule Request')
+                    ->modalDescription(
+                        'The original appointment date and time will remain unchanged.'
+                    )
+                    ->visible(
+                        fn (Appointments $record): bool =>
+                            $record->status === 'reschedule_requested'
+                    )
+                    ->action(function (Appointments $record): void {
+                        $declined = DB::transaction(function () use ($record): bool {
+                            $locked = Appointments::query()
+                                ->whereKey($record->getKey())
+                                ->lockForUpdate()
+                                ->first();
+
+                            if (! $locked || $locked->status !== 'reschedule_requested') {
+                                return false;
+                            }
+
+                            $locked->update([
+                                'status' => 'confirmed',
+                                'reschedule_date' => null,
+                                'reschedule_time' => null,
+                                'reschedule_end_time' => null,
+                                'reschedule_reason' => null,
+                            ]);
+
+                            return true;
+                        });
+
+                        if (! $declined) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Reschedule request has already changed')
+                                ->warning()
+                                ->send();
+
+                            return;
+                        }
+
+                        $record->refresh();
+
+                        if (filter_var($record->patient_email, FILTER_VALIDATE_EMAIL)) {
+                            Notification::route('mail', $record->patient_email)
+                                ->notify(new \App\Notifications\GuestRescheduleDecision(
+                                    $record,
+                                    'declined'
+                                ));
+                        }
+
+                        \Filament\Notifications\Notification::make()
+                            ->title('Reschedule declined')
+                            ->success()
+                            ->send();
+                    }),
+
+                DeleteAction::make(),
+                ])->icon('heroicon-m-ellipsis-vertical')->label('')->button(),
+            ])
+
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+}

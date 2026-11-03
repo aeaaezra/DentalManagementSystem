@@ -5814,3 +5814,43 @@ body.sidebar-open::after {
     object-fit: cover;
     display: block;
 }
+
+
+/* SUCCESS MESSAGE INSIDE TOOTH CONDITION MODAL */
+.tooth-condition-modal-content > .tooth-modal-success-message {
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    width: auto;
+    margin: 12px 20px 0;
+    padding: 12px 16px;
+    border: 1px solid #86efac;
+    border-radius: 8px;
+    background: #f0fdf4;
+    color: #166534;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    box-shadow: none;
+    animation: toastIn 0.2s ease;
+}
+
+
+/* Tooth confirmation stays inside the modal, below the selected tooth */
+.tooth-condition-modal-content > .tooth-modal-success-message {
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    width: auto;
+    margin: 12px 24px 0;
+    padding: 11px 14px;
+    border: 1px solid #86efac;
+    border-radius: 8px;
+    background: #f0fdf4;
+    color: #166534;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    box-shadow: none;
+    animation: toastIn 0.2s ease;
+}

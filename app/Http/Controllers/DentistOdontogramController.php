@@ -69,71 +69,113 @@ class DentistOdontogramController extends Controller
      */
     public function save(Request $request)
     {
-        $validated = $request->validate([
-            'patient_id' => [
-                'required',
-                'exists:patient_records,id',
-            ],
+        $validator = \Illuminate\Support\Facades\Validator::make(
+            $request->all(),
+            [
+                'patient_id' => [
+                    'required',
+                    'integer',
+                    'exists:patient_records,id',
+                ],
 
-            'odontogram' => [
-                'required',
-                'array',
-            ],
-        ]);
+                'odontogram' => [
+                    'required',
+                    'array',
+                    'min:1',
+                ],
+
+                'odontogram.*' => [
+                    'required',
+                    'array',
+                ],
+
+                'odontogram.*.condition' => [
+                    'required',
+                    'string',
+                    \Illuminate\Validation\Rule::in([
+                        'healthy',
+                        'caries',
+                        'filled',
+                        'crown',
+                        'missing',
+                        'root-canal',
+                        'extraction',
+                        'implant',
+                        'fracture',
+                        'other',
+                    ]),
+                ],
+
+                'odontogram.*.remarks' => [
+                    'nullable',
+                    'string',
+                    'max:1000',
+                ],
+            ]
+        );
+
+        $validator->after(function ($validator) use ($request) {
+            $allowedTeeth = array_map('strval', array_merge(
+                range(11, 18),
+                range(21, 28),
+                range(31, 38),
+                range(41, 48),
+                range(51, 55),
+                range(61, 65),
+                range(71, 75),
+                range(81, 85)
+            ));
+
+            $odontogram = $request->input('odontogram');
+
+            if (! is_array($odontogram)) {
+                return;
+            }
+
+            foreach ($odontogram as $toothNumber => $record) {
+                if (! in_array((string) $toothNumber, $allowedTeeth, true)) {
+                    $validator->errors()->add(
+                        "odontogram.{$toothNumber}",
+                        'The submitted tooth number is invalid.'
+                    );
+                }
+            }
+        });
+
+        $validated = $validator->validate();
 
         $patientId = $validated['patient_id'];
         $odontogramData = $validated['odontogram'];
 
-        $savedTeeth = [];
+        \Illuminate\Support\Facades\DB::transaction(
+            function () use ($odontogramData, $patientId) {
+                $savedTeeth = [];
 
-        foreach ($odontogramData as $toothNumber => $record) {
-            if (!is_array($record)) {
-                continue;
+                foreach ($odontogramData as $toothNumber => $record) {
+                    // Validation above guarantees each record is an array
+                    // with a supported condition and valid remarks.
+                    $condition = $record['condition'];
+                    $remarks = $record['remarks'] ?? '';
+
+                    // Save healthy teeth too, so their condition persists.
+                    $savedTeeth[] = (string) $toothNumber;
+
+                    Odontogram::updateOrCreate(
+                        [
+                            'patient_record_id' => $patientId,
+                            'tooth_number' => (string) $toothNumber,
+                        ],
+                        [
+                            'condition' => $condition,
+                            'remarks' => $remarks,
+                        ]
+                    );
+                }
+
+                // Do not delete omitted teeth during Save.
+                // Use the explicit Clear Chart action for intentional full clearing.
             }
-
-            $condition = $record['condition'] ?? 'healthy';
-            $remarks = $record['remarks'] ?? '';
-
-            /*
-             * Healthy teeth do not need a database record.
-             */
-            if ($condition === 'healthy') {
-                continue;
-            }
-
-            $savedTeeth[] = (string) $toothNumber;
-
-            Odontogram::updateOrCreate(
-                [
-                    'patient_record_id' => $patientId,
-                    'tooth_number' => (string) $toothNumber,
-                ],
-                [
-                    'condition' => $condition,
-                    'remarks' => $remarks,
-                ]
-            );
-        }
-
-        /*
-         * Delete old teeth that are no longer present
-         * in the submitted odontogram.
-         */
-        $deleteQuery = Odontogram::where(
-            'patient_record_id',
-            $patientId
         );
-
-        if (!empty($savedTeeth)) {
-            $deleteQuery
-                ->whereNotIn(
-                    'tooth_number',
-                    $savedTeeth
-                )
-                ->delete();
-        } else {
-            $deleteQuery->delete();
-        }
 
         /*
          * Return the newly saved records.
@@ -176,21 +218,52 @@ class DentistOdontogramController extends Controller
     }
 
     /**
-     * Clear a patient's odontogram.
+     * Clear one tooth or the entire odontogram for a patient.
      */
     public function clear(Request $request)
     {
         $validated = $request->validate([
             'patient_id' => [
                 'required',
+                'integer',
                 'exists:patient_records,id',
+            ],
+            'tooth_number' => [
+                'sometimes',
+                'required',
+                'string',
+                \Illuminate\Validation\Rule::in(array_map('strval', array_merge(
+                    range(11, 18),
+                    range(21, 28),
+                    range(31, 38),
+                    range(41, 48),
+                    range(51, 55),
+                    range(61, 65),
+                    range(71, 75),
+                    range(81, 85)
+                ))),
             ],
         ]);
 
-        Odontogram::where(
+        $query = Odontogram::where(
             'patient_record_id',
             $validated['patient_id']
-        )->delete();
+        );
+
+        if (array_key_exists('tooth_number', $validated)) {
+            $query->where(
+                'tooth_number',
+                $validated['tooth_number']
+            )->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Tooth ' . $validated['tooth_number'] . ' cleared successfully.',
+                'tooth_number' => $validated['tooth_number'],
+            ]);
+        }
+
+        $query->delete();
 
         return response()->json([
             'success' => true,

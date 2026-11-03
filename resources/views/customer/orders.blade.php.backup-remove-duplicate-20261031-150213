@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="csrf-token"
+        content="{{ csrf_token() }}"
+    >
+
+    <title>
+        Shine & Smile | My Orders
+    </title>
+
+
+    {{-- =========================================================
+         PRODUCT CSS
+    ========================================================== --}}
+
+    <link
+        rel="stylesheet"
+        href="{{ asset('css/customer/product.css') }}"
+    >
+
+
+    {{-- =========================================================
+         ORDERS CSS
+    ========================================================== --}}
+
+    <link
+        rel="stylesheet"
+        href="{{ asset('css/customer/orders.css') }}?v=pink-modal-2"
+    >
+
+</head>
+
+
+<body>
+
+
+    {{-- =========================================================
+         HEADER
+    ========================================================== --}}
+
+    <header class="customer-header">
+
+
+        {{-- BRAND --}}
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                🦷
+            </div>
+
+
+            <div>
+
+                <h1>
+                    Shine & Smile
+                </h1>
+
+                <span>
+                    Dental Clinic
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        {{-- NAVIGATION --}}
+
+        <nav class="customer-nav">
+
+            <a
+                href="{{ route('customer.products') }}"
+                class="nav-link"
+            >
+                Products
+            </a>
+
+
+            <a
+                href="{{ route('customer.orders') }}"
+                class="nav-link active"
+            >
+                My Orders
+            </a>
+
+        </nav>
+
+
+
+        {{-- HEADER ACTIONS --}}
+
+        <div class="header-actions">
+
+
+            {{-- CART --}}
+
+            <a
+                href="{{ route('customer.cart') }}"
+                class="cart-button"
+                aria-label="Shopping Cart"
+            >
+
+                🛒
+
+                <span id="headerCartCount">
+                    0
+                </span>
+
+            </a>
+
+
+
+            {{-- PROFILE --}}
+
+            <div class="customer-profile">
+
+                <div class="profile-avatar">
+
+                    {{
+                        strtoupper(
+                            substr(
+                                auth()->user()->name ?? 'C',
+                                0,
+                                1
+                            )
+                        )
+                    }}
+
+                </div>
+
+
+                <div class="profile-info">
+
+                    <strong>
+
+                        {{
+                            auth()->user()->name
+                            ?? 'Customer'
+                        }}
+
+                    </strong>
+
+
+                    <small>
+                        Customer
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    {{-- =========================================================
+         MAIN
+    ========================================================== --}}
+
+    <main class="orders-page">
+
+
+        {{-- =====================================================
+             PAGE HEADER
+        ====================================================== --}}
+
+        <section class="orders-heading">
+
+
+            <div>
+
+                <span class="orders-label">
+                    SHINE & SMILE DENTAL CLINIC
+                </span>
+
+
+                <h2>
+                    My Orders
+                </h2>
+
+
+                <p>
+                    View and track your dental product orders.
+                </p>
+
+            </div>
+
+
+            <a
+                href="{{ route('customer.products') }}"
+                class="shop-products-button"
+            >
+                🛍 Shop Products
+            </a>
+
+        </section>
+
+
+
+        {{-- =====================================================
+             ORDER SUMMARY CARDS
+        ====================================================== --}}
+
+        <section class="order-statistics">
+
+
+            <div class="order-stat-card">
+
+                <div class="stat-icon all">
+                    📦
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Total Orders
+                    </span>
+
+                    <strong id="totalOrders">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="order-stat-card">
+
+                <div class="stat-icon pending">
+                    ⏳
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Pending
+                    </span>
+
+                    <strong id="pendingOrders">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="order-stat-card">
+
+                <div class="stat-icon processing">
+                    🔄
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Processing
+                    </span>
+
+                    <strong id="processingOrders">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="order-stat-card">
+
+                <div class="stat-icon completed">
+                    ✓
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Completed
+                    </span>
+
+                    <strong id="completedOrders">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        {{-- =====================================================
+             FILTER BAR
+        ====================================================== --}}
+
+        <section class="orders-section">
+
+
+            <div class="orders-toolbar">
+
+
+                <div class="order-tabs">
+
+
+                    <button
+                        type="button"
+                        class="order-tab active"
+                        data-status="all"
+                    >
+                        All
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="order-tab"
+                        data-status="pending"
+                    >
+                        Pending
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="order-tab"
+                        data-status="processing"
+                    >
+                        Processing
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="order-tab"
+                        data-status="completed"
+                    >
+                        Completed
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="order-tab"
+                        data-status="cancelled"
+                    >
+                        Cancelled
+                    </button>
+
+                </div>
+
+
+
+                <div class="order-search">
+
+                    <span>
+                        🔍
+                    </span>
+
+
+                    <input
+                        type="search"
+                        id="orderSearch"
+                        placeholder="Search order number..."
+                    >
+
+                </div>
+
+            </div>
+
+
+
+            {{-- =================================================
+                 ORDERS LIST
+            ================================================== --}}
+
+            <div
+                class="orders-list"
+                id="ordersList"
+            >
+
+                {{-- Orders will be rendered here --}}
+
+            </div>
+
+
+
+            {{-- =================================================
+                 EMPTY STATE
+            ================================================== --}}
+
+            <div
+                class="orders-empty"
+                id="ordersEmpty"
+                style="display: none;"
+            >
+
+                <div class="empty-orders-icon">
+                    📦
+                </div>
+
+
+                <h3>
+                    No Orders Found
+                </h3>
+
+
+                <p>
+                    You don't have any orders in this category.
+                </p>
+
+
+                <a
+                    href="{{ route('customer.products') }}"
+                    class="shop-products-button"
+                >
+                    Browse Products
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    {{-- =========================================================
+         ORDER DETAILS MODAL
+    ========================================================== --}}
+
+    <div
+        class="order-modal-overlay"
+        id="orderModal"
+    >
+
+        <div class="order-modal">
+
+
+            <div class="order-modal-header">
+
+                <div>
+
+                    <span>
+                        ORDER DETAILS
+                    </span>
+
+                    <h2 id="modalOrderNumber">
+                        ORD-000000
+                    </h2>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    id="closeOrderModal"
+                    class="modal-close"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+
+            {{-- STATUS --}}
+
+            <div class="modal-status-row">
+
+                <span>
+                    Order Status
+                </span>
+
+
+                <strong id="modalOrderStatus">
+                    Pending
+                </strong>
+
+            </div>
+
+
+
+            {{-- TRACKER --}}
+
+            <div class="order-tracker" id="orderDeliveryTracker">
+                <div class="tracker-step">
+                    <div class="tracker-circle">1</div>
+                    <span>Order Packed</span>
+                </div>
+
+                <div class="tracker-line"></div>
+
+                <div class="tracker-step">
+                    <div class="tracker-circle">2</div>
+                    <span>Parcel Picked Up</span>
+                </div>
+
+                <div class="tracker-line"></div>
+
+                <div class="tracker-step">
+                    <div class="tracker-circle">3</div>
+                    <span>Sorting Facility</span>
+                </div>
+
+                <div class="tracker-line"></div>
+
+                <div class="tracker-step">
+                    <div class="tracker-circle">4</div>
+                    <span>In Transit</span>
+                </div>
+
+                <div class="tracker-line"></div>
+
+                <div class="tracker-step">
+                    <div class="tracker-circle">5</div>
+                    <span>Out for Delivery</span>
+                </div>
+
+                <div class="tracker-line"></div>
+
+                <div class="tracker-step">
+                    <div class="tracker-circle">6</div>
+                    <span>Order Delivered</span>
+                </div>
+            </div>
+
+
+            {{-- ITEMS --}}
+
+            <div class="modal-items">
+
+                <h3>
+                    Order Items
+                </h3>
+
+
+                <div id="modalOrderItems">
+
+                </div>
+
+            </div>
+
+
+
+            {{-- TOTAL --}}
+
+            <div class="modal-total">
+
+                <span>
+                    Total
+                </span>
+
+
+                <strong id="modalOrderTotal">
+                    ₱0.00
+                </strong>
+
+            </div>
+
+
+
+            {{-- INFO --}}
+
+            <div class="modal-information">
+
+
+                <div>
+
+                    <span>
+                        Order Date
+                    </span>
+
+                    <strong id="modalOrderDate">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Payment Method
+                    </span>
+
+                    <strong id="modalPaymentMethod">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Delivery
+                    </span>
+
+                    <strong id="modalDelivery">
+                        -
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+    {{-- =========================================================
+         TOAST
+    ========================================================== --}}
+
+    <div
+        class="toast"
+        id="toast"
+    ></div>
+
+
+
+    {{-- =========================================================
+         JAVASCRIPT
+    ========================================================== --}}
+
+
+
+    <script>
+        window.customerOrdersData = {{ Illuminate\Support\Js::from($customerOrdersData) }};
+    </script>
+    <script src="{{ asset('js/customer/orders.js') }}?v=cancel-success-modal-20261024"></script>
+
+
+<!-- Pink Cancellation Success Modal -->
+<div id="cancellationSuccessModal" class="cancel-success-overlay"
+     aria-hidden="true">
+    <div class="cancel-success-card" role="dialog" aria-modal="true"
+         aria-labelledby="cancelSuccessTitle"
+         aria-describedby="cancelSuccessMessage">
+        <div class="cancel-success-icon" aria-hidden="true">✓</div>
+        <h2 id="cancelSuccessTitle">Request Submitted!</h2>
+        <p id="cancelSuccessMessage">
+            Your cancellation request was submitted for admin review.
+        </p>
+        <button type="button" id="cancelSuccessOk"
+                class="cancel-success-button">OK</button>
+    </div>
+</div>
+
+<!-- Pink Cancellation Request Modal -->
+<div id="cancellationModal" class="cancellation-modal-overlay"
+     aria-hidden="true">
+    <div class="cancellation-modal" role="dialog" aria-modal="true"
+         aria-labelledby="cancellationTitle">
+
+        <button type="button" class="cancellation-close"
+                id="cancellationClose" aria-label="Close">&times;</button>
+
+        <div class="cancellation-icon">🦷</div>
+
+        <h2 id="cancellationTitle">Request Cancellation</h2>
+        <p>Please enter the reason for cancelling this order:</p>
+
+        <textarea id="cancellationReason"
+                  placeholder="Type your reason here..."
+                  maxlength="1000" required></textarea>
+
+        <div class="cancellation-modal-actions">
+            <button type="button" id="cancellationCancel"
+                    class="cancellation-btn cancellation-btn-outline">
+                Cancel
+            </button>
+
+            <button type="button" id="cancellationSubmit"
+                    class="cancellation-btn cancellation-btn-primary">
+                ➤ &nbsp; Submit Request
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Shopee-inspired cancellation form -->
+<div class="cancel-modal" id="cancelModal" aria-hidden="true">
+    <div class="cancel-modal__backdrop" data-close-cancel></div>
+
+    <section class="cancel-modal__panel" role="dialog"
+             aria-modal="true" aria-labelledby="cancelTitle">
+        <button type="button" class="cancel-modal__close" data-close-cancel
+                aria-label="Close cancellation form">×</button>
+
+        <h2 id="cancelTitle">Cancel Order</h2>
+        <p class="cancel-modal__intro">Please select a reason for cancelling this order.</p>
+
+        <form id="cancelOrderForm">
+            <input type="hidden" name="order_id" id="cancelOrderId">
+
+            <fieldset>
+                <legend>Reason for Cancellation</legend>
+
+                <label class="cancel-option">
+                    <input type="radio" name="reason" value="I want to change my order" required>
+                    <span>I want to change my order (size, color, etc.)</span>
+                </label>
+                <label class="cancel-option">
+                    <input type="radio" name="reason" value="I want to add or remove an item">
+                    <span>I want to add or remove an item</span>
+                </label>
+                <label class="cancel-option">
+                    <input type="radio" name="reason" value="I found a better price elsewhere">
+                    <span>I found a better price elsewhere</span>
+                </label>
+                <label class="cancel-option">
+                    <input type="radio" name="reason" value="The delivery process is too slow">
+                    <span>The delivery process is too slow</span>
+                </label>
+                <label class="cancel-option">
+                    <input type="radio" name="reason" value="I no longer need this order">
+                    <span>I no longer need this order</span>
+                </label>
+                <label class="cancel-option">
+                    <input type="radio" name="reason" value="Payment issue">
+                    <span>Payment issue</span>
+                </label>
+                <label class="cancel-option">
+                    <input type="radio" name="reason" value="Other">
+                    <span>Other (please specify)</span>
+                </label>
+            </fieldset>
+
+            <label class="cancel-details-label" for="cancelDetails">
+                Additional details <span>(optional)</span>
+            </label>
+            <textarea id="cancelDetails" name="details"
+                      placeholder="Type your reason here..." rows="3"></textarea>
+
+            <div class="cancel-modal__actions">
+                <button type="button" class="cancel-button cancel-button--outline"
+                        data-close-cancel>Back</button>
+                <button type="submit" class="cancel-button cancel-button--primary"
+                        id="submitCancel" disabled>Submit Request</button>
+            </div>
+        </form>
+    </section>
+</div>
+
+<style>
+.cancel-modal[aria-hidden="true"] { display: none; }
+.cancel-modal {
+    position: fixed; inset: 0; z-index: 9999;
+    display: grid; place-items: center; padding: 16px;
+    font-family: Arial, sans-serif;
+}
+.cancel-modal__backdrop {
+    position: absolute; inset: 0;
+    background: rgba(25,15,22,.58); backdrop-filter: blur(5px);
+}
+.cancel-modal__panel {
+    position: relative; width: min(100%,560px); max-height: 90vh;
+    overflow-y: auto; padding: 30px; border-radius: 22px;
+    background: #fff8fb; box-shadow: 0 18px 60px rgba(40,10,25,.25);
+}
+.cancel-modal__close {
+    position: absolute; top: 16px; right: 18px; width: 38px; height: 38px;
+    border: 0; border-radius: 50%; background: #ffe2ee;
+    color: #e91e63; font-size: 26px; cursor: pointer;
+}
+.cancel-modal h2 { margin: 8px 40px 10px 0; color: #e91e63; font-size: 27px; }
+.cancel-modal__intro { margin: 0 0 22px; color: #74616c; }
+.cancel-modal fieldset { margin: 0; padding: 0; border: 0; }
+.cancel-modal legend { margin-bottom: 10px; font-weight: 700; color: #33232c; }
+.cancel-option {
+    display: flex; align-items: center; gap: 12px; padding: 14px 4px;
+    border-bottom: 1px solid #f0dce5; cursor: pointer; color: #33232c;
+}
+.cancel-option input { width: 19px; height: 19px; flex: 0 0 auto; accent-color: #e91e63; }
+.cancel-details-label { display: block; margin: 20px 0 8px; font-weight: 700; }
+.cancel-details-label span { font-weight: 400; color: #887681; }
+#cancelDetails {
+    width: 100%; box-sizing: border-box; resize: vertical; padding: 12px;
+    border: 1px solid #e7cbd8; border-radius: 12px; font: inherit;
+}
+.cancel-modal__actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 22px; }
+.cancel-button {
+    min-width: 130px; padding: 13px 18px; border-radius: 30px;
+    font-weight: 700; cursor: pointer;
+}
+.cancel-button--outline { border: 1px solid #e91e63; background: white; color: #e91e63; }
+.cancel-button--primary { border: 0; background: #e91e63; color: white; }
+.cancel-button--primary:disabled { background: #d9d6d8; color: #999; cursor: not-allowed; }
+@media (max-width: 480px) {
+    .cancel-modal__panel { padding: 24px 18px; }
+    .cancel-modal__actions { flex-direction: column-reverse; }
+    .cancel-button { width: 100%; }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('cancelModal');
+    const form = document.getElementById('cancelOrderForm');
+    const submitButton = document.getElementById('submitCancel');
+
+    window.openCancelForm = function (orderId) {
+        document.getElementById('cancelOrderId').value = orderId;
+        modal.setAttribute('aria-hidden', 'false');
+    };
+
+    function closeCancelForm() {
+        modal.setAttribute('aria-hidden', 'true');
+    }
+
+    modal.querySelectorAll('[data-close-cancel]').forEach(button => {
+        button.addEventListener('click', closeCancelForm);
+    });
+
+    form.addEventListener('change', () => {
+        submitButton.disabled = !form.querySelector('input[name="reason"]:checked');
+    });
+
+    form.addEventListener('submit', event => {
+        event.preventDefault();
+        const selectedReason = form.querySelector('input[name="reason"]:checked');
+        if (!selectedReason) return;
+
+        alert(
+            'Cancellation form submitted for order #' +
+            document.getElementById('cancelOrderId').value +
+            '\nReason: ' + selectedReason.value +
+            (document.getElementById('cancelDetails').value
+                ? '\nDetails: ' + document.getElementById('cancelDetails').value
+                : '')
+        );
+
+        closeCancelForm();
+    });
+});
+</script>
+
+</body>
+
+</html>

@@ -11,6 +11,29 @@ class DentistTreatmentController extends Controller
 
     public function index(Request $request)
     {
+
+$procedureCatalog = \App\Models\ServiceProcedure::query()
+    ->where('is_active', true)
+    ->with('category')
+    ->orderBy('category_id')
+    ->orderBy('procedure_name')
+    ->get()
+    ->groupBy('category_id')
+    ->map(function ($procedures) {
+        $first = $procedures->first();
+
+        return [
+            'id' => $first->category_id,
+            'name' => $first->category?->category_name ?? 'Uncategorized',
+            'procedures' => $procedures->map(fn ($procedure) => [
+                'id' => $procedure->id,
+                'name' => $procedure->procedure_name,
+                'price' => (float) $procedure->price,
+            ])->values(),
+        ];
+    })
+    ->values();
+
         $query = Treatment::query();
 
         if ($request->filled('search')) {
@@ -61,7 +84,8 @@ class DentistTreatmentController extends Controller
             'dentist.treatments',
             compact(
                 'treatments',
-                'patients'
+                'patients',
+                'procedureCatalog'
             )
         );
     }

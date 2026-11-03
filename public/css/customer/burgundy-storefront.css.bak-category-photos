@@ -1,0 +1,108 @@
+:root {
+    --pink: #ff1688;
+    --pink-light: #ffe0ef;
+    --muted: #d8bdca;
+    --shadow: 0 10px 28px rgba(0, 0, 0, .24);
+}
+
+body {
+    background: #4a0028;
+    color: #fff5fa;
+}
+
+.topbar,
+header.topbar {
+    background: #10090e;
+    border-bottom: 1px solid rgba(255, 22, 136, .3);
+}
+
+.brand-name,
+.nav-links a,
+.nav-action {
+    color: #fff5fa;
+}
+
+.hero {
+    background: linear-gradient(120deg, #31001d 0%, #650034 55%, #260019 100%);
+    color: #fff5fa;
+}
+
+.hero h1,
+.section h2,
+.section-head h2 {
+    color: #fff5fa;
+}
+
+.hero-description,
+.trust-item,
+.section p {
+    color: #ead4df;
+}
+
+.eyebrow,
+.section-label,
+.text-link,
+.category-info strong {
+    color: #ff1688;
+}
+
+.btn-primary,
+.nav-action:hover,
+.text-link:hover {
+    background: #ff1688;
+    color: #fff;
+}
+
+.btn-outline {
+    color: #fff;
+    border-color: #ff1688;
+}
+
+.shop-category-section,
+.section {
+    background: #4a0028;
+}
+
+.category-card,
+.product-card {
+    background: #fff8fc;
+    border-color: rgba(255, 22, 136, .25);
+    color: #27101d;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, .18);
+}
+
+.category-art {
+    height: 155px;
+    padding: 0;
+    overflow: hidden;
+    background: #fff;
+}
+
+.category-art img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.category-info strong {
+    color: #9b004e;
+}
+
+.category-info span {
+    color: #725765;
+}
+
+.featured {
+    background: #35001f;
+}
+
+.product-card {
+    color: #27101d;
+}
+
+@media (max-width: 700px) {
+    .category-art {
+        height: 115px;
+    }
+}

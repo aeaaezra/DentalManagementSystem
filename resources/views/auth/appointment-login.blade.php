@@ -989,11 +989,12 @@
 
                         <div>
 
-                            <a
-                                href="{{ route('password.request') }}"
-                            >
-                                Forgot your password?
-                            </a>
+
+				<a
+				    href="{{ route('password.request', ['portal' => 'appointments.login']) }}"
+				>
+				    Forgot your password?
+				</a>
 
                         </div>
 

@@ -8,7 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
+<link rel="icon" type="image/png"
+      href="{{ asset('images/shine-and-smile-favicon.png') }}">
     <title>
         {{ config('app.name', 'Laravel') }}
     </title>
@@ -26,16 +27,8 @@
     />
 
 
-    {{-- =========================================================
-         FAVICON
-    ========================================================== --}}
-
-    <link
-        rel="icon"
-        type="image/png"
-        href="{{ asset('images/favicon.png') }}"
-    >
-
+    {{-- FAVICON --}}
+    <link rel="icon" href="{{ asset('images/shine-and-smile-favicon.png') }}?v=5">
 
     {{-- =========================================================
          ALPINE CLOAK
@@ -77,6 +70,119 @@
 
 </head>
 
+
+<style>
+#ss-page-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff8fb;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity .45s ease, visibility .45s ease;
+}
+#ss-page-loader.ss-loader-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+.ss-loader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 13px;
+    color: #d92b7c;
+    font-family: Arial, sans-serif;
+}
+.ss-loader-tooth {
+    font-size: 58px;
+    line-height: 1.2;
+    animation: ss-tooth-bounce .8s ease-in-out infinite alternate;
+}
+.ss-loader-ring {
+    width: 34px;
+    height: 34px;
+    border: 4px solid #f8c8df;
+    border-top-color: #d92b7c;
+    border-radius: 50%;
+    animation: ss-loader-spin .75s linear infinite;
+}
+.ss-loader-title {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: .4px;
+}
+.ss-loader-subtitle {
+    font-size: 12px;
+    color: #927084;
+}
+@keyframes ss-loader-spin { to { transform: rotate(360deg); } }
+@keyframes ss-tooth-bounce { to { transform: translateY(-7px) rotate(5deg); } }
+@media (prefers-reduced-motion: reduce) {
+    .ss-loader-tooth, .ss-loader-ring { animation-duration: 2s; }
+}
+</style>
+<div id="ss-page-loader" role="status" aria-live="polite" aria-label="Loading page">
+    <div class="ss-loader-content">
+        <div class="ss-loader-tooth">🦷</div>
+        <div class="ss-loader-title">Shine &amp; Smile</div>
+        <div class="ss-loader-ring"></div>
+        <div class="ss-loader-subtitle">Preparing your smile...</div>
+    </div>
+</div>
+<script>
+(function () {
+    const loader = document.getElementById('ss-page-loader');
+    if (!loader) return;
+
+    const minimumTime = 3000;
+    const startedAt = Date.now();
+
+    function hideLoader() {
+        const remaining = Math.max(0, minimumTime - (Date.now() - startedAt));
+        window.setTimeout(function () {
+            loader.classList.add('ss-loader-hidden');
+        }, remaining);
+    }
+
+    if (document.readyState === 'complete') {
+        hideLoader();
+    } else {
+        window.addEventListener('load', hideLoader, { once: true });
+    }
+
+    window.addEventListener('pageshow', function () {
+        loader.classList.add('ss-loader-hidden');
+    });
+
+    document.addEventListener('click', function (event) {
+        const link = event.target.closest('a[href]');
+        if (!link || event.defaultPrevented ||
+            event.button !== 0 ||
+            event.ctrlKey || event.metaKey || event.shiftKey || event.altKey ||
+            link.target === '_blank' ||
+            link.hasAttribute('download') ||
+            link.getAttribute('href').startsWith('#') ||
+            link.getAttribute('href').startsWith('javascript:')) return;
+
+        const destination = new URL(link.href, window.location.href);
+        if (destination.origin !== window.location.origin ||
+            destination.href === window.location.href) return;
+
+        loader.classList.remove('ss-loader-hidden');
+    });
+
+    document.addEventListener('submit', function (event) {
+        const form = event.target;
+        if (event.defaultPrevented || form.target === '_blank') return;
+        if (form.method && form.method.toLowerCase() === 'dialog') return;
+        loader.classList.remove('ss-loader-hidden');
+    }, true);
+})();
+</script>
 
 <body
     class="font-sans antialiased
@@ -315,111 +421,174 @@
                 @endauth
 
 
-                {{-- =================================================
-                     USER PROFILE
-                ================================================== --}}
-
+                {{-- CUSTOMER ACCOUNT DROPDOWN --}}
                 @auth
-
-                    <div
-                        class="flex items-center gap-3"
-                    >
-
-
-                        {{-- =================================================
-                             PROFILE PICTURE
-                        ================================================== --}}
-
-                        <div
-                            class="w-10 h-10
-                                   rounded-full
-                                   overflow-hidden
-                                   border-2
-                                   border-pink-500
-                                   flex-shrink-0"
+                    <div class="relative" id="accountDropdown">
+                        <button
+                            type="button"
+                            id="accountDropdownToggle"
+                            aria-expanded="false"
+                            aria-controls="accountDropdownMenu"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2
+                                   hover:bg-gray-100 dark:hover:bg-gray-700
+                                   focus:outline-none focus:ring-2 focus:ring-pink-400
+                                   transition"
                         >
+                            <span class="w-10 h-10 rounded-full overflow-hidden
+                                         border-2 border-pink-500 flex-shrink-0">
+                                @if(auth()->user()->profile_picture)
+                                    <img
+                                        src="{{ asset('storage/' . auth()->user()->profile_picture) }}"
+                                        alt="Profile"
+                                        class="w-full h-full object-cover"
+                                    >
+                                @else
+                                    <img
+                                        src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=FCE7F3&color=E91E63"
+                                        alt="Profile"
+                                        class="w-full h-full object-cover"
+                                    >
+                                @endif
+                            </span>
 
-                            @if(auth()->user()->profile_picture)
+                            <span class="leading-tight text-left">
+                                <span class="block text-sm font-semibold text-gray-800 dark:text-white">
+                                    {{ auth()->user()->name }}
+                                </span>
+                                <span class="block text-xs text-gray-500 dark:text-gray-400">
+                                    Patient
+                                </span>
+                            </span>
 
-                                <img
-                                    src="{{ asset(
-                                        'storage/' .
-                                        auth()->user()->profile_picture
-                                    ) }}"
-                                    alt="Profile"
-                                    class="w-full h-full object-cover"
-                                >
+                            <svg id="accountDropdownChevron"
+                                 xmlns="http://www.w3.org/2000/svg"
+                                 width="18" height="18" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2"
+                                 stroke-linecap="round" stroke-linejoin="round"
+                                 class="text-gray-500 dark:text-gray-300 transition-transform"
+                                 aria-hidden="true">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
 
-                            @else
-
-                                <img
-                                    src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=FCE7F3&color=E91E63"
-                                    alt="Profile"
-                                    class="w-full h-full object-cover"
-                                >
-
-                            @endif
-
-                        </div>
-
-
-                        {{-- =================================================
-                             USER INFORMATION
-                        ================================================== --}}
-
-                        <div
-                            class="leading-tight"
-                        >
-
-                            <div
-                                class="text-sm
-                                       font-semibold
-                                       text-gray-800
-                                       dark:text-white"
-                            >
-                                {{ auth()->user()->name }}
+                        <div id="accountDropdownMenu"
+                             class="hidden absolute right-0 mt-2 w-56 rounded-xl
+                                    border border-gray-200 dark:border-gray-700
+                                    bg-white dark:bg-gray-800 shadow-xl z-50 py-2"
+                             role="menu">
+                            <div class="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
+                                <p class="text-sm font-semibold text-gray-800 dark:text-white">
+                                    {{ auth()->user()->name }}
+                                </p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                    {{ auth()->user()->email }}
+                                </p>
                             </div>
 
-                            <div
-                                class="text-xs
-                                       text-gray-500
-                                       dark:text-gray-400"
-                            >
-                                Patient
-                            </div>
+                            <a href="{{ route('customer.profile') }}"
+                               role="menuitem"
+                               class="flex items-center gap-3 px-4 py-3 text-sm
+                                      text-gray-700 dark:text-gray-200
+                                      hover:bg-pink-50 dark:hover:bg-gray-700">
+                                <svg width="18" height="18" viewBox="0 0 24 24"
+                                     fill="none" stroke="currentColor" stroke-width="2"
+                                     stroke-linecap="round" stroke-linejoin="round"
+                                     aria-hidden="true">
+                                    <circle cx="12" cy="8" r="4"></circle>
+                                    <path d="M5 21v-2a7 7 0 0 1 14 0v2"></path>
+                                </svg>
+                                Profile
+                            </a>
 
+                            <a href="{{ route('customer.settings') }}"
+                               role="menuitem"
+                               class="flex items-center gap-3 px-4 py-3 text-sm
+                                      text-gray-700 dark:text-gray-200
+                                      hover:bg-pink-50 dark:hover:bg-gray-700">
+                                <svg width="18" height="18" viewBox="0 0 24 24"
+                                     fill="none" stroke="currentColor" stroke-width="2"
+                                     stroke-linecap="round" stroke-linejoin="round"
+                                     aria-hidden="true">
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                    <path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.6a8 8 0 0 1-1.7 1l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.7-1l-1.7.6-1.4-2.4 1.4-1.1a7 7 0 0 1 0-2l-1.4-1.1 1.4-2.4 1.7.6a8 8 0 0 1 1.7-1l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.7 1l1.7-.6 1.4 2.4-1.4 1.1a7 7 0 0 1 0 1.9Z"
+                                          transform="translate(-1 -1) scale(1.04)"></path>
+                                </svg>
+                                Settings
+                            </a>
+
+                            <div class="my-1 border-t border-gray-100 dark:border-gray-700"></div>
+
+                            <button type="button" id="openLogoutModal"
+                                    role="menuitem"
+                                    class="w-full flex items-center gap-3 px-4 py-3
+                                           text-sm text-red-600 hover:bg-red-50
+                                           dark:hover:bg-red-900/20 text-left">
+                                <svg width="18" height="18" viewBox="0 0 24 24"
+                                     fill="none" stroke="currentColor" stroke-width="2"
+                                     stroke-linecap="round" stroke-linejoin="round"
+                                     aria-hidden="true">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                    <polyline points="16 17 21 12 16 7"></polyline>
+                                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                                </svg>
+                                Logout
+                            </button>
                         </div>
-
-
-                        {{-- =================================================
-                             CHEVRON
-                        ================================================== --}}
-
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="18"
-                            height="18"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            class="profile-chevron
-                                   text-gray-500
-                                   dark:text-gray-300
-                                   ml-1"
-                            aria-hidden="true"
-                        >
-
-                            <polyline
-                                points="6 9 12 15 18 9"
-                            ></polyline>
-
-                        </svg>
-
                     </div>
 
+                    {{-- LOGOUT CONFIRMATION MODAL --}}
+                    <div id="logoutConfirmationModal"
+                         class="hidden fixed inset-0 z-[100] items-center justify-center
+                                bg-black/50 px-4 py-6"
+                         role="dialog" aria-modal="true"
+                         aria-labelledby="logoutModalTitle"
+                         aria-describedby="logoutModalDescription">
+                        <div class="w-full max-w-md rounded-2xl bg-white dark:bg-gray-800
+                                    p-6 shadow-2xl">
+                            <div class="mx-auto mb-4 flex h-14 w-14 items-center
+                                        justify-center rounded-full bg-red-100 text-red-600">
+                                <svg width="28" height="28" viewBox="0 0 24 24"
+                                     fill="none" stroke="currentColor" stroke-width="2"
+                                     stroke-linecap="round" stroke-linejoin="round"
+                                     aria-hidden="true">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                    <polyline points="16 17 21 12 16 7"></polyline>
+                                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                                </svg>
+                            </div>
+
+                            <h2 id="logoutModalTitle"
+                                class="text-xl font-bold text-center text-gray-900 dark:text-white">
+                                Log out of your account?
+                            </h2>
+                            <p id="logoutModalDescription"
+                               class="mt-2 text-sm text-center text-gray-600 dark:text-gray-300">
+                                Are you sure you want to log out? You will need to sign in again to access your account.
+                            </p>
+
+                            <div class="mt-6 flex flex-col-reverse sm:flex-row
+                                        justify-center gap-3">
+                                <button type="button" id="cancelLogout"
+                                        class="rounded-xl border border-gray-300 dark:border-gray-600
+                                               px-5 py-2.5 text-sm font-semibold
+                                               text-gray-700 dark:text-gray-200
+                                               hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    Cancel
+                                </button>
+
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit"
+                                            class="w-full rounded-xl bg-red-600 px-5 py-2.5
+                                                   text-sm font-semibold text-white
+                                                   hover:bg-red-700 focus:outline-none
+                                                   focus:ring-2 focus:ring-red-400">
+                                        Yes, Log Out
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 @endauth
 
             </div>
@@ -481,6 +650,70 @@
     </div>
 
 
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const toggle = document.getElementById('accountDropdownToggle');
+    const menu = document.getElementById('accountDropdownMenu');
+    const chevron = document.getElementById('accountDropdownChevron');
+    const openLogout = document.getElementById('openLogoutModal');
+    const modal = document.getElementById('logoutConfirmationModal');
+    const cancelLogout = document.getElementById('cancelLogout');
+
+    if (!toggle || !menu) return;
+
+    function closeMenu() {
+        menu.classList.add('hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+        if (chevron) chevron.classList.remove('rotate-180');
+    }
+
+    toggle.addEventListener('click', function (event) {
+        event.stopPropagation();
+        const willOpen = menu.classList.contains('hidden');
+        menu.classList.toggle('hidden', !willOpen);
+        toggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+        if (chevron) chevron.classList.toggle('rotate-180', willOpen);
+    });
+
+    document.addEventListener('click', function (event) {
+        if (!event.target.closest('#accountDropdown')) closeMenu();
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            closeMenu();
+            if (modal && !modal.classList.contains('hidden')) closeModal();
+        }
+    });
+
+    function openModal() {
+        if (!modal) return;
+        closeMenu();
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.classList.add('overflow-hidden');
+        if (cancelLogout) cancelLogout.focus();
+    }
+
+    function closeModal() {
+        if (!modal) return;
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.classList.remove('overflow-hidden');
+        if (openLogout) openLogout.focus();
+    }
+
+    if (openLogout) openLogout.addEventListener('click', openModal);
+    if (cancelLogout) cancelLogout.addEventListener('click', closeModal);
+
+    if (modal) {
+        modal.addEventListener('click', function (event) {
+            if (event.target === modal) closeModal();
+        });
+    }
+});
+</script>
 </body>
 
 </html>

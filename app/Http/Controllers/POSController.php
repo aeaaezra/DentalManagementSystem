@@ -6,6 +6,7 @@ use App\Models\DiscountCode;
 use App\Models\PosSaleItems;
 use App\Models\PosSales;
 use App\Models\Products;
+use App\Models\ProductVariant;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +20,9 @@ class POSController extends Controller
     public function homepage()
     {
         $products = Products::where('is_active', true)
+            ->with(['variants' => function ($query) {
+                $query->where('is_active', true)->orderBy('name');
+            }])
             ->orderBy('product_name')
             ->get();
 
@@ -32,6 +36,18 @@ class POSController extends Controller
                 'brand' => $product->brand_name,
                 'price' => (float) $product->selling_price,
                 'stock' => (int) $product->quantity,
+                'variants' => $product->variants->map(function ($variant) use ($product) {
+                    return [
+                        'id' => (int) $variant->id,
+                        'name' => $variant->name,
+                        'sku' => $variant->sku,
+			'options' => $variant->options,
+                        'price' => $variant->price !== null
+                            ? (float) $variant->price
+                            : (float) $product->selling_price,
+                        'stock' => (int) $variant->quantity,
+                    ];
+                })->values(),
                 'image' => $product->image,
                 'unit' => $product->unit,
             ];
@@ -101,6 +117,110 @@ class POSController extends Controller
     /**
      * Cashier sales history.
      */
+
+    /**
+     * POS sales reports.
+     */
+    public function reports(Request $request)
+    {
+        $range = $request->input('range', '7days');
+        $today = now()->toDateString();
+
+        if ($range === 'today') {
+            $from = $today;
+            $to = $today;
+        } elseif ($range === '30days') {
+            $from = now()->subDays(29)->toDateString();
+            $to = $today;
+        } elseif ($range === 'custom') {
+            $from = $request->input('from', now()->subDays(6)->toDateString());
+            $to = $request->input('to', $today);
+
+            foreach (['from', 'to'] as $field) {
+                $$field = request()->input($field, $$field);
+                if (!is_string($$field) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $$field)) {
+                    $$field = $field === 'from'
+                        ? now()->subDays(6)->toDateString()
+                        : $today;
+                }
+            }
+
+            if ($from > $to) {
+                [$from, $to] = [$to, $from];
+            }
+        } else {
+            $range = '7days';
+            $from = now()->subDays(6)->toDateString();
+            $to = $today;
+        }
+
+        $base = PosSales::query()
+            ->where('cashier_id', auth()->id())
+            ->whereDate('created_at', '>=', $from)
+            ->whereDate('created_at', '<=', $to);
+
+        $totalSales = (clone $base)->sum('total');
+        $transactionCount = (clone $base)->count();
+        $averageSale = $transactionCount > 0
+            ? $totalSales / $transactionCount
+            : 0;
+
+        $saleIds = (clone $base)->select('id');
+
+        $itemsSold = PosSaleItems::whereIn('pos_sale_id', $saleIds)
+            ->sum('quantity');
+
+        $recentSales = (clone $base)->latest()->limit(10)->get();
+
+        $topProducts = DB::table('pos_sale_items')
+            ->join('pos_sales', 'pos_sales.id', '=', 'pos_sale_items.pos_sale_id')
+            ->leftJoin('products', 'products.id', '=', 'pos_sale_items.product_id')
+            ->where('pos_sales.cashier_id', auth()->id())
+            ->whereDate('pos_sales.created_at', '>=', $from)
+            ->whereDate('pos_sales.created_at', '<=', $to)
+            ->select(
+                'products.product_name',
+                DB::raw('SUM(pos_sale_items.quantity) as quantity_sold'),
+                DB::raw('SUM(pos_sale_items.subtotal) as revenue')
+            )
+            ->groupBy('products.product_name')
+            ->orderByDesc('quantity_sold')
+            ->limit(5)
+            ->get();
+
+        $dailyRows = (clone $base)
+            ->select(
+                DB::raw('DATE(created_at) as sale_date'),
+                DB::raw('SUM(total) as revenue'),
+                DB::raw('COUNT(*) as transactions')
+            )
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->orderBy('sale_date')
+            ->get()
+            ->keyBy('sale_date');
+
+        $chartLabels = [];
+        $chartSales = [];
+        $chartTransactions = [];
+        $cursor = \Carbon\Carbon::parse($from);
+        $lastDay = \Carbon\Carbon::parse($to);
+
+        while ($cursor->lte($lastDay)) {
+            $key = $cursor->toDateString();
+            $day = $dailyRows->get($key);
+            $chartLabels[] = $cursor->format('M j');
+            $chartSales[] = $day ? (float) $day->revenue : 0;
+            $chartTransactions[] = $day ? (int) $day->transactions : 0;
+            $cursor->addDay();
+        }
+
+        return view('pos.reports', compact(
+            'range', 'from', 'to', 'totalSales', 'transactionCount',
+            'averageSale', 'itemsSold', 'recentSales', 'topProducts',
+            'chartLabels', 'chartSales', 'chartTransactions'
+        ));
+    }
+
     public function salesHistory()
     {
         $sales = PosSales::with(['items.product'])
@@ -215,6 +335,7 @@ class POSController extends Controller
         $validated = $request->validate([
             'cart' => 'required|array|min:1',
             'cart.*.id' => 'required|integer',
+            'cart.*.variant_id' => 'nullable|integer',
             'cart.*.qty' => 'required|integer|min:1',
             'cash_received' => 'required|numeric|min:0',
             'discount_code' => 'nullable|string|max:50',
@@ -246,18 +367,49 @@ class POSController extends Controller
                         );
                     }
 
-                    if ((int) $product->quantity < $quantity) {
+                    $variant = null;
+
+                    if (!empty($item['variant_id'])) {
+                        $variantId = (int) $item['variant_id'];
+
+                        $variant = ProductVariant::whereKey($variantId)
+                            ->where('product_id', $product->id)
+                            ->where('is_active', true)
+                            ->lockForUpdate()
+                            ->first();
+
+                        if (!$variant) {
+                            throw new \RuntimeException(
+                                "The selected variant for {$product->product_name} "
+                                . "was not found or is inactive."
+                            );
+                        }
+
+                        if ((int) $variant->quantity < $quantity) {
+                            throw new \RuntimeException(
+                                "Insufficient stock for {$product->product_name} "
+                                . "({$variant->name}). Available: {$variant->quantity}, "
+                                . "requested: {$quantity}."
+                            );
+                        }
+                    } elseif ((int) $product->quantity < $quantity) {
                         throw new \RuntimeException(
                             "Insufficient stock for {$product->product_name}. "
                             . "Available: {$product->quantity}, requested: {$quantity}."
                         );
                     }
 
-                    $price = round((float) $product->selling_price, 2);
+                    $price = round(
+                        $variant && $variant->price !== null
+                            ? (float) $variant->price
+                            : (float) $product->selling_price,
+                        2
+                    );
                     $itemSubtotal = round($price * $quantity, 2);
 
                     $cartItems[] = [
                         'product' => $product,
+                        'variant' => $variant,
                         'quantity' => $quantity,
                         'price' => $price,
                         'subtotal' => $itemSubtotal,
@@ -383,13 +535,18 @@ class POSController extends Controller
                     PosSaleItems::create([
                         'pos_sale_id' => $sale->id,
                         'product_id' => $product->id,
+                        'variant_id' => $item['variant']?->id,
                         'quantity' => $item['quantity'],
                         'price' => $item['price'],
                         'unit_price' => $item['price'],
                         'subtotal' => $item['subtotal'],
                     ]);
 
-                    $product->decrement('quantity', $item['quantity']);
+                    if ($item['variant']) {
+                        $item['variant']->decrement('quantity', $item['quantity']);
+                    } else {
+                        $product->decrement('quantity', $item['quantity']);
+                    }
                 }
 
                 if ($discountCode) {
@@ -398,11 +555,18 @@ class POSController extends Controller
 
                 $receiptItems = collect($cartItems)->map(function ($item) {
                     $product = $item['product'];
+                    $variant = $item['variant'];
 
                     return [
                         'id' => $product->id,
-                        'name' => $product->product_name,
-                        'sku' => $product->sku,
+                        'variant_id' => $variant?->id,
+                        'variant_name' => $variant?->name,
+                        'name' => $variant
+                            ? $product->product_name . ' (' . $variant->name . ')'
+                            : $product->product_name,
+                        'sku' => $variant && $variant->sku
+                            ? $variant->sku
+                            : $product->sku,
                         'barcode' => $product->barcode,
                         'unit' => $product->unit,
                         'quantity' => $item['quantity'],

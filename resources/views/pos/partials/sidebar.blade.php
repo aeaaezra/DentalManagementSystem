@@ -31,18 +31,15 @@
             <span>Products</span>
         </a>
 
-        <a class="nav-item"
-           href="{{ url('/admin/stock-movements') }}">
+        <a class="nav-item {{ request()->routeIs('pos.inventory.stock-movements') ? 'active' : '' }}"
+           href="{{ route('pos.inventory.stock-movements') }}">
             <i class="fa-solid fa-boxes-stacked"></i>
             <span>Inventory</span>
         </a>
 
-        <a class="nav-item" href="#" onclick="return false;">
-            <i class="fa-solid fa-users"></i>
-            <span>Customers</span>
-        </a>
 
-        <a class="nav-item" href="{{ url('/admin/reports') }}">
+        <a class="nav-item {{ request()->routeIs('pos.reports') ? 'active' : '' }}"
+           href="{{ route('pos.reports') }}">
             <i class="fa-solid fa-chart-column"></i>
             <span>Reports</span>
         </a>

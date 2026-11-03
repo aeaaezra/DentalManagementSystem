@@ -1,0 +1,246 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Book an Appointment | Shine &amp; Smile</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 24px;
+            font-family: Arial, sans-serif;
+            color: #333;
+            background: #fff8fb;
+        }
+        .container {
+            max-width: 760px;
+            margin: auto;
+            padding: 28px;
+            background: white;
+            border: 1px solid #f5c9dd;
+            border-radius: 18px;
+        }
+        h1 { color: #d63384; margin-top: 0; }
+        .intro { color: #666; line-height: 1.5; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+        .field { margin-bottom: 16px; }
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 600;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font: inherit;
+            background: white;
+        }
+        textarea { min-height: 90px; resize: vertical; }
+        .error {
+            padding: 12px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+            background: #fff0f0;
+            color: #a40000;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            border: 0;
+            border-radius: 9px;
+            background: #d63384;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover { background: #b9256e; }
+        @media (max-width: 560px) {
+            body { padding: 12px; }
+            .container { padding: 18px; }
+            .grid { grid-template-columns: 1fr; gap: 0; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Book an Appointment</h1>
+    <p class="intro">
+        Complete the form below to request a dental appointment.
+        You do not need to create an account. Your appointment will be
+        pending until the clinic reviews it.
+    </p>
+
+    @if ($errors->any())
+        <div class="error">
+            <strong>Please check the following:</strong>
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form method="POST" action="{{ route('appointments.guest.store') }}">
+        @csrf
+
+        <h3>Patient Information</h3>
+        <div class="grid">
+            <div class="field">
+                <label for="patient_name">Full name *</label>
+                <input id="patient_name" name="patient_name"
+                       value="{{ old('patient_name') }}" maxlength="255" required>
+            </div>
+            <div class="field">
+                <label for="tel_no">Mobile number</label>
+                <input id="tel_no" name="tel_no" type="tel"
+                       value="{{ old('tel_no') }}"
+                       placeholder="09XXXXXXXXX">
+            </div>
+            <div class="field">
+                <label for="age">Age</label>
+                <input id="age" name="age" type="number" min="1"
+                       value="{{ old('age') }}">
+            </div>
+            <div class="field">
+                <label for="sex">Sex</label>
+                <select id="sex" name="sex">
+                    <option value="">Select</option>
+                    <option value="Male" @selected(old('sex') === 'Male')>Male</option>
+                    <option value="Female" @selected(old('sex') === 'Female')>Female</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="civil_status">Civil status</label>
+                <select id="civil_status" name="civil_status">
+                    <option value="">Select</option>
+                    @foreach (['Single','Married','Widowed','Separated'] as $status)
+                        <option value="{{ $status }}"
+                            @selected(old('civil_status') === $status)>
+                            {{ $status }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="field">
+                <label for="occupation">Occupation</label>
+                <select id="occupation" name="occupation">
+                    <option value="">Select Occupation</option>
+                    @foreach ([
+                        'Student',
+                        'Employed',
+                        'Self-Employed',
+                        'Business Owner',
+                        'Government Employee',
+                        'Private Employee',
+                        'Unemployed',
+                        'Retired',
+                        'Other'
+                    ] as $occupationOption)
+                        <option value="{{ $occupationOption }}"
+                            @selected(old('occupation') === $occupationOption)>
+                            {{ $occupationOption }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="address">Address</label>
+            <textarea id="address" name="address">{{ old('address') }}</textarea>
+        </div>
+
+        <h3>Appointment Details</h3>
+        <div class="field">
+            <label for="service_id">Dental service *</label>
+            <select id="service_id" name="service_id" required>
+                <option value="">Choose a service</option>
+                @foreach ($services as $service)
+                    <option value="{{ $service->id }}"
+                        @selected((string) old('service_id') === (string) $service->id)>
+                        {{ $service->service_name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="grid">
+            <div class="field">
+                <label for="appointment_date">Preferred date *</label>
+                <input id="appointment_date" name="appointment_date"
+                       type="date" min="{{ now()->toDateString() }}"
+                       value="{{ old('appointment_date') }}" required>
+            </div>
+            <div class="field">
+                <label for="appointment_time">Preferred time *</label>
+                <select id="appointment_time" name="appointment_time" required>
+                    <option value="">Choose a time</option>
+                    @foreach (range(8, 16) as $hour)
+                        @foreach ([0, 30] as $minute)
+                            @php
+                                $time = sprintf('%02d:%02d:00', $hour, $minute);
+                            @endphp
+                            <option value="{{ $time }}"
+                                @selected(old('appointment_time') === $time)>
+                                {{ date('g:i A', strtotime($time)) }}
+                            </option>
+                        @endforeach
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="reason">Reason for appointment *</label>
+            <textarea id="reason" name="reason" required>{{ old('reason') }}</textarea>
+        </div>
+
+        <h3>Medical Information</h3>
+        @foreach ([
+            'heart_condition' => 'Heart condition',
+            'allergy' => 'Allergies',
+            'diabetes' => 'Diabetes',
+            'hypertension' => 'Hypertension',
+            'bleeding_tendency' => 'Bleeding tendency',
+            'asthma' => 'Asthma'
+        ] as $field => $label)
+            <div class="field">
+                <label>
+                    <input style="width:auto" type="checkbox" name="{{ $field }}"
+                           value="1" @checked(old($field))>
+                    {{ $label }}
+                </label>
+                <input name="{{ $field }}_details"
+                       value="{{ old($field . '_details') }}"
+                       placeholder="Details, if applicable">
+            </div>
+        @endforeach
+
+        <div class="field">
+            <label for="other_conditions">Other medical conditions</label>
+            <textarea id="other_conditions" name="other_conditions">{{ old('other_conditions') }}</textarea>
+        </div>
+
+        <div class="field">
+            <label for="patient_signature">Patient signature (optional)</label>
+            <input id="patient_signature" name="patient_signature"
+                   value="{{ old('patient_signature') }}">
+        </div>
+
+        <button type="submit">Submit Appointment Request</button>
+    </form>
+</div>
+</body>
+</html>
+

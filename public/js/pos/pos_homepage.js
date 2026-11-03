@@ -16,7 +16,30 @@ document.addEventListener("DOMContentLoaded", () => {
             price: Number(product.price) || 0,
             stock: Number(product.stock) || 0,
 	    image: product.image ?? "",
-	    unit: product.unit ?? "Unit"
+	    unit: product.unit ?? "Unit",
+
+variants: Array.isArray(product.variants)
+    ? product.variants.map(v => {
+        let color = String(v.options ?? "").trim();
+
+        // Handle options stored as JSON strings, e.g. '"blue"'.
+        try {
+            const parsed = JSON.parse(color);
+            if (typeof parsed === "string") {
+                color = parsed;
+            }
+        } catch (_) {}
+
+        return {
+            id: Number(v.id),
+            name: String(v.name ?? "").trim(),
+            color: color.replace(/^["']+|["']+$/g, "").trim(),
+            sku: v.sku ?? "",
+            price: Number(v.price) || 0,
+            stock: Number(v.stock) || 0
+        };
+    })
+    : []
 
         }))
         : [];
@@ -221,11 +244,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
         productGrid.innerHTML = list
             .map(product => {
-                const out =
-                    product.stock <= 0;
+                const hasVariants =
+                    Array.isArray(product.variants) &&
+                    product.variants.length > 0;
 
-                const low =
-                    !out && product.stock <= 10;
+                const totalVariantStock = hasVariants
+                    ? product.variants.reduce((total, variant) => total + variant.stock, 0)
+                    : 0;
+
+                const out = hasVariants
+                    ? !product.variants.some(variant => variant.stock > 0)
+                    : product.stock <= 0;
+
+                const low = !out && (
+                    hasVariants
+                        ? totalVariantStock <= 10
+                        : product.stock <= 10
+                );
+
+                const variantPrices = hasVariants
+                    ? product.variants.map(variant => variant.price)
+                    : [];
+
+                const minVariantPrice = hasVariants
+                    ? Math.min(...variantPrices)
+                    : product.price;
+
+                const maxVariantPrice = hasVariants
+                    ? Math.max(...variantPrices)
+                    : product.price;
+
+                const displayPrice = hasVariants
+                    ? (minVariantPrice === maxVariantPrice
+                        ? formatCurrency(minVariantPrice)
+                        : `${formatCurrency(minVariantPrice)} - ${formatCurrency(maxVariantPrice)}`)
+                    : formatCurrency(product.price);
 
                 let image =
                     product.image || "";
@@ -319,14 +372,78 @@ document.addEventListener("DOMContentLoaded", () => {
                                     out
                                         ? "Out of Stock"
                                         : low
-                                            ? `Low Stock (${product.stock})`
-                                            : `In Stock (${product.stock})`
+                                            ? `Low Stock (${hasVariants ? totalVariantStock : product.stock})`
+                                            : `In Stock (${hasVariants ? totalVariantStock : product.stock})`
                                 }
                             </div>
 
+                            ${
+
+product.variants.length
+    ? `
+        <div class="pos-variant-label">
+            <div style="font-weight:600;margin:10px 0 6px;">
+                Color Variant
+            </div>
+
+            <div class="pos-color-buttons"
+                 data-color-buttons="${product.id}"
+                 style="display:flex;gap:8px;flex-wrap:wrap;">
+                ${[...new Set(product.variants.map(v => v.color).filter(Boolean))]
+                    .map(color => `
+                        <button
+                            type="button"
+                            data-color="${product.id}:${color}"
+                            style="
+                                padding:8px 14px;
+                                border:1px solid #f08ab5;
+                                border-radius:8px;
+                                background:#fff;
+                                color:#d92f7b;
+                                cursor:pointer;
+                            ">
+                            ${color.charAt(0).toUpperCase() + color.slice(1)}
+                        </button>
+                    `).join("")}
+            </div>
+
+            <div style="font-weight:600;margin:12px 0 6px;">
+                Size
+            </div>
+
+            <div class="pos-size-buttons"
+                 data-size-buttons="${product.id}"
+                 style="display:flex;gap:8px;flex-wrap:wrap;">
+                ${[...new Set(product.variants.map(v => v.name).filter(Boolean))]
+                    .map(size => `
+                        <button
+                            type="button"
+                            data-size="${product.id}:${size}"
+                            style="
+                                padding:8px 14px;
+                                border:1px solid #ddd;
+                                border-radius:8px;
+                                background:#fff;
+                                cursor:pointer;
+                            ">
+                            ${size.charAt(0).toUpperCase() + size.slice(1)}
+                        </button>
+                    `).join("")}
+            </div>
+
+            <div data-variant-info="${product.id}"
+                 style="font-size:12px;margin-top:8px;color:#666;">
+                Choose a color and size
+            </div>
+        </div>
+    `
+    : ""
+
+                            }
+
                             <div class="price-row">
                                 <span class="price">
-                                    ${formatCurrency(product.price)}
+                                    ${displayPrice}
                                 </span>
                             </div>
 
@@ -334,7 +451,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 type="button"
                                 class="add-button"
                                 data-add="${product.id}"
-                                ${out ? "disabled" : ""}
+                                ${(product.variants.length ? !product.variants.some(v => v.stock > 0) : out) ? "disabled" : ""}
                             >
                                 <i
                                     class="fa-solid fa-cart-shopping"
@@ -361,145 +478,79 @@ document.addEventListener("DOMContentLoaded", () => {
     |--------------------------------------------------------------------------
     */
 
-    function addToCart(productId) {
-        const id =
-            Number(productId);
+    function addToCart(productId, variantId = null) {
+        const product = products.find(p => Number(p.id) === Number(productId));
+        if (!product) return;
 
-        const product =
-            products.find(
-                item =>
-                    Number(item.id) === id
-            );
-
-        if (!product) {
-            console.error(
-                "Product not found:",
-                id
-            );
-
-            return;
-        }
-
-        if (product.stock <= 0) {
-            alert(
-                "This product is out of stock."
-            );
-
-            return;
-        }
-
-        const existingItem =
-            cart.find(
-                item =>
-                    Number(item.id) === id
-            );
-
-        if (existingItem) {
-            if (
-                existingItem.quantity >=
-                product.stock
-            ) {
-                alert(
-                    `Only ${product.stock} item(s) available.`
-                );
-
+        let variant = null;
+        if (product.variants.length) {
+            variant = product.variants.find(v => Number(v.id) === Number(variantId));
+            if (!variant) {
+                alert("Please choose a variant first.");
                 return;
             }
+            if (variant.stock <= 0) {
+                alert("This variant is out of stock.");
+                return;
+            }
+        } else if (product.stock <= 0) {
+            alert("This product is out of stock.");
+            return;
+        }
 
-            existingItem.quantity += 1;
+        const stock = variant ? variant.stock : product.stock;
+        const key = `${product.id}:${variant ? variant.id : 0}`;
+        const existingItem = cart.find(item => item.cartKey === key);
+
+        if (existingItem) {
+            if (existingItem.quantity >= stock) {
+                alert(`Only ${stock} item(s) available.`);
+                return;
+            }
+            existingItem.quantity++;
         } else {
-
-	cart.push({
-	    id: product.id,
-	    name: product.name,
-	    sku: product.sku,
-	    barcode: product.barcode,
-	    brand: product.brand,
-	    price: product.price,
-	    quantity: 1,
-	    stock: product.stock,
-	    image: product.image,
-	    unit: product.unit
-	});
-
+            cart.push({
+                cartKey: key,
+                id: product.id,
+                variant_id: variant ? variant.id : null,
+                variant_name: variant ? variant.name : "",
+                name: product.name,
+                sku: variant ? (variant.sku || product.sku) : product.sku,
+                barcode: product.barcode,
+                brand: product.brand,
+                price: variant ? variant.price : product.price,
+                quantity: 1,
+                stock,
+                image: product.image,
+                unit: product.unit
+            });
         }
 
         renderCart();
         updateTotals();
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | CHANGE QUANTITY
-    |--------------------------------------------------------------------------
-    */
+    function changeQuantity(itemKey, amount) {
+        const item = cart.find(i => i.cartKey === String(itemKey));
+        if (!item) return;
 
-    function changeQuantity(
-        productId,
-        amount
-    ) {
-        const item =
-            cart.find(
-                cartItem =>
-                    Number(cartItem.id) ===
-                    Number(productId)
-            );
-
-        if (!item) {
+        const next = item.quantity + amount;
+        if (next <= 0) {
+            removeFromCart(itemKey);
+            return;
+        }
+        if (next > item.stock) {
+            alert(`Only ${item.stock} item(s) available.`);
             return;
         }
 
-        const product =
-            products.find(
-                productItem =>
-                    Number(productItem.id) ===
-                    Number(productId)
-            );
-
-        if (!product) {
-            return;
-        }
-
-        const newQuantity =
-            item.quantity + amount;
-
-        if (newQuantity <= 0) {
-            removeFromCart(productId);
-            return;
-        }
-
-        if (
-            newQuantity >
-            product.stock
-        ) {
-            alert(
-                `Only ${product.stock} item(s) available.`
-            );
-
-            return;
-        }
-
-        item.quantity =
-            newQuantity;
-
+        item.quantity = next;
         renderCart();
         updateTotals();
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | REMOVE FROM CART
-    |--------------------------------------------------------------------------
-    */
-
-    function removeFromCart(productId) {
-        cart =
-            cart.filter(
-                item =>
-                    Number(item.id) !==
-                    Number(productId)
-            );
-
+    function removeFromCart(itemKey) {
+        cart = cart.filter(item => item.cartKey !== String(itemKey));
         renderCart();
         updateTotals();
     }
@@ -510,7 +561,7 @@ document.addEventListener("DOMContentLoaded", () => {
     |--------------------------------------------------------------------------
     */
 
-function renderCart() {
+    function renderCart() {
 
     if (!cartItems) {
         return;
@@ -577,7 +628,7 @@ const productImage =
                     <div class="cart-product-details">
 
                         <h3>
-                            ${item.name}
+                            ${item.name}${item.variant_name ? ` (${item.variant_name})` : ""}
                         </h3>
 
                         <span class="cart-product-sku">
@@ -593,7 +644,7 @@ const productImage =
                     <button
                         class="remove-cart-button"
                         data-action="remove"
-                        data-id="${item.id}"
+                        data-key="${item.cartKey}"
                         type="button"
                         title="Remove item"
                     >
@@ -610,7 +661,7 @@ const productImage =
                         <button
                             class="quantity-button"
                             data-action="decrease"
-                            data-id="${item.id}"
+                            data-key="${item.cartKey}"
                             type="button"
                             title="Decrease quantity"
                         >
@@ -624,7 +675,7 @@ const productImage =
                         <button
                             class="quantity-button"
                             data-action="increase"
-                            data-id="${item.id}"
+                            data-key="${item.cartKey}"
                             type="button"
                             title="Increase quantity"
                         >
@@ -692,10 +743,8 @@ const productImage =
             button.addEventListener(
                 "click",
                 () => {
-                    const productId =
-                        Number(
-                            button.dataset.id
-                        );
+                    const itemKey =
+                        String(button.dataset.key || "");
 
                     const action =
                         button.dataset.action;
@@ -705,7 +754,7 @@ const productImage =
                         "increase"
                     ) {
                         changeQuantity(
-                            productId,
+                            itemKey,
                             1
                         );
                     }
@@ -715,7 +764,7 @@ const productImage =
                         "decrease"
                     ) {
                         changeQuantity(
-                            productId,
+                            itemKey,
                             -1
                         );
                     }
@@ -725,7 +774,7 @@ const productImage =
                         "remove"
                     ) {
                         removeFromCart(
-                            productId
+                            itemKey
                         );
                     }
                 }
@@ -1388,10 +1437,8 @@ function calculateTotal() {
         const cartPayload =
             cart.map(item => ({
                 id: item.id,
-                qty:
-                    Number(
-                        item.quantity
-                    )
+                variant_id: item.variant_id || null,
+                qty: Number(item.quantity)
             }));
 
         const discountCode =
@@ -1624,30 +1671,37 @@ function calculateTotal() {
             */
 
             cart.forEach(item => {
-                const product =
-                    products.find(
-                        productItem =>
-                            Number(
-                                productItem.id
-                            ) ===
-                            Number(item.id)
+                const product = products.find(
+                    productItem =>
+                        Number(productItem.id) === Number(item.id)
+                );
+
+                if (!product) return;
+
+                const soldQuantity = Number(item.quantity || 0);
+
+                if (item.variant_id) {
+                    const variant = (product.variants || []).find(
+                        variantItem =>
+                            Number(variantItem.id) === Number(item.variant_id)
                     );
 
-                if (product) {
-                    product.stock =
-                        Math.max(
+                    if (variant) {
+                        variant.stock = Math.max(
                             0,
-                            Number(
-                                product.stock ||
-                                0
-                            ) -
-                            Number(
-                                item.quantity ||
-                                0
-                            )
+                            Number(variant.stock || 0) - soldQuantity
                         );
+                    }
+                } else {
+                    product.stock = Math.max(
+                        0,
+                        Number(product.stock || 0) - soldQuantity
+                    );
                 }
             });
+
+            // Refresh product cards and variant stock labels after a successful sale.
+            renderProducts();
 
             /*
             |--------------------------------------------------------------------------
@@ -1861,36 +1915,133 @@ window.lastReceipt = {
     */
 
     function setupProductButtons() {
-        if (!productGrid) {
-            return;
-        }
+        if (!productGrid) return;
 
-        productGrid.addEventListener(
-            "click",
-            event => {
-                const button =
-                    event.target.closest(
-                        "[data-add]"
-                    );
+        productGrid.addEventListener("click", event => {
+            const colorButton = event.target.closest("button[data-color]");
+            const sizeButton = event.target.closest("button[data-size]");
 
-                if (!button) {
-                    return;
-                }
+            // Handle color selection.
+            if (colorButton) {
+                const [productId] = colorButton.dataset.color.split(":");
+                const group = productGrid.querySelector(
+                    `[data-color-buttons="${productId}"]`
+                );
+                if (!group) return;
 
-                if (button.disabled) {
-                    return;
-                }
+                group.querySelectorAll("button[data-color]").forEach(button => {
+                    const selected = button === colorButton;
+                    button.dataset.selected = selected ? "true" : "false";
+                    button.style.background = selected ? "#d92f7b" : "#fff";
+                    button.style.color = selected ? "#fff" : "#d92f7b";
+                    button.style.borderColor = selected ? "#d92f7b" : "#f08ab5";
+                });
 
-                const productId =
-                    Number(
-                        button.dataset.add
-                    );
-
-                addToCart(productId);
+                updateVariantInfo(productId);
+                return;
             }
-        );
-    }
 
+            // Handle size selection.
+            if (sizeButton) {
+                const [productId] = sizeButton.dataset.size.split(":");
+                const group = productGrid.querySelector(
+                    `[data-size-buttons="${productId}"]`
+                );
+                if (!group) return;
+
+                group.querySelectorAll("button[data-size]").forEach(button => {
+                    const selected = button === sizeButton;
+                    button.dataset.selected = selected ? "true" : "false";
+                    button.style.background = selected ? "#d92f7b" : "#fff";
+                    button.style.color = selected ? "#fff" : "#333";
+                    button.style.borderColor = selected ? "#d92f7b" : "#ddd";
+                });
+
+                updateVariantInfo(productId);
+                return;
+            }
+
+            // Handle Add to Cart.
+            const addButton = event.target.closest("[data-add]");
+            if (!addButton || addButton.disabled) return;
+
+            const productId = Number(addButton.dataset.add);
+            const product = products.find(p => Number(p.id) === productId);
+            if (!product) return;
+
+            if (product.variants && product.variants.length) {
+                const selectedColor = productGrid.querySelector(
+                    `[data-color-buttons="${productId}"] button[data-selected="true"]`
+                );
+                const selectedSize = productGrid.querySelector(
+                    `[data-size-buttons="${productId}"] button[data-selected="true"]`
+                );
+
+                if (!selectedColor || !selectedSize) {
+                    alert("Please choose both a color and a size.");
+                    return;
+                }
+
+                const color = selectedColor.dataset.color.split(":").slice(1).join(":");
+                const size = selectedSize.dataset.size.split(":").slice(1).join(":");
+
+                const variant = product.variants.find(v =>
+                    String(v.color || "").trim().toLowerCase() === color.trim().toLowerCase() &&
+                    String(v.name || "").trim().toLowerCase() === size.trim().toLowerCase()
+                );
+
+                if (!variant) {
+                    alert("That color and size combination is not available.");
+                    return;
+                }
+
+                if (Number(variant.stock) <= 0) {
+                    alert("This color and size is out of stock.");
+                    return;
+                }
+
+                addToCart(productId, Number(variant.id));
+                return;
+            }
+
+            addToCart(productId, null);
+        });
+
+        function updateVariantInfo(productId) {
+            const product = products.find(p => Number(p.id) === Number(productId));
+            const info = productGrid.querySelector(
+                `[data-variant-info="${productId}"]`
+            );
+            if (!product || !info) return;
+
+            const colorButton = productGrid.querySelector(
+                `[data-color-buttons="${productId}"] button[data-selected="true"]`
+            );
+            const sizeButton = productGrid.querySelector(
+                `[data-size-buttons="${productId}"] button[data-selected="true"]`
+            );
+
+            if (!colorButton || !sizeButton) {
+                info.textContent = "Choose a color and size";
+                return;
+            }
+
+            const color = colorButton.dataset.color.split(":").slice(1).join(":");
+            const size = sizeButton.dataset.size.split(":").slice(1).join(":");
+            const variant = product.variants.find(v =>
+                String(v.color || "").trim().toLowerCase() === color.trim().toLowerCase() &&
+                String(v.name || "").trim().toLowerCase() === size.trim().toLowerCase()
+            );
+
+            if (!variant) {
+                info.textContent = "This combination is unavailable";
+            } else if (Number(variant.stock) <= 0) {
+                info.textContent = "Out of stock";
+            } else {
+                info.textContent = `Stock: ${variant.stock} · Price: ${Number(variant.price).toFixed(2)}`;
+            }
+        }
+    }
     /*
     |--------------------------------------------------------------------------
     | SEARCH / BARCODE

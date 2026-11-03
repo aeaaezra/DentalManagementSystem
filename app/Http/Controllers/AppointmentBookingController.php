@@ -6,9 +6,12 @@ use App\Models\Appointments;
 use App\Models\PatientRecords;
 use App\Models\Doctor;
 use App\Models\Service;
+use App\Models\ServiceCategory;
+use App\Models\ServiceProcedure;
 use App\Models\User;
 
 use App\Notifications\AppointmentSubmitted;
+use App\Notifications\AdminAppointmentBooked;
 use App\Notifications\AppointmentCancelled;
 use App\Notifications\AppointmentApproved;
 use App\Notifications\AppointmentDeclined;
@@ -17,6 +20,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 use App\Models\ClinicPayment;
 use App\Models\TreatmentGuide;
@@ -26,10 +30,40 @@ use Carbon\Carbon;
 
 class AppointmentBookingController extends Controller
 {
+public function guestCreate()
+{
+    $serviceCategories = ServiceCategory::query()
+        ->where('is_active', true)
+        ->whereHas('procedures', function ($query) {
+            $query->where('is_active', true);
+        })
+        ->with(['procedures' => function ($query) {
+            $query->where('is_active', true)
+                ->orderBy('procedure_name');
+        }])
+        ->orderBy('category_name')
+        ->get();
 
+    return view('appointments.guest-create', compact('serviceCategories'));
+}
+
+public function guestStore(Request $request)
+{
+    return $this->storeGuestAppointment($request);
+}
     public function create()
     {
-        $services = Service::all();
+        $serviceCategories = ServiceCategory::query()
+            ->where('is_active', true)
+            ->whereHas('procedures', function ($query) {
+                $query->where('is_active', true);
+            })
+            ->with(['procedures' => function ($query) {
+                $query->where('is_active', true)
+                    ->orderBy('procedure_name');
+            }])
+            ->orderBy('category_name')
+            ->get();
 
         $payments = ClinicPayment::all();
 
@@ -44,23 +78,18 @@ class AppointmentBookingController extends Controller
             ->unreadNotifications
             ->count();
 
-        $latestBalance = Appointments::whereHas(
-            'patient',
-            function ($query) {
-                $query->where(
-                    'user_id',
-                    Auth::id()
-                );
-            }
-        )
-            ->where('balance', '>', 0)
-            ->latest('appointment_date')
-            ->first();
+
+$latestBalance = Appointments::whereHas('patient', function ($query) {
+    $query->where('user_id', Auth::id());
+})
+    ->where('balance', '>', 0)
+    ->latest('appointment_date')
+    ->first();
 
         return view(
             'appointments.create',
             compact(
-                'services',
+                'serviceCategories',
                 'payments',
                 'notifications',
                 'notificationCount',
@@ -71,16 +100,278 @@ class AppointmentBookingController extends Controller
 
 
 
+
+    private function storeGuestAppointment(Request $request)
+    {
+        $request->merge([
+            'tel_no' => preg_replace(
+                '/[\s().-]+/',
+                '',
+                (string) $request->input('tel_no', '')
+            ),
+        ]);
+
+        $validated = $request->validate([ 'service_category_id' => ['required', 'exists:service_categories,id'],
+'service_procedure_ids' => [
+'required', 
+'array', 
+'min:1', 
+'max:20'],
+
+'service_procedure_ids.*' => [
+    'required',
+    'integer',
+    'distinct',
+    'exists:service_procedures,id',
+],
+            'patient_name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'regex:/^[A-Za-z0-9._%+-]+@gmail\.com$/i'],
+            'age' => ['nullable', 'integer', 'min:1'],
+            'sex' => ['nullable', 'string', 'max:50'],
+            'civil_status' => ['nullable', 'string', 'max:100'],
+            'tel_no' => [
+                'nullable',
+                'string',
+                'regex:/^(?:09\d{9}|\+639\d{9}|639\d{9})$/',
+            ],
+            'occupation' => ['nullable', 'string', 'max:255'],
+            'address' => ['nullable', 'string', 'max:1000'],
+            'heart_condition' => ['nullable'],
+            'heart_condition_details' => ['nullable', 'string', 'max:255'],
+            'allergy' => ['nullable'],
+            'allergy_details' => ['nullable', 'string', 'max:255'],
+            'diabetes' => ['nullable'],
+            'diabetes_details' => ['nullable', 'string', 'max:255'],
+            'hypertension' => ['nullable'],
+            'hypertension_details' => ['nullable', 'string', 'max:255'],
+            'bleeding_tendency' => ['nullable'],
+            'bleeding_tendency_details' => ['nullable', 'string', 'max:255'],
+            'asthma' => ['nullable'],
+            'asthma_details' => ['nullable', 'string', 'max:255'],
+            'other_conditions' => ['nullable', 'string', 'max:2000'],
+            'appointment_date' => [
+                'required',
+                'date',
+                'after_or_equal:today',
+            ],
+            'appointment_time' => ['required', 'date_format:H:i:s'],
+            'reason' => ['required', 'string', 'max:2000'],
+            'patient_signature' => ['nullable', 'string', 'max:10000'],
+        ]);
+
+        $category = ServiceCategory::query()
+            ->whereKey($validated['service_category_id'])
+            ->where('is_active', true)
+            ->firstOrFail();
+
+$procedureIds = array_map('intval', $validated['service_procedure_ids']);
+
+$procedures = ServiceProcedure::query()
+    ->whereIn('id', $procedureIds)
+    ->where('category_id', $category->id)
+    ->where('is_active', true)
+    ->get();
+
+if ($procedures->count() !== count($procedureIds)) {
+    return back()->withErrors([
+        'service_procedure_ids' => 'Choose active procedures from the selected category.',
+    ])->withInput();
+}
+
+if ($procedures->contains(fn ($p) => (int) $p->duration_minutes <= 0)) {
+    return back()->withErrors([
+        'service_procedure_ids' => 'Each selected procedure must have a valid duration.',
+    ])->withInput();
+}
+
+$duration = (int) $procedures->sum('duration_minutes');
+$primaryProcedure = $procedures->first();
+$startTime = Carbon::createFromFormat(
+    'Y-m-d H:i:s',
+    $validated['appointment_date'] . ' ' . $validated['appointment_time']
+);
+
+$endTime = $startTime->copy()->addMinutes($duration);
+        $exists = Appointments::query()
+            ->whereDate('appointment_date', $validated['appointment_date'])
+            ->whereNotIn('status', ['cancelled', 'declined'])
+            ->where('appointment_time', '<', $endTime->format('H:i:s'))
+            ->where('end_time', '>', $startTime->format('H:i:s'))
+            ->exists();
+
+        if ($exists) {
+            return back()->withErrors([
+                'appointment_time' => 'This appointment time is already booked.',
+            ])->withInput();
+        }
+
+        $dailyCount = Appointments::query()
+            ->whereDate('appointment_date', $validated['appointment_date'])
+            ->whereNotIn('status', ['cancelled', 'declined'])
+            ->count();
+
+        if ($dailyCount >= 20) {
+            return back()->withErrors([
+                'appointment_date' =>
+                    'The maximum number of appointments for this day has been reached.',
+            ])->withInput();
+        }
+
+$appointment = DB::transaction(function () use (
+    $validated,
+    $category,
+    $procedures,
+    $primaryProcedure,
+    $endTime
+) {
+
+            $patient = PatientRecords::create([
+                'user_id' => null,
+                'patient_name' => $validated['patient_name'],
+                'age' => $validated['age'] ?? null,
+                'sex' => $validated['sex'] ?? null,
+                'civil_status' => $validated['civil_status'] ?? null,
+                'tel_no' => $validated['tel_no'] ?? null,
+                'occupation' => $validated['occupation'] ?? null,
+                'address' => $validated['address'] ?? null,
+                'patient_signature' => $validated['patient_signature'] ?? null,
+                'heart_condition' => !empty($validated['heart_condition']),
+                'heart_condition_details' => $validated['heart_condition_details'] ?? null,
+                'allergy' => !empty($validated['allergy']),
+                'allergy_details' => $validated['allergy_details'] ?? null,
+                'diabetes' => !empty($validated['diabetes']),
+                'diabetes_details' => $validated['diabetes_details'] ?? null,
+                'hypertension' => !empty($validated['hypertension']),
+                'hypertension_details' => $validated['hypertension_details'] ?? null,
+                'bleeding_tendency' => !empty($validated['bleeding_tendency']),
+                'bleeding_tendency_details' => $validated['bleeding_tendency_details'] ?? null,
+                'asthma' => !empty($validated['asthma']),
+                'asthma_details' => $validated['asthma_details'] ?? null,
+                'other_conditions' => $validated['other_conditions'] ?? null,
+            ]);
+
+            $appointment = Appointments::create([
+                'patient_record_id' => $patient->id,
+                'service_id' => $category->legacy_service_id,
+                'service_category_id' => $category->id,
+                'service_procedure_id' => $primaryProcedure->id,
+                'patient_email' => $validated['email'],
+                'appointment_date' => $validated['appointment_date'],
+                'appointment_time' => $validated['appointment_time'],
+                'end_time' => $endTime->format('H:i:s'),
+                'reason' => $validated['reason'],
+                'status' => 'pending',
+                'amount' => 0,
+                'deposit' => 0,
+                'total_amount' => 0,
+                'amount_paid' => 0,
+                'balance' => 0,
+                'payment_status' => 'Unpaid',
+            ]);
+
+            $appointment->appointmentProcedures()->createMany(
+                $procedures->map(fn ($procedure) => [
+                    'service_procedure_id' => $procedure->id,
+                    'procedure_name' => $procedure->procedure_name,
+                    'category_name' => $category->category_name,
+                    'pricing_unit' => $procedure->pricing_unit,
+                    'price' => $procedure->price,
+                    'duration_minutes' => $procedure->duration_minutes,
+                ])->all()
+            );
+
+            return $appointment;
+        });
+
+        $admins = User::role('admin')->get();
+
+        foreach ($admins as $admin) {
+            $admin->notify(new AdminAppointmentBooked($appointment));
+        }
+
+        // Temporary diagnostics for guest appointment email delivery.
+        \Illuminate\Support\Facades\Log::info(
+            'Guest appointment email block reached.',
+            [
+                'appointment_id' => $appointment->id,
+                'patient_email_valid' => filter_var(
+                    $appointment->patient_email,
+                    FILTER_VALIDATE_EMAIL
+                ) !== false,
+            ]
+        );
+
+        // Send the patient a pending-appointment email.
+        if (filter_var($appointment->patient_email, FILTER_VALIDATE_EMAIL)) {
+            try {
+                \Illuminate\Support\Facades\Notification::route(
+                    'mail',
+                    $appointment->patient_email
+                )->notify(new AppointmentSubmitted($appointment));
+
+                \Illuminate\Support\Facades\Log::info(
+                    'Guest appointment pending email accepted.',
+                    ['appointment_id' => $appointment->id]
+                );
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error(
+                    'Guest appointment pending email failed.',
+                    [
+                        'appointment_id' => $appointment->id,
+                        'exception' => $e->getMessage(),
+                    ]
+                );
+            }
+        }
+
+        session(['guest_appointment_confirmation_id' => $appointment->id]);
+
+        return redirect()->route('appointments.guest.thankyou', [
+            'appointment' => $appointment->id,
+        ]);
+    }
+
     public function store(
         Request $request,
         BillingService $billingService
     ) {
 
+        \Illuminate\Support\Facades\Log::info(
+            'APPOINTMENT_STORE_ENTRY_REACHED',
+            [
+                'user_id' => \Illuminate\Support\Facades\Auth::id(),
+                'path' => $request->path(),
+            ]
+        );
+
+        // Accept common spacing and punctuation in Philippine phone numbers.
+        $request->merge([
+            'tel_no' => preg_replace(
+                '/[\s().-]+/',
+                '',
+                (string) $request->input('tel_no', '')
+            ),
+        ]);
+
         $validated = $request->validate([
 
-            'service_id' => [
+            'service_category_id' => [
                 'required',
-                'exists:services,id'
+                'exists:service_categories,id'
+            ],
+
+            'service_procedure_ids' => [
+                'required',
+                'array',
+                'min:1',
+                'max:20',
+            ],
+
+            'service_procedure_ids.*' => [
+                'required',
+                'integer',
+                'distinct',
+                'exists:service_procedures,id',
             ],
 
             'patient_name' => [
@@ -104,7 +395,9 @@ class AppointmentBookingController extends Controller
             ],
 
             'tel_no' => [
-                'nullable'
+                'nullable',
+                'string',
+                'regex:/^(?:09\d{9}|\+639\d{9}|639\d{9})$/',
             ],
 
             'occupation' => [
@@ -158,26 +451,28 @@ class AppointmentBookingController extends Controller
 
 
 
-        $service = Service::findOrFail(
-            $validated['service_id']
-        );
+        $category = ServiceCategory::query()
+            ->whereKey($validated['service_category_id'])
+            ->where('is_active', true)
+            ->firstOrFail();
 
-
-
+        $procedure = ServiceProcedure::query()
+            ->whereKey($validated['service_procedure_id'])
+            ->where('category_id', $category->id)
+            ->where('is_active', true)
+            ->firstOrFail();
 
         $duration = (int) (
-            $service->duration_minutes ?? 0
+            $procedure->duration_minutes ?? 0
         );
 
         if ($duration <= 0) {
-
             return back()
                 ->withErrors([
-                    'service_id' =>
-                        'The selected service does not have a valid duration.'
+                    'service_procedure_id' =>
+                        'The selected procedure does not have a valid duration.'
                 ])
                 ->withInput();
-
         }
 
 
@@ -292,7 +587,8 @@ class AppointmentBookingController extends Controller
         $appointment = DB::transaction(
             function () use (
                 $validated,
-                $service,
+                $category,
+                $procedure,
                 $endTime
             ) {
 
@@ -332,44 +628,37 @@ $patient = PatientRecords::create([
 
 
 
+$appointment = Appointments::create([
+    'patient_record_id' => $patient->id,
+    'service_id' => $category->legacy_service_id,
+    'service_category_id' => $category->id,
+    'service_procedure_id' => $primaryProcedure->id,
+    'patient_email' => $validated['email'],
+    'appointment_date' => $validated['appointment_date'],
+    'appointment_time' => $validated['appointment_time'],
+    'end_time' => $endTime->format('H:i:s'),
+    'reason' => $validated['reason'],
+    'status' => 'pending',
+    'amount' => 0,
+    'deposit' => 0,
+    'total_amount' => 0,
+    'amount_paid' => 0,
+    'balance' => 0,
+    'payment_status' => 'Unpaid',
+]);
 
-                $appointment = Appointments::create([
+$appointment->appointmentProcedures()->createMany(
+    $procedures->map(fn ($procedure) => [
+        'service_procedure_id' => $procedure->id,
+        'procedure_name' => $procedure->procedure_name,
+        'category_name' => $category->category_name,
+        'pricing_unit' => $procedure->pricing_unit,
+        'price' => $procedure->price,
+        'duration_minutes' => $procedure->duration_minutes,
+    ])->all()
+);
 
-                    'patient_record_id' =>
-                        $patient->id,
-
-                    'service_id' =>
-                        $service->id,
-
-                    'appointment_date' =>
-                        $validated['appointment_date'],
-
-                    'appointment_time' =>
-                        $validated['appointment_time'],
-
-                    'end_time' =>
-                        $endTime->format('H:i:s'),
-
-                    'reason' =>
-                        $validated['reason'],
-
-                    'status' =>
-                        'pending',
-
-                    'total_fee' =>
-                        $service->price,
-
-                    'amount_paid' =>
-                        0,
-
-                    'balance' =>
-                        $service->price,
-
-                ]);
-
-
-                return $appointment;
-
+return $appointment;
             }
         );
 
@@ -382,6 +671,43 @@ $patient = PatientRecords::create([
             )
         );
 
+        // TEMPORARY DIAGNOSTICS: admin appointment notifications.
+        $admins = User::role('admin')->get();
+
+        \Illuminate\Support\Facades\Log::info(
+            'Admin appointment notification: admins found',
+            [
+                'appointment_id' => $appointment->id,
+                'admin_count' => $admins->count(),
+                'admin_ids' => $admins->pluck('id')->all(),
+            ]
+        );
+
+        foreach ($admins as $admin) {
+            try {
+                $admin->notify(new AdminAppointmentBooked($appointment));
+
+                \Illuminate\Support\Facades\Log::info(
+                    'Admin appointment notification: saved',
+                    [
+                        'appointment_id' => $appointment->id,
+                        'admin_id' => $admin->id,
+                    ]
+                );
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error(
+                    'Admin appointment notification: failed',
+                    [
+                        'appointment_id' => $appointment->id,
+                        'admin_id' => $admin->id,
+                        'error' => $e->getMessage(),
+                    ]
+                );
+
+                throw $e;
+            }
+        }
+
 
 
 
@@ -393,6 +719,21 @@ $patient = PatientRecords::create([
     }
 
 
+
+
+    public function guestThankYou(Appointments $appointment)
+    {
+        if (
+            (int) session('guest_appointment_confirmation_id') !==
+            (int) $appointment->id
+        ) {
+            abort(403);
+        }
+
+        $appointment->load('service');
+
+        return view('appointments.thank-you', compact('appointment'));
+    }
 
     public function thankYou(
         Appointments $appointment
@@ -481,17 +822,14 @@ $patient = PatientRecords::create([
             ->count();
 
 
+
         $totalOutstanding = Appointments::whereHas(
             'patient',
             function ($query) {
-
-                $query->where(
-                    'user_id',
-                    Auth::id()
-                );
-
+                $query->where('user_id', Auth::id());
             }
         )
+            ->where('status', 'completed')
             ->sum('balance');
 
 
@@ -523,22 +861,15 @@ $patient = PatientRecords::create([
             ->count();
 
 
+
         $pendingPayments = Appointments::whereHas(
             'patient',
             function ($query) {
-
-                $query->where(
-                    'user_id',
-                    Auth::id()
-                );
-
+                $query->where('user_id', Auth::id());
             }
         )
-            ->where(
-                'balance',
-                '>',
-                0
-            )
+            ->where('status', 'completed')
+            ->where('balance', '>', 0)
             ->count();
 
 
@@ -964,250 +1295,563 @@ public function availableSlots(Request $request)
             'date',
         ],
 
+        'service_procedure_ids' => [
+            'sometimes',
+            'array',
+            'min:1',
+            'max:20',
+        ],
+
+        'service_procedure_ids.*' => [
+            'integer',
+            'distinct',
+            'exists:service_procedures,id',
+        ],
+
+        'service_procedure_id' => [
+            'nullable',
+            'required_without_all:service_id,service_procedure_ids',
+            'integer',
+            'exists:service_procedures,id',
+        ],
+
         'service_id' => [
-            'required',
+            'nullable',
+            'required_without_all:service_procedure_id,service_procedure_ids',
+            'integer',
             'exists:services,id',
         ],
     ]);
 
     $date = $validated['date'];
+    $duration = 0;
 
-    $service = Service::findOrFail(
-        $validated['service_id']
-    );
+    if (!empty($validated['service_procedure_ids'])) {
+        $procedureIds = $validated['service_procedure_ids'];
 
+        $procedures = ServiceProcedure::query()
+            ->whereIn('id', $procedureIds)
+            ->where('is_active', true)
+            ->get();
 
+        if ($procedures->count() !== count($procedureIds)) {
+            return response()->json([
+                'message' => 'One or more selected procedures are inactive or unavailable.',
+            ], 422);
+        }
 
-    $duration = (int) (
-        $service->duration_minutes ?? 0
-    );
+        foreach ($procedures as $procedure) {
+            $procedureDuration = (int) ($procedure->duration_minutes ?? 0);
+
+            if ($procedureDuration <= 0) {
+                return response()->json([
+                    'message' => 'Every selected procedure must have a valid clinic-approved duration.',
+                ], 422);
+            }
+
+            $duration += $procedureDuration;
+        }
+    } elseif (!empty($validated['service_procedure_id'])) {
+        $procedure = ServiceProcedure::query()
+            ->whereKey($validated['service_procedure_id'])
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $duration = (int) ($procedure->duration_minutes ?? 0);
+    } else {
+        $service = Service::findOrFail($validated['service_id']);
+        $duration = (int) ($service->duration_minutes ?? 0);
+    }
 
     if ($duration <= 0) {
         return response()->json([
-            'message' =>
-                'The selected service does not have a valid duration.'
+            'message' => 'The selected procedure or service does not have a valid duration.',
         ], 422);
     }
 
-
-
-
-    $clinicStart = Carbon::parse(
-        $date . ' 08:00:00'
-    );
-
-    $clinicEnd = Carbon::parse(
-        $date . ' 17:00:00'
-    );
-
-
-
+    $clinicStart = Carbon::parse($date . ' 08:00:00');
+    $clinicEnd = Carbon::parse($date . ' 17:00:00');
 
     $now = now();
 
-
-
-
     $dailyAppointmentCount = Appointments::query()
-        ->whereDate(
-            'appointment_date',
-            $date
-        )
-        ->whereNotIn(
-            'status',
-            [
-                'cancelled',
-                'declined',
-            ]
-        )
+        ->whereDate('appointment_date', $date)
+        ->whereNotIn('status', [
+            'cancelled',
+            'declined',
+        ])
         ->count();
-
 
     $maximumPatientsPerDay = 20;
 
-
-
-
     $appointments = Appointments::query()
-        ->whereDate(
-            'appointment_date',
-            $date
-        )
-        ->whereNotIn(
-            'status',
-            [
-                'cancelled',
-                'declined',
-            ]
-        )
-        ->with('service')
+        ->whereDate('appointment_date', $date)
+        ->whereNotIn('status', [
+            'cancelled',
+            'declined',
+        ])
+        ->with(['service', 'serviceProcedure'])
         ->get();
 
-
-
-
     $slots = [];
-
     $currentTime = $clinicStart->copy();
 
-
     while (
-        $currentTime
-            ->copy()
+        $currentTime->copy()
             ->addMinutes($duration)
             ->lessThanOrEqualTo($clinicEnd)
     ) {
-
-
-
         $slotStartCarbon = $currentTime->copy();
-
-
-
 
         $slotEndCarbon = $currentTime
             ->copy()
             ->addMinutes($duration);
 
-
-
-
         $isOverlapping = false;
 
-
         foreach ($appointments as $appointment) {
-
-
-
             $appointmentStart = Carbon::parse(
                 $date . ' ' . $appointment->appointment_time
             );
 
-
-
-
             if ($appointment->end_time) {
-
                 $appointmentEnd = Carbon::parse(
                     $date . ' ' . $appointment->end_time
                 );
-
             } else {
-
-                $existingDuration = 0;
-
-                if ($appointment->service) {
-
-                    $existingDuration = (int) (
-                        $appointment
-                            ->service
-                            ->duration_minutes ?? 0
-                    );
-
-                }
-
-
+                $existingDuration = (int) (
+                    $appointment->serviceProcedure->duration_minutes
+                    ?? $appointment->service->duration_minutes
+                    ?? 0
+                );
 
                 if ($existingDuration <= 0) {
-
                     $existingDuration = $duration;
-
                 }
-
 
                 $appointmentEnd = $appointmentStart
                     ->copy()
-                    ->addMinutes(
-                        $existingDuration
-                    );
-
+                    ->addMinutes($existingDuration);
             }
-
-
-
 
             if (
                 $appointmentStart->lt($slotEndCarbon)
-                &&
-                $appointmentEnd->gt($slotStartCarbon)
+                && $appointmentEnd->gt($slotStartCarbon)
             ) {
-
                 $isOverlapping = true;
-
                 break;
             }
         }
 
-
-
-
         $isPastTime = false;
-
 
         if (
             $date === $now->toDateString()
-            &&
-            $slotStartCarbon->lessThanOrEqualTo($now)
+            && $slotStartCarbon->lessThanOrEqualTo($now)
         ) {
-
             $isPastTime = true;
-
         }
 
-
-
-
         $dailyLimitReached =
-            $dailyAppointmentCount >=
-            $maximumPatientsPerDay;
-
-
-
+            $dailyAppointmentCount >= $maximumPatientsPerDay;
 
         $available =
             !$isOverlapping
-            &&
-            !$isPastTime
-            &&
-            !$dailyLimitReached;
-
-
-
+            && !$isPastTime
+            && !$dailyLimitReached;
 
         $slots[] = [
-
-            'time' =>
-                $slotStartCarbon->format('h:i A'),
-
-            'start' =>
-                $slotStartCarbon->format('H:i:s'),
-
-            'end' =>
-                $slotEndCarbon->format('H:i:s'),
-
-            'duration' =>
-                $duration,
-
-            'available' =>
-                $available,
-
+            'time' => $slotStartCarbon->format('h:i A'),
+            'start' => $slotStartCarbon->format('H:i:s'),
+            'end' => $slotEndCarbon->format('H:i:s'),
+            'duration' => $duration,
+            'available' => $available,
         ];
 
-
-
-
-        $currentTime->addMinutes(
-            $duration
-        );
+        $currentTime->addMinutes($duration);
     }
 
-
-    return response()->json(
-        $slots
-    );
+    return response()->json($slots);
 }
 
+    /**
+     * Return available slots for a guest rescheduling request.
+     * This endpoint is protected by a temporary signed URL.
+     */
+    public function guestRescheduleSlots(
+        Request $request,
+        Appointments $appointment
+    ) {
+        abort_unless(
+            $appointment->status === 'confirmed'
+                && $appointment->patient?->user === null
+                && filter_var($appointment->patient_email, FILTER_VALIDATE_EMAIL),
+            403,
+            'This appointment is not eligible for guest rescheduling.'
+        );
 
+        $validated = $request->validate([
+            'date' => ['required', 'date_format:Y-m-d', 'after_or_equal:today'],
+        ]);
+
+        $date = $validated['date'];
+        // Use the saved duration snapshots for all procedures on this appointment.
+        $duration = (int) $appointment->appointmentProcedures()
+            ->sum('duration_minutes');
+
+        // Keep older appointments working if they have no procedure snapshot rows.
+        if ($duration <= 0) {
+            $duration = (int) ($appointment->service?->duration_minutes ?? 0);
+        }
+
+        if ($duration <= 0) {
+            return response()->json([
+                'message' => 'The appointment service has no valid duration.',
+            ], 422);
+        }
+
+        $clinicStart = Carbon::parse($date . ' 08:00:00');
+        $clinicEnd = Carbon::parse($date . ' 17:00:00');
+        $now = now();
+
+        $activeStatuses = ['cancelled', 'declined'];
+
+        $dailyCount = Appointments::query()
+            ->whereDate('appointment_date', $date)
+            ->where('id', '!=', $appointment->getKey())
+            ->whereNotIn('status', $activeStatuses)
+            ->count();
+
+        $existingAppointments = Appointments::query()
+            ->whereDate('appointment_date', $date)
+            ->where('id', '!=', $appointment->getKey())
+            ->whereNotIn('status', $activeStatuses)
+            ->with('service')
+            ->get();
+
+        $slots = [];
+        $currentTime = $clinicStart->copy();
+
+        while (
+            $currentTime->copy()->addMinutes($duration)->lessThanOrEqualTo($clinicEnd)
+        ) {
+            $slotStartCarbon = $currentTime->copy();
+            $slotEndCarbon = $currentTime->copy()->addMinutes($duration);
+            $isOverlapping = false;
+
+            foreach ($existingAppointments as $existing) {
+                if (!$existing->appointment_time) {
+                    continue;
+                }
+
+                $appointmentStart = Carbon::parse(
+                    $date . ' ' . $existing->appointment_time
+                );
+
+                if ($existing->end_time) {
+                    $appointmentEnd = Carbon::parse(
+                        $date . ' ' . $existing->end_time
+                    );
+                } else {
+                    $existingDuration = (int) (
+                        $existing->service?->duration_minutes ?? 0
+                    );
+
+                    if ($existingDuration <= 0) {
+                        $existingDuration = $duration;
+                    }
+
+                    $appointmentEnd = $appointmentStart->copy()
+                        ->addMinutes($existingDuration);
+                }
+
+                if (
+                    $appointmentStart->lt($slotEndCarbon)
+                    && $appointmentEnd->gt($slotStartCarbon)
+                ) {
+                    $isOverlapping = true;
+                    break;
+                }
+            }
+
+            $isPastTime = $date === $now->toDateString()
+                && $slotStartCarbon->lessThanOrEqualTo($now);
+
+            $dailyLimitReached = $dailyCount >= 20;
+
+            // A reschedule must offer a different slot from the original booking.
+            $isOriginalSlot = $date === $appointment->appointment_date?->toDateString()
+                && $slotStartCarbon->format('H:i:s') === $appointment->appointment_time;
+
+            $slots[] = [
+                'time' => $slotStartCarbon->format('h:i A'),
+                'start' => $slotStartCarbon->format('H:i:s'),
+                'end' => $slotEndCarbon->format('H:i:s'),
+                'duration' => $duration,
+                'available' => !$isOverlapping
+                    && !$isPastTime
+                    && !$dailyLimitReached
+                    && !$isOriginalSlot,
+            ];
+
+            $currentTime->addMinutes($duration);
+        }
+
+        return response()->json($slots);
+    }
+
+    /**
+     * Display the guest cancellation request form.
+     * The route must have valid signed-URL middleware.
+     */
+    public function guestCancellationForm(
+        Request $request,
+        Appointments $appointment
+    ) {
+        abort_if(
+            $appointment->patient?->user !== null ||
+            ! filter_var($appointment->patient_email, FILTER_VALIDATE_EMAIL),
+            403,
+            'This link is only available for guest appointments.'
+        );
+
+        if (in_array($appointment->status, [
+            'reschedule_requested',
+            'cancellation_requested',
+        ], true)) {
+            return view('appointments.guest-cancellation', [
+                'appointment' => $appointment,
+                'requestPending' => true,
+            ]);
+        }
+
+        abort_unless(
+            $appointment->status === 'confirmed',
+            410,
+            'This appointment is no longer eligible for a cancellation request.'
+        );
+
+        $expiresAt = now()->addDays(7);
+
+        $rescheduleSlotsUrl = URL::temporarySignedRoute(
+            'appointments.guest.reschedule-slots',
+            $expiresAt,
+            ['appointment' => $appointment->getKey()]
+        );
+
+        $rescheduleSubmitUrl = URL::temporarySignedRoute(
+            'appointments.guest.reschedule.submit',
+            $expiresAt,
+            ['appointment' => $appointment->getKey()]
+        );
+
+        return view('appointments.guest-cancellation', compact(
+            'appointment',
+            'rescheduleSlotsUrl',
+            'rescheduleSubmitUrl'
+        ));
+    }
+
+    /**
+     * Submit a guest cancellation request.
+     * This does not cancel the appointment; the admin must decide.
+     */
+    public function submitGuestCancellation(
+        Request $request,
+        Appointments $appointment
+    ) {
+        $validated = $request->validate([
+            'cancellation_reason' => ['required', 'string', 'max:100'],
+            'cancellation_details' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $updated = Appointments::query()
+            ->whereKey($appointment->getKey())
+            ->where('status', 'confirmed')
+            ->whereHas('patient', function ($query) {
+                $query->whereNull('user_id');
+            })
+            ->where('patient_email', $appointment->patient_email)
+            ->update([
+                'status' => 'cancellation_requested',
+                'cancellation_reason' => $validated['cancellation_reason'],
+                'cancellation_details' => $validated['cancellation_details'] ?? null,
+                'updated_at' => now(),
+            ]);
+
+        if ($updated !== 1) {
+            return back()->withErrors([
+                'cancellation' => 'This appointment has already changed and cannot accept another request.',
+            ]);
+        }
+
+        return view('appointments.guest-cancellation', [
+            'appointment' => $appointment->fresh(),
+            'submitted' => true,
+        ]);
+    }
+
+    /**
+     * Submit a guest rescheduling request without changing the original booking.
+     */
+    public function submitGuestReschedule(
+        Request $request,
+        Appointments $appointment
+    ) {
+        abort_unless(
+            $appointment->status === 'confirmed'
+                && $appointment->patient?->user === null
+                && filter_var($appointment->patient_email, FILTER_VALIDATE_EMAIL),
+            403,
+            'This appointment is not eligible for guest rescheduling.'
+        );
+
+        $validated = $request->validate([
+            'reschedule_date' => [
+                'required',
+                'date_format:Y-m-d',
+                'after_or_equal:today',
+            ],
+            'reschedule_time' => [
+                'required',
+                'date_format:H:i:s',
+            ],
+            'reschedule_reason' => [
+                'nullable',
+                'string',
+                'max:1000',
+            ],
+        ]);
+
+        $date = $validated['reschedule_date'];
+        $start = Carbon::parse($date . ' ' . $validated['reschedule_time']);
+        // Use the saved duration snapshots for all procedures on this appointment.
+        $duration = (int) $appointment->appointmentProcedures()
+            ->sum('duration_minutes');
+
+        // Keep older appointments working if they have no procedure snapshot rows.
+        if ($duration <= 0) {
+            $duration = (int) ($appointment->service?->duration_minutes ?? 0);
+        }
+
+        if ($duration <= 0) {
+            return back()->withErrors([
+                'reschedule_time' => 'The appointment service has no valid duration.',
+            ]);
+        }
+
+        $end = $start->copy()->addMinutes($duration);
+        $clinicStart = Carbon::parse($date . ' 08:00:00');
+        $clinicEnd = Carbon::parse($date . ' 17:00:00');
+
+        $minutesFromOpening =
+            ((int) $start->format('H') * 60 + (int) $start->format('i')) - (8 * 60);
+
+        if (
+            $start->lt($clinicStart)
+            || $end->gt($clinicEnd)
+            || $start->format('s') !== '00'
+            || $minutesFromOpening < 0
+            || $minutesFromOpening % $duration !== 0
+            || ($date === now()->toDateString() && $start->lessThanOrEqualTo(now()))
+        ) {
+            return back()->withErrors([
+                'reschedule_time' => 'Please choose a future time within clinic hours.',
+            ]);
+        }
+
+        $saved = DB::transaction(function () use (
+            $appointment,
+            $validated,
+            $date,
+            $start,
+            $end,
+            $duration
+        ) {
+            $lockedAppointment = Appointments::query()
+                ->whereKey($appointment->getKey())
+                ->lockForUpdate()
+                ->first();
+
+            if (
+                ! $lockedAppointment
+                || $lockedAppointment->status !== 'confirmed'
+                || $lockedAppointment->patient_record_id !== $appointment->patient_record_id
+                || $lockedAppointment->patient_email !== $appointment->patient_email
+            ) {
+                return false;
+            }
+
+            $activeStatuses = ['cancelled', 'declined'];
+
+            $dailyCount = Appointments::query()
+                ->whereDate('appointment_date', $date)
+                ->where('id', '!=', $lockedAppointment->getKey())
+                ->whereNotIn('status', $activeStatuses)
+                ->count();
+
+            if ($dailyCount >= 20) {
+                return false;
+            }
+
+            $existingAppointments = Appointments::query()
+                ->whereDate('appointment_date', $date)
+                ->where('id', '!=', $lockedAppointment->getKey())
+                ->whereNotIn('status', $activeStatuses)
+                ->with('service')
+                ->lockForUpdate()
+                ->get();
+
+            foreach ($existingAppointments as $existing) {
+                if (! $existing->appointment_time) {
+                    continue;
+                }
+
+                $existingStart = Carbon::parse(
+                    $date . ' ' . $existing->appointment_time
+                );
+
+                $existingDuration = (int) (
+                    $existing->service?->duration_minutes ?? 0
+                );
+
+                if ($existing->end_time) {
+                    $existingEnd = Carbon::parse(
+                        $date . ' ' . $existing->end_time
+                    );
+                } else {
+                    $existingEnd = $existingStart->copy()->addMinutes(
+                        $existingDuration > 0 ? $existingDuration : $duration
+                    );
+                }
+
+                if ($existingStart->lt($end) && $existingEnd->gt($start)) {
+                    return false;
+                }
+            }
+
+            $lockedAppointment->update([
+                'status' => 'reschedule_requested',
+                'reschedule_date' => $date,
+                'reschedule_time' => $start->format('H:i:s'),
+                'reschedule_end_time' => $end->format('H:i:s'),
+                'reschedule_reason' => $validated['reschedule_reason'] ?? null,
+            ]);
+
+            return true;
+        });
+
+        if (! $saved) {
+            return back()->withErrors([
+                'reschedule_time' => 'That slot is no longer available, or the daily appointment limit has been reached. Please choose another time.',
+            ])->withInput();
+        }
+
+        return view('appointments.guest-cancellation', [
+            'appointment' => $appointment->fresh(),
+            'rescheduleSubmitted' => true,
+        ]);
+    }
 
     public function printHistory(
         Request $request

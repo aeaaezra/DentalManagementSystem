@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\Products\Tables;
 
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -110,8 +112,15 @@ class ProductsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ])
+                    ->icon('heroicon-m-ellipsis-vertical')
+                    ->label('')
+                    ->tooltip('Product actions')
+                    ->button(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

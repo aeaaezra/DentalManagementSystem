@@ -232,8 +232,9 @@
             >
 
                 <img
+                    id="cashier-profile-avatar"
                     src="{{ auth()->user()->profile_picture
-                        ? asset('storage/' . auth()->user()->profile_picture)
+                        ? asset('storage/' . auth()->user()->profile_picture) . '?v=' . auth()->user()->updated_at->timestamp
                         : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&background=E91E63&color=ffffff'
                     }}"
                     alt="{{ auth()->user()->name }}"
@@ -308,61 +309,47 @@
                    h-fit"
         >
 
-            <!-- Profile -->
-
+<!-- Profile navigation -->
             <button
                 type="button"
                 onclick="showSection('profile')"
                 data-section="profile"
-                class="settings-nav active w-full
+                class="settings-nav w-full
                        flex items-center gap-3
                        px-4 py-3
                        rounded-xl
                        text-left
                        transition"
             >
-
                 <span
                     class="settings-icon
                            w-9 h-9
                            rounded-xl
-                           bg-pink-100
-                           dark:bg-pink-950/40
-                           text-primary
+                           bg-gray-100
+                           dark:bg-gray-800
+                           text-gray-500
                            flex items-center justify-center"
                 >
-
-                    <svg
-                        class="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
+                    <svg class="w-5 h-5"
+                         fill="none"
+                         stroke="currentColor"
+                         viewBox="0 0 24 24">
                         <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
                             stroke-width="2"
-                            d="M16 7a4 4 0 11-8 0
-                               4 4 0 018 0z
-                               M12 14a7 7 0 00-7 7h14
-                               a7 7 0 00-7-7z"
+                            d="M20 21a8 8 0 00-16 0
+                               M12 13a4 4 0 100-8 4 4 0 000 8z"
                         />
                     </svg>
-
                 </span>
-
                 <span>
-                    <span class="block text-sm font-semibold">
-                        Profile
-                    </span>
-
+                    <span class="block text-sm font-semibold">Profile</span>
                     <span class="block text-[11px] text-gray-400">
-                        Personal information
+                        Profile photo and account
                     </span>
                 </span>
-
             </button>
-
 
             <!-- Password -->
 
@@ -743,6 +730,118 @@
                 class="settings-section"
             >
 
+<!-- Profile Picture -->
+<div class="flex flex-col sm:flex-row sm:items-center gap-5 p-5 rounded-2xl bg-pink-50 dark:bg-pink-950/30 mb-6">
+    @auth
+        <img
+            id="profile-photo-preview"
+            src="{{ auth()->user()->profile_picture
+                ? asset('storage/' . auth()->user()->profile_picture)
+                : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&background=E91E63&color=ffffff&size=160'
+            }}"
+            class="w-20 h-20 rounded-2xl object-cover border-4 border-white dark:border-[#251C22] shadow-md"
+            alt="Profile photo"
+        >
+
+        <div class="flex-1">
+            <h3 class="font-bold">{{ auth()->user()->name }}</h3>
+            <p class="text-xs text-gray-500 mt-1">{{ auth()->user()->email }}</p>
+
+            <form
+                id="profile-photo-form"
+                action="{{ route('pos.settings.profile-photo.upload') }}"
+                method="POST"
+                enctype="multipart/form-data"
+                class="mt-3"
+            >
+                @csrf
+
+                <input
+                    type="file"
+                    id="profile-picture-input"
+                    name="profile_picture"
+                    accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                    class="hidden"
+                >
+
+                <button
+                    type="button"
+                    onclick="document.getElementById('profile-picture-input').click()"
+                    class="px-3 py-2 rounded-lg bg-white dark:bg-[#251C22] border border-pink-200 dark:border-pink-900/40 text-xs font-semibold text-primary"
+                >
+                    Change Photo
+                </button>
+            </form>
+
+            @if(auth()->user()->profile_picture)
+                <form
+                    action="{{ route('pos.settings.profile-photo.remove') }}"
+                    method="POST"
+                    onsubmit="return confirm('Remove your profile photo?')"
+                    class="mt-2"
+                >
+                    @csrf
+                    @method('DELETE')
+
+                    <button
+                        type="submit"
+                        class="px-3 py-2 rounded-lg text-xs font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30"
+                    >
+                        Remove
+                    </button>
+                </form>
+            @endif
+
+            <p class="text-xs text-gray-500 mt-2">
+                JPG, PNG, or WebP. Maximum size: 2 MB.
+            </p>
+
+            @error('profile_picture')
+                <p class="text-sm text-red-600 mt-2">{{ $message }}</p>
+            @enderror
+        </div>
+    @endauth
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const input = document.getElementById('profile-picture-input');
+    const form = document.getElementById('profile-photo-form');
+    const preview = document.getElementById('profile-photo-preview');
+    const avatar = document.getElementById('cashier-profile-avatar');
+
+    if (!input || !form) return;
+
+    input.addEventListener('change', function () {
+        const file = this.files && this.files[0];
+        if (!file) return;
+
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+
+        if (!allowedTypes.includes(file.type)) {
+            alert('Please choose a JPG, PNG, or WebP image.');
+            this.value = '';
+            return;
+        }
+
+        if (file.size > 2 * 1024 * 1024) {
+            alert('The image must not exceed 2 MB.');
+            this.value = '';
+            return;
+        }
+
+        const objectUrl = URL.createObjectURL(file);
+
+        if (preview) preview.src = objectUrl;
+        if (avatar) avatar.src = objectUrl;
+
+        form.requestSubmit();
+    });
+});
+</script>
+
+
+
                 <div class="settings-card">
 
                     <div class="settings-header">
@@ -783,170 +882,93 @@
                     </div>
 
 
-                    <!-- Profile Picture -->
 
-                    <div
-                        class="flex flex-col sm:flex-row
-                               sm:items-center gap-5
-                               p-5
-                               rounded-2xl
-                               bg-pink-50
-                               dark:bg-pink-950/30
-                               mb-6"
-                    >
 
-                        @auth
 
-                            <img
-                                src="{{ auth()->user()->profile_picture
-                                    ? asset('storage/' . auth()->user()->profile_picture)
-                                    : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&background=E91E63&color=ffffff&size=160'
-                                }}"
-                                class="w-20 h-20
-                                       rounded-2xl
-                                       object-cover
-                                       border-4
-                                       border-white
-                                       dark:border-[#251C22]
-                                       shadow-md"
-                            >
 
-                            <div class="flex-1">
+                    </div>
 
-                                <h3 class="font-bold">
-                                    {{ auth()->user()->name }}
-                                </h3>
 
-                                <p class="text-xs text-gray-500 mt-1">
-                                    {{ auth()->user()->email }}
-                                </p>
+                    @if (session('success'))
+                        <div class="mb-5 rounded-xl bg-green-50 text-green-700 px-4 py-3 text-sm">
+                            {{ session('success') }}
+                        </div>
+                    @endif
 
-                                <div class="mt-3 flex gap-2">
+                    @if ($errors->any())
+                        <div class="mb-5 rounded-xl bg-red-50 text-red-700 px-4 py-3 text-sm">
+                            <ul class="list-disc pl-5">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
 
-                                    <button
-                                        type="button"
-                                        class="px-3 py-2
-                                               rounded-lg
-                                               bg-white
-                                               dark:bg-[#251C22]
-                                               border
-                                               border-pink-200
-                                               dark:border-pink-900/40
-                                               text-xs
-                                               font-semibold
-                                               text-primary"
-                                    >
-                                        Change Photo
-                                    </button>
+                    <form method="POST" action="{{ route('pos.settings.profile.update') }}">
+                        @csrf
+                        @method('PUT')
 
-                                    <button
-                                        type="button"
-                                        class="px-3 py-2
-                                               rounded-lg
-                                               text-xs
-                                               font-semibold
-                                               text-red-500
-                                               hover:bg-red-50
-                                               dark:hover:bg-red-950/30"
-                                    >
-                                        Remove
-                                    </button>
-
-                                </div>
-
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label for="profile-name" class="settings-label">Full Name</label>
+                                <input
+                                    id="profile-name"
+                                    name="name"
+                                    type="text"
+                                    value="{{ old('name', auth()->user()->name ?? '') }}"
+                                    maxlength="255"
+                                    required
+                                    autocomplete="name"
+                                    class="settings-input"
+                                >
                             </div>
 
-                        @endauth
+                            <div>
+                                <label for="profile-email" class="settings-label">Email Address</label>
+                                <input
+                                    id="profile-email"
+                                    name="email"
+                                    type="email"
+                                    value="{{ old('email', auth()->user()->email ?? '') }}"
+                                    maxlength="255"
+                                    required
+                                    autocomplete="email"
+                                    class="settings-input"
+                                >
+                            </div>
 
-                    </div>
+                            <div>
+                                <label for="profile-phone" class="settings-label">Phone Number</label>
+                                <input
+                                    id="profile-phone"
+                                    name="phone"
+                                    type="text"
+                                    value="{{ old('phone', auth()->user()->phone ?? '') }}"
+                                    maxlength="20"
+                                    autocomplete="tel"
+                                    placeholder="+63 9XX XXX XXXX"
+                                    class="settings-input"
+                                >
+                            </div>
 
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-
-                        <!-- Name -->
-
-                        <div>
-
-                            <label class="settings-label">
-                                Full Name
-                            </label>
-
-                            <input
-                                type="text"
-                                value="{{ auth()->user()->name ?? '' }}"
-                                class="settings-input"
-                            >
-
+                            <div>
+                                <label class="settings-label">Role</label>
+                                <input
+                                    type="text"
+                                    value="{{ auth()->user()->getRoleNames()->implode(', ') ?: (auth()->user()->role ?? 'Cashier') }}"
+                                    disabled
+                                    class="settings-input opacity-60 cursor-not-allowed"
+                                >
+                            </div>
                         </div>
 
-
-                        <!-- Email -->
-
-                        <div>
-
-                            <label class="settings-label">
-                                Email Address
-                            </label>
-
-                            <input
-                                type="email"
-                                value="{{ auth()->user()->email ?? '' }}"
-                                class="settings-input"
-                            >
-
+                        <div class="settings-footer">
+                            <button type="submit" class="primary-button">
+                                Save Changes
+                            </button>
                         </div>
-
-
-                        <!-- Phone -->
-
-                        <div>
-
-                            <label class="settings-label">
-                                Phone Number
-                            </label>
-
-                            <input
-                                type="text"
-                                value="{{ auth()->user()->phone ?? '' }}"
-                                placeholder="+63 9XX XXX XXXX"
-                                class="settings-input"
-                            >
-
-                        </div>
-
-
-                        <!-- Role -->
-
-                        <div>
-
-                            <label class="settings-label">
-                                Role
-                            </label>
-
-                            <input
-                                type="text"
-                                value="{{ auth()->user()->role ?? 'Cashier' }}"
-                                disabled
-                                class="settings-input
-                                       opacity-60
-                                       cursor-not-allowed"
-                            >
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="settings-footer">
-
-                        <button
-                            type="button"
-                            class="primary-button"
-                            onclick="showToast('Profile changes saved successfully.')"
-                        >
-                            Save Changes
-                        </button>
-
+                    </form>
                     </div>
 
                 </div>
@@ -1069,12 +1091,42 @@
                                 New Password
                             </label>
 
-                            <input
-                                type="password"
-                                id="new-password"
-                                class="settings-input"
-                                placeholder="Enter new password"
+                            <div class="relative">
+                                <input
+                                    type="password"
+                                    id="new-password"
+                                    class="settings-input pr-12"
+                                    placeholder="Enter new password"
+                                    autocomplete="new-password"
+                                autocomplete="new-password"
                             >
+
+                                <button
+                                    type="button"
+                                    class="password-eye"
+                                    aria-label="Show enter new password"
+                                    aria-pressed="false"
+                                    onclick="togglePassword('new-password', this)"
+                                    style="position:absolute;right:12px;top:50%;transform:translateY(-50%);"
+                                >
+                                    <svg width="20" height="20" viewBox="0 0 24 24"
+                                         fill="none" stroke="currentColor"
+                                         stroke-width="2" aria-hidden="true">
+                                        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div class="mt-3">
+                                <div class="flex gap-1 mb-2" aria-label="Password strength">
+                                    <span class="password-strength-bar h-1.5 flex-1 rounded-full bg-gray-200"></span>
+                                    <span class="password-strength-bar h-1.5 flex-1 rounded-full bg-gray-200"></span>
+                                    <span class="password-strength-bar h-1.5 flex-1 rounded-full bg-gray-200"></span>
+                                    <span class="password-strength-bar h-1.5 flex-1 rounded-full bg-gray-200"></span>
+                                </div>
+                                <p id="password-strength-label" class="text-xs text-gray-500" aria-live="polite">Enter a new password</p>
+                            </div>
 
                         </div>
 
@@ -1087,12 +1139,34 @@
                                 Confirm New Password
                             </label>
 
-                            <input
-                                type="password"
-                                id="confirm-password"
-                                class="settings-input"
-                                placeholder="Confirm new password"
+                            <div class="relative">
+                                <input
+                                    type="password"
+                                    id="confirm-password"
+                                    class="settings-input pr-12"
+                                    placeholder="Confirm new password"
+                                    autocomplete="new-password"
+                                autocomplete="new-password"
                             >
+
+                                <button
+                                    type="button"
+                                    class="password-eye"
+                                    aria-label="Show confirm new password"
+                                    aria-pressed="false"
+                                    onclick="togglePassword('confirm-password', this)"
+                                    style="position:absolute;right:12px;top:50%;transform:translateY(-50%);"
+                                >
+                                    <svg width="20" height="20" viewBox="0 0 24 24"
+                                         fill="none" stroke="currentColor"
+                                         stroke-width="2" aria-hidden="true">
+                                        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <p id="password-match-message" class="mt-2 text-xs" aria-live="polite"></p>
 
                         </div>
 
@@ -1110,18 +1184,11 @@
                                 Password requirements
                             </p>
 
-                            <ul
-                                class="text-xs
-                                       text-gray-500
-                                       dark:text-gray-400
-                                       space-y-1"
-                            >
-
-                                <li>• At least 8 characters</li>
-                                <li>• Contains uppercase and lowercase letters</li>
-                                <li>• Contains at least one number</li>
-                                <li>• Contains at least one special character</li>
-
+                            <ul class="text-xs text-gray-500 dark:text-gray-400 space-y-2">
+                                <li id="pw-rule-length">○ At least 8 characters</li>
+                                <li id="pw-rule-case">○ Uppercase and lowercase letters</li>
+                                <li id="pw-rule-number">○ At least one number</li>
+                                <li id="pw-rule-special">○ At least one special character</li>
                             </ul>
 
                         </div>
@@ -1146,6 +1213,73 @@
             </div>
 
 
+
+
+            <script>
+            (function () {
+                const initPasswordChecker = function () {
+                    const password = document.getElementById('new-password');
+                    const confirm = document.getElementById('confirm-password');
+                    const strengthLabel = document.getElementById('password-strength-label');
+                    const matchMessage = document.getElementById('password-match-message');
+                    const bars = document.querySelectorAll('.password-strength-bar');
+
+                    if (!password || !confirm || !strengthLabel || !matchMessage) return;
+
+                    const rules = [
+                        { id: 'pw-rule-length', test: value => value.length >= 8, label: 'At least 8 characters' },
+                        { id: 'pw-rule-case', test: value => /[a-z]/.test(value) && /[A-Z]/.test(value), label: 'Uppercase and lowercase letters' },
+                        { id: 'pw-rule-number', test: value => /[0-9]/.test(value), label: 'At least one number' },
+                        { id: 'pw-rule-special', test: value => /[^A-Za-z0-9]/.test(value), label: 'At least one special character' }
+                    ];
+
+                    function updateChecker() {
+                        const value = password.value;
+                        let passed = 0;
+
+                        rules.forEach(rule => {
+                            const item = document.getElementById(rule.id);
+                            const valid = rule.test(value);
+                            if (valid) passed++;
+                            if (item) {
+                                item.textContent = (valid ? '✓ ' : '○ ') + rule.label;
+                                item.style.color = valid ? '#16a34a' : '';
+                            }
+                        });
+
+                        const strength = value.length === 0 ? 0 : passed;
+                        const labels = ['Enter a new password', 'Weak password', 'Fair password', 'Good password', 'Strong password'];
+                        strengthLabel.textContent = labels[strength];
+
+                        const colors = ['#e5e7eb', '#ef4444', '#f59e0b', '#0d9488', '#16a34a'];
+                        bars.forEach((bar, index) => {
+                            bar.style.backgroundColor = index < strength ? colors[strength] : '#e5e7eb';
+                        });
+
+                        if (confirm.value.length === 0) {
+                            matchMessage.textContent = '';
+                            matchMessage.style.color = '';
+                        } else if (confirm.value === value) {
+                            matchMessage.textContent = '✓ Passwords match';
+                            matchMessage.style.color = '#16a34a';
+                        } else {
+                            matchMessage.textContent = '✗ Passwords do not match';
+                            matchMessage.style.color = '#dc2626';
+                        }
+                    }
+
+                    password.addEventListener('input', updateChecker);
+                    confirm.addEventListener('input', updateChecker);
+                    updateChecker();
+                };
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initPasswordChecker);
+                } else {
+                    initPasswordChecker();
+                }
+            })();
+            </script>
 
             <!-- =================================================
                  POS SETTINGS
@@ -2140,7 +2274,7 @@
 </div>
 
 
-<script src="{{ asset('js/pos/pos_settings.js') }}?v=2"></script>
+<script src="{{ asset('js/pos/pos_settings.js') }}?v=3"></script>
 
 </body>
 </html>

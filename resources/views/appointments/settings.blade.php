@@ -11,7 +11,7 @@
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <link rel="stylesheet"href="{{ asset('css/appointment/patient-theme.css') }}">
 
-    <script src="{{ asset('js/patient-theme.js') }}"></script>
+    <script src="{{ asset('js/appointment/patient-theme.js') }}"></script>
 
 </head>
 

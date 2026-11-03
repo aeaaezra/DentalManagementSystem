@@ -70,7 +70,7 @@ class LoginRequest extends FormRequest
         }
 
         if ($routeName === 'customer.login.store') {
-            if (!$user->hasRole('customer')) {
+            if (!$user->hasRole('customer') || $user->hasAnyRole(['admin', 'dentist', 'cashier', 'receptionist']) || $user->role === 'staff') {
                 RateLimiter::hit(
                     $this->throttleKey()
                 );

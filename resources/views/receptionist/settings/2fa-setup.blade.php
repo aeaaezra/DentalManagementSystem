@@ -16,7 +16,7 @@
 
     <link
         rel="stylesheet"
-        href="{{ asset('css/receptionist-settings.css') }}"
+        href="{{ asset('css/receptionist/receptionist-settings.css') }}"
     >
 
 </head>

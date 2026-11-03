@@ -5340,3 +5340,222 @@ svg {
         flex-direction: column-reverse;
     }
 }
+
+/* Patient / Guardian Signature — far-right placement */
+.patient-record-view .record-ui-form-grid > .patient-signature-right-column {
+    grid-column: 1 / -1 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 420px) !important;
+    align-items: start !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.patient-record-view .patient-signature-right-column > label {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    width: 100% !important;
+    text-align: left !important;
+}
+
+.patient-record-view .patient-signature-right-column #patientSignatureContainer {
+    grid-column: 2 !important;
+    grid-row: 2 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+}
+
+.patient-record-view .patient-signature-right-column #overviewPatientSignature {
+    width: 100% !important;
+    max-width: 420px !important;
+    height: 150px !important;
+    object-fit: contain !important;
+    object-position: right center !important;
+    margin: 0 !important;
+}
+
+@media (max-width: 600px) {
+    .patient-record-view .record-ui-form-grid > .patient-signature-right-column {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .patient-record-view .patient-signature-right-column > label,
+    .patient-record-view .patient-signature-right-column #patientSignatureContainer {
+        grid-column: 1 !important;
+    }
+}
+
+/* Medical History — pink checked checkboxes */
+.patient-record-view input[type="checkbox"]:checked {
+    accent-color: #e91e63 !important;
+}
+
+/* Pink check mark for browsers using custom checkbox styling */
+.patient-record-view input[type="checkbox"]:checked::before {
+    accent-color: #e91e63 !important;
+}
+
+
+/* Force checked Medical History boxes to PINK */
+.patient-record-view input[type="checkbox"]:checked,
+.patient-record-view input[type="checkbox"]:checked:hover,
+.patient-record-view input[type="checkbox"]:checked:focus {
+    accent-color: #e91e63 !important;
+    background-color: #e91e63 !important;
+    border-color: #e91e63 !important;
+}
+
+/* Pink styling for custom checkbox labels */
+.patient-record-view input[type="checkbox"]:checked + label::before,
+.patient-record-view input[type="checkbox"]:checked ~ label::before {
+    background-color: #e91e63 !important;
+    border-color: #e91e63 !important;
+    color: #ffffff !important;
+}
+
+
+/* Medical History: pink checked checkboxes, including disabled inputs */
+.patient-record-view .medical-ui-check-label input[type="checkbox"] {
+    accent-color: #e91e63 !important;
+    opacity: 1 !important;
+    filter: none !important;
+    cursor: default;
+}
+
+.patient-record-view .medical-ui-check-label input[type="checkbox"]:checked {
+    accent-color: #e91e63 !important;
+    -webkit-appearance: auto !important;
+    appearance: auto !important;
+}
+
+
+/* Dentist Patient Records: custom pink Medical History checkboxes */
+.patient-record-view .medical-ui-check-label {
+    position: relative;
+}
+
+.patient-record-view .medical-ui-check-label input[type="checkbox"] {
+    position: absolute !important;
+    width: 20px !important;
+    height: 20px !important;
+    margin: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+.patient-record-view .medical-ui-check-label .medical-ui-checkmark {
+    display: inline-flex !important;
+    position: relative !important;
+    flex: 0 0 20px !important;
+    width: 20px !important;
+    height: 20px !important;
+    box-sizing: border-box !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 3px !important;
+    background: #fff !important;
+}
+
+.patient-record-view .medical-ui-check-label input[type="checkbox"]:checked
++ .medical-ui-checkmark {
+    background: #e91e63 !important;
+    border-color: #e91e63 !important;
+}
+
+.patient-record-view .medical-ui-check-label input[type="checkbox"]:checked
++ .medical-ui-checkmark::after {
+    content: "" !important;
+    display: block !important;
+    width: 5px !important;
+    height: 10px !important;
+    border: solid #fff !important;
+    border-width: 0 2px 2px 0 !important;
+    transform: rotate(45deg) !important;
+    margin-top: -2px !important;
+}
+
+/* FINAL FIX: Pink checkbox based on the medical condition card state */
+.patient-record-view .medical-ui-item.has-condition .medical-ui-check-label .medical-ui-checkmark {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 20px !important;
+    height: 20px !important;
+    flex: 0 0 20px !important;
+    box-sizing: border-box !important;
+    background-color: #e91e63 !important;
+    border: 1px solid #e91e63 !important;
+    border-radius: 3px !important;
+}
+
+.patient-record-view .medical-ui-item.has-condition .medical-ui-check-label .medical-ui-checkmark::after {
+    content: "" !important;
+    display: block !important;
+    width: 5px !important;
+    height: 10px !important;
+    border: solid #ffffff !important;
+    border-width: 0 2px 2px 0 !important;
+    transform: rotate(45deg) !important;
+    margin-top: -2px !important;
+}
+
+.patient-record-view .medical-ui-item:not(.has-condition) .medical-ui-check-label .medical-ui-checkmark {
+    display: inline-flex !important;
+    background-color: #ffffff !important;
+    border: 1px solid #d1d5db !important;
+}
+
+/* Compact FDI tooth selector in treatment history */
+.treatment-teeth-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.treatment-teeth-quadrant {
+    min-width: 0;
+    padding: 8px;
+    border: 1px solid var(--border-color, #d9dce3);
+    border-radius: 8px;
+}
+
+.treatment-teeth-quadrant > strong {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12px;
+}
+
+.treatment-teeth-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.treatment-teeth-options label {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 3px 5px;
+    border: 1px solid var(--border-color, #d9dce3);
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.treatment-teeth-options input {
+    margin: 0;
+    accent-color: var(--primary-color, #6b2737);
+}
+
+@media (max-width: 600px) {
+    .treatment-teeth-grid {
+        grid-template-columns: 1fr;
+    }
+}

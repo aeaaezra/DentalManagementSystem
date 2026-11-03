@@ -10,7 +10,7 @@
                     >
                         <div class="font-bold text-lg text-gray-900 dark:text-white">{{ $product->name }}</div>
                         <div class="text-primary-600 font-semibold">₱{{ number_format($product->price, 2) }}</div>
-                        <div class="text-xs text-gray-500">Stock: {{ $product->stock }}</div>
+                        <div class="text-xs text-gray-500">Stock: {{ $product->quantity }}</div>
                     </button>
                 @endforeach
             </div>

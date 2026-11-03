@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Notifications\Concerns\ChecksNotificationPreferences;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class AppointmentDeclined extends Notification
@@ -24,26 +25,52 @@ class AppointmentDeclined extends Notification
             return [];
         }
 
-        return [
-            'database',
-        ];
+        if ($notifiable instanceof \Illuminate\Notifications\AnonymousNotifiable) {
+            return ['mail'];
+        }
+
+        $channels = ['database'];
+
+        if (! empty($notifiable->email)) {
+            $channels[] = 'mail';
+        }
+
+        return $channels;
+    }
+
+    public function toMail(object $notifiable): MailMessage
+    {
+        $date = $this->appointment->appointment_date
+            ? $this->appointment->appointment_date->format('F d, Y')
+            : 'Not specified';
+
+        $time = $this->appointment->appointment_time
+            ?: 'Not specified';
+
+        return (new MailMessage)
+            ->subject('Appointment Update - Shine & Smile Dental')
+            ->greeting('Hello ' . (
+                $notifiable instanceof \Illuminate\Notifications\AnonymousNotifiable
+                    ? ($this->appointment->patient?->patient_name ?? 'Patient')
+                    : ($notifiable->name ?? 'Patient')
+            ) . ',')
+            ->line('We regret to inform you that your requested dental appointment has been declined by Shine & Smile Dental.')
+            ->line('Appointment date: ' . $date)
+            ->line('Appointment time: ' . $time)
+            ->line('Please contact our clinic if you would like assistance arranging another appointment.')
+            ->salutation('Thank you, Shine & Smile Dental');
     }
 
     public function toDatabase(object $notifiable): array
     {
         return [
             'title' => 'Appointment Declined',
-
             'message' => 'Your dental appointment has been declined by the clinic.',
-
             'appointment_id' => $this->appointment->id,
-
             'appointment_date' => $this->appointment->appointment_date
                 ? $this->appointment->appointment_date->format('F d, Y')
                 : null,
-
             'appointment_time' => $this->appointment->appointment_time,
-
             'status' => $this->appointment->status,
         ];
     }

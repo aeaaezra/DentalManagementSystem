@@ -1,5 +1,4 @@
-
-<html lang="en" class="scroll-smooth dark-mode">
+<html lang="en" class="scroll-smooth">
 
 <head>
     <meta charset="UTF-8">
@@ -14,7 +13,25 @@
 	    <title>Shine & Smile Dental | Creating Healthy, Beautiful Smiles</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@600;700&display=swap"  rel="stylesheet"  >
 <link rel="stylesheet" href="{{ asset('css/appointment/patient-theme.css') }}">
-<link rel="stylesheet" href="{{ asset('css/appointment/homepage.css') }}">
+<link rel="stylesheet" href="{{ asset('css/appointment/homepage.css') }}?v={{ filemtime(public_path('css/appointment/homepage.css')) }}">
+
+<style id="homepage-light-mode-default">
+html:not(.dark-mode) body {
+    background-color: #ffffff;
+    color: #2d2d2d;
+}
+html:not(.dark-mode) .main-navbar {
+    background-color: #ffffff !important;
+    color: #2d2d2d !important;
+    border-bottom: 1px solid #eeeeee !important;
+}
+html:not(.dark-mode) .homepage-footer {
+    background-color: #ffffff !important;
+    color: #4b5563 !important;
+    border-color: #eeeeee !important;
+}
+</style>
+
     <link  rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}" >
 
 
@@ -1081,7 +1098,7 @@
             <img
                 src="{{ Auth::user()->profile_picture
                     ? asset('storage/' . Auth::user()->profile_picture)
-                    : asset('images/default-profile.png') }}"
+                    : asset('images/default-profile.svg') }}"
                 class="w-12 h-12 rounded-full object-cover border-2 border-pink-500"
                 alt="{{ Auth::user()->name }}"
             >
@@ -1369,7 +1386,7 @@
 
 </aside>
 
-<main class="container mx-auto px-4 sm:px-6 pt-[120px]">
+<main class="container mx-auto px-4 sm:px-6 pt-[150px]">
 
 @if(session('success'))
 
@@ -1392,10 +1409,10 @@
 @endif
 
 
-<section class="mb-12 max-w-7xl mx-auto custom-pink text-white rounded-2xl p-8 md:p-10 flex flex-col md:flex-row justify-between items-center shadow-lg">
 
+<section class="mb-12 max-w-7xl mx-auto custom-pink text-white rounded-2xl p-8 md:p-10 flex flex-col md:flex-row justify-between items-center shadow-lg">
     <div>
-        <h2 class="text-2xl font-bold">
+<h2 class="text-2xl font-bold">
     Welcome Back, {{ auth()->user()->name }}!
 </h2>
 
@@ -1404,15 +1421,15 @@
         </p>
     </div>
 
-    <a href="{{ route('appointments.create') }}"
-       class="inline-block bg-white text-custom-pink font-bold py-3 px-8 rounded-full shadow-md hover:bg-gray-100 transition mt-4 md:mt-0">
-        Book Now!
-    </a>
+<a href="{{ route('appointments.create') }}"
+   class="inline-block bg-white text-custom-pink font-bold py-3 px-8 rounded-full shadow-md hover:bg-gray-100 transition mt-4 md:mt-0">
+    Book Now!
+</a>
 
 </section>
 
-<div class="lg:col-span-3 w-full bg-white dark:bg-[#111318] p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-[#2b3038]">
-        <!-- Left Column: Appointments -->
+
+<div class="w-full max-w-7xl mx-auto bg-white dark:bg-[#111318] p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-[#2b3038]">
 <section class="mb-12 bg-white dark:bg-[#111318] p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-[#2b3038] max-w-5xl mx-auto">
 
     <div class="flex justify-between items-center mb-8">
@@ -2194,24 +2211,21 @@
 
                     @forelse($appointmentHistory as $appointment)
 
+
                         @php
                             $amountPaid = (float) ($appointment->amount_paid ?? 0);
                             $balance = (float) ($appointment->balance ?? 0);
-                            $totalAmount = (float) ($appointment->total_amount ?? 0);
+                            $isCompleted = strtolower(trim($appointment->status ?? '')) === 'completed';
 
-                            /*
-                             * UI safeguard:
-                             * If total_amount is empty/zero but payment
-                             * information exists, calculate the displayed
-                             * total as amount paid + remaining balance.
-                             *
-                             * This does NOT update the database.
-                             */
-                            if (
-                                $totalAmount <= 0 &&
-                                ($amountPaid > 0 || $balance > 0)
-                            ) {
-                                $totalAmount = $amountPaid + $balance;
+                            if ($isCompleted) {
+                                $totalAmount = (float) ($appointment->total_amount ?? 0);
+
+                                if ($totalAmount <= 0 && ($amountPaid > 0 || $balance > 0)) {
+                                    $totalAmount = $amountPaid + $balance;
+                                }
+                            } else {
+                                $totalAmount = 0;
+                                $balance = 0;
                             }
 
                             $paymentStatus = strtolower(

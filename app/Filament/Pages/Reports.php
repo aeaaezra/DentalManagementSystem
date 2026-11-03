@@ -194,7 +194,7 @@ class Reports extends Page
     protected function generateOrderingReport(): void
     {
         $orders = Orders::query()
-            ->with('items')
+            ->with(['customer', 'items.product', 'items.variant'])
             ->whereBetween('created_at', [
                 Carbon::parse($this->dateFrom)->startOfDay(),
                 Carbon::parse($this->dateTo)->endOfDay(),
@@ -205,22 +205,24 @@ class Reports extends Page
         $this->reportData = [
             'total_orders' => $orders->count(),
 
-            'total_amount' => (float) $orders->sum('total_amount'),
+            'total_amount' => (float) $orders
+                ->where('order_status', '!=', 'cancelled')
+                ->sum('final_amount'),
 
             'pending' => $orders
-                ->where('status', 'pending')
+                ->where('order_status', 'pending')
                 ->count(),
 
             'processing' => $orders
-                ->where('status', 'processing')
+                ->whereIn('order_status', ['processing', 'confirmed'])
                 ->count(),
 
             'completed' => $orders
-                ->where('status', 'completed')
+                ->where('order_status', 'completed')
                 ->count(),
 
             'cancelled' => $orders
-                ->where('status', 'cancelled')
+                ->where('order_status', 'cancelled')
                 ->count(),
 
             'orders' => $orders,

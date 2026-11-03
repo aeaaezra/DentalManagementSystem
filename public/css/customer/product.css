@@ -2304,3 +2304,160 @@ a {
     }
 
 }
+
+/* Stronger shadows for Shop by Category cards */
+.categories .category {
+    border: 1px solid #f5c2d7;
+    border-radius: 18px;
+    box-shadow:
+        0 5px 12px rgba(105, 20, 55, 0.08),
+        0 12px 24px rgba(242, 13, 99, 0.10);
+    transition:
+        transform 0.22s ease,
+        border-color 0.22s ease,
+        box-shadow 0.22s ease;
+}
+
+.categories .category:hover {
+    transform: translateY(-5px);
+    border-color: #f20d63;
+    box-shadow:
+        0 8px 16px rgba(105, 20, 55, 0.12),
+        0 18px 32px rgba(242, 13, 99, 0.22);
+}
+
+.categories .category img {
+    transition: transform 0.25s ease;
+}
+
+.categories .category:hover img {
+    transform: scale(1.025);
+}
+
+/* Stronger shadows for Shop by Category cards */
+.categories .category {
+    border: 1px solid #f5c2d7;
+    border-radius: 18px;
+    box-shadow:
+        0 5px 12px rgba(105, 20, 55, 0.08),
+        0 12px 24px rgba(242, 13, 99, 0.10);
+    transition:
+        transform 0.22s ease,
+        border-color 0.22s ease,
+        box-shadow 0.22s ease;
+}
+
+.categories .category:hover {
+    transform: translateY(-5px);
+    border-color: #f20d63;
+    box-shadow:
+        0 8px 16px rgba(105, 20, 55, 0.12),
+        0 18px 32px rgba(242, 13, 99, 0.22);
+}
+
+.categories .category img {
+    transition: transform 0.25s ease;
+}
+
+.categories .category:hover img {
+    transform: scale(1.025);
+}
+
+/* Customer navigation buttons — matching pink outlined style */
+.customer-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.customer-nav .nav-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    border: 1px solid #ffc2d9;
+    border-radius: 12px;
+    background: #fff0f6;
+    color: #f20d62;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.customer-nav .nav-link:hover,
+.customer-nav .nav-link.active {
+    background: #ffe3ef;
+    border-color: #ff9fc5;
+    color: #f20d62;
+}
+
+/* Match Products and My Orders navigation button styling */
+.customer-nav .nav-link {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 10px 16px !important;
+    border: 1px solid #ffc2d9 !important;
+    border-radius: 11px !important;
+    background: #fff0f6 !important;
+    color: #ec1670 !important;
+    text-decoration: none !important;
+    font-weight: 600 !important;
+    transition: background .2s ease, color .2s ease !important;
+}
+
+.customer-nav .nav-link:hover,
+.customer-nav .nav-link.active {
+    background: #ec1670 !important;
+    border-color: #ec1670 !important;
+    color: #fff !important;
+}
+
+/* Customer navigation: outlined tabs, pink active tab */
+.customer-nav .nav-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    border: 1px solid #f8bfd4;
+    border-radius: 10px;
+    color: #e91e63;
+    background: #fff;
+    text-decoration: none;
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+}
+
+.customer-nav .nav-link:hover {
+    background: #fff0f6;
+    border-color: #ec4899;
+    color: #db2777;
+}
+
+.customer-nav .nav-link.active,
+.customer-nav .nav-link[aria-current="page"] {
+    background: #fff0f6;
+    border-color: #fff0f6;
+    color: #e91e63;
+}
+
+/* FINAL override: outline both customer navigation tabs */
+.customer-nav .nav-link {
+    background: #fff !important;
+    color: #ec1670 !important;
+    border: 1px solid #ffc2d9 !important;
+    border-radius: 11px !important;
+    padding: 10px 16px !important;
+}
+
+.customer-nav .nav-link:hover {
+    background: #fff0f6 !important;
+    border-color: #ec1670 !important;
+    color: #ec1670 !important;
+}
+
+.customer-nav .nav-link.active {
+    background: #ec1670 !important;
+    border-color: #ec1670 !important;
+    color: #fff !important;
+}

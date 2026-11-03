@@ -1801,7 +1801,9 @@
 
                                 if (
                                     $appointment->checked_in_at
+                                    || $appointment->treatment_started_at
                                     || $appointment->checked_out_at
+                                    || $appointment->late_review_status !== null
                                 ) {
                                     return false;
                                 }
@@ -1888,60 +1890,98 @@
                         @endphp
 
 
-                        <div class="late-patient">
+                        <div class="late-patient" style="display:block; padding:18px; margin-bottom:12px; border:1px solid #f1d5e5; border-radius:14px;">
 
+                            <div style="display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;">
 
-                            <div class="late-patient-info">
+                                <div class="late-patient-info">
 
-                                <div class="late-patient-icon">
+                                    <div class="late-patient-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="12" r="9" />
+                                            <path stroke-linecap="round" d="M12 7v5l3 2" />
+                                        </svg>
+                                    </div>
 
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                    >
-
-                                        <circle
-                                            cx="12"
-                                            cy="12"
-                                            r="9"
-                                        />
-
-                                        <path
-                                            stroke-linecap="round"
-                                            d="M12 7v5l3 2"
-                                        />
-
-                                    </svg>
+                                    <div>
+                                        <strong>{{ $latePatient }}</strong>
+                                        <span>Appointment: {{ $lateDateTime->format('h:i A') }}</span>
+                                        <span>{{ $minutesLate }} minutes late</span>
+                                    </div>
 
                                 </div>
 
-
-                                <div>
-
-                                    <strong>
-                                        {{ $latePatient }}
-                                    </strong>
-
-                                    <span>
-
-                                        Appointment:
-                                        {{ $lateDateTime->format('h:i A') }}
-
-                                    </span>
-
-                                </div>
+                                <strong class="late-time">{{ $minutesLate }} min late</strong>
 
                             </div>
 
+                            @if($appointment->late_review_status)
 
-                            <strong class="late-time">
+                                <div style="margin-top:14px; padding:12px; border-radius:10px; background:#fdf2f8; color:#831843;">
+                                    <strong>Receptionist review saved:</strong>
 
-                                {{ $minutesLate }} min late
+                                    @if($appointment->late_review_status === 'patient_arrived')
+                                        Patient arrived — keep the existing appointment and complete check-in.
+                                    @elseif($appointment->late_review_status === 'patient_not_arrived')
+                                        Patient did not arrive — flagged for a separate rescheduling review.
+                                    @else
+                                        {{ str_replace('_', ' ', $appointment->late_review_status) }}
+                                    @endif
 
-                            </strong>
+                                    @if($appointment->late_reviewed_at)
+                                        <div style="font-size:12px; margin-top:5px;">
+                                            Reviewed {{ $appointment->late_reviewed_at->format('M j, Y h:i A') }}
+                                        </div>
+                                    @endif
+
+                                    @if($appointment->late_review_notes)
+                                        <div style="margin-top:6px;">
+                                            <strong>Note:</strong> {{ $appointment->late_review_notes }}
+                                        </div>
+                                    @endif
+                                </div>
+
+                            @else
+
+                                <form method="POST"
+                                      action="{{ route('receptionist.appointments.late-review', ['appointment' => $appointment->id]) }}"
+                                      style="margin-top:16px;">
+                                    @csrf
+
+                                    <label for="late_review_notes_{{ $appointment->id }}"
+                                           style="display:block; font-weight:600; margin-bottom:6px;">
+                                        Receptionist note (optional)
+                                    </label>
+
+                                    <textarea id="late_review_notes_{{ $appointment->id }}"
+                                              name="late_review_notes"
+                                              rows="2"
+                                              maxlength="2000"
+                                              placeholder="Example: Called patient; waiting for confirmation."
+                                              style="width:100%; box-sizing:border-box; padding:10px 12px; border:1px solid #e5c5d7; border-radius:9px; margin-bottom:12px;"></textarea>
+
+                                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+
+                                        <button type="submit"
+                                                name="decision"
+                                                value="patient_arrived"
+                                                style="border:0; border-radius:9px; padding:10px 14px; background:#15803d; color:white; font-weight:600; cursor:pointer;">
+                                            Patient Arrived
+                                        </button>
+
+                                        <button type="submit"
+                                                name="decision"
+                                                value="patient_not_arrived"
+                                                style="border:0; border-radius:9px; padding:10px 14px; background:#be123c; color:white; font-weight:600; cursor:pointer;"
+                                                onclick="return confirm('Confirm that the patient has not arrived? This will flag the appointment for review but will not reschedule it.');">
+                                            Patient Did Not Arrive
+                                        </button>
+
+                                    </div>
+
+                                </form>
+
+                            @endif
 
                         </div>
 

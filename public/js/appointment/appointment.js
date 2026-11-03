@@ -1,4 +1,4 @@
-/* =========================================================
+	/* =========================================================
    GLOBAL CSRF TOKEN HELPER
    ========================================================= */
 
@@ -44,7 +44,6 @@ function getCsrfToken() {
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", function () {
-
     const profileBtn = document.getElementById("profileBtn");
     const profileMenu = document.getElementById("profileMenu");
 
@@ -53,76 +52,49 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    profileBtn.addEventListener("click", function (event) {
+    function closeProfileMenu() {
+        profileMenu.classList.add("hidden");
+        profileMenu.classList.remove("profile-open");
+        profileMenu.style.display = "none";
+        profileBtn.setAttribute("aria-expanded", "false");
+    }
 
+    function openProfileMenu() {
+        profileMenu.classList.remove("hidden");
+        profileMenu.classList.add("profile-open");
+        profileMenu.style.display = "block";
+        profileBtn.setAttribute("aria-expanded", "true");
+    }
+
+    profileBtn.addEventListener("click", function (event) {
         event.preventDefault();
         event.stopPropagation();
 
-        const isOpen =
-            profileMenu.classList.contains("profile-open");
-
-        if (isOpen) {
-
-            profileMenu.classList.remove("profile-open");
-            profileMenu.style.display = "none";
-
-            profileBtn.setAttribute(
-                "aria-expanded",
-                "false"
-            );
-
+        if (profileMenu.classList.contains("hidden")) {
+            openProfileMenu();
         } else {
-
-            profileMenu.classList.add("profile-open");
-            profileMenu.style.display = "block";
-
-            profileBtn.setAttribute(
-                "aria-expanded",
-                "true"
-            );
+            closeProfileMenu();
         }
     });
-
 
     profileMenu.addEventListener("click", function (event) {
         event.stopPropagation();
     });
 
-
     document.addEventListener("click", function (event) {
-
         if (
             !profileBtn.contains(event.target) &&
             !profileMenu.contains(event.target)
         ) {
-
-            profileMenu.classList.remove("profile-open");
-
-            profileMenu.style.display = "none";
-
-            profileBtn.setAttribute(
-                "aria-expanded",
-                "false"
-            );
+            closeProfileMenu();
         }
     });
-
 
     document.addEventListener("keydown", function (event) {
-
         if (event.key === "Escape") {
-
-            profileMenu.classList.remove("profile-open");
-
-            profileMenu.style.display = "none";
-
-            profileBtn.setAttribute(
-                "aria-expanded",
-                "false"
-            );
+            closeProfileMenu();
         }
     });
-
 });
 
 
@@ -131,179 +103,64 @@ document.addEventListener("DOMContentLoaded", function () {
    ========================================================= */
 
 document.addEventListener('DOMContentLoaded', function () {
+    const logoutBtn = document.getElementById('logoutBtn');
+    const logoutModal = document.getElementById('logoutModal');
+    const logoutModalOverlay = document.getElementById('logoutModalOverlay');
+    const cancelLogout = document.getElementById('cancelLogout');
+    const confirmLogout = document.getElementById('confirmLogout');
 
-    const logoutBtn =
-        document.getElementById('logoutBtn');
-
-    const logoutModal =
-        document.getElementById('logoutModal');
-
-    const logoutModalOverlay =
-        document.getElementById('logoutModalOverlay');
-
-    const cancelLogout =
-        document.getElementById('cancelLogout');
-
-    const confirmLogout =
-        document.getElementById('confirmLogout');
-
-
-    if (
-        !logoutBtn ||
-        !logoutModal ||
-        !cancelLogout ||
-        !confirmLogout
-    ) {
-        console.warn('Logout modal elements not found.');
+    if (!logoutBtn || !logoutModal || !cancelLogout || !confirmLogout) {
+        console.warn('Logout modal elements are missing.', {
+            logoutBtn: !!logoutBtn,
+            logoutModal: !!logoutModal,
+            cancelLogout: !!cancelLogout,
+            confirmLogout: !!confirmLogout
+        });
         return;
     }
 
-
-    /* ==========================================
-       OPEN MODAL
-       ========================================== */
-
-    logoutBtn.addEventListener('click', function (event) {
-
-        event.preventDefault();
-        event.stopPropagation();
+    function openLogoutModal(event) {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
 
         logoutModal.classList.add('show');
-
-        logoutModal.setAttribute(
-            'aria-hidden',
-            'false'
-        );
-
-        document.body.classList.add(
-            'logout-modal-open'
-        );
-
-    });
-
-
-    /* ==========================================
-       CLOSE MODAL
-       ========================================== */
+        logoutModal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('logout-modal-open');
+    }
 
     function closeLogoutModal() {
-
         logoutModal.classList.remove('show');
-
-        logoutModal.setAttribute(
-            'aria-hidden',
-            'true'
-        );
-
-        document.body.classList.remove(
-            'logout-modal-open'
-        );
-
+        logoutModal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('logout-modal-open');
     }
 
+    logoutBtn.addEventListener('click', openLogoutModal);
 
-    /* ==========================================
-       CANCEL BUTTON
-       ========================================== */
-
-    cancelLogout.addEventListener('click', function () {
-
-        closeLogoutModal();
-
-    });
-
-
-    /* ==========================================
-       CLICK OVERLAY
-       ========================================== */
+    cancelLogout.addEventListener('click', closeLogoutModal);
 
     if (logoutModalOverlay) {
-
-        logoutModalOverlay.addEventListener(
-            'click',
-            function () {
-
-                closeLogoutModal();
-
-            }
-        );
-
+        logoutModalOverlay.addEventListener('click', closeLogoutModal);
     }
 
+    confirmLogout.addEventListener('click', function () {
+        const form = document.getElementById('logoutForm');
 
-    /* ==========================================
-       CONFIRM LOGOUT
-       ========================================== */
-
-    confirmLogout.addEventListener(
-        'click',
-        function () {
-
-            const form =
-                document.createElement('form');
-
-            form.method = 'POST';
-
-            form.action = '/logout';
-
-
-            const csrfToken =
-                document.querySelector(
-                    'meta[name="csrf-token"]'
-                );
-
-
-            if (csrfToken) {
-
-                const input =
-                    document.createElement('input');
-
-                input.type = 'hidden';
-
-                input.name = '_token';
-
-                input.value =
-                    csrfToken.getAttribute('content');
-
-                form.appendChild(input);
-
-            } else {
-
-                console.error(
-                    'CSRF token not found.'
-                );
-
-                return;
-            }
-
-
-            document.body.appendChild(form);
-
-            form.submit();
-
+        if (!form) {
+            console.error('Logout form not found.');
+            return;
         }
-    );
 
+        form.submit();
+    });
 
-
-    document.addEventListener(
-        'keydown',
-        function (event) {
-
-            if (
-                event.key === 'Escape' &&
-                logoutModal.classList.contains('show')
-            ) {
-
-                closeLogoutModal();
-
-            }
-
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && logoutModal.classList.contains('show')) {
+            closeLogoutModal();
         }
-    );
-
+    });
 });
-
 
 /* ========================================================
    MOBILE SIDEBAR / BURGER MENU
@@ -567,12 +424,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function closeNotificationDetails() {
         if (!notificationModal) return;
+
+        notificationModal.classList.remove("show");
         notificationModal.classList.add("hidden");
         notificationModal.setAttribute("aria-hidden", "true");
     }
 
     function openNotificationDetails(item) {
-        if (!notificationModal) return;
+        if (!notificationModal || !item) return;
 
         const title = item.dataset.notificationTitle || "Notification";
         const message = item.dataset.notificationMessage || "No message available.";
@@ -583,10 +442,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (notificationModalTime) notificationModalTime.textContent = time;
 
         notificationModal.classList.remove("hidden");
+        notificationModal.classList.add("show");
         notificationModal.setAttribute("aria-hidden", "false");
 
-        // Keep the visual state consistent immediately. Server persistence should
-        // be handled by the backend endpoint when one is provided.
         if (item.dataset.notificationStatus === "unread") {
             item.dataset.notificationStatus = "read";
             item.classList.remove("is-unread");
@@ -1189,3 +1047,89 @@ document.addEventListener(
 
     }
 );
+
+/* =========================================================
+   CANCELLATION REQUEST MODAL — RESTORED
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+    const cancelModal = document.getElementById("cancelModal");
+    const cancelModalContent = document.getElementById("cancelModalContent");
+    const cancelAppointmentForm = document.getElementById("cancelAppointmentForm");
+    const closeCancelModal = document.getElementById("closeCancelModal");
+    const keepAppointmentButton = document.getElementById("cancelModalKeepButton");
+
+    if (!cancelModal || !cancelModalContent || !cancelAppointmentForm) {
+        console.error("Cancellation modal is missing a required element.");
+        return;
+    }
+
+    function openCancelModal(actionUrl) {
+        if (!actionUrl) {
+            console.error("Cannot open cancellation modal: appointment URL is missing.");
+            return;
+        }
+
+        cancelAppointmentForm.action = actionUrl;
+        cancelModal.classList.remove("hidden");
+        cancelModal.classList.add("flex");
+        cancelModal.setAttribute("aria-hidden", "false");
+
+        requestAnimationFrame(function () {
+            cancelModalContent.classList.remove("scale-95", "opacity-0");
+            cancelModalContent.classList.add("scale-100", "opacity-100");
+        });
+    }
+
+    function closeCancelAppointmentModal() {
+        cancelModalContent.classList.remove("scale-100", "opacity-100");
+        cancelModalContent.classList.add("scale-95", "opacity-0");
+        cancelModal.setAttribute("aria-hidden", "true");
+
+        setTimeout(function () {
+            cancelModal.classList.remove("flex");
+            cancelModal.classList.add("hidden");
+        }, 200);
+    }
+
+    document.addEventListener("click", function (event) {
+        const button = event.target.closest(".open-cancel-modal");
+        if (!button) return;
+
+        event.preventDefault();
+
+        const appointmentForm = button.closest(".cancel-appointment-form");
+        if (!appointmentForm) {
+            console.error("Cancellation button has no appointment form.");
+            return;
+        }
+
+        openCancelModal(appointmentForm.action);
+    });
+
+    if (closeCancelModal) {
+        closeCancelModal.addEventListener("click", function (event) {
+            event.preventDefault();
+            closeCancelAppointmentModal();
+        });
+    }
+
+    if (keepAppointmentButton) {
+        keepAppointmentButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            closeCancelAppointmentModal();
+        });
+    }
+
+    cancelModal.addEventListener("click", function (event) {
+        if (event.target === cancelModal) {
+            closeCancelAppointmentModal();
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && !cancelModal.classList.contains("hidden")) {
+            closeCancelAppointmentModal();
+        }
+    });
+});

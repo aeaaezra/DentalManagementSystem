@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const state = {
         patientId: "",
+        chartLoaded: false,
         selectedTooth: null,
         condition: "healthy",
         notes: "",
@@ -93,12 +94,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeToothConditionModal =
         $("#closeToothConditionModal");
 
-    const cancelToothCondition =
-        $("#cancelToothCondition");
-
-    const confirmToothCondition =
-        $("#confirmToothCondition");
-
     const toothConfirmedModal =
         $("#toothConfirmedModal");
 
@@ -110,9 +105,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const closeToothConfirmedModal =
         $("#closeToothConfirmedModal");
-
-    const conditionInputs =
-        $$('input[name="tooth_condition"]');
 
     const applyToothButton =
         $("#applyToothButton");
@@ -401,15 +393,18 @@ document.addEventListener("DOMContentLoaded", () => {
         const enabled =
             hasPatient();
 
+        const chartReady =
+            enabled && state.chartLoaded;
+
         teeth.forEach(tooth => {
             tooth.classList.toggle(
                 "disabled-tooth",
-                !enabled
+                !chartReady
             );
 
             tooth.setAttribute(
                 "aria-disabled",
-                enabled
+                chartReady
                     ? "false"
                     : "true"
             );
@@ -417,27 +412,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
         conditionButtons.forEach(button => {
             button.disabled =
-                !enabled;
+                !chartReady;
         });
 
         if (applyToothButton) {
             applyToothButton.disabled =
-                !enabled;
+                !chartReady;
         }
 
         if (clearToothButton) {
             clearToothButton.disabled =
-                !enabled;
+                !chartReady;
         }
 
         if (saveChartButton) {
             saveChartButton.disabled =
-                !enabled;
+                !chartReady;
         }
 
         if (clearHistoryButton) {
             clearHistoryButton.disabled =
-                !enabled;
+                !chartReady;
         }
     }
 
@@ -733,6 +728,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function loadPatientChart(id) {
+        state.chartLoaded = false;
+        updateOdontogramAvailability();
+
         if (!id) {
             resetChartState();
             return;
@@ -856,7 +854,13 @@ document.addEventListener("DOMContentLoaded", () => {
             updateSelectedToothPanel();
             updateHistory();
 
+            state.chartLoaded = true;
+            updateOdontogramAvailability();
+
         } catch (error) {
+            state.chartLoaded = false;
+            updateOdontogramAvailability();
+
             console.error(
                 "Unable to load patient chart:",
                 error
@@ -879,35 +883,19 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        state.selectedTooth =
-            String(toothNumber);
+        state.selectedTooth = String(toothNumber);
 
         const record =
-            state.data[
-                state.selectedTooth
-            ];
+            state.data[state.selectedTooth] || {};
 
-        const currentCondition =
-            record?.condition ||
-            "healthy";
-
-        conditionInputs.forEach(
-            input => {
-                input.checked =
-                    input.value ===
-                    currentCondition;
-            }
-        );
+        state.condition = record.condition || "healthy";
+        state.notes = record.remarks || "";
 
         updateSelectedToothPanel();
 
-        if (!toothConditionModal) {
-            return;
+        if (toothConditionModal) {
+            openModal(toothConditionModal);
         }
-
-        openModal(
-            toothConditionModal
-        );
     }
 
     function closeToothConditionModalFunction() {
@@ -920,30 +908,59 @@ document.addEventListener("DOMContentLoaded", () => {
         toothNumber,
         condition
     ) {
-        const message =
-            `Tooth ${toothNumber} has been updated to ${
-                conditionNames[
-                    condition
-                ] ||
-                condition
-            }.`;
+        const modal = document.querySelector("#toothConditionModal");
+        const content = modal?.querySelector(
+            ".tooth-condition-modal-content"
+        );
+        const selected = content?.querySelector(
+            ".selected-tooth-text"
+        );
 
-        if (!toothConfirmedModal) {
-            openSuccessModal(
-                message
+        if (!content || !selected) {
+            console.error(
+                "Cannot display confirmation inside the tooth modal."
             );
-
             return;
         }
 
-        if (toothConfirmedMessage) {
-            toothConfirmedMessage.textContent =
-                message;
-        }
+        content.querySelector(
+            ".tooth-modal-success-message"
+        )?.remove();
 
-        openModal(
-            toothConfirmedModal
-        );
+        const notice = document.createElement("div");
+        notice.className = "tooth-modal-success-message";
+        notice.setAttribute("role", "status");
+        notice.textContent = "Condition applied successfully!";
+
+        Object.assign(notice.style, {
+            display: "block",
+            position: "relative",
+            zIndex: "3",
+            boxSizing: "border-box",
+            width: "auto",
+            margin: "12px 24px",
+            padding: "12px",
+            background: "#f0fdf4",
+            color: "#166534",
+            border: "1px solid #86efac",
+            borderRadius: "8px",
+            textAlign: "center",
+            fontSize: "13px",
+            fontWeight: "600"
+        });
+
+        selected.insertAdjacentElement("afterend", notice);
+
+        console.log("[Odontogram modal diagnostic]", {
+            modalFound: !!document.querySelector("#toothConditionModal"),
+            modalVisible: !!modal && !modal.classList.contains("hidden"),
+            noticeInsideModal: modal?.contains(notice) ?? false,
+            noticeParent: notice.parentElement?.className ?? null
+        });
+
+        window.setTimeout(() => {
+            notice.remove();
+        }, 3000);
     }
 
     function closeToothConfirmedModalFunction() {
@@ -987,7 +1004,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     }
 
-    function clearSelectedTooth() {
+    async function clearSelectedTooth() {
         if (!requirePatient()) {
             return;
         }
@@ -1001,41 +1018,67 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const toothNumber =
-            state.selectedTooth;
-
-        delete state.data[
-            toothNumber
-        ];
-
-        const tooth =
-            $(
-                `.tooth[data-tooth="${CSS.escape(
-                    String(toothNumber)
-                )}"]`
+        if (!config.clearUrl) {
+            toast(
+                "Clear URL is not configured.",
+                "error"
             );
 
-        clearToothVisual(
-            tooth
-        );
+            return;
+        }
 
-        state.selectedTooth =
-            null;
+        const toothNumber = String(state.selectedTooth);
 
-        state.condition =
-            "healthy";
+        if (confirmClearTooth) {
+            confirmClearTooth.disabled = true;
+        }
 
-        state.notes =
-            "";
+        try {
+            const result = await request(
+                config.clearUrl,
+                {
+                    method: "POST",
+                    body: JSON.stringify({
+                        patient_id: state.patientId,
+                        tooth_number: toothNumber
+                    })
+                }
+            );
 
-        updateSelectedToothPanel();
-        updateSummary();
+            delete state.data[toothNumber];
 
-        closeClearToothModal();
+            const tooth = $(
+                `.tooth[data-tooth="${CSS.escape(toothNumber)}"]`
+            );
 
-        openSuccessModal(
-            `Tooth ${toothNumber} has been cleared successfully.`
-        );
+            clearToothVisual(tooth);
+
+            state.selectedTooth = null;
+            state.condition = "healthy";
+            state.notes = "";
+
+            updateSelectedToothPanel();
+            updateSummary();
+
+            closeClearToothModal();
+
+            openSuccessModal(
+                result.message ||
+                `Tooth ${toothNumber} has been cleared successfully.`
+            );
+        } catch (error) {
+            console.error("Clear tooth error:", error);
+
+            toast(
+                error.message ||
+                `Unable to clear Tooth ${toothNumber}.`,
+                "error"
+            );
+        } finally {
+            if (confirmClearTooth) {
+                confirmClearTooth.disabled = false;
+            }
+        }
     }
 
     function openSaveChartModal() {
@@ -1146,12 +1189,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         } finally {
             if (saveChartButton) {
-                saveChartButton.disabled =
-                    false;
-
                 saveChartButton.textContent =
                     originalText;
             }
+
+            updateOdontogramAvailability();
         }
     }
 
@@ -1325,6 +1367,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 state.patientId =
                     event.target.value;
 
+                state.chartLoaded = false;
+
                 const option =
                     event.target
                         .selectedOptions[0];
@@ -1422,98 +1466,8 @@ conditionButtons.forEach(button => {
     );
 });
 
-    if (confirmToothCondition) {
-        confirmToothCondition.addEventListener(
-            "click",
-            () => {
-                if (!requirePatient()) {
-                    return;
-                }
-
-                if (!state.selectedTooth) {
-                    toast(
-                        "Please select a tooth first.",
-                        "error"
-                    );
-
-                    return;
-                }
-
-                const selectedInput =
-                    $(
-                        'input[name="tooth_condition"]:checked'
-                    );
-
-                if (!selectedInput) {
-                    toast(
-                        "Please select a tooth condition.",
-                        "error"
-                    );
-
-                    return;
-                }
-
-                const toothNumber =
-                    state.selectedTooth;
-
-                const condition =
-                    selectedInput.value ||
-                    "healthy";
-
-                const existingRecord =
-                    state.data[
-                        toothNumber
-                    ] || {};
-
-                const remarks =
-                    existingRecord.remarks ||
-                    "";
-
-                state.data[
-                    toothNumber
-                ] = {
-                    condition:
-                        condition,
-
-                    remarks:
-                        remarks
-                };
-
-                state.condition =
-                    condition;
-
-                paintTooth(
-                    toothNumber,
-                    condition
-                );
-
-                addHistory(
-                    toothNumber,
-                    condition,
-                    remarks
-                );
-
-                updateSelectedToothPanel();
-
-                closeToothConditionModalFunction();
-
-                showToothConfirmedModal(
-                    toothNumber,
-                    condition
-                );
-            }
-        );
-    }
-
     if (closeToothConditionModal) {
         closeToothConditionModal.addEventListener(
-            "click",
-            closeToothConditionModalFunction
-        );
-    }
-
-    if (cancelToothCondition) {
-        cancelToothCondition.addEventListener(
             "click",
             closeToothConditionModalFunction
         );
@@ -1781,6 +1735,8 @@ conditionButtons.forEach(button => {
     ) {
         state.patientId =
             initialOption.value;
+
+        state.chartLoaded = false;
 
         updatePatientInformation(
             initialOption

@@ -11,6 +11,7 @@ class PosSaleItems extends Model
     protected $fillable = [
         'pos_sale_id',
         'product_id',
+        'variant_id',
         'quantity',
         'price',
         'subtotal',
@@ -25,6 +26,12 @@ class PosSaleItems extends Model
     public function sale()
     {
         return $this->belongsTo(PosSales::class, 'pos_sale_id');
+    }
+
+
+    public function variant()
+    {
+        return $this->belongsTo(ProductVariant::class, 'variant_id');
     }
 
     public function product()

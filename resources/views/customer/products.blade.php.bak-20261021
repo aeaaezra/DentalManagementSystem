@@ -1,0 +1,579 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PinkCart | Dental & Health Products</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --pink: #ec3189;
+            --pink-dark: #d91d73;
+            --pink-light: #fff0f7;
+            --pink-bg: #fff8fb;
+            --text: #26202a;
+            --muted: #817783;
+            --border: #f0e4eb;
+            --white: #fff;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: var(--pink-bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+        }
+
+        a { color: inherit; text-decoration: none; }
+
+        .promo {
+            background: linear-gradient(90deg, #ed2584, #fa579e);
+            color: white;
+            padding: 10px 5%;
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .header {
+            background: white;
+            padding: 18px 5%;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand {
+            min-width: 215px;
+            font-size: 27px;
+            font-weight: 800;
+            color: var(--pink);
+            letter-spacing: -1px;
+        }
+
+        .brand small {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 400;
+            letter-spacing: 0;
+        }
+
+        .search {
+            display: flex;
+            flex: 1;
+            height: 46px;
+            border: 2px solid var(--pink);
+            border-radius: 9px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .search input {
+            flex: 1;
+            min-width: 0;
+            border: 0;
+            padding: 0 16px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .search button {
+            background: var(--pink);
+            color: white;
+            border: 0;
+            width: 58px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .header-link {
+            color: var(--pink);
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            flex-wrap: wrap;
+            padding: 15px 4%;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .nav a:hover { color: var(--pink); }
+
+        .container {
+            width: min(1440px, 94%);
+            margin: 22px auto 50px;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 0.85fr;
+            align-items: center;
+            min-height: 310px;
+            overflow: hidden;
+            border-radius: 22px;
+            padding: 38px 5%;
+            background: linear-gradient(115deg, #fff0f7, #ffc4df);
+        }
+
+        .eyebrow {
+            color: var(--pink);
+            font-size: 11px;
+            letter-spacing: 2px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            font-size: clamp(35px, 4vw, 58px);
+            line-height: 1.04;
+            letter-spacing: -2px;
+            margin: 18px 0 12px;
+        }
+
+        .hero h1 span { color: var(--pink); }
+
+        .hero p {
+            max-width: 460px;
+            line-height: 1.8;
+            color: #756674;
+            font-size: 14px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--pink);
+            color: white;
+            padding: 14px 25px;
+            border-radius: 10px;
+            border: 0;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .btn:hover {
+            background: var(--pink-dark);
+            transform: translateY(-2px);
+        }
+
+        .hero-image {
+            width: 100%;
+            max-height: 275px;
+            object-fit: contain;
+            mix-blend-mode: multiply;
+        }
+
+        .benefits {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 16px 0 28px;
+        }
+
+        .benefit {
+            padding: 19px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 13px;
+        }
+
+        .benefit strong {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .benefit span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .section { margin: 28px 0; }
+
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .section-heading h2 {
+            font-size: 22px;
+            margin: 0;
+            letter-spacing: -.6px;
+        }
+
+        .section-heading a {
+            color: var(--pink);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+
+        .category {
+            background: white;
+            padding: 12px 8px;
+            text-align: center;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            transition: .2s;
+        }
+
+        .category:hover {
+            border-color: var(--pink);
+            transform: translateY(-3px);
+        }
+
+        .category img {
+            width: 100%;
+            height: 90px;
+            object-fit: contain;
+        }
+
+        .category strong {
+            display: block;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .category span {
+            display: block;
+            color: var(--pink);
+            font-size: 11px;
+            margin-top: 6px;
+        }
+
+        .deals {
+            background: linear-gradient(120deg, #ffe8f3, #fff4f9);
+            border-radius: 18px;
+            padding: 22px;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .product {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            padding: 12px;
+            min-width: 0;
+            transition: .2s;
+        }
+
+        .product:hover {
+            box-shadow: 0 8px 24px #d9287914;
+            transform: translateY(-3px);
+        }
+
+        .product img {
+            width: 100%;
+            height: 150px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: #fffafd;
+        }
+
+        .product h3 {
+            font-size: 12px;
+            line-height: 1.5;
+            min-height: 36px;
+            margin: 10px 0;
+        }
+
+        .price {
+            color: var(--pink);
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .old-price {
+            color: #999;
+            font-size: 11px;
+            text-decoration: line-through;
+            margin-left: 6px;
+        }
+
+        .rating {
+            color: #f3a51c;
+            font-size: 12px;
+            margin: 8px 0;
+        }
+
+        .rating span {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .product .btn {
+            width: 100%;
+            padding: 11px 5px;
+            margin-top: 5px;
+        }
+
+        .footer {
+            padding: 35px 5%;
+            text-align: center;
+            color: var(--muted);
+            background: white;
+            border-top: 1px solid var(--border);
+            font-size: 12px;
+        }
+
+        @media (max-width: 1000px) {
+            .header { flex-wrap: wrap; gap: 15px; }
+            .brand { min-width: 150px; }
+            .search { order: 3; flex-basis: 100%; }
+            .categories { grid-template-columns: repeat(3, 1fr); }
+            .products { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .hero { grid-template-columns: 1fr 0.7fr; }
+            .benefits { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 600px) {
+            .promo { justify-content: center; text-align: center; }
+            .header { padding: 15px 4%; }
+            .brand { font-size: 23px; }
+            .nav { gap: 18px; justify-content: flex-start; }
+            .container { width: 94%; margin-top: 14px; }
+            .hero { grid-template-columns: 1fr; padding: 28px 23px; }
+            .hero h1 { font-size: 38px; }
+            .hero-image { max-height: 180px; margin-top: 15px; }
+            .benefits { grid-template-columns: repeat(2, 1fr); }
+            .benefit { padding: 12px; }
+            .categories { grid-template-columns: repeat(2, 1fr); }
+            .products { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .product img { height: 120px; }
+            .deals { padding: 12px; }
+            .section-heading h2 { font-size: 18px; }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="promo">
+    <span>🚚 Free Shipping on orders ₱799 and up</span>
+    <span>💗 10% OFF selected dental products</span>
+    <span>📍 Deliver to: General Santos City</span>
+</div>
+
+<header class="header">
+    <a class="brand" href="{{ url('/') }}">
+        ♡ PinkCart
+        <small>Dental &amp; Health Products</small>
+    </a>
+
+    <form class="search" action="{{ route('customer.products') }}" method="GET">
+        <input type="search" name="search"
+               value="{{ request('search') }}"
+               placeholder="Search dental products, oral care, and more...">
+        <button type="submit" aria-label="Search">⌕</button>
+    </form>
+
+<a class="header-link" href="{{ route('customer.cart') }}">🛒 Cart</a>
+    @auth
+        <a class="header-link" href="{{ url('/profile') }}">
+            {{ auth()->user()->name }}
+        </a>
+    @else
+        <a class="header-link" href="{{ route('customer.login') }}">Sign In</a>
+    @endauth
+</header>
+
+<nav class="nav">
+    <a href="{{ url('/') }}">⌂ Home</a>
+    <a href="{{ route('customer.products') }}">Toothbrushes</a>
+    <a href="{{ route('customer.products') }}">Toothpaste</a>
+    <a href="{{ route('customer.products') }}">Mouthwash</a>
+    <a href="{{ route('customer.products') }}">Dental Floss</a>
+    <a href="{{ route('customer.products') }}">Whitening</a>
+    <a href="{{ route('customer.products') }}">Oral Care Kits</a>
+    <a href="{{ route('customer.products') }}">All Products</a>
+</nav>
+
+<main class="container">
+
+    <section class="hero">
+        <div>
+            <div class="eyebrow">Premium Dental Care Products</div>
+            <h1>Your Smile,<br><span>Our Priority.</span></h1>
+            <p>
+                Discover quality dental essentials and everyday oral-care
+                products—all in one place.
+            </p>
+            <a class="btn" href="{{ route('customer.products') }}">
+                Shop Now &nbsp; →
+            </a>
+        </div>
+
+        <img class="hero-image"
+             src="https://images.unsplash.com/photo-1609840114035-3c981b782dfe?auto=format&fit=crop&w=900&q=85"
+             alt="Dental care products">
+    </section>
+
+    <section class="benefits">
+        <div class="benefit">
+            <strong>🚚 Free Delivery</strong>
+            <span>On qualifying orders</span>
+        </div>
+        <div class="benefit">
+            <strong>🔒 Secure Shopping</strong>
+            <span>Shop with confidence</span>
+        </div>
+        <div class="benefit">
+            <strong>🏷️ Great Deals</strong>
+            <span>Offers on selected products</span>
+        </div>
+        <div class="benefit">
+            <strong>💬 Customer Support</strong>
+            <span>We're here to help</span>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-heading">
+            <h2>Shop by Category</h2>
+            <a href="{{ route('customer.products') }}">View All →</a>
+        </div>
+
+<div class="categories">
+    @forelse ($categories as $category)
+        <a class="category"
+           href="{{ route('customer.products', ['category' => $category]) }}">
+            <div style="font-size:42px;padding:14px 0">
+                🦷
+            </div>
+
+            <strong>{{ $category }}</strong>
+            <span>Shop Now →</span>
+        </a>
+    @empty
+        <p>No product categories available yet.</p>
+    @endforelse
+</div>
+
+    </section>
+
+    <section class="section deals">
+        <div class="section-heading">
+            <h2>💗 Flash Deals</h2>
+            <a href="{{ route('customer.products') }}">View All Deals →</a>
+        </div>
+
+
+<div class="products">
+    @forelse ($products as $product)
+        <article class="product">
+            <div style="text-align:right">
+                @if ((int) $product->quantity <= 0)
+                    <span style="background:#eee;color:#666;padding:5px 8px;border-radius:5px;font-size:11px">
+                        Out of stock
+                    </span>
+                @else
+                    <span style="background:#ffe0ef;color:#df267c;padding:5px 8px;border-radius:5px;font-size:11px">
+                        In stock: {{ $product->quantity }}
+                    </span>
+                @endif
+            </div>
+
+            @if (!empty($product->image))
+                <img
+                    src="{{ asset('storage/' . ltrim($product->image, '/')) }}"
+                    alt="{{ $product->product_name }}"
+                    loading="lazy"
+                    onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+                >
+                <div style="display:none;height:150px;align-items:center;justify-content:center;font-size:55px;background:#fffafd">
+                    🦷
+                </div>
+            @else
+                <div style="height:150px;display:flex;align-items:center;justify-content:center;font-size:55px;background:#fffafd;border-radius:8px">
+                    🦷
+                </div>
+            @endif
+
+            <h3>{{ $product->product_name }}</h3>
+
+            @if (!empty($product->brand_name))
+                <p style="font-size:11px;color:var(--muted)">
+                    {{ $product->brand_name }}
+                </p>
+            @endif
+
+            <div class="price">
+                ₱{{ number_format((float) $product->selling_price, 2) }}
+            </div>
+
+            <div class="rating">
+                {{ $product->category ?: 'Dental & Health' }}
+            </div>
+
+            <a class="btn"
+               href="{{ route('customer.products', ['search' => $product->product_name]) }}">
+                View Product
+            </a>
+        </article>
+    @empty
+        <p style="grid-column:1/-1;text-align:center;padding:30px">
+            No active products found. Please check your inventory.
+        </p>
+    @endforelse
+</div>
+
+<div style="margin-top:24px">
+    {{ $products->links() }}
+</div>
+
+    </section>
+
+    <section class="section">
+        <div class="section-heading">
+            <h2>Recommended for You</h2>
+            <a href="{{ route('customer.products') }}">See All →</a>
+        </div>
+        <p style="color:var(--muted);font-size:13px">
+            Explore our complete catalog and find the right products for your needs.
+        </p>
+        <a class="btn" href="{{ route('customer.products') }}">Browse All Products →</a>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <strong style="color:var(--pink)">PinkCart</strong>
+    <p>Dental &amp; Health Products</p>
+    <p>© {{ date('Y') }} PinkCart. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

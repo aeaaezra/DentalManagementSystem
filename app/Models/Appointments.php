@@ -13,7 +13,10 @@ class Appointments extends Model
 
     protected $fillable = [
         'patient_record_id',
+        'patient_email',
         'service_id',
+        'service_category_id',
+        'service_procedure_id',
         'appointment_date',
         'appointment_time',
         'end_time',
@@ -36,6 +39,14 @@ class Appointments extends Model
         'checked_out_at',
         'cancellation_reason',
         'cancellation_details',
+        'reschedule_date',
+        'reschedule_time',
+        'reschedule_end_time',
+        'reschedule_reason',
+        'late_review_status',
+        'late_reviewed_at',
+        'late_reviewed_by',
+        'late_review_notes',
     ];
 
     protected $casts = [
@@ -43,6 +54,7 @@ class Appointments extends Model
         'checked_in_at' => 'datetime',
         'treatment_started_at' => 'datetime',
         'checked_out_at' => 'datetime',
+        'late_reviewed_at' => 'datetime',
         'paid_at' => 'datetime',
 
         'amount' => 'decimal:2',
@@ -75,6 +87,33 @@ class Appointments extends Model
             'id'
         );
     }
+
+    public function serviceCategory()
+    {
+        return $this->belongsTo(
+            ServiceCategory::class,
+            'service_category_id',
+            'id'
+        );
+    }
+
+    public function serviceProcedure()
+    {
+        return $this->belongsTo(
+            ServiceProcedure::class,
+            'service_procedure_id',
+            'id'
+        );
+    }
+    
+    public function appointmentProcedures()
+{
+    return $this->hasMany(
+        AppointmentProcedure::class,
+        'appointment_id',
+        'id'
+    );
+}
 
     public function feedback()
     {

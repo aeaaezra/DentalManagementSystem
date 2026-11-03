@@ -159,3 +159,136 @@ document.addEventListener(
 
     }
 );
+        if (editButton) {
+
+            editButton.addEventListener(
+                'click',
+                function (event) {
+
+                    const target =
+                        document.getElementById(
+                            'personalInformation'
+                        );
+
+                    if (target) {
+
+                        event.preventDefault();
+
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+
+                    }
+
+                }
+            );
+
+        }
+
+    }
+);
+
+        if (editButton) {
+
+            editButton.addEventListener(
+                'click',
+                function (event) {
+
+                    const target =
+                        document.getElementById(
+                            'personalInformation'
+                        );
+
+                    if (target) {
+
+                        event.preventDefault();
+
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+
+                    }
+
+                }
+            );
+
+        }
+
+        /* ========================================================
+           PROFILE TABS
+        ======================================================== */
+
+        const profileTabs =
+            document.querySelectorAll('[data-profile-tab]');
+
+        const profilePanels =
+            document.querySelectorAll('[data-profile-panel]');
+
+        function activateProfileTab(panelId) {
+
+            const targetPanel =
+                document.getElementById(panelId);
+
+            if (!targetPanel) {
+                return;
+            }
+
+            profileTabs.forEach(function (tab) {
+
+                const isActive =
+                    tab.dataset.profileTab === panelId;
+
+                tab.classList.toggle('active', isActive);
+
+                tab.setAttribute(
+                    'aria-selected',
+                    String(isActive)
+                );
+
+                tab.setAttribute(
+                    'tabindex',
+                    isActive ? '0' : '-1'
+                );
+
+            });
+
+            profilePanels.forEach(function (panel) {
+
+                panel.hidden = panel.id !== panelId;
+
+            });
+
+        }
+
+        profileTabs.forEach(function (tab) {
+
+            tab.addEventListener('click', function () {
+
+                activateProfileTab(
+                    tab.dataset.profileTab
+                );
+
+            });
+
+        });
+
+        const initialTab =
+            Array.from(profileTabs).find(function (tab) {
+
+                return tab.getAttribute('aria-selected') === 'true';
+
+            });
+
+        if (initialTab) {
+
+            activateProfileTab(
+                initialTab.dataset.profileTab
+            );
+
+        }
+
+    }
+);
+

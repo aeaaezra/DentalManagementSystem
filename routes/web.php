@@ -3,11 +3,13 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Auth\GoogleAuthController;
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 use Illuminate\Support\Facades\DB;
 
+use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\MessageController;
@@ -22,6 +24,10 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\OdontogramController;
 use App\Http\Controllers\TwoFactorController;
+use App\Http\Controllers\CUSTOOrderingController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\Auth\CustomerRegistrationController;
 
 use App\Http\Controllers\ReceptionistAppointmentController;
 use App\Http\Controllers\ReceptionistPatientController;
@@ -86,7 +92,8 @@ Route::middleware('guest')->group(function () {
     Route::post(
         '/admin-login',
         [AuthenticatedSessionController::class, 'store']
-    )->name('admin.login.store');
+    )->middleware('throttle:5,1')
+    ->name('admin.login.store');
 
 });
 
@@ -109,7 +116,8 @@ Route::middleware('guest')->group(function () {
     Route::post(
         '/appointments/login',
         [AuthenticatedSessionController::class, 'store']
-    )->name('appointments.login.store');
+    )->middleware('throttle:5,1')
+    ->name('appointments.login.store');
 
 });
 
@@ -119,6 +127,21 @@ Route::middleware('guest')->group(function () {
 | CUSTOMER LOGIN
 |--------------------------------------------------------------------------
 */
+
+Route::middleware('guest')->group(function () {
+    // Display the customer registration form
+    Route::get('/customer/register', [
+        CustomerRegistrationController::class,
+        'create'
+    ])->name('customer.register');
+
+    // Process customer registration
+    Route::post('/customer/register', [
+        CustomerRegistrationController::class,
+        'store'
+    ])->middleware('throttle:5,1')->name('customer.register.store');
+});
+
 
 Route::middleware('guest')->group(function () {
 
@@ -132,7 +155,8 @@ Route::middleware('guest')->group(function () {
     Route::post(
         '/customer/login',
         [AuthenticatedSessionController::class, 'store']
-    )->name('customer.login.store');
+    )->middleware('throttle:5,1')
+    ->name('customer.login.store');
 
 });
 
@@ -155,7 +179,8 @@ Route::middleware('guest')->group(function () {
     Route::post(
         '/dentist/login',
         [AuthenticatedSessionController::class, 'store']
-    )->name('dentist.login.store');
+    )->middleware('throttle:5,1')
+    ->name('dentist.login.store');
 
 });
 
@@ -183,7 +208,8 @@ Route::middleware('guest')->group(function () {
     Route::post(
         '/receptionist/login',
         [AuthenticatedSessionController::class, 'store']
-    )->name('receptionist.login.store');
+    )->middleware('throttle:5,1')
+    ->name('receptionist.login.store');
 
 });
 
@@ -193,6 +219,17 @@ Route::middleware('guest')->group(function () {
 | POS / CASHIER LOGIN
 |--------------------------------------------------------------------------
 */
+Route::middleware('guest')->group(function () {
+    Route::get('/auth/google/redirect', [
+        GoogleAuthController::class,
+        'redirect',
+    ])->name('auth.google.redirect');
+
+    Route::get('/auth/google/callback', [
+        GoogleAuthController::class,
+        'callback',
+    ])->name('auth.google.callback');
+});
 
 Route::middleware('guest')->group(function () {
 
@@ -206,7 +243,8 @@ Route::middleware('guest')->group(function () {
     Route::post(
         '/pos/login',
         [AuthenticatedSessionController::class, 'store']
-    )->name('pos.login.post');
+    )->middleware('throttle:5,1')
+    ->name('pos.login.post');
 
 });
 
@@ -272,7 +310,7 @@ Route::get('/notifications/data', function () {
         }
 
         if ($user->hasRole('customer')) {
-            return redirect()->route('customer.shop');
+            return redirect()->route('customer.products');
         }
 
         if ($user->hasRole('staff')) {
@@ -563,21 +601,6 @@ Route::get(
 
     /*
     |--------------------------------------------------------------------------
-    | AVAILABLE APPOINTMENT SLOTS
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get(
-        '/available-slots',
-        [
-            AppointmentBookingController::class,
-            'availableSlots'
-        ]
-    )->name('appointments.available-slots');
-
-
-    /*
-    |--------------------------------------------------------------------------
     | NOTIFICATIONS
     |--------------------------------------------------------------------------
     */
@@ -599,6 +622,69 @@ Route::get(
     )->name('notifications.mark-all-read');
 
 });
+
+/*
+|--------------------------------------------------------------------------
+| AVAILABLE APPOINTMENT SLOTS (PUBLIC)
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/available-slots',
+    [AppointmentBookingController::class, 'availableSlots']
+)->middleware('throttle:60,1')
+    ->name('appointments.available-slots');
+
+
+/*
+|--------------------------------------------------------------------------
+| GUEST APPOINTMENT BOOKING
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/guest-appointment-booking',
+    [AppointmentBookingController::class, 'guestCreate']
+)->name('appointments.guest.create');
+
+Route::post(
+    '/guest-appointment-booking',
+    [AppointmentBookingController::class, 'guestStore']
+)->middleware('throttle:5,1')
+    ->name('appointments.guest.store');
+
+Route::get(
+    '/guest-appointment-booking/thank-you/{appointment}',
+    [AppointmentBookingController::class, 'guestThankYou']
+
+)->name('appointments.guest.thankyou');
+
+// Guest cancellation links are temporary signed URLs.
+// GET displays the form; POST submits the request.
+Route::get(
+    '/guest-appointment-cancellation/{appointment}',
+    [AppointmentBookingController::class, 'guestCancellationForm']
+)->middleware('signed')->name('appointments.guest.cancel.form');
+
+Route::post(
+    '/guest-appointment-reschedule-slots/{appointment}',
+    [AppointmentBookingController::class, 'guestRescheduleSlots']
+)->middleware(['signed', 'throttle:60,1'])
+    ->name('appointments.guest.reschedule-slots');
+
+// Guest rescheduling requests use a separate signed POST endpoint.
+Route::post(
+    '/guest-appointment-reschedule/{appointment}',
+    [AppointmentBookingController::class, 'submitGuestReschedule']
+)->middleware(['signed', 'throttle:5,1'])
+    ->name('appointments.guest.reschedule.submit');
+
+
+Route::post(
+    '/guest-appointment-cancellation/{appointment}',
+    [AppointmentBookingController::class, 'submitGuestCancellation']
+)->middleware(['signed', 'throttle:5,1'])->name('appointments.guest.cancel.submit');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -680,6 +766,14 @@ Route::middleware([
             'show'
         ]
     )->name('patient-records.show');
+
+    Route::post(
+        '/patient-records/{patient}/treatments',
+        [
+            DentistPatientRecordController::class,
+            'storeTreatment'
+        ]
+    )->name('patient-records.treatments.store');
 
 Route::get(
     '/odontogram',
@@ -851,6 +945,14 @@ Route::middleware([
     )->name('dashboard');
 
     Route::post(
+        '/appointments/{appointment}/late-review',
+        [
+            ReceptionistAppointmentController::class,
+            'reviewLateAppointment'
+        ]
+    )->name('appointments.late-review');
+
+    Route::post(
         '/appointments/{appointment}/check-in',
         [
             ReceptionistAppointmentController::class,
@@ -898,13 +1000,6 @@ Route::middleware([
         ]
     )->name('patients.store');
 
-    Route::put(
-        '/patients/{patient}',
-        [
-            ReceptionistPatientController::class,
-            'update'
-        ]
-    )->name('patients.update');
 
 
     /*
@@ -1045,14 +1140,10 @@ Route::get(
         )->middleware(['auth', 'role:cashier'])
          ->name('products');
 
-Route::get(
-    '/sales-history',
-    [
-        POSController::class,
-        'salesHistory'
-    ]
-)->middleware(['auth', 'role:cashier'])
- ->name('sales-history');
+Route::get('/sales-history', [POSController::class, 'salesHistory'])
+    ->middleware(['auth', 'role:cashier'])
+    ->name('sales-history');
+
 
         Route::post(
             '/checkout',
@@ -1062,6 +1153,8 @@ Route::get(
             ]
         )->middleware(['auth', 'role:cashier'])
          ->name('checkout');
+
+
 Route::post(
     '/discount/validate',
     [
@@ -1080,11 +1173,47 @@ Route::post(
         )->middleware(['auth', 'role:cashier'])
          ->name('discount.validate');
 
-        Route::view(
-            '/profile',
-            'pos.profile'
+        Route::get('/reports', [POSController::class, 'reports'])
+            ->middleware(['auth', 'role:cashier'])
+            ->name('reports');
+
+Route::put(
+    '/settings/pos',
+    [\App\Http\Controllers\POSSettingsController::class, 'updatePos']
+)->middleware(['auth', 'role:cashier'])
+ ->name('settings.pos.update');
+
+Route::put(
+    '/settings/appearance',
+    [\App\Http\Controllers\POSSettingsController::class, 'updateAppearance']
+)->middleware(['auth', 'role:cashier'])
+ ->name('settings.appearance.update');
+
+Route::put(
+    '/settings/profile',
+    [\App\Http\Controllers\POSProfileController::class, 'update']
+)->middleware(['auth', 'role:cashier'])
+ ->name('settings.profile.update');
+
+Route::view(
+    '/settings',
+    'pos.settings'
+)->middleware(['auth', 'role:cashier'])
+ ->name('settings');
+
+        Route::post(
+            '/settings/profile-photo',
+            [\App\Http\Controllers\POSProfilePhotoController::class, 'upload']
         )->middleware(['auth', 'role:cashier'])
-         ->name('profile');
+         ->name('settings.profile-photo.upload');
+
+        Route::delete(
+            '/settings/profile-photo',
+            [\App\Http\Controllers\POSProfilePhotoController::class, 'remove']
+        )->middleware(['auth', 'role:cashier'])
+         ->name('settings.profile-photo.remove');
+
+
 
         Route::view(
             '/settings',
@@ -1093,29 +1222,39 @@ Route::post(
          ->name('settings');
     });
 
+
+// Main ordering landing page
+Route::get('/ordering', function (\Illuminate\Http\Request $request) {
+    $query = \App\Models\Products::query()
+        ->where('is_active', true);
+
+    // Optional category filter
+    if ($request->filled('category')) {
+        $query->where('category', $request->query('category'));
+    }
+
+    // Fetch active products from the existing database
+    $products = $query
+        ->orderBy('product_name')
+        ->get();
+
+    // Build category cards from actual product categories
+    $categories = \App\Models\Products::query()
+        ->where('is_active', true)
+        ->whereNotNull('category')
+        ->where('category', '<>', '')
+        ->select('category')
+        ->distinct()
+        ->orderBy('category')
+        ->pluck('category');
+
+    return view('customer.landing', compact('products', 'categories'));
+})->name('ordering');
+// Keep the existing welcome URL working
 Route::get('/ordering/welcome', function () {
-    return view('customer.welcome');
+    return redirect()->route('ordering');
 })->name('customer.welcome');
-/*
-|--------------------------------------------------------------------------
-| Customer Authentication
-|--------------------------------------------------------------------------
-*/
 
-Route::middleware('guest')->group(function () {
-
-    // Customer Login Page
-    Route::get('/customer/login', function () {
-        return view('auth.customer-login');
-    })->name('customer.login');
-
-    // Customer Login
-    Route::post('/customer/login', [
-        AuthenticatedSessionController::class,
-        'store'
-    ])->name('customer.login.store');
-
-});
 
 
 /*
@@ -1139,17 +1278,48 @@ Route::middleware([
         'products'
     ])->name('products');
 
+
+    // Individual product details page
+    Route::get('/products/{product}', [
+        CustomerOrderController::class,
+        'productDetails'
+    ])->whereNumber('product')->name('products.show');
+
+    // Submit a review for a delivered product
+    Route::post('/products/{product}/reviews', [
+        \App\Http\Controllers\ProductReviewController::class,
+        'store'
+    ])->whereNumber('product')->name('products.reviews.store');
+
     // Cart
     Route::get('/cart', [
         CustomerOrderController::class,
         'cart'
     ])->name('cart');
 
+    // Order thank-you confirmation
+    Route::get('/orders/{order}/thank-you', [
+        CustomerOrderController::class,
+        'thankYou'
+    ])->whereNumber('order')->name('orders.thank-you');
+
+    // Request cancellation for an eligible order
+    Route::post('/orders/{order}/cancellation-request', [
+        CustomerOrderController::class,
+        'requestCancellation'
+    ])->whereNumber('order')->name('orders.cancellation-request');
+
     // Orders
     Route::get('/orders', [
         CustomerOrderController::class,
         'orders'
     ])->name('orders');
+
+    // Submit customer order
+    Route::post('/orders', [
+        CustomerOrderController::class,
+        'store'
+    ])->name('orders.store');
 
     // Checkout
     Route::get('/checkout', [
@@ -1168,7 +1338,10 @@ Route::middleware([
         CustomerOrderController::class,
         'profile'
     ])->name('profile');
-
+Route::put('/profile', [
+    CustomerOrderController::class,
+    'updateProfile'
+])->name('profile.update');
 });
 
 /*
@@ -1355,7 +1528,8 @@ Route::post(
         TwoFactorController::class,
         'verifyLogin'
     ]
-)->name('2fa.login.verify');
+)->middleware('throttle:5,1')
+    ->name('2fa.login.verify');
 
 
 Route::middleware('auth')->group(function () {

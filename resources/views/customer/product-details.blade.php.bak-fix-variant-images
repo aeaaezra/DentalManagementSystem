@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ $product->product_name }} | Shine & Smile</title>
+    <style>
+        :root { --pink:#df267c; --pale:#fff0f6; --border:#f0d5e2; --text:#30242b; }
+        * { box-sizing:border-box; }
+        body { margin:0; background:#fff9fc; color:var(--text); font-family:Arial,sans-serif; }
+        header { background:white; border-bottom:1px solid var(--border); padding:17px 5%; }
+        header a { color:var(--pink); font-weight:700; text-decoration:none; }
+        .wrap { max-width:1150px; margin:30px auto; padding:0 18px; }
+        .crumb { margin-bottom:18px; font-size:13px; color:#8b7580; }
+        .crumb a { color:var(--pink); text-decoration:none; }
+        .panel { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); gap:34px; padding:26px; background:white; border:1px solid #f5e6ed; border-radius:15px; box-shadow:0 8px 28px #6d24400a; }
+        .hero { height:430px; display:flex; align-items:center; justify-content:center; background:#fffafd; border:1px solid #f6e9ef; border-radius:12px; overflow:hidden; }
+        .hero img { width:100%; height:100%; object-fit:contain; }
+        .thumbs { display:flex; flex-wrap:wrap; gap:9px; margin-top:12px; }
+        .thumb { width:65px; height:65px; padding:4px; border:1px solid var(--border); background:white; border-radius:8px; cursor:pointer; }
+        .thumb img { width:100%; height:100%; object-fit:contain; }
+        .thumb.active { border:2px solid var(--pink); }
+        h1 { margin:4px 0 12px; font-size:27px; line-height:1.3; }
+        .category { color:#8b7580; font-size:13px; }
+        .price { color:var(--pink); background:#fff5f9; padding:16px; margin:18px 0; font-size:28px; font-weight:700; border-radius:9px; }
+        .label { font-size:14px; font-weight:700; margin:18px 0 9px; }
+        .options { display:flex; flex-wrap:wrap; gap:9px; }
+        .option { background:white; border:1px solid #ded4da; border-radius:7px; padding:10px 15px; cursor:pointer; }
+        .option.selected { color:var(--pink); border:1.5px solid var(--pink); background:#fff5f9; }
+        .option:disabled { opacity:.4; cursor:not-allowed; text-decoration:line-through; }
+        .stock { font-size:13px; color:#6d5862; margin-top:10px; }
+        .quantity { display:flex; align-items:center; gap:0; }
+        .quantity button,.quantity input { height:38px; width:42px; text-align:center; border:1px solid #ded4da; background:white; font-size:17px; }
+        .quantity input { width:55px; }
+        .actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:24px; }
+        .actions button { flex:1; min-width:145px; padding:14px 12px; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer; }
+        .add { border:1px solid var(--pink); background:#fff3f8; color:var(--pink); }
+        .buy { border:1px solid var(--pink); background:var(--pink); color:white; }
+        .actions button:disabled { opacity:.5; cursor:not-allowed; }
+        .description { white-space:pre-line; line-height:1.7; color:#685762; font-size:14px; margin-top:24px; }
+        @media(max-width:760px) {
+            .wrap { margin:16px auto; padding:0 12px; }
+            .panel { grid-template-columns:1fr; padding:15px; gap:23px; }
+            .hero { height:300px; }
+            h1 { font-size:23px; }
+            .price { font-size:25px; }
+        }
+    </style>
+</head>
+<body>
+<header><a href="{{ route('customer.products') }}">♥ Shine & Smile</a></header>
+
+@php
+    $fallbackImage = asset(
+        'images/categories/dental-supplies.jpg'
+    );
+    $mainImage = $product->image
+        ? asset('storage/' . ltrim($product->image, '/'))
+        : $fallbackImage;
+@endphp
+
+<main class="wrap">
+    <div class="crumb">
+        <a href="{{ route('customer.products') }}">Products</a>
+        &nbsp; / &nbsp; {{ $product->product_name }}
+    </div>
+
+    <section class="panel">
+        <div>
+            <div class="hero">
+                <img id="main-product-image"
+                     src="{{ $mainImage }}"
+                     alt="{{ $product->product_name }}"
+                     onerror="this.onerror=null;this.src='{{ $fallbackImage }}'">
+            </div>
+            <div class="thumbs">
+                <button type="button" class="thumb active" data-image="{{ $mainImage }}">
+                    <img src="{{ $mainImage }}" alt="Product image">
+                </button>
+                @foreach ($variants as $variant)
+                    @if (!empty($variant['image']))
+                        @php
+                            $variantImage = asset('storage/' . ltrim($variant['image'], '/'));
+                        @endphp
+                        <button type="button" class="thumb" data-image="{{ $variantImage }}">
+                            <img src="{{ $variantImage }}" alt="{{ $variant['name'] }}">
+                        </button>
+                    @endif
+                @endforeach
+            </div>
+        </div>
+
+        <div>
+            <div class="category">{{ $product->category ?: 'Dental & Health' }}</div>
+            <h1>{{ $product->product_name }}</h1>
+            @if ($product->brand_name)
+                <div class="category">Brand: {{ $product->brand_name }}</div>
+            @endif
+
+            <div class="price" id="product-price">
+                ₱{{ number_format($startingPrice, 2) }}
+            </div>
+
+            @if ($variants->isNotEmpty())
+                @php
+                    $colors = $variants->pluck('color')->filter()->unique()->values();
+                    $sizes = $variants->pluck('name')->filter()->unique()->values();
+                @endphp
+
+                @if ($colors->isNotEmpty())
+                    <div class="label">Color</div>
+                    <div class="options" id="color-options">
+                        @foreach ($colors as $color)
+                            <button type="button" class="option"
+                                    data-color="{{ $color }}">{{ ucfirst($color) }}</button>
+                        @endforeach
+                    </div>
+                @endif
+
+                <div class="label">Size / Variant</div>
+                <div class="options" id="size-options">
+                    @foreach ($sizes as $size)
+                        <button type="button" class="option"
+                                data-size="{{ $size }}">{{ ucfirst($size) }}</button>
+                    @endforeach
+                </div>
+
+                <div class="stock" id="variant-stock">Choose your options.</div>
+            @else
+                <div class="stock">
+                    {{ $product->quantity > 0 ? 'In stock: '.$product->quantity : 'Out of stock' }}
+                </div>
+            @endif
+
+            <div class="label">Quantity</div>
+            <div class="quantity">
+                <button type="button" id="qty-minus" aria-label="Decrease quantity">−</button>
+                <input type="number" id="quantity" value="1" min="1" max="1" inputmode="numeric">
+                <button type="button" id="qty-plus" aria-label="Increase quantity">+</button>
+            </div>
+
+            <div class="actions">
+                <button type="button" class="add" id="add-cart">🛒 Add to Cart</button>
+                <button type="button" class="buy" id="buy-now">Buy Now</button>
+            </div>
+
+            @if ($product->description)
+                <div class="description">
+                    <strong>Product Description</strong>
+                    <p>{{ $product->description }}</p>
+                </div>
+            @endif
+        </div>
+    </section>
+</main>
+
+<script>
+(() => {
+    const variants = @json($variants);
+    const product = {
+        id: {{ (int) $product->id }},
+        name: @json($product->product_name),
+        price: {{ (float) $product->selling_price }},
+        stock: {{ (int) $product->quantity }},
+        hasVariants: {{ $variants->isNotEmpty() ? 'true' : 'false' }}
+    };
+
+    let selectedColor = null;
+    let selectedSize = null;
+    let selectedVariant = null;
+
+    const priceEl = document.getElementById('product-price');
+    const stockEl = document.getElementById('variant-stock');
+    const mainImageEl = document.getElementById('main-product-image');
+    const originalMainImage = mainImageEl ? mainImageEl.src : '';
+    const quantityEl = document.getElementById('quantity');
+    const addButton = document.getElementById('add-cart');
+    const buyButton = document.getElementById('buy-now');
+
+    document.querySelectorAll('.thumb').forEach(button => {
+        button.addEventListener('click', () => {
+            document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+            button.classList.add('active');
+            document.getElementById('main-product-image').src = button.dataset.image;
+        });
+    });
+
+    function matchingVariants() {
+        return variants.filter(v =>
+            (!selectedColor || String(v.color).toLowerCase() === selectedColor.toLowerCase()) &&
+            (!selectedSize || String(v.name).toLowerCase() === selectedSize.toLowerCase())
+        );
+    }
+
+    function updateOptions() {
+        const colorButtons = [...document.querySelectorAll('[data-color]')];
+        const sizeButtons = [...document.querySelectorAll('[data-size]')];
+
+        colorButtons.forEach(button => {
+            const available = variants.some(v =>
+                String(v.color).toLowerCase() === button.dataset.color.toLowerCase() &&
+                Number(v.stock) > 0 &&
+                (!selectedSize || String(v.name).toLowerCase() === selectedSize.toLowerCase())
+            );
+            button.disabled = !available;
+            button.classList.toggle('selected', selectedColor === button.dataset.color);
+        });
+
+        sizeButtons.forEach(button => {
+            const available = variants.some(v =>
+                String(v.name).toLowerCase() === button.dataset.size.toLowerCase() &&
+                Number(v.stock) > 0 &&
+                (!selectedColor || String(v.color).toLowerCase() === selectedColor.toLowerCase())
+            );
+            button.disabled = !available;
+            button.classList.toggle('selected', selectedSize === button.dataset.size);
+        });
+    }
+
+    function refresh() {
+        if (!product.hasVariants) {
+            selectedVariant = null;
+            stockEl && (stockEl.textContent = '');
+            quantityEl.max = Math.max(1, product.stock);
+            quantityEl.value = Math.min(Number(quantityEl.value) || 1, Math.max(1, product.stock));
+            addButton.disabled = buyButton.disabled = product.stock <= 0;
+            return;
+        }
+
+        const matches = matchingVariants();
+        selectedVariant = selectedColor && selectedSize
+            ? variants.find(v =>
+                String(v.color).toLowerCase() === selectedColor.toLowerCase() &&
+                String(v.name).toLowerCase() === selectedSize.toLowerCase()
+            )
+            : null;
+
+        if (selectedVariant) {
+            priceEl.textContent = '₱' + Number(selectedVariant.price).toFixed(2);
+
+            // Switch to this variant's image when one is saved.
+            // Otherwise restore the main product image.
+            if (mainImageEl) {
+                mainImageEl.src = selectedVariant.image_url || originalMainImage;
+            }
+
+            stockEl.textContent = Number(selectedVariant.stock) > 0
+                ? 'In stock: ' + selectedVariant.stock
+                : 'Out of stock';
+            quantityEl.max = Math.max(1, Number(selectedVariant.stock));
+            quantityEl.value = Math.min(Number(quantityEl.value) || 1, Number(quantityEl.max));
+        } else {
+            const available = matches.filter(v => Number(v.stock) > 0);
+            const lowest = available.length
+                ? Math.min(...available.map(v => Number(v.price)))
+                : null;
+            priceEl.textContent = lowest === null
+                ? 'Unavailable'
+                : 'From ₱' + lowest.toFixed(2);
+            stockEl.textContent = selectedColor && selectedSize
+                ? 'This combination is unavailable'
+                : 'Choose your options.';
+            quantityEl.max = 1;
+            quantityEl.value = 1;
+        }
+
+        const valid = !!selectedVariant && Number(selectedVariant.stock) > 0;
+        addButton.disabled = buyButton.disabled = !valid;
+        updateOptions();
+    }
+
+    document.querySelectorAll('[data-color]').forEach(button => {
+        button.addEventListener('click', () => {
+            selectedColor = button.dataset.color;
+            refresh();
+        });
+    });
+
+    document.querySelectorAll('[data-size]').forEach(button => {
+        button.addEventListener('click', () => {
+            selectedSize = button.dataset.size;
+            refresh();
+        });
+    });
+
+    document.getElementById('qty-minus').addEventListener('click', () => {
+        quantityEl.value = Math.max(1, (Number(quantityEl.value) || 1) - 1);
+    });
+    document.getElementById('qty-plus').addEventListener('click', () => {
+        const max = Number(quantityEl.max) || 1;
+        quantityEl.value = Math.min(max, (Number(quantityEl.value) || 1) + 1);
+    });
+    quantityEl.addEventListener('change', () => {
+        const max = Number(quantityEl.max) || 1;
+        quantityEl.value = Math.max(1, Math.min(max, Math.floor(Number(quantityEl.value) || 1)));
+    });
+
+    function addToCart(buyNow) {
+        const variant = selectedVariant;
+        if (product.hasVariants && (!variant || Number(variant.stock) <= 0)) {
+            alert('Please choose an available color and size.');
+            return;
+        }
+
+        const stock = product.hasVariants ? Number(variant.stock) : product.stock;
+        const qty = Number(quantityEl.value);
+        if (qty < 1 || qty > stock) {
+            alert('The requested quantity exceeds available stock.');
+            return;
+        }
+
+        const variantId = variant ? Number(variant.id) : null;
+        const cartKey = String(product.id) + ':' + String(variantId || 0);
+        let cart;
+        try {
+            cart = JSON.parse(localStorage.getItem('shineSmileCart') || '[]');
+            if (!Array.isArray(cart)) cart = [];
+        } catch (_) { cart = []; }
+
+        const existing = cart.find(item =>
+            (item.cart_key || (String(item.id) + ':' + String(item.variant_id || 0))) === cartKey
+        );
+        const currentQty = existing ? Number(existing.quantity) || 0 : 0;
+
+        if (currentQty + qty > stock) {
+            alert('The quantity in your cart would exceed available stock.');
+            return;
+        }
+
+        const item = {
+            id: product.id,
+            name: product.name,
+            variant_id: variantId,
+            variant_name: variant ? [variant.color, variant.name].filter(Boolean).join(' / ') : '',
+            cart_key: cartKey,
+            price: variant ? Number(variant.price) : product.price,
+            quantity: currentQty + qty,
+            stock: stock
+        };
+
+        if (existing) Object.assign(existing, item);
+        else cart.push(item);
+
+        try {
+            localStorage.setItem('shineSmileCart', JSON.stringify(cart));
+        } catch (_) {
+            alert('Unable to save your cart. Check your browser storage settings.');
+            return;
+        }
+
+        if (buyNow) {
+            window.location.href = @json(url('/customer/checkout'));
+        } else {
+            addButton.textContent = '✓ Added to Cart';
+            setTimeout(() => addButton.textContent = '🛒 Add to Cart', 1200);
+        }
+    }
+
+    addButton.addEventListener('click', () => addToCart(false));
+    buyButton.addEventListener('click', () => addToCart(true));
+
+    if (product.hasVariants) {
+        const firstColor = [...document.querySelectorAll('[data-color]')].find(b => !b.disabled);
+        const firstSize = [...document.querySelectorAll('[data-size]')].find(b => !b.disabled);
+        if (firstColor) selectedColor = firstColor.dataset.color;
+        if (firstSize) selectedSize = firstSize.dataset.size;
+    }
+    refresh();
+})();
+</script>
+</body>
+</html>

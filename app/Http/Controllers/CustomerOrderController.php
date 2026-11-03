@@ -6,6 +6,10 @@ use App\Models\Customer;
 use App\Models\OrderItems;
 use App\Models\Orders;
 use App\Models\Products;
+use App\Models\ProductVariant;
+use App\Models\ProductReview;
+use App\Models\User;
+use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -21,6 +25,10 @@ class CustomerOrderController extends Controller
 public function products(Request $request)
 {
     $query = Products::query()
+        ->with(['variants' => function ($variantQuery) {
+            $variantQuery->where('is_active', true)
+                ->orderBy('id');
+        }])
         ->where('is_active', true);
 
     // SEARCH
@@ -43,9 +51,21 @@ public function products(Request $request)
         $query->where('category', $request->category);
     }
 
-    // STOCK
+    // STOCK: include products with available active variants.
     if ($request->boolean('in_stock')) {
-        $query->where('quantity', '>', 0);
+        $query->where(function ($stockQuery) {
+            $stockQuery->where(function ($productQuery) {
+                $productQuery
+                    ->where('quantity', '>', 0)
+                    ->whereDoesntHave('variants', function ($variantQuery) {
+                        $variantQuery->where('is_active', true);
+                    });
+            })->orWhereHas('variants', function ($variantQuery) {
+                $variantQuery
+                    ->where('is_active', true)
+                    ->where('quantity', '>', 0);
+            });
+        });
     }
 
     // PRICE
@@ -82,9 +102,9 @@ public function products(Request $request)
             break;
     }
 
-    // PRODUCTS
+    // PRODUCTS: load 20 products per page for See More
     $products = $query
-        ->paginate(12)
+        ->paginate(20)
         ->withQueryString();
 
     // CATEGORIES
@@ -105,9 +125,111 @@ public function products(Request $request)
 
 
 
+    public function productDetails($product)
+    {
+        $product = Products::query()
+            ->where('is_active', true)
+            ->with(['variants' => function ($query) {
+                $query->where('is_active', true)->orderBy('id');
+            }])
+            ->findOrFail($product);
+
+        $variants = $product->variants->map(function ($variant) use ($product) {
+            $options = $variant->options;
+
+            if (is_string($options)) {
+                $decoded = json_decode($options, true);
+                $options = json_last_error() === JSON_ERROR_NONE ? $decoded : $options;
+            }
+
+            $color = '';
+            if (is_array($options)) {
+                $color = $options['color'] ?? $options['Color'] ?? '';
+                if ($color === '' && count($options) === 1) {
+                    $color = reset($options);
+                }
+            } elseif (is_string($options)) {
+                $color = trim($options, " \t\n\r\0\x0B\"'");
+            }
+
+            return [
+                'id' => (int) $variant->id,
+                'name' => trim((string) $variant->name),
+                'color' => is_scalar($color) ? trim((string) $color) : '',
+                'price' => (float) ($variant->price ?? $product->selling_price),
+                'stock' => (int) $variant->quantity,
+                'image' => $variant->image,
+                'image_url' => !empty($variant->image)
+                    ? asset('storage/' . ltrim($variant->image, '/'))
+                    : null,
+                'sku' => $variant->sku,
+            ];
+        })->values();
+
+        $startingPrice = $variants->isNotEmpty()
+            ? $variants->min('price')
+            : (float) $product->selling_price;
+
+        $reviews = ProductReview::with('customer')
+            ->where('product_id', $product->id)
+            ->latest()
+            ->get();
+
+        $reviewCount = $reviews->count();
+
+        $averageRating = $reviewCount > 0
+            ? $reviews->avg('rating')
+            : 0;
+
+        $eligibleOrders = collect();
+
+        $customer = Customer::where(
+            'email',
+            auth()->user()->email
+        )->first();
+
+        if ($customer) {
+            $eligibleOrders = Orders::where('customer_id', $customer->id)
+                ->where('delivery_stage', 'order_delivered')
+                ->whereHas('items', function ($query) use ($product) {
+                    $query->where('product_id', $product->id);
+                })
+                ->orderByDesc('id')
+                ->get();
+        }
+
+        return view('customer.product-details', compact(
+            'product',
+            'variants',
+            'startingPrice',
+            'reviews',
+            'reviewCount',
+            'averageRating',
+            'eligibleOrders'
+        ));
+    }
+
     public function cart()
     {
-        return view('customer.cart');
+        $recommendedProducts = Products::query()
+            ->where('is_active', true)
+            ->where(function ($query) {
+                $query->where('quantity', '>', 0)
+                    ->orWhereHas('variants', function ($variantQuery) {
+                        $variantQuery->where('is_active', true)
+                            ->where('quantity', '>', 0);
+                    });
+            })
+            ->with(['variants' => function ($query) {
+                $query->where('is_active', true)
+                    ->where('quantity', '>', 0)
+                    ->orderBy('id');
+            }])
+            ->orderBy('product_name')
+            ->limit(8)
+            ->get();
+
+        return view('customer.cart', compact('recommendedProducts'));
     }
 
 
@@ -131,317 +253,316 @@ public function products(Request $request)
 
     public function store(Request $request)
     {
-        $request->validate([
-            'items' => [
-                'required',
-                'array',
-                'min:1',
-            ],
-
-            'items.*.product_id' => [
-                'required',
-                'integer',
-                'exists:products,id',
-            ],
-
-            'items.*.quantity' => [
-                'required',
-                'integer',
-                'min:1',
-            ],
-
-            'payment_method' => [
-                'required',
-                'string',
-                'max:50',
-            ],
+        $validated = $request->validate([
+            'items' => ['required', 'array', 'min:1'],
+            'items.*.product_id' => ['required', 'integer', 'exists:products,id'],
+            'items.*.variant_id' => ['nullable', 'integer', 'exists:product_variants,id'],
+            'items.*.quantity' => ['required', 'integer', 'min:1', 'max:100'],
+            'payment_method' => ['required', 'in:cod,gcash,bank_transfer,card'],
+            'delivery_address' => ['required', 'string', 'max:5000'],
+            'contact_number' => ['required', 'string', 'max:30'],
+            'notes' => ['nullable', 'string', 'max:2000'],
         ]);
 
+        $user = $request->user();
+        $customer = Customer::firstOrNew(['email' => $user->email]);
 
-        $user = auth()->user();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | FIND CUSTOMER
-        |--------------------------------------------------------------------------
-        */
-
-        $customer = Customer::where(
-            'user_id',
-            $user->id
-        )->first();
-
-
-        if (!$customer) {
-
-            return response()->json([
-                'success' => false,
-
-                'message' =>
-                    'Customer profile was not found.',
-            ], 422);
-
+        if (!$customer->exists) {
+            $parts = preg_split('/\s+/', trim($user->name), 2);
+            $customer->first_name = $parts[0] ?? 'Customer';
+            $customer->last_name = $parts[1] ?? '';
+            $customer->password = \Illuminate\Support\Facades\Hash::make(
+                Str::random(48)
+            );
         }
 
+        $customer->phone = $validated['contact_number'];
+        $customer->address = $validated['delivery_address'];
+        $customer->save();
 
-        /*
-        |--------------------------------------------------------------------------
-        | CREATE ORDER
-        |--------------------------------------------------------------------------
-        */
-
-        $order = DB::transaction(function () use (
-            $request,
-            $customer,
-            $user
-        ) {
-
+        $order = DB::transaction(function () use ($validated, $customer) {
             $total = 0;
-
             $items = [];
+            $seenLines = [];
 
-
-            /*
-            |--------------------------------------------------------------------------
-            | CHECK PRODUCTS
-            |--------------------------------------------------------------------------
-            */
-
-            foreach ($request->items as $cartItem) {
-
+            foreach ($validated['items'] as $cartItem) {
                 $product = Products::lockForUpdate()
-                    ->findOrFail(
-                        $cartItem['product_id']
-                    );
-
+                    ->findOrFail($cartItem['product_id']);
 
                 $quantity = (int) $cartItem['quantity'];
-
-
-                /*
-                |--------------------------------------------------------------------------
-                | CHECK PRODUCT STATUS
-                |--------------------------------------------------------------------------
-                */
+                $variantId = isset($cartItem['variant_id']) &&
+                    $cartItem['variant_id'] !== ''
+                    ? (int) $cartItem['variant_id']
+                    : null;
 
                 if (!$product->is_active) {
-
-                    abort(
-                        422,
-                        "{$product->product_name} is currently unavailable."
-                    );
-
+                    abort(422, $product->product_name . ' is currently unavailable.');
                 }
 
+                $lineKey = $product->id . ':' . ($variantId ?? '0');
+                if (isset($seenLines[$lineKey])) {
+                    abort(422, 'Duplicate product variant in cart. Please update your cart.');
+                }
+                $seenLines[$lineKey] = true;
 
-                /*
-                |--------------------------------------------------------------------------
-                | CHECK STOCK
-                |--------------------------------------------------------------------------
-                */
+                $variant = null;
 
-                if ($product->quantity < $quantity) {
+                if ($variantId !== null) {
+                    $variant = ProductVariant::where('product_id', $product->id)
+                        ->lockForUpdate()
+                        ->findOrFail($variantId);
 
-                    abort(
-                        422,
-                        "Insufficient stock for {$product->product_name}."
-                    );
+                    if (!$variant->is_active) {
+                        abort(422, 'The selected variant for ' . $product->product_name . ' is unavailable.');
+                    }
 
+                    if ((int) $variant->quantity < $quantity) {
+                        abort(422, 'Insufficient stock for ' . $product->product_name . ' - ' . $variant->name . '.');
+                    }
+
+                    $price = $variant->price !== null
+                        ? (float) $variant->price
+                        : (float) $product->selling_price;
+                } else {
+                    $hasActiveVariants = ProductVariant::where('product_id', $product->id)
+                        ->where('is_active', true)
+                        ->exists();
+
+                    if ($hasActiveVariants) {
+                        abort(422, 'Please select a variant for ' . $product->product_name . '.');
+                    }
+
+                    if ((int) $product->quantity < $quantity) {
+                        abort(422, 'Insufficient stock for ' . $product->product_name . '.');
+                    }
+
+                    $price = (float) $product->selling_price;
                 }
 
-
-                /*
-                |--------------------------------------------------------------------------
-                | PRICE
-                |--------------------------------------------------------------------------
-                */
-
-                $price = (float) $product->selling_price;
-
-
-                $subtotal =
-                    $price * $quantity;
-
-
+                $subtotal = round($price * $quantity, 2);
                 $total += $subtotal;
 
-
                 $items[] = [
-
-                    'product' =>
-                        $product,
-
-                    'quantity' =>
-                        $quantity,
-
-                    'price' =>
-                        $price,
-
-                    'subtotal' =>
-                        $subtotal,
-
+                    'product' => $product,
+                    'variant' => $variant,
+                    'quantity' => $quantity,
+                    'unit_price' => $price,
+                    'subtotal' => $subtotal,
                 ];
             }
 
-
-            /*
-            |--------------------------------------------------------------------------
-            | CREATE ORDER
-            |--------------------------------------------------------------------------
-            */
-
             $order = Orders::create([
-
-                'customer_id' =>
-                    $customer->id,
-
-                'order_no' =>
-                    'ORD-' .
-                    now()->format('YmdHis') .
-                    '-' .
-                    strtoupper(
-                        Str::random(5)
-                    ),
-
-                'customer_name' =>
-                    $user->name,
-
-                'contact_number' =>
-                    $customer->contact_number ?? null,
-
-                'address' =>
-                    $customer->address ?? null,
-
-                'total_amount' =>
-                    $total,
-
-                'payment_method' =>
-                    $request->payment_method,
-
-                'payment_status' =>
-                    'pending',
-
-                'status' =>
-                    'pending',
-
+                'order_number' => 'ORD-' . now()->format('YmdHis') . '-' . strtoupper(Str::random(5)),
+                'customer_id' => $customer->id,
+                'order_date' => now(),
+                'total_amount' => $total,
+                'shipping_fee' => 0,
+                'discount_amount' => 0,
+                'final_amount' => $total,
+                'payment_method' => $validated['payment_method'],
+                'payment_status' => $validated['payment_method'] === 'cod' ? 'unpaid' : 'pending',
+                'order_status' => 'pending',
+                'delivery_address' => $validated['delivery_address'],
+                'contact_number' => $validated['contact_number'],
+                'notes' => $validated['notes'] ?? null,
             ]);
 
-
-            /*
-            |--------------------------------------------------------------------------
-            | CREATE ORDER ITEMS
-            |--------------------------------------------------------------------------
-            */
-
             foreach ($items as $item) {
-
                 OrderItems::create([
-
-                    'order_id' =>
-                        $order->id,
-
-                    'product_id' =>
-                        $item['product']->id,
-
-                    'quantity' =>
-                        $item['quantity'],
-
-                    'price' =>
-                        $item['price'],
-
-                    'subtotal' =>
-                        $item['subtotal'],
-
+                    'order_id' => $order->id,
+                    'product_id' => $item['product']->id,
+                    'variant_id' => $item['variant']?->id,
+                    'quantity' => $item['quantity'],
+                    'unit_price' => $item['unit_price'],
+                    'subtotal' => $item['subtotal'],
                 ]);
 
-
-                /*
-                |--------------------------------------------------------------------------
-                | REDUCE PRODUCT STOCK
-                |--------------------------------------------------------------------------
-                */
-
-                $item['product']->decrement(
-                    'quantity',
-                    $item['quantity']
-                );
+                if ($item['variant']) {
+                    $item['variant']->decrement('quantity', $item['quantity']);
+                } else {
+                    $item['product']->decrement('quantity', $item['quantity']);
+                }
             }
-
 
             return $order;
         });
 
+        // Save database notifications for administrators after the order succeeds.
+        $admins = User::role('admin')->get();
 
-        /*
-        |--------------------------------------------------------------------------
-        | RETURN RESPONSE
-        |--------------------------------------------------------------------------
-        */
+        foreach ($admins as $admin) {
+            $notificationId = (string) \Illuminate\Support\Str::uuid();
+
+            $admin->notifications()->create([
+                'id' => $notificationId,
+                'type' => \Filament\Notifications\DatabaseNotification::class,
+                'data' => [
+                    'title' => 'New order received',
+                    'body' => "Order {$order->order_number} was placed. Total: PHP "
+                        . number_format((float) ($order->final_amount ?? $order->total_amount), 2),
+                    'icon' => 'heroicon-o-shopping-bag',
+                    'iconColor' => 'success',
+                    'color' => 'success',
+                    'duration' => 'persistent',
+                    'format' => 'filament',
+                    'actions' => [],
+                    'view' => null,
+                    'viewData' => [],
+                ],
+                'read_at' => null,
+            ]);
+        }
 
         return response()->json([
-
-            'success' =>
-                true,
-
-            'message' =>
-                'Your order has been submitted successfully.',
-
-            'order_id' =>
-                $order->id,
-
-            'order_no' =>
-                $order->order_no,
-
-            'redirect' =>
-                route('customer.orders'),
-
+            'success' => true,
+            'message' => 'Your order has been submitted successfully.',
+            'order_id' => $order->id,
+            'order_number' => $order->order_number,
+            'redirect' => route('customer.orders.thank-you', ['order' => $order->id]),
         ]);
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | CUSTOMER ORDERS
-    |--------------------------------------------------------------------------
-    */
+    public function thankYou(Orders $order)
+    {
+        $customer = Customer::where('email', auth()->user()->email)->firstOrFail();
+
+        abort_unless((int) $order->customer_id === (int) $customer->id, 404);
+
+        return view('customer.thank-you', compact('order'));
+    }
+
+    public function requestCancellation(Request $request, Orders $order)
+    {
+        $validated = $request->validate([
+            'cancellation_reason' => 'required|string|max:1000',
+        ]);
+
+        $customer = Customer::where('email', auth()->user()->email)->firstOrFail();
+
+        abort_unless((int) $order->customer_id === (int) $customer->id, 404);
+
+        $result = DB::transaction(function () use ($order, $validated) {
+            $lockedOrder = Orders::whereKey($order->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $orderStatus = strtolower($lockedOrder->order_status ?? '');
+            $deliveryStage = strtolower($lockedOrder->delivery_stage ?? 'order_packed');
+
+            // Accept cancellation requests before shipment.
+            if (!in_array($orderStatus, ['pending', 'confirmed'], true)) {
+                return 'order_not_pending';
+            }
+
+            if (!in_array($deliveryStage, ['order_packed', 'order_confirmed'], true)) {
+                return 'parcel_already_processed';
+            }
+
+            if (($lockedOrder->cancellation_status ?? 'none') !== 'none') {
+                return 'request_already_exists';
+            }
+
+            $lockedOrder->cancellation_status = 'requested';
+            $lockedOrder->cancellation_reason = $validated['cancellation_reason'];
+            $lockedOrder->cancellation_requested_at = now();
+            $lockedOrder->save();
+
+            return 'requested';
+        });
+
+        if ($result !== 'requested') {
+            $messages = [
+                'order_not_pending' => 'This order is no longer eligible for cancellation.',
+                'parcel_already_processed' => 'This parcel has already moved beyond the packing stage.',
+                'request_already_exists' => 'A cancellation request has already been submitted for this order.',
+            ];
+
+            $message = $messages[$result] ?? 'Unable to request cancellation.';
+
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $message], 422);
+            }
+
+            return back()->withErrors([
+                'cancellation' => $message,
+            ]);
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Your cancellation request was submitted for admin review.',
+                'cancellation_status' => 'requested',
+            ]);
+        }
+
+        return back()->with('success', 'Your cancellation request was submitted for admin review.');
+    }
 
     public function orders()
     {
-        $user = auth()->user();
+        $customer = Customer::where('email', auth()->user()->email)->first();
 
+        $orders = $customer
+            ? Orders::with(['items.product', 'items.variant'])
+                ->where('customer_id', $customer->id)
+                ->latest('order_date')
+                ->get()
+            : collect();
 
-        $customer = Customer::where(
-            'user_id',
-            $user->id
-        )->first();
+        $reviewedItems = $customer
+            ? ProductReview::where('customer_id', $customer->id)
+                ->whereIn('order_id', $orders->pluck('id'))
+                ->get()
+                ->keyBy(fn ($review) => $review->order_id . ':' . $review->product_id)
+            : collect();
 
+        $customerOrdersData = $orders->map(function ($order) use ($reviewedItems) {
+            return [
+                'id' => $order->id,
+                'order_number' => $order->order_number,
+                'date' => $order->order_date
+                    ? $order->order_date->format('F d, Y')
+                    : '',
+                'delivery_stage' => $order->delivery_stage ?? 'order_packed',
+                'cancellation_status' => $order->cancellation_status ?? 'none',
+                'cancellation_reason' => $order->cancellation_reason ?? '',
+                'cancellation_requested_at' => $order->cancellation_requested_at
+                    ? $order->cancellation_requested_at->format('M d, Y h:i A')
+                    : '',
+                'status' => ($order->delivery_stage ?? 'order_packed') === 'order_delivered'
+                    ? 'completed'
+                    : match (strtolower($order->order_status ?? 'pending')) {
+                        'confirmed' => 'processing',
+                        'pending' => 'pending',
+                        'processing' => 'processing',
+                        'completed', 'delivered' => 'completed',
+                        'cancelled', 'canceled' => 'cancelled',
+                        default => strtolower($order->order_status ?? 'pending'),
+                    },
+                'payment' => $order->payment_method ?? '—',
+                'delivery' => $order->delivery_address ?: 'Pickup at Clinic',
+                'total' => (float) ($order->final_amount ?? $order->total_amount ?? 0),
+                'items' => $order->items->map(function ($item) use ($order, $reviewedItems) {
+                    $review = $reviewedItems->get($order->id . ':' . $item->product_id);
 
-        if (!$customer) {
+                    return [
+                        'product_id' => (int) $item->product_id,
+                        'name' => $item->product->product_name ?? 'Product',
+                        'quantity' => (int) $item->quantity,
+                        'price' => (float) $item->unit_price,
+                        'icon' => '📦',
+                        'reviewed' => (bool) $review,
+                        'review_rating' => $review?->rating,
+                        'review_url' => route('customer.products.reviews.store', $item->product_id),
+                    ];
+                })->values()->all(),
+            ];
+        })->values()->all();
 
-            $orders = collect();
-
-        } else {
-
-            $orders = Orders::with([
-                'items.product'
-            ])
-                ->where(
-                    'customer_id',
-                    $customer->id
-                )
-                ->latest()
-                ->get();
-        }
-
-
-        return view(
-            'customer.orders',
-            compact('orders')
-        );
+        return response()
+            ->view('customer.orders', compact('orders', 'customerOrdersData'));
     }
-
-
     /*
     |--------------------------------------------------------------------------
     | CUSTOMER SETTINGS
@@ -460,18 +581,45 @@ public function products(Request $request)
     |--------------------------------------------------------------------------
     */
 
-    public function profile()
-    {
-        $user = auth()->user();
+public function profile()
+{
+    $user = auth()->user();
 
-        $customer = Customer::where(
-            'user_id',
-            $user->id
-        )->first();
+    $customer = Customer::where('email', $user->email)->first();
 
-        return view(
-            'customer.profile',
-            compact('customer')
-        );
+    return view('customer.profile', compact('user', 'customer'));
+}
+
+public function updateProfile(Request $request)
+{
+    $user = $request->user();
+    $oldEmail = $user->email;
+
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+        'phone' => 'nullable|string|max:30',
+        'address' => 'nullable|string|max:2000',
+    ]);
+
+    $customer = Customer::where('email', $oldEmail)->first();
+
+    $user->name = $validated['name'];
+    $user->email = $validated['email'];
+    $user->phone = $validated['phone'] ?? null;
+    $user->save();
+
+    if ($customer) {
+        $nameParts = preg_split('/\s+/', trim($validated['name']), 2);
+        $customer->first_name = $nameParts[0] ?? '';
+        $customer->last_name = $nameParts[1] ?? '';
+        $customer->email = $validated['email'];
+        $customer->phone = $validated['phone'] ?? null;
+        $customer->address = $validated['address'] ?? null;
+        $customer->save();
     }
+
+    return redirect()->route('customer.profile')
+        ->with('success', 'Your profile has been updated successfully.');
+}
 }

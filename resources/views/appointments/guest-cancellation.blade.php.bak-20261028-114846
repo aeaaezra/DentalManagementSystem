@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Request Appointment Cancellation | Shine & Smile Dental</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f7fb; color: #243047; margin: 0; padding: 24px; }
+        main { max-width: 620px; margin: 36px auto; background: #fff; padding: 28px; border-radius: 14px; box-shadow: 0 8px 28px rgba(20, 40, 70, .08); }
+        h1 { margin-top: 0; color: #173b66; }
+        .details { background: #f4f7fb; border-radius: 8px; padding: 14px 18px; margin: 20px 0; }
+        label { display: block; font-weight: 600; margin: 18px 0 8px; }
+        select, textarea { box-sizing: border-box; width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font: inherit; }
+        textarea { min-height: 110px; resize: vertical; }
+        button { margin-top: 20px; padding: 12px 20px; background: #173b66; color: white; border: 0; border-radius: 8px; font-weight: 700; cursor: pointer; }
+        .error { color: #b42318; }
+        .success { padding: 14px; border-radius: 8px; background: #ecfdf3; color: #067647; }
+        .muted { color: #64748b; font-size: .94rem; }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Appointment Cancellation Request</h1>
+
+    @if (!empty($submitted))
+        <div class="success">
+            Your cancellation request has been submitted. Your appointment is not cancelled yet.
+            The clinic must review your request and email you its decision.
+        </div>
+    @else
+        <p>Please provide a reason for requesting cancellation. This form submits a request only; it does not immediately cancel your appointment.</p>
+
+        <div class="details">
+            <strong>Appointment date:</strong>
+            {{ $appointment->appointment_date?->format('F d, Y') ?? $appointment->appointment_date }}<br>
+            <strong>Appointment time:</strong> {{ $appointment->appointment_time ?? 'Not specified' }}<br>
+            <strong>Status:</strong> {{ str_replace('_', ' ', ucfirst($appointment->status)) }}
+        </div>
+
+        @if ($errors->any())
+            <div class="error">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form method="POST" action="{{ url()->full() }}">
+            @csrf
+
+            <label for="cancellation_reason">Reason for cancellation *</label>
+            <select id="cancellation_reason" name="cancellation_reason" required>
+                <option value="">Select a reason</option>
+                @foreach ([
+                    'Schedule conflict',
+                    'Illness or medical concern',
+                    'Transportation problem',
+                    'Financial reasons',
+                    'Other'
+                ] as $reason)
+                    <option value="{{ $reason }}" @selected(old('cancellation_reason') === $reason)>
+                        {{ $reason }}
+                    </option>
+                @endforeach
+            </select>
+
+            <label for="cancellation_details">Additional details (optional)</label>
+            <textarea id="cancellation_details" name="cancellation_details" maxlength="1000">{{ old('cancellation_details') }}</textarea>
+
+            <button type="submit">Submit Cancellation Request</button>
+        </form>
+        <p class="muted">For your security, this link expires. If it has expired, contact the clinic for assistance.</p>
+    @endif
+</main>
+</body>
+</html>

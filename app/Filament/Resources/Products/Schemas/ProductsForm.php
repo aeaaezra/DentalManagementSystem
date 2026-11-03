@@ -12,6 +12,8 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Hidden;
 
 class ProductsForm
 {
@@ -149,6 +151,95 @@ class ProductsForm
                             ])
                             ->columns(2),
 
+
+                        Tab::make('Variants')
+                            ->schema([
+                                Repeater::make('variants')
+                                    ->label('Product Variants')
+                                    ->relationship()
+                                    ->schema([
+                                        TextInput::make('name')
+                                            ->label('Variant Name')
+                                            ->required()
+                                            ->maxLength(255)
+                                            ->placeholder('e.g. Blue / Large'),
+
+                                        TextInput::make('sku')
+                                            ->label('Variant SKU')
+                                            ->maxLength(100)
+                                            ->nullable()
+                                            ->unique(table: 'product_variants', column: 'sku', ignoreRecord: true),
+
+                                        Textarea::make('options')
+                                            ->label('Options (JSON)')
+                                            ->rows(2)
+                                            ->placeholder('{"color":"Blue","size":"Large"}')
+                                            ->formatStateUsing(function ($state) {
+                                                if (is_array($state)) {
+                                                    return json_encode($state, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+                                                }
+
+                                                return $state;
+                                            })
+                                            ->dehydrateStateUsing(function ($state) {
+                                                if (blank($state)) {
+                                                    return null;
+                                                }
+
+                                                if (is_array($state)) {
+                                                    return $state;
+                                                }
+
+                                                $decoded = json_decode($state, true);
+
+                                                return json_last_error() === JSON_ERROR_NONE && is_array($decoded)
+                                                    ? $decoded
+                                                    : $state;
+                                            }),
+
+                                        TextInput::make('price')
+                                            ->label('Override Price (optional)')
+                                            ->numeric()
+                                            ->prefix('₱')
+                                            ->minValue(0)
+                                            ->nullable()
+                                            ->helperText('Leave blank to use the main product price.'),
+
+                                        TextInput::make('quantity')
+                                            ->label('Variant Stock')
+                                            ->numeric()
+                                            ->integer()
+                                            ->required()
+                                            ->minValue(0)
+                                            ->default(0),
+
+                                        FileUpload::make('image')
+                                            ->label('Variant Image')
+                                            ->image()
+                                            ->acceptedFileTypes([
+                                                'image/jpeg',
+                                                'image/png',
+                                                'image/webp',
+                                                'image/gif',
+                                            ])
+                                            ->disk('public')
+                                            ->directory('product-variants')
+                                            ->maxSize(5120)
+                                            ->nullable(),
+
+                                        Toggle::make('is_active')
+                                            ->label('Variant Active')
+                                            ->default(true)
+                                            ->required(),
+                                    ])
+                                    ->columns(2)
+                                    ->collapsible()
+                                    ->reorderable()
+                                    ->addActionLabel('Add Product Variant')
+                                    ->defaultItems(0)
+                                    ->columnSpanFull(),
+                            ])
+                            ->columns(1),
 
                         Tab::make('Media & Status')
                             ->schema([

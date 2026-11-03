@@ -724,10 +724,10 @@
             </form>
 
 
-            <a
-                href="{{ route('login') }}"
-                class="forgot-back-login"
-            >
+		<a
+		    href="{{ $backToLoginUrl ?? route('login') }}"
+		    class="forgot-back-login"
+		>
 
                 <svg
                     xmlns="http://www.w3.org/2000/svg"

@@ -22,3 +22,72 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Environment backups and local secrets
+.env.backup*
+.env.*.backup*
+.env.*-*
+
+# Local backups
+/backups/
+*.bak
+*.backup
+*.before
+*.broken-layout-backup
+*.signup-backup
+
+# Accidental empty files created in the project root
+/,
+/-
+/106260
+/127275
+/138204
+/1920
+/357
+/64464
+/6454
+/68875
+/7554
+/81284
+/address
+/brand_name,
+/category,
+/datetime
+/datetime,
+/div
+/div::after
+/div:first-child
+/email
+/first_name
+/id,
+/image,
+/integer,
+/last_name
+/name
+/nullable|string|max:2000,
+/nullable|string|max:30,
+/phone
+/required|email|max:255|unique:users,email,
+/required|string|max:255,
+/.hidden.md:flex
+/profile[email],
+/profile[name],
+/[required,
+/[required],
+/security
+
+# Nested application dependencies
+**/vendor/
+**/node_modules/
+
+# Generated Laravel bootstrap cache (keep .gitignore files)
+**/bootstrap/cache/*.php
+
+# Local SQLite databases
+*.sqlite
+*.sqlite3
+*.db
+
+# Local editor and operating-system files
+*.swp
+*.swo

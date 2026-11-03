@@ -29,6 +29,48 @@
         href="{{ asset('css/customer/profile.css') }}"
     >
 
+
+<style>
+/* Enhanced Profile navigation links */
+.customer-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.customer-nav .nav-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border: 1px solid transparent;
+    border-radius: 11px;
+    color: #51424b;
+    background: transparent;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color .18s ease, background .18s ease,
+                border-color .18s ease, transform .18s ease;
+}
+
+.customer-nav .nav-link:hover {
+    color: #ed1763;
+    background: #fff0f6;
+    border-color: #ffd0e2;
+    transform: translateY(-1px);
+}
+
+.customer-nav .nav-link:focus-visible {
+    outline: 3px solid rgba(237, 23, 99, .25);
+    outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+    .customer-nav { gap: 4px; }
+    .customer-nav .nav-link { padding: 9px 11px; font-size: 13px; }
+}
+</style>
+
 </head>
 
 
@@ -92,7 +134,7 @@
 
         <a
             href="{{ route('customer.products') }}"
-            class="nav-link"
+            class="nav-link" style="display:inline-flex;align-items:center;justify-content:center;padding:10px 16px;border:1px solid #ffd0e2;border-radius:11px;color:#ed1763;background:#fff0f6;font-weight:600;text-decoration:none;"
         >
             Products
         </a>
@@ -100,7 +142,7 @@
 
         <a
             href="{{ route('customer.orders') }}"
-            class="nav-link"
+            class="nav-link" style="display:inline-flex;align-items:center;justify-content:center;padding:10px 16px;border:1px solid #ffd0e2;border-radius:11px;color:#ed1763;background:#fff0f6;font-weight:600;text-decoration:none;"
         >
             My Orders
         </a>
@@ -514,355 +556,164 @@
 
     </section>
 
+    {{-- PROFILE TABS --}}
 
 
-    {{-- PROFILE LAYOUT --}}
+{{-- PROFILE TABS --}}
+<nav class="profile-tabs" role="tablist" aria-label="Customer profile sections">
 
-    <div class="profile-layout">
+    <button type="button" class="profile-tab active"
+        id="tab-personal" role="tab" aria-selected="true"
+        aria-controls="panel-personal" data-profile-tab="panel-personal">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20 21a8 8 0 0 0-16 0"/>
+            <circle cx="12" cy="7" r="4"/>
+        </svg>
+        Personal Info
+    </button>
 
+    <button type="button" class="profile-tab"
+        id="tab-account" role="tab" aria-selected="false"
+        aria-controls="panel-account" data-profile-tab="panel-account">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/>
+            <path d="m9 12 2 2 4-4"/>
+        </svg>
+        Account
+    </button>
 
-        {{-- PERSONAL INFORMATION --}}
+    <button type="button" class="profile-tab"
+        id="tab-orders" role="tab" aria-selected="false"
+        aria-controls="panel-orders" data-profile-tab="panel-orders">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m12 3 9 5-9 5-9-5 9-5Z"/>
+            <path d="m3 8 9 5 9-5"/>
+            <path d="M3 8v9l9 5 9-5V8"/>
+            <path d="M12 13v9"/>
+        </svg>
+        My Orders
+    </button>
 
-        <section
-            class="profile-main-card"
-            id="personalInformation"
-        >
+</nav>
 
+{{-- PERSONAL INFORMATION PANEL --}}
+<section class="profile-main-card profile-panel"
+    id="panel-personal" data-profile-panel="panel-personal">
 
-            <div class="profile-card-header">
+    <div class="profile-card-header">
+        <div class="profile-tooth-icon" aria-hidden="true">
+            <svg viewBox="0 0 64 64">
+<path fill="none" stroke="currentColor" stroke-width="3"
+d="M20 8C9 8 6 19 10 31l8 23c2 5 7 4 8-2l3-12c1-4 5-4 6 0l3 12c1 6 6 7 8 2l8-23C58 19 55 8 44 8c-6 0-8 4-12 4S26 8 20 8Z"/>
+            </svg>
+        </div>
 
-                <div>
+        <div class="profile-heading-text">
+            <h3>Personal Information</h3>
+            <p>Your basic account information.</p>
+        </div>
 
-                    <h3>
-                        Personal Information
-                    </h3>
+        <div class="profile-header-note">
+            <span aria-hidden="true">✦</span>
+            <p>Keep your information updated<br>for a better experience.</p>
+        </div>
+    </div>
 
-                    <p>
-                        Your basic account information.
-                    </p>
+    @if (session('success'))
+        <div class="profile-success">{{ session('success') }}</div>
+    @endif
 
+    @if ($errors->any())
+        <div class="profile-errors">
+            @foreach ($errors->all() as $error)
+                <p>{{ $error }}</p>
+            @endforeach
+        </div>
+    @endif
+
+    <form action="{{ route('customer.profile.update') }}" method="POST">
+        @csrf
+        @method('PUT')
+
+        <div class="information-grid">
+
+            <div class="information-item">
+                <span class="field-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="8" r="4"/>
+                        <path d="M4 21v-2a8 8 0 0 1 16 0v2Z"/>
+                    </svg>
+                </span>
+                <div class="information-content">
+                    <label for="name">Full Name</label>
+                    <input id="name" name="name" type="text"
+                        value="{{ old('name', $user->name) }}"
+                        maxlength="255" required>
                 </div>
-
             </div>
 
-
-            <div class="information-grid">
-
-
-                {{-- NAME --}}
-
-                <div class="information-item">
-
-                    <div class="information-icon">
-
-                        <svg viewBox="0 0 24 24">
-
-                            <circle
-                                cx="12"
-                                cy="7"
-                                r="4"
-                            />
-
-                            <path
-                                d="M4 21a8 8 0 0 1 16 0"
-                            />
-
-                        </svg>
-
-                    </div>
-
-
-                    <div class="information-content">
-
-                        <span>
-                            Full Name
-                        </span>
-
-                        <strong>
-                            {{ $user->name ?? 'Not provided' }}
-                        </strong>
-
-                    </div>
-
+            <div class="information-item">
+                <span class="field-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="3" y="5" width="18" height="14" rx="2"/>
+                        <path d="m4 7 8 6 8-6"/>
+                    </svg>
+                </span>
+                <div class="information-content">
+                    <label for="email">Email Address</label>
+                    <input id="email" name="email" type="email"
+                        value="{{ old('email', $user->email) }}"
+                        maxlength="255" required>
                 </div>
-
-
-
-                {{-- EMAIL --}}
-
-                <div class="information-item">
-
-                    <div class="information-icon">
-
-                        <svg viewBox="0 0 24 24">
-
-                            <rect
-                                x="3"
-                                y="5"
-                                width="18"
-                                height="14"
-                                rx="2"
-                            />
-
-                            <path
-                                d="m3 7 9 6 9-6"
-                            />
-
-                        </svg>
-
-                    </div>
-
-
-                    <div class="information-content">
-
-                        <span>
-                            Email Address
-                        </span>
-
-                        <strong>
-                            {{ $user->email ?? 'Not provided' }}
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-
-                {{-- PHONE --}}
-
-                <div class="information-item">
-
-                    <div class="information-icon">
-
-                        <svg viewBox="0 0 24 24">
-
-                            <path
-                                d="M6.5 3.5
-                                   9 3
-                                   11 8
-                                   8.5 9.5
-                                   a15 15 0 0 0 6 6
-                                   L16 13
-                                   21 15
-                                   20.5 17.5
-                                   C20 20 18 21 16.5 20.5
-                                   8.5 18
-                                   5 14
-                                   3.5 7.5
-                                   C3 5.8 4.5 4 6.5 3.5Z"
-                            />
-
-                        </svg>
-
-                    </div>
-
-
-                    <div class="information-content">
-
-                        <span>
-                            Phone Number
-                        </span>
-
-                        <strong>
-                            {{ $user->phone ?? 'Not provided' }}
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-
-                {{-- ADDRESS --}}
-
-                <div class="information-item">
-
-                    <div class="information-icon">
-
-                        <svg viewBox="0 0 24 24">
-
-                            <path
-                                d="M20 10
-                                   c0 5-8 11-8 11
-                                   S4 15 4 10
-                                   a8 8 0 1 1 16 0Z"
-                            />
-
-                            <circle
-                                cx="12"
-                                cy="10"
-                                r="2.5"
-                            />
-
-                        </svg>
-
-                    </div>
-
-
-                    <div class="information-content">
-
-                        <span>
-                            Address
-                        </span>
-
-                        <strong>
-                            {{ $user->address ?? 'Not provided' }}
-                        </strong>
-
-                    </div>
-
-                </div>
-
             </div>
 
-        </section>
-
-
-
-        {{-- RIGHT SIDE --}}
-
-        <aside class="profile-side">
-
-
-            {{-- ORDER ACTIVITY --}}
-
-            <div class="profile-side-card">
-
-                <div class="side-card-header">
-
-                    <h3>
-                        Order Activity
-                    </h3>
-
+            <div class="information-item">
+                <span class="field-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M22 16.9v3a2 2 0 0 1-2.2 2A19.8 19.8 0 0 1 3.1 5.2 2 2 0 0 1 5.1 3h3a2 2 0 0 1 2 1.7l.5 3a2 2 0 0 1-.6 1.7l-1.5 1.5a16 16 0 0 0 4.6 4.6l1.5-1.5a2 2 0 0 1 1.7-.6l3 .5a2 2 0 0 1 1.7 2Z"/>
+                    </svg>
+                </span>
+                <div class="information-content">
+                    <label for="phone">Phone Number</label>
+                    <input id="phone" name="phone" type="tel"
+                        value="{{ old('phone', $user->phone ?? '') }}"
+                        maxlength="30" placeholder="Enter your phone number">
                 </div>
-
-
-                {{-- TOTAL ORDERS --}}
-
-                <div class="activity-stat">
-
-                    <div class="activity-icon">
-
-                        <svg viewBox="0 0 24 24">
-
-                            <path
-                                d="m4 7 8-4 8 4-8 4-8-4Z"
-                            />
-
-                            <path
-                                d="M4 7v10l8 4 8-4V7"
-                            />
-
-                            <path
-                                d="M12 11v10"
-                            />
-
-                        </svg>
-
-                    </div>
-
-
-                    <div>
-
-                        <span>
-                            Total Orders
-                        </span>
-
-                        <strong>
-                            {{ $totalOrders ?? 0 }}
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                {{-- PENDING ORDERS --}}
-
-                <div class="activity-stat">
-
-                    <div class="activity-icon pending">
-
-                        <svg viewBox="0 0 24 24">
-
-                            <circle
-                                cx="12"
-                                cy="12"
-                                r="8"
-                            />
-
-                            <path
-                                d="M12 7v5l3 2"
-                            />
-
-                        </svg>
-
-                    </div>
-
-
-                    <div>
-
-                        <span>
-                            Pending Orders
-                        </span>
-
-                        <strong>
-                            {{ $pendingOrders ?? 0 }}
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                {{-- COMPLETED ORDERS --}}
-
-                <div class="activity-stat">
-
-                    <div class="activity-icon completed">
-
-                        <svg viewBox="0 0 24 24">
-
-                            <path
-                                d="m5 12 4 4L19 6"
-                            />
-
-                        </svg>
-
-                    </div>
-
-
-                    <div>
-
-                        <span>
-                            Completed Orders
-                        </span>
-
-                        <strong>
-                            {{ $completedOrders ?? 0 }}
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <a
-                    href="{{ route('customer.orders') }}"
-                    class="view-orders-button"
-                >
-                    View My Orders
-                </a>
-
             </div>
 
+            <div class="information-item">
+                <span class="field-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/>
+                        <circle cx="12" cy="10" r="2.5"/>
+                    </svg>
+                </span>
+                <div class="information-content">
+                    <label for="address">Address</label>
+                    <textarea id="address" name="address" rows="3"
+                        maxlength="2000"
+                        placeholder="Enter your address">{{ old('address', $customer->address ?? '') }}</textarea>
+                </div>
+            </div>
 
+        </div>
+
+        <button type="submit" class="profile-save-button">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 3h12l4 4v14H3V3h2Z"/>
+                <path d="M7 3v7h10V3M7 21v-7h10v7"/>
+            </svg>
+            <span>Save Changes</span>
+            <span class="save-arrow" aria-hidden="true">→</span>
+        </button>
+    </form>
+</section>
+
+<aside class="profile-side">
 
             {{-- ACCOUNT INFORMATION --}}
 
-            <div class="profile-side-card">
-
+<div class="profile-side-card" id="panel-account" data-profile-panel="account" hidden>
                 <div class="side-card-header">
 
                     <h3>

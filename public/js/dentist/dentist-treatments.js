@@ -6,6 +6,31 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 
+
+function refreshTreatmentSelection() {
+    const selected = Array.from(
+        document.querySelectorAll(".treatment-procedure-select")
+    ).flatMap(select =>
+        Array.from(select.selectedOptions)
+            .filter(option => option.value)
+            .map(option => ({
+                name: option.textContent.split(" — ₱")[0].trim(),
+                price: Number(option.textContent.split("₱").pop().replace(/,/g, "")) || 0
+            }))
+    );
+
+    const treatmentField = document.getElementById("formTreatment");
+    const costField = document.getElementById("formCost");
+
+    if (treatmentField) {
+        treatmentField.value = selected.map(item => item.name).join(", ");
+    }
+
+    if (costField) {
+        costField.value = selected.reduce((sum, item) => sum + item.price, 0).toFixed(2);
+    }
+}
+
     "use strict";
 
 
@@ -739,9 +764,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 "";
 
 
-            formTooth.value =
-                treatment.tooth_number ||
-                "";
+            const selectedTeeth = String(treatment.tooth_number || "")
+                .split(",")
+                .map(tooth => tooth.trim())
+                .filter(Boolean);
+
+            formTooth.querySelectorAll('input[name="tooth_numbers[]"]').forEach(
+                checkbox => {
+                    checkbox.checked = selectedTeeth.includes(checkbox.value);
+                }
+            );
 
 
             formTreatment.value =
@@ -899,15 +931,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
 
-                if (
-                    !formTreatment.value.trim()
-                ) {
+                const selectedProcedureNames = Array.from(
+                    document.querySelectorAll(".treatment-procedure-select")
+                ).flatMap(select =>
+                    Array.from(select.selectedOptions)
+                        .filter(option => option.value)
+                        .map(option => option.textContent.split(" — ₱")[0].trim())
+                ).filter(Boolean);
 
-                    showToast(
-                        "Please enter a treatment.",
-                        "error"
-                    );
-
+                if (!selectedProcedureNames.length) {
+                    showToast("Please select at least one procedure.", "error");
                     return;
                 }
 
@@ -946,13 +979,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         patient_record_id:
                             formPatient.value,
 
-                        tooth_number:
-                            formTooth.value ||
-                            null,
+                        tooth_number: Array.from(
+                            formTooth.querySelectorAll('input[name="tooth_numbers[]"]:checked')
+                        ).map(checkbox => checkbox.value).join(", ") || null,
 
                         treatment_name:
-                            formTreatment.value
-                                .trim(),
+                            selectedProcedureNames.join(", "),
 
                         treatment_date:
                             formDate.value,
@@ -1236,4 +1268,103 @@ function initializeLogoutModal() {
 
 document.addEventListener("DOMContentLoaded", function () {
     initializeLogoutModal();
+});
+/* ===== Treatment category selector: Add Category button ===== */
+document.addEventListener('DOMContentLoaded', function () {
+    const addButton = document.getElementById('addTreatmentCategory');
+    const rowsContainer = document.getElementById('treatmentCategoryRows');
+
+    if (!addButton || !rowsContainer) {
+        console.warn('Treatment category selector elements were not found.');
+        return;
+    }
+
+    // The controller will provide this catalog when we connect the database.
+    const catalog = Array.isArray(window.procedureCatalog)
+        ? window.procedureCatalog
+        : [];
+
+    function escapeTreatmentText(value) {
+        return String(value).replace(/[&<>"']/g, function (character) {
+            return {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            }[character];
+        });
+    }
+
+    function addCategoryRow() {
+const row = document.createElement('div');
+        row.className = 'treatment-category-row';
+
+        row.innerHTML = `
+            <div class="treatment-category-fields">
+                <div class="treatment-field">
+                    <label>Category *</label>
+                    <select class="treatment-category-select">
+                        <option value="">Select category...</option>
+                        ${catalog.map(category => `
+                            <option value="${category.id}">
+                                ${escapeTreatmentText(category.name)}
+                            </option>
+                        `).join('')}
+                    </select>
+                </div>
+
+                <div class="treatment-field">
+                    <label>Procedure(s) *</label>
+                    <select class="treatment-procedure-select" multiple disabled>
+                        <option>Select a category first</option>
+                    </select>
+                </div>
+
+                <button type="button"
+                        class="treatment-remove-category"
+                        aria-label="Remove category">×</button>
+            </div>
+            <div class="treatment-category-chips"></div>
+        `;
+
+	row.querySelector(".treatment-remove-category").addEventListener("click", function () {
+    row.remove();
+    refreshTreatmentSelection();
+});
+        rowsContainer.appendChild(row);
+
+        const categorySelect = row.querySelector('.treatment-category-select');
+        const procedureSelect = row.querySelector('.treatment-procedure-select');
+        procedureSelect.addEventListener("change", refreshTreatmentSelection);
+
+        categorySelect.addEventListener('change', function () {
+            const category = catalog.find(item => String(item.id) === this.value);
+            procedureSelect.innerHTML = '';
+
+            if (!category) {
+                procedureSelect.disabled = true;
+                procedureSelect.add(new Option('Select a category first', ''));
+                return;
+            }
+
+            procedureSelect.disabled = false;
+
+            (category.procedures || []).forEach(procedure => {
+                procedureSelect.add(new Option(
+                    `${procedure.name} — ₱${Number(procedure.price || 0).toLocaleString('en-PH', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    })}`,
+                    procedure.id
+                ));
+            });
+        });
+
+        row.querySelector('.treatment-remove-category').addEventListener('click', function () {
+            row.remove();
+        });
+    }
+
+    addButton.addEventListener('click', addCategoryRow);
 });

@@ -179,69 +179,14 @@ class ReceptionistPatientController extends Controller
 
             'patient' => [
 
-                'id' =>
-                    $patient->id,
-
-                'name' =>
-                    $patient->patient_name
-                    ?? 'Unknown Patient',
-
-                'age' =>
-                    $patient->age,
-
-                'sex' =>
-                    $patient->sex,
-
-                'civil_status' =>
-                    $patient->civil_status,
-
-                'tel_no' =>
-                    $patient->tel_no,
-
-                'occupation' =>
-                    $patient->occupation,
-
-                'address' =>
-                    $patient->address,
-
-                'heart_condition' =>
-                    $patient->heart_condition,
-
-                'heart_condition_details' =>
-                    $patient->heart_condition_details,
-
-                'allergy' =>
-                    $patient->allergy,
-
-                'allergy_details' =>
-                    $patient->allergy_details,
-
-                'diabetes' =>
-                    $patient->diabetes,
-
-                'diabetes_details' =>
-                    $patient->diabetes_details,
-
-                'hypertension' =>
-                    $patient->hypertension,
-
-                'hypertension_details' =>
-                    $patient->hypertension_details,
-
-                'bleeding_tendency' =>
-                    $patient->bleeding_tendency,
-
-                'bleeding_tendency_details' =>
-                    $patient->bleeding_tendency_details,
-
-                'asthma' =>
-                    $patient->asthma,
-
-                'asthma_details' =>
-                    $patient->asthma_details,
-
-                'other_conditions' =>
-                    $patient->other_conditions,
+                'id' => $patient->id,
+                'name' => $patient->patient_name ?? 'Unknown Patient',
+                'age' => $patient->age,
+                'sex' => $patient->sex,
+                'civil_status' => $patient->civil_status,
+                'tel_no' => $patient->tel_no,
+                'occupation' => $patient->occupation,
+                'address' => $patient->address,
 
             ],
 

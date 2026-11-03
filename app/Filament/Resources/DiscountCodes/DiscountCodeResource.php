@@ -9,6 +9,7 @@ use App\Filament\Resources\DiscountCodes\Schemas\DiscountCodeForm;
 use App\Filament\Resources\DiscountCodes\Tables\DiscountCodesTable;
 use App\Models\DiscountCode;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,7 +19,13 @@ class DiscountCodeResource extends Resource
 {
     protected static ?string $model = DiscountCode::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
+
+
+    protected static ?string $navigationLabel = 'Discount Codes';
+
+    protected static string|UnitEnum|null $navigationGroup = 'POS';
+
 
     public static function form(Schema $schema): Schema
     {

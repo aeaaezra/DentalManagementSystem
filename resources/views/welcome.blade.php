@@ -67,6 +67,7 @@
 
     </style>
 
+<link rel="icon" type="image/png" href="{{ asset('images/shine-and-smile-favicon.png') }}?v=6">
 </head>
 
 

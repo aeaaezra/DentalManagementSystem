@@ -1,0 +1,369 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Privacy Policy for Shine & Smile Dental Management System. Learn how personal information is collected, used, stored, and protected.">
+    <title>Privacy Policy | Shine &amp; Smile</title>
+
+    <link rel="stylesheet" href="{{ asset('css/welcome.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        .ss-legal {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 40px 20px 70px;
+        }
+
+        .ss-legal-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .ss-legal-header {
+            margin-bottom: 28px;
+        }
+
+        .ss-legal-header h1 {
+            font-size: clamp(30px, 5vw, 44px);
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .ss-legal-header p {
+            line-height: 1.7;
+            opacity: .8;
+        }
+
+        .ss-legal-card {
+            padding: clamp(22px, 4vw, 42px);
+            border-radius: 18px;
+            background: #fff;
+            color: #333;
+            box-shadow: 0 8px 35px rgba(0, 0, 0, .07);
+        }
+
+        .ss-legal-section {
+            margin-bottom: 30px;
+        }
+
+        .ss-legal-section h2 {
+            font-size: 21px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #25212a;
+        }
+
+        .ss-legal-section p,
+        .ss-legal-section li {
+            font-size: 15px;
+            line-height: 1.85;
+            color: #555;
+        }
+
+        .ss-legal-section ul {
+            padding-left: 24px;
+            margin-top: 10px;
+        }
+
+        .ss-legal-section li {
+            margin-bottom: 8px;
+        }
+
+        .ss-legal-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .ss-legal-actions a {
+            text-decoration: none;
+        }
+
+        .ss-legal-updated {
+            font-size: 13px !important;
+            opacity: .7;
+        }
+
+        @media (max-width: 600px) {
+            .ss-legal {
+                padding: 28px 14px 48px;
+            }
+
+            .ss-legal-card {
+                border-radius: 12px;
+            }
+        }
+
+
+        .ss-nav {
+            width: 100%;
+            padding: 18px 5%;
+            box-sizing: border-box;
+        }
+
+        .ss-nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ss-nav-logo {
+            display: inline-block;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .ss-nav-logo:hover {
+            opacity: .85;
+        }
+
+
+    </style>
+</head>
+<body class="ss-body">
+
+
+<nav id="ssNav" class="ss-nav">
+    <div class="ss-container ss-nav-row">
+        <a href="{{ url('/') }}" class="ss-nav-logo">Shine &amp; Smile</a>
+
+        <div class="ss-nav-links">
+            <a href="{{ url('/') }}">Home</a>
+            <a href="{{ url('/#about') }}">About</a>
+            <a href="{{ url('/#services') }}">Services</a>
+            <a href="{{ url('/#contact') }}">Contact</a>
+        </div>
+
+        <div class="ss-nav-actions">
+            <a href="{{ route('appointments.login') }}" class="ss-btn ss-btn--ghost ss-btn--sm">Login</a>
+            <a href="{{ route('appointments.create') }}" class="ss-btn ss-btn--solid ss-btn--sm">Book Appointment</a>
+        </div>
+    </div>
+</nav>
+
+    <main class="ss-legal">
+        <div class="ss-legal-container">
+
+            <header class="ss-legal-header">
+                <h1>Privacy Policy</h1>
+                <p>
+                    This policy explains how Shine &amp; Smile Dental Management System
+                    may collect, use, disclose, and protect personal information when
+                    you use our website and services.
+                </p>
+                <p class="ss-legal-updated">
+                    Last updated: October 15, 2026
+                </p>
+            </header>
+
+            <article class="ss-legal-card">
+
+                <section class="ss-legal-section">
+                    <h2>1. Introduction</h2>
+                    <p>
+                        Shine &amp; Smile respects your privacy. This policy describes
+                        the personal information that may be processed when you visit
+                        our website, create an account, request an appointment, or
+                        receive dental services.
+                    </p>
+                    <p>
+                        This policy should be read together with our
+                        <a href="{{ route('terms.conditions') }}">Terms and Conditions</a>.
+                    </p>
+                </section>
+
+                <section class="ss-legal-section">
+                    <h2>2. Information We May Collect</h2>
+                    <p>Depending on how you use our services, information may include:</p>
+                    <ul>
+                        <li><strong>Identity information:</strong> your name and other details you provide for identification.</li>
+                        <li><strong>Contact information:</strong> email address, telephone number, and address when requested.</li>
+                        <li><strong>Account information:</strong> login details and account preferences. Passwords should be protected using appropriate security measures.</li>
+                        <li><strong>Appointment information:</strong> requested dates, appointment status, and relevant communications.</li>
+                        <li><strong>Dental and health information:</strong> medical history, dental records, treatment details, and other health information when necessary for care.</li>
+                        <li><strong>Transaction information:</strong> payment records and service charges associated with your transactions.</li>
+                        <li><strong>Technical information:</strong> information such as browser details, access logs, or device information where collected by the website or its services.</li>
+                    </ul>
+                    <p>
+                        We aim to collect only information that is relevant and necessary
+                        for the stated purpose.
+                    </p>
+                </section>
+
+                <section class="ss-legal-section">
+                    <h2>3. How We May Use Your Information</h2>
+                    <p>Your information may be used, where appropriate, to:</p>
+                    <ul>
+                        <li>Create and manage user accounts.</li>
+                        <li>Receive, schedule, confirm, or manage appointment requests.</li>
+                        <li>Support dental assessment, treatment, and patient record management.</li>
+                        <li>Process and document payments and transactions.</li>
+                        <li>Respond to questions, concerns, and service requests.</li>
+                        <li>Maintain the security, reliability, and functionality of the system.</li>
+                        <li>Meet applicable legal and regulatory obligations.</li>
+                    </ul>
+                </section>
+
+                <section class="ss-legal-section">
+                    <h2>4. Dental and Health Information</h2>
+                    <p>
+                        Dental and medical information is particularly sensitive.
+                        Access to these records should be limited to authorized
+                        personnel who need the information for legitimate clinical,
+                        administrative, or legal purposes.
+                    </p>
+                    <p>
+                        Please provide accurate information relevant to your care.
+                        Do not submit another person's health information unless you
+                        are authorized to do so.
+                    </p>
+                </section>
+
+                <section class="ss-legal-section">
+                    <h2>5. Sharing and Disclosure</h2>
+                    <p>
+                        We do not intend to make personal information publicly available.
+                        Information may be disclosed when necessary and lawful, such as:
+                    </p>
+                    <ul>
+                        <li>To authorized dental or administrative personnel involved in providing services.</li>
+                        <li>To service providers supporting the operation of the website or system, if applicable and appropriately authorized.</li>
+                        <li>When disclosure is required by law or a valid legal process.</li>
+                        <li>When necessary to protect the rights, safety, or security of patients, the clinic, or others, subject to applicable law.</li>
+                    </ul>
+                    <p>
+                        Any sharing should be limited to what is reasonably necessary
+                        for the relevant purpose.
+                    </p>
+                </section>
+
+                <section class="ss-legal-section">
+                    <h2>6. Data Security</h2>
+                    <p>
+                        Reasonable organizational, physical, and technical safeguards
+                        should be used to protect personal information against
+                        unauthorized access, disclosure, alteration, loss, or misuse.
+                        No website or electronic storage method can be guaranteed
+                        completely secure.
+                    </p>
+                    <p>
+                        Users should keep their login credentials confidential and
+                        notify the clinic if they suspect unauthorized access to
+                        their account.
+                    </p>
+                </section>
+
+                <section class="ss-legal-section">
+                    <h2>7. Data Retention</h2>
+                    <p>
+                        Personal information should be retained only for as long as
+                        reasonably necessary for the purpose for which it was collected,
+                        including applicable clinical, operational, and legal
+                        requirements. The appropriate retention period depends on
+                        the type of record and the applicable requirements.
+                    </p>
+                </section>
+
+                <section class="ss-legal-section">
+                    <h2>8. Your Privacy Rights</h2>
+                    <p>
+                        Subject to applicable law and any lawful exceptions, you may
+                        have rights to request access to your personal information,
+                        ask for corrections, inquire about how it is processed, or
+                        raise concerns about its handling.
+                    </p>
+                    <p>
+                        To make a request, contact the clinic through its verified
+                        official contact channel. We may need to verify your identity
+                        before responding. Some records may need to be retained where
+                        required by law or necessary for legitimate purposes.
+                    </p>
+                </section>
+
+                <section class="ss-legal-section">
+                    <h2>9. Cookies and Technical Data</h2>
+                    <p>
+                        The website or its supporting services may use cookies or
+                        similar technologies for functions such as maintaining sessions,
+                        remembering preferences, or supporting security. The actual
+                        technologies used depend on the system configuration.
+                    </p>
+                    <p>
+                        You can review your browser settings to manage cookies.
+                        Disabling certain cookies may affect website functionality.
+                    </p>
+                </section>
+
+                <section class="ss-legal-section">
+                    <h2>10. Children and Authorized Representatives</h2>
+                    <p>
+                        Where a patient is a minor or another person is acting on a
+                        patient's behalf, the clinic may need to verify the authority
+                        of a parent, guardian, or representative before collecting
+                        information or responding to requests, as required by law.
+                    </p>
+                </section>
+
+                <section class="ss-legal-section">
+                    <h2>11. Third-Party Websites</h2>
+                    <p>
+                        Our website may contain links to external websites or services.
+                        Their privacy practices are governed by their own policies.
+                        We encourage you to review those policies before providing
+                        information to a third party.
+                    </p>
+                </section>
+
+                <section class="ss-legal-section">
+                    <h2>12. Changes to This Policy</h2>
+                    <p>
+                        This Privacy Policy may be updated when our services,
+                        practices, or applicable requirements change. The updated
+                        version should be published on this page with a revised
+                        update date.
+                    </p>
+                </section>
+
+                <section class="ss-legal-section">
+                    <h2>13. Contact and Privacy Concerns</h2>
+                    <p>
+                        For questions about this policy or requests relating to
+                        personal information, please contact Shine &amp; Smile through
+                        its verified official contact details.
+                    </p>
+                    <p>
+                        Before publishing this page, the clinic should add and verify
+                        its official privacy contact information and any designated
+                        Data Protection Officer details, if applicable.
+                    </p>
+                </section>
+
+                <div class="ss-legal-actions">
+                    <a href="{{ route('appointments.landing') }}"
+                       class="ss-btn ss-btn--ghost">
+                        Back to Home
+                    </a>
+
+                    <a href="{{ route('terms.conditions') }}"
+                       class="ss-btn ss-btn--solid">
+                        Terms and Conditions
+                    </a>
+                </div>
+
+            </article>
+        </div>
+    </main>
+
+</body>
+</html>

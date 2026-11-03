@@ -1,0 +1,47 @@
+
+<?php
+
+namespace App\Filament\Resources\Users\Pages;
+
+use App\Filament\Resources\Users\UsersResource;
+use Filament\Resources\Pages\CreateRecord;
+
+class CreateUsers extends CreateRecord
+{
+    protected static string $resource = UsersResource::class;
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $roles = $data['selected_roles'] ?? [];
+
+        unset($data['selected_roles']);
+
+        // Keep the legacy role column compatible with existing code.
+        // Prefer admin when the selected roles include admin.
+        $priority = [
+            'admin',
+            'cashier',
+            'dentist',
+            'receptionist',
+            'patient',
+            'customer',
+            'staff',
+        ];
+
+        foreach ($priority as $role) {
+            if (in_array($role, $roles, true)) {
+                $data['role'] = $role;
+                break;
+            }
+        }
+
+        return $data;
+    }
+
+    protected function afterCreate(): void
+    {
+        $roles = $this->form->getState()['selected_roles'] ?? [];
+
+        $this->record->syncRoles($roles);
+    }
+}

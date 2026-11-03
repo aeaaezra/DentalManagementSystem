@@ -28,7 +28,7 @@ class OrdersResource extends Resource
     protected static ?string $navigationLabel = 'Orders';
 
 
-    protected static ?string $recordTitleAttribute = 'order_no';
+    protected static ?string $recordTitleAttribute = 'order_number';
 
     public static function form(Schema $schema): Schema
     {

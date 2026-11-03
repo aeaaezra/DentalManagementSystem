@@ -2195,3 +2195,484 @@ body.receptionist-body {
     }
 
 }
+
+
+
+/* GOOGLE AUTHENTICATOR SETUP PAGE */
+body:has(.two-factor-setup-page) {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #fff1f7 0%, #fff8fb 55%, #fdf2f8 100%);
+    color: #1f2937;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.two-factor-setup-page {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 48px 20px;
+}
+
+.two-factor-setup-card {
+    width: 100%;
+    max-width: 680px;
+    padding: 36px;
+    background: #ffffff;
+    border: 1px solid #fce7f3;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(157, 23, 77, 0.10);
+}
+
+.two-factor-setup-header {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.setup-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px;
+    border-radius: 18px;
+    background: #fce7f3;
+    color: #db2777;
+}
+
+.two-factor-setup-header h1 {
+    margin: 0 0 10px;
+    color: #831843;
+    font-size: clamp(24px, 4vw, 32px);
+    line-height: 1.25;
+    font-weight: 800;
+    letter-spacing: -0.7px;
+}
+
+.two-factor-setup-header p,
+.setup-step p {
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+.two-factor-setup-header p {
+    margin: 0;
+}
+
+.setup-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin: 18px 0;
+    padding: 18px;
+    background: #fff8fb;
+    border: 1px solid #fce7f3;
+    border-radius: 15px;
+}
+
+.step-number {
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #ec4899;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.setup-step h3 {
+    margin: 2px 0 5px;
+    color: #1f2937;
+    font-size: 15px;
+    font-weight: 750;
+}
+
+.setup-step p {
+    margin: 0;
+}
+
+.qr-code-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+    margin: 22px 0;
+    padding: 24px;
+    background: #ffffff;
+    border: 1px solid #fce7f3;
+    border-radius: 18px;
+}
+
+#qrCode {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+#qrCode img,
+#qrCode canvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.secret-container {
+    margin: 16px 0 24px;
+    padding: 14px 16px;
+    background: #fff1f6;
+    border: 1px solid #fbcfe8;
+    border-radius: 12px;
+    overflow-wrap: anywhere;
+    line-height: 1.7;
+    font-size: 12px;
+    color: #9d174d;
+}
+
+.secret-container span {
+    display: block;
+    margin-bottom: 5px;
+    color: #831843;
+    font-weight: 600;
+}
+
+.secret-container strong {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    letter-spacing: 0.4px;
+}
+
+.two-factor-verify-form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.two-factor-verify-form label {
+    color: #374151;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.two-factor-verify-form input {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    border: 1px solid #e5cbd8;
+    border-radius: 11px;
+    outline: none;
+    background: #ffffff;
+    color: #1f2937;
+    font: inherit;
+    font-size: 16px;
+    letter-spacing: 3px;
+}
+
+.two-factor-verify-form input:focus {
+    border-color: #ec4899;
+    box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.12);
+}
+
+.primary-button.setup-submit-button {
+    min-height: 48px;
+    padding: 12px 20px;
+    border: 0;
+    border-radius: 11px;
+    background: #ec4899;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 750;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.primary-button.setup-submit-button:hover {
+    background: #db2777;
+    transform: translateY(-1px);
+}
+
+.security-error {
+    padding: 11px 13px;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    background: #fef2f2;
+    color: #b91c1c;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.two-factor-setup-card > a {
+    display: inline-block;
+    margin-top: 20px;
+    color: #be185d;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.two-factor-setup-card > a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+    .two-factor-setup-page {
+        padding: 20px 12px;
+    }
+
+    .two-factor-setup-card {
+        padding: 22px 16px;
+        border-radius: 18px;
+    }
+
+    .setup-step {
+        padding: 14px;
+    }
+
+    .qr-code-container {
+        padding: 14px;
+    }
+}
+
+
+
+
+/* COMPACT GOOGLE AUTHENTICATOR SETUP DESIGN */
+body:has(.two-factor-setup-page) {
+    min-height: 100vh;
+}
+
+.two-factor-setup-page {
+    padding: 28px 16px;
+}
+
+.two-factor-setup-card {
+    max-width: 520px;
+    padding: 26px;
+    border-radius: 18px;
+}
+
+.two-factor-setup-header {
+    margin-bottom: 20px;
+}
+
+.setup-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 12px;
+    border-radius: 14px;
+}
+
+.two-factor-setup-header h1 {
+    font-size: 26px;
+    letter-spacing: -0.4px;
+}
+
+.two-factor-setup-header p,
+.setup-step p {
+    font-size: 13px;
+}
+
+.setup-step {
+    gap: 12px;
+    margin: 12px 0;
+    padding: 14px;
+    border-radius: 12px;
+}
+
+.step-number {
+    flex-basis: 30px;
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
+}
+
+.setup-step h3 {
+    font-size: 14px;
+}
+
+.qr-code-container {
+    min-height: 0;
+    margin: 16px 0;
+    padding: 16px;
+    border-radius: 14px;
+}
+
+#qrCode img,
+#qrCode canvas {
+    width: 200px;
+    max-width: 100%;
+    height: auto;
+}
+
+.secret-container {
+    margin: 12px 0 18px;
+    padding: 11px 12px;
+    font-size: 11px;
+}
+
+.two-factor-verify-form {
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.two-factor-verify-form input,
+.primary-button.setup-submit-button {
+    min-height: 44px;
+}
+
+@media (max-width: 600px) {
+    .two-factor-setup-page {
+        padding: 14px 10px;
+    }
+
+    .two-factor-setup-card {
+        padding: 20px 15px;
+    }
+
+    .two-factor-setup-header h1 {
+        font-size: 23px;
+    }
+
+    #qrCode img,
+    #qrCode canvas {
+        width: 180px;
+    }
+}
+
+
+/* CONSOLIDATED GOOGLE AUTHENTICATOR SETUP LAYOUT */
+body:has(> .two-factor-setup-page) {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #fff1f7 0%, #fff8fb 55%, #fdf2f8 100%);
+    color: #1f2937;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body > .two-factor-setup-page {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+}
+
+.two-factor-setup-page .two-factor-setup-card {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 540px;
+    margin: auto;
+    padding: 28px;
+    background: #fff;
+    border: 1px solid #fce7f3;
+    border-radius: 18px;
+    box-shadow: 0 20px 60px rgba(157, 23, 77, 0.10);
+}
+
+.two-factor-setup-page .two-factor-setup-header {
+    margin-bottom: 22px;
+}
+
+.two-factor-setup-page .two-factor-setup-header h1 {
+    font-size: 26px;
+    line-height: 1.3;
+}
+
+.two-factor-setup-page .two-factor-setup-header p {
+    font-size: 13px;
+}
+
+.two-factor-setup-page .setup-step {
+    gap: 12px;
+    margin: 12px 0;
+    padding: 14px;
+    border-radius: 12px;
+}
+
+.two-factor-setup-page .step-number {
+    flex-basis: 32px;
+    width: 32px;
+    height: 32px;
+    font-size: 13px;
+}
+
+.two-factor-setup-page .setup-step h3 {
+    font-size: 14px;
+}
+
+.two-factor-setup-page .setup-step p {
+    font-size: 13px;
+}
+
+.two-factor-setup-page .qr-code-container {
+    min-height: 0;
+    margin: 16px 0;
+    padding: 16px;
+}
+
+.two-factor-setup-page #qrCode img,
+.two-factor-setup-page #qrCode canvas {
+    width: 180px;
+    max-width: 100%;
+    height: auto;
+}
+
+.two-factor-setup-page .secret-container {
+    margin: 12px 0 16px;
+    padding: 12px;
+    font-size: 12px;
+}
+
+.two-factor-setup-page .two-factor-verify-form {
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.two-factor-setup-page .two-factor-verify-form input {
+    min-height: 44px;
+    font-size: 14px;
+}
+
+.two-factor-setup-page .setup-submit-button {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 16px;
+    font-size: 13px;
+}
+
+@media (max-width: 600px) {
+    body > .two-factor-setup-page {
+        align-items: flex-start;
+        padding: 14px 10px;
+    }
+
+    .two-factor-setup-page .two-factor-setup-card {
+        padding: 22px 16px;
+    }
+
+    .two-factor-setup-page .two-factor-setup-header h1 {
+        font-size: 23px;
+    }
+
+    .two-factor-setup-page #qrCode img,
+    .two-factor-setup-page #qrCode canvas {
+        width: 170px;
+    }
+}
+

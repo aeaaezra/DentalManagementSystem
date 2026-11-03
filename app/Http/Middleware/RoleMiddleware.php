@@ -59,7 +59,7 @@ class RoleMiddleware
 
         if ($loginType === 'customer') {
             return redirect()
-                ->route('customer.shop')
+                ->route('customer.products')
                 ->with('error', 'You do not have access to that page.');
         }
 

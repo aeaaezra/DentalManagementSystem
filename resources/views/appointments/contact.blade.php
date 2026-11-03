@@ -39,7 +39,7 @@
     >
 
     <script
-        src="{{ asset('js/patient-theme.js') }}"
+        src="{{ asset('js/appointment/patient-theme.js') }}"
     ></script>
 
 </head>

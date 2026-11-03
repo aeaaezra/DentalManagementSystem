@@ -2440,8 +2440,6 @@
 
                                 @csrf
 
-                                @method('DELETE')
-
                                 <button
                                     type="submit"
                                     class="ss-danger-button"

@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     <link rel="stylesheet" href="{{ asset('css/appointment/patient-theme.css') }}">
-    <script src="{{ asset('js/patient-theme.js') }}"></script>
+    <script src="{{ asset('js/appointment/patient-theme.js') }}"></script>
 
 
     <style>
@@ -265,6 +265,57 @@
             .card { max-width: 100%; border: none; box-shadow: none; }
             .buttons, .history-button, .status { display: none; }
         }
+    
+        /* Thank-you page layout protection */
+        html, body {
+            width: 100%;
+            min-width: 0;
+            margin: 0;
+        }
+
+        body {
+            overflow-x: hidden;
+        }
+
+        .page {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            margin: 0;
+            padding: 30px 15px;
+            box-sizing: border-box;
+            overflow-wrap: anywhere;
+        }
+
+        .page,
+        .page *,
+        .page *::before,
+        .page *::after {
+            box-sizing: border-box;
+        }
+
+        .page > .card {
+            width: 100%;
+            max-width: 760px;
+            flex: 0 1 760px;
+            min-width: 0;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .page > .card {
+            flex: 0 1 760px;
+            min-width: 0;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @media (max-width: 600px) {
+            .page {
+                padding: 20px 12px;
+            }
+        }
+
     </style>
 </head>
 
@@ -408,11 +459,22 @@
     <span>Print Summary</span>
 </button>
 
+            <button
+                type="button"
+                class="button okay-button"
+                style="background:#ec167b;color:#fff;border:1px solid #ec167b;cursor:pointer;"
+                onclick="window.parent.postMessage({ type: 'ss-appointment-close' }, window.location.origin)"
+            >
+                <span>Okay</span>
+            </button>
+
         </div>
 
+        @auth
         <a href="{{ route('appointments.history') }}" class="history-button">
             View Appointment History →
         </a>
+        @endauth
 
     </main>
 </div>

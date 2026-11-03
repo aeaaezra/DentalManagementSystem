@@ -79,12 +79,29 @@ document.addEventListener('DOMContentLoaded', function () {
        SAVE CART
     ============================================================ */
 
-    function saveCart() {
-
-        localStorage.setItem(
-            'shineSmileCart',
-            JSON.stringify(cart)
+    function getCartItemKey(item) {
+        return String(
+            item.cart_key ||
+            (String(item.id) + ':' + String(item.variant_id || 0))
         );
+    }
+
+    const selectionStorageKey = 'shineSmileCheckoutSelection';
+
+    function readSelectedKeys() {
+        try {
+            const saved = JSON.parse(localStorage.getItem(selectionStorageKey));
+            if (Array.isArray(saved)) return saved.map(String);
+        } catch (error) {}
+        return cart.map(getCartItemKey);
+    }
+
+    function saveSelectedKeys(keys) {
+        localStorage.setItem(selectionStorageKey, JSON.stringify(keys));
+    }
+
+    function saveCart() {
+        localStorage.setItem('shineSmileCart', JSON.stringify(cart));
     }
 
 
@@ -124,32 +141,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function updateCart() {
 
-        const totalItems =
-            cart.reduce(
-                function (sum, item) {
+        let selectedKeys = readSelectedKeys();
+        const currentKeys = cart.map(getCartItemKey);
 
-                    return sum
-                        + Number(item.quantity);
+        // Keep saved choices for items still in the cart; newly added items start checked.
+        selectedKeys = currentKeys.filter(key =>
+            selectedKeys.includes(key) || !localStorage.getItem(selectionStorageKey)
+        );
+        saveSelectedKeys(selectedKeys);
 
-                },
-                0
-            );
+        const selectedItems = cart.filter(item =>
+            selectedKeys.includes(getCartItemKey(item))
+        );
 
+        const totalItems = selectedItems.reduce(
+            (sum, item) => sum + Number(item.quantity), 0
+        );
 
-        const subtotal =
-            cart.reduce(
-                function (sum, item) {
-
-                    return sum
-                        + (
-                            Number(item.price)
-                            *
-                            Number(item.quantity)
-                        );
-
-                },
-                0
-            );
+        const subtotal = selectedItems.reduce(
+            (sum, item) => sum + Number(item.price) * Number(item.quantity), 0
+        );
 
 
         const total =
@@ -201,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (checkoutButton) {
 
             checkoutButton.disabled =
-                cart.length === 0;
+                selectedItems.length === 0;
         }
 
 
@@ -255,11 +266,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 return `
                     <div
                         class="cart-item"
-                        data-id="${item.id}"
+                        data-cart-key="${getCartItemKey(item)}"
                     >
+                        <label class="cart-item-select" title="Select this item for checkout">
+                            <input
+                                type="checkbox"
+                                class="cart-item-checkbox"
+                                data-cart-key="${getCartItemKey(item)}"
+                                ${readSelectedKeys().includes(getCartItemKey(item)) ? 'checked' : ''}
+                                aria-label="Select ${String(item.name || 'product').replace(/&/g, '&amp;').replace(/"/g, '&quot;')}"
+                            >
+                        </label>
 
                         <div class="cart-item-image">
-                            ${item.icon || '🦷'}
+                            ${item.image
+                                ? `<img src="${String(item.image).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')}" alt="${String(item.name || 'Product').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')}" loading="lazy" onerror="this.style.display='none';">`
+                                : (item.icon || '🦷')}
                         </div>
 
 
@@ -273,6 +295,12 @@ document.addEventListener('DOMContentLoaded', function () {
                             <h4>
                                 ${item.name}
                             </h4>
+
+                            ${item.variant_name ? `
+                                <p class="cart-item-variant">
+                                    Option: ${item.variant_name}
+                                </p>
+                            ` : ''}
 
 
                             <p>
@@ -294,7 +322,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 <button
                                     type="button"
                                     class="quantity-minus"
-                                    data-id="${item.id}"
+                                    data-cart-key="${getCartItemKey(item)}"
                                 >
                                     −
                                 </button>
@@ -308,7 +336,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 <button
                                     type="button"
                                     class="quantity-plus"
-                                    data-id="${item.id}"
+                                    data-cart-key="${getCartItemKey(item)}"
                                 >
                                     +
                                 </button>
@@ -324,7 +352,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <button
                                 type="button"
                                 class="remove-item"
-                                data-id="${item.id}"
+                                data-cart-key="${getCartItemKey(item)}"
                             >
                                 Remove
                             </button>
@@ -343,16 +371,13 @@ document.addEventListener('DOMContentLoaded', function () {
     ============================================================ */
 
     function changeQuantity(
-        productId,
+        cartKey,
         change
     ) {
 
         const item =
             cart.find(function (cartItem) {
-
-                return String(cartItem.id)
-                    === String(productId);
-
+                return getCartItemKey(cartItem) === String(cartKey);
             });
 
 
@@ -368,16 +393,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (newQuantity <= 0) {
 
-            removeItem(productId);
+            removeItem(cartKey);
 
             return;
         }
 
 
+        const availableStock = Number(item.stock);
+
         if (
-            item.stock
-            &&
-            newQuantity > item.stock
+            !Number.isInteger(availableStock)
+            || availableStock < 1
+            || newQuantity > availableStock
         ) {
 
             showToast(
@@ -400,14 +427,11 @@ document.addEventListener('DOMContentLoaded', function () {
        REMOVE ITEM
     ============================================================ */
 
-    function removeItem(productId) {
+    function removeItem(cartKey) {
 
         cart =
             cart.filter(function (item) {
-
-                return String(item.id)
-                    !== String(productId);
-
+                return getCartItemKey(item) !== String(cartKey);
             });
 
 
@@ -434,36 +458,113 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
 
-                const confirmed =
-                    confirm(
-                        'Are you sure you want to clear your cart?'
-                    );
-
-
-                if (!confirmed) {
-                    return;
-                }
-
-
-                cart = [];
-
-
-                updateCart();
-
-
-                showToast(
-                    'Cart cleared.'
-                );
+                openClearCartModal();
             }
         );
     }
 
+
+
+    /* CLEAR CART MODAL */
+    const clearCartModal = document.getElementById('clearCartModal');
+    const clearCartCancel = document.getElementById('clearCartCancel');
+    const clearCartConfirm = document.getElementById('clearCartConfirm');
+    const clearCartTimer = document.getElementById('clearCartTimer');
+    let clearCartCountdown = null;
+    let clearCartDeadline = 0;
+
+    function closeClearCartModal() {
+        if (!clearCartModal) return;
+        clearCartModal.classList.remove('is-open');
+        clearCartModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+
+        if (clearCartCountdown) {
+            clearInterval(clearCartCountdown);
+            clearCartCountdown = null;
+        }
+    }
+
+    function openClearCartModal() {
+        if (!clearCartModal) {
+            showToast('Confirmation dialog unavailable. Please refresh the page.');
+            return;
+        }
+
+        clearCartDeadline = Date.now() + 60000;
+        clearCartModal.classList.add('is-open');
+        clearCartModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+
+        function updateCountdown() {
+            const remaining = Math.max(0, clearCartDeadline - Date.now());
+            const seconds = Math.ceil(remaining / 1000);
+            if (clearCartTimer) {
+                clearCartTimer.textContent =
+                    String(Math.floor(seconds / 60)).padStart(2, '0') + ':' +
+                    String(seconds % 60).padStart(2, '0');
+            }
+            if (remaining <= 0 && clearCartCountdown) {
+                clearInterval(clearCartCountdown);
+                clearCartCountdown = null;
+            }
+        }
+
+        if (clearCartCountdown) clearInterval(clearCartCountdown);
+        updateCountdown();
+        clearCartCountdown = setInterval(updateCountdown, 250);
+        if (clearCartCancel) clearCartCancel.focus();
+    }
+
+    if (clearCartCancel) {
+        clearCartCancel.addEventListener('click', closeClearCartModal);
+    }
+
+    if (clearCartConfirm) {
+        clearCartConfirm.addEventListener('click', function () {
+            if (cart.length === 0) {
+                closeClearCartModal();
+                return;
+            }
+            cart = [];
+            updateCart();
+            closeClearCartModal();
+            showToast('Cart cleared.');
+        });
+    }
+
+    if (clearCartModal) {
+        clearCartModal.addEventListener('click', function (event) {
+            if (event.target === clearCartModal) closeClearCartModal();
+        });
+    }
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && clearCartModal &&
+            clearCartModal.classList.contains('is-open')) {
+            closeClearCartModal();
+        }
+    });
 
     /* ============================================================
        CART ITEM ACTIONS
     ============================================================ */
 
     if (cartItems) {
+        cartItems.addEventListener('change', function (event) {
+            const checkbox = event.target.closest('.cart-item-checkbox');
+            if (!checkbox) return;
+
+            let keys = readSelectedKeys();
+            const key = String(checkbox.dataset.cartKey);
+
+            keys = checkbox.checked
+                ? Array.from(new Set([...keys, key]))
+                : keys.filter(savedKey => savedKey !== key);
+
+            saveSelectedKeys(keys);
+            updateCart();
+        });
 
         cartItems.addEventListener(
             'click',
@@ -490,7 +591,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (minus) {
 
                     changeQuantity(
-                        minus.dataset.id,
+                        minus.dataset.cartKey,
                         -1
                     );
 
@@ -501,7 +602,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (plus) {
 
                     changeQuantity(
-                        plus.dataset.id,
+                        plus.dataset.cartKey,
                         1
                     );
 
@@ -512,7 +613,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (remove) {
 
                     removeItem(
-                        remove.dataset.id
+                        remove.dataset.cartKey
                     );
                 }
             }
@@ -530,26 +631,90 @@ document.addEventListener('DOMContentLoaded', function () {
             'click',
             function () {
 
-                if (cart.length === 0) {
+                const selected = cart.filter(item =>
+                    readSelectedKeys().includes(getCartItemKey(item))
+                );
 
-                    showToast(
-                        'Your cart is empty.'
-                    );
-
+                if (selected.length === 0) {
+                    showToast('Select at least one item to check out.');
                     return;
                 }
 
-
-                /*
-                 * Change this route to your actual
-                 * checkout route when you create it.
-                 */
-
-                window.location.href =
-                    '/orders/checkout';
+                saveSelectedKeys(selected.map(getCartItemKey));
+                window.location.href = '/customer/checkout';
             }
         );
     }
+
+
+    /* ============================================================
+       RECOMMENDATION ADD TO CART
+    ============================================================ */
+
+    document.addEventListener('click', function (event) {
+        const button = event.target.closest('[data-recommendation-add]');
+
+        if (!button) {
+            return;
+        }
+
+        const id = Number(button.dataset.id);
+        const name = button.dataset.name || 'Product';
+        const price = Number(button.dataset.price);
+        const stock = Number(button.dataset.stock);
+        const image = button.dataset.image || '';
+        const variantId = button.dataset.variantId
+            ? Number(button.dataset.variantId)
+            : 0;
+        const variantName = button.dataset.variantName || '';
+        const cartKey = String(id) + ':' + String(variantId);
+
+        if (
+            !Number.isInteger(id) || id < 1 ||
+            !Number.isFinite(price) || price < 0 ||
+            !Number.isInteger(stock) || stock < 1
+        ) {
+            showToast('This product is currently unavailable.');
+            return;
+        }
+
+        const existing = cart.find(function (item) {
+            return getCartItemKey(item) === cartKey;
+        });
+
+        if (existing) {
+            const quantity = Number(existing.quantity);
+
+            if (!Number.isInteger(quantity) || quantity >= stock) {
+                showToast('You have reached the available stock.');
+                return;
+            }
+
+            existing.quantity = quantity + 1;
+            existing.stock = stock;
+            existing.name = name;
+            existing.price = price;
+            existing.image = image || existing.image || '';
+            existing.variant_id = variantId;
+            existing.variant_name = variantName;
+            existing.cart_key = cartKey;
+        } else {
+            cart.push({
+                id: id,
+                name: name,
+                image: image,
+                variant_id: variantId,
+                variant_name: variantName,
+                cart_key: cartKey,
+                price: price,
+                quantity: 1,
+                stock: stock
+            });
+        }
+
+        updateCart();
+        showToast(name + ' added to cart.');
+    });
 
 
     /* ============================================================

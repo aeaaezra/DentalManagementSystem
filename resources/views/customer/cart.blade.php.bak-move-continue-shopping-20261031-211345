@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="csrf-token"
+        content="{{ csrf_token() }}"
+    >
+
+    <title>
+        Shine & Smile | Shopping Cart
+    </title>
+
+
+    <link
+        rel="stylesheet"
+        href="{{ asset('css/customer/product.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ asset('css/customer/cart.css') }}?v={{ filemtime(public_path('css/customer/cart.css')) }}"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================================
+         HEADER
+    ========================================================== -->
+
+    <header class="customer-header">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                🦷
+            </div>
+
+            <div>
+
+                <h1>
+                    Shine & Smile
+                </h1>
+
+                <span>
+                    Dental Clinic
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <nav class="customer-nav">
+
+            <a
+                href="{{ route('customer.products') }}"
+                class="nav-link"
+            >
+                Products
+            </a>
+
+
+            <a
+                href="{{ route('customer.orders') }}"
+                class="nav-link"
+            >
+                My Orders
+            </a>
+
+        </nav>
+
+
+        <div class="header-actions">
+
+            <a
+                href="{{ route('customer.cart') }}"
+                class="cart-button active-cart"
+            >
+
+                🛒
+
+                <span id="headerCartCount">
+                    0
+                </span>
+
+            </a>
+
+
+            <div class="cart-profile-wrap" id="cartProfileWrap">
+                <button type="button" class="customer-profile cart-profile-toggle"
+                        id="cartProfileToggle" aria-expanded="false"
+                        aria-controls="cartProfileMenu">
+                    <span class="profile-avatar">
+                        {{ strtoupper(substr(auth()->user()->name ?? 'C', 0, 1)) }}
+                    </span>
+                    <span class="profile-info">
+                        <strong>{{ auth()->user()->name ?? 'Customer' }}</strong>
+                        <small>Customer</small>
+                    </span>
+                    <span class="cart-profile-chevron" aria-hidden="true">⌄</span>
+                </button>
+
+                <div class="cart-profile-menu" id="cartProfileMenu" hidden>
+                    <div class="cart-profile-menu-info">
+                        <strong>{{ auth()->user()->name ?? 'Customer' }}</strong>
+                        <small>{{ auth()->user()->email ?? '' }}</small>
+                    </div>
+                    <a href="{{ route('customer.profile') }}">♙ &nbsp; Profile</a>
+                    <a href="{{ route('customer.settings') }}">⚙ &nbsp; Settings</a>
+                    <button type="button" class="cart-profile-logout" id="cartProfileLogout">
+                        ↪ &nbsp; Logout
+                    </button>
+                </div>
+            </div>
+
+            <div class="cart-profile-overlay" id="cartProfileOverlay" hidden>
+                <div class="cart-profile-dialog" role="dialog" aria-modal="true"
+                     aria-labelledby="cartProfileLogoutTitle">
+                    <h2 id="cartProfileLogoutTitle">Log out of your account?</h2>
+                    <p>Are you sure you want to log out?</p>
+                    <div class="cart-profile-dialog-actions">
+                        <button type="button" id="cartProfileCancel">Cancel</button>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit">Yes, Log Out</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =========================================================
+         MAIN
+    ========================================================== -->
+
+    <main class="cart-page">
+
+
+        <!-- PAGE HEADER -->
+
+        <div class="cart-page-header">
+
+            <div>
+
+                <span class="cart-label">
+                    YOUR SHOPPING CART
+                </span>
+
+                <h2>
+                    Shopping Cart
+                </h2>
+
+                <p>
+                    Review your selected dental products
+                    before checkout.
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             CART LAYOUT
+        ====================================================== -->
+
+        <div class="cart-layout">
+
+
+            <!-- =================================================
+                 CART ITEMS
+            ================================================== -->
+
+            <section class="cart-items-section">
+
+
+                <div class="cart-section-header">
+
+                    <div>
+
+                        <h3>
+                            Your Items
+                        </h3>
+
+                        <span id="cartItemCount">
+                            0 items
+                        </span>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        id="clearCart"
+                        class="clear-cart-button"
+                    >
+                        Clear Cart
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="cartItems"
+                    class="cart-items"
+                >
+
+                    <!-- Javascript will insert items here -->
+
+                </div>
+
+
+                <!-- EMPTY CART -->
+
+                <div
+                    id="emptyCart"
+                    class="empty-cart"
+                    style="display: none;"
+                >
+
+                    <div class="empty-cart-icon">
+                        🛒
+                    </div>
+
+
+                    <h3>
+                        Your cart is empty
+                    </h3>
+
+
+                    <p>
+                        You haven't added any dental products yet.
+                    </p>
+
+
+                    <a
+                        href="{{ route('customer.products') }}"
+                        class="browse-products-button"
+                    >
+                        Browse Products
+                    </a>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 ORDER SUMMARY
+            ================================================== -->
+
+            <aside class="order-summary">
+
+
+                <div class="summary-header">
+
+                    <h3>
+                        Order Summary
+                    </h3>
+
+                </div>
+
+
+                <div class="summary-body">
+
+
+                    <div class="summary-row">
+
+                        <span>
+                            Subtotal
+                        </span>
+
+                        <strong id="subtotal">
+                            ₱0.00
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>
+                            Delivery
+                        </span>
+
+                        <strong id="delivery">
+                            ₱0.00
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-divider"></div>
+
+
+                    <div class="summary-row total-row">
+
+                        <span>
+                            Total
+                        </span>
+
+                        <strong id="total">
+                            ₱0.00
+                        </strong>
+
+                    </div>
+
+
+                    <!-- DELIVERY -->
+
+                    <div class="delivery-box">
+
+                        <div class="delivery-icon">
+                            🚚
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Delivery Information
+                            </strong>
+
+                            <p>
+                                Delivery fee will be calculated
+                                during checkout.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        id="checkoutButton"
+                        class="checkout-button"
+                        disabled
+                    >
+                        Proceed to Checkout
+                    </button>
+
+
+                    <a
+                        href="{{ route('customer.products') }}"
+                        class="continue-link"
+                    >
+                        Continue Shopping
+                    </a>
+
+
+                    <a href="{{ route('customer.products') }}" class="continue-shopping">
+                        Continue Shopping
+                    </a>
+                </div>
+
+            </aside>
+
+        </div>
+
+        <!-- YOU MAY ALSO LIKE -->
+        <section class="cart-recommendations" aria-labelledby="recommendationsTitle">
+            <div class="recommendations-heading">
+                <div>
+                    <span class="cart-label">MORE TO LOVE</span>
+                    <h2 id="recommendationsTitle">You May Also Like</h2>
+                    <p>Discover more dental essentials for your next order.</p>
+                </div>
+                <a href="{{ route('customer.products') }}" class="recommendations-view-all">
+                    View All Products →
+                </a>
+            </div>
+
+            <div class="recommendations-grid">
+                @forelse ($recommendedProducts as $recommendedProduct)
+                    @php
+                        $recommendationImage = !empty($recommendedProduct->image)
+                            ? asset('storage/' . ltrim($recommendedProduct->image, '/'))
+                            : asset('images/categories/dental-supplies.jpg');
+
+                        $availableVariant = $recommendedProduct->variants->first();
+                        $recommendationStock = $availableVariant
+                            ? (int) $availableVariant->quantity
+                            : (int) $recommendedProduct->quantity;
+                        $recommendationPrice = $availableVariant
+                            ? (float) ($availableVariant->price ?? $recommendedProduct->selling_price)
+                            : (float) $recommendedProduct->selling_price;
+                    @endphp
+
+                    <article class="recommendation-card">
+                        <a class="recommendation-image-link"
+                           href="{{ route('customer.products.show', $recommendedProduct->id) }}">
+                            <img
+                                src="{{ $recommendationImage }}"
+                                alt="{{ $recommendedProduct->product_name }}"
+                                loading="lazy"
+                                onerror="this.onerror=null;this.style.display='none';"
+                            >
+                        </a>
+
+                        <div class="recommendation-card-body">
+                            <span class="recommendation-category">
+                                {{ $recommendedProduct->category ?: 'Dental Supplies' }}
+                            </span>
+
+                            <a class="recommendation-name"
+                               href="{{ route('customer.products.show', $recommendedProduct->id) }}">
+                                {{ $recommendedProduct->product_name }}
+                            </a>
+
+                            <strong class="recommendation-price">
+                                ₱{{ number_format($recommendationPrice, 2) }}
+                            </strong>
+
+                            <span class="recommendation-stock">
+                                {{ $recommendationStock }} in stock
+                            </span>
+
+                            <button
+                                type="button"
+                                class="recommendation-add"
+                                data-recommendation-add
+                                data-id="{{ $recommendedProduct->id }}"
+                                data-name="{{ $recommendedProduct->product_name }}"
+                                data-price="{{ $recommendationPrice }}"
+                                data-stock="{{ $recommendationStock }}"
+                                data-image="{{ $recommendationImage }}"
+                                data-variant-id="{{ $availableVariant?->id ?? '' }}"
+                                data-variant-name="{{ $availableVariant?->name ?? '' }}"
+                            >
+                                + Add to Cart
+                            </button>
+                        </div>
+                    </article>
+                @empty
+                    <p class="recommendations-empty">No recommended products are available right now.</p>
+                @endforelse
+            </div>
+        </section>
+
+    </main>
+
+
+
+    <!-- =========================================================
+         TOAST
+    ========================================================== -->
+
+    <div
+        id="toast"
+        class="toast"
+    ></div>
+
+
+
+    <style>
+    #clearCartModal {
+        position: fixed;
+        inset: 0;
+        z-index: 100000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(35, 18, 28, .55);
+        backdrop-filter: blur(5px);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .25s ease, visibility .25s ease;
+    }
+    #clearCartModal.is-open {
+        opacity: 1;
+        visibility: visible;
+    }
+    .clear-modal-card {
+        width: min(440px, 100%);
+        padding: 28px;
+        border: 1px solid #f7c9df;
+        border-radius: 22px;
+        background: #fff;
+        box-shadow: 0 24px 70px rgba(70, 20, 45, .25);
+        text-align: center;
+        transform: translateY(14px) scale(.98);
+        transition: transform .25s ease;
+    }
+    #clearCartModal.is-open .clear-modal-card {
+        transform: translateY(0) scale(1);
+    }
+    .clear-modal-top {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        margin-bottom: 18px;
+    }
+    .clear-modal-icon {
+        display: grid;
+        place-items: center;
+        width: 58px;
+        height: 58px;
+        border-radius: 18px;
+        background: #fff0f6;
+        color: #d92b7c;
+        font-size: 28px;
+    }
+    .clear-modal-timer {
+        min-width: 76px;
+        padding: 10px 12px;
+        border: 1px solid #f4c0d7;
+        border-radius: 14px;
+        background: #fff7fb;
+        color: #c02668;
+    }
+    .clear-modal-timer strong {
+        display: block;
+        font-size: 22px;
+        font-variant-numeric: tabular-nums;
+    }
+    .clear-modal-timer span {
+        font-size: 10px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+    .clear-modal-title {
+        margin: 0 0 9px;
+        color: #21151c;
+        font-size: 23px;
+        font-weight: 800;
+    }
+    .clear-modal-description {
+        margin: 0 auto 24px;
+        max-width: 320px;
+        color: #756570;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+    .clear-modal-actions {
+        display: flex;
+        gap: 10px;
+    }
+    .clear-modal-actions button {
+        flex: 1;
+        min-height: 46px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        font: inherit;
+        font-size: 14px;
+        font-weight: 750;
+        cursor: pointer;
+        transition: transform .18s ease, background .18s ease;
+    }
+    .clear-modal-actions button:hover {
+        transform: translateY(-1px);
+    }
+    #clearCartCancel {
+        border: 1px solid #edc5d7;
+        background: #fff;
+        color: #32232b;
+    }
+    #clearCartConfirm {
+        border: 1px solid #d92b7c;
+        background: #d92b7c;
+        color: #fff;
+    }
+    #clearCartConfirm:hover {
+        background: #b91f66;
+    }
+    @media (prefers-reduced-motion: reduce) {
+        #clearCartModal, .clear-modal-card,
+        .clear-modal-actions button { transition: none; }
+    }
+    </style>
+
+    <div id="clearCartModal" aria-hidden="true">
+        <section class="clear-modal-card"
+                 role="dialog"
+                 aria-modal="true"
+                 aria-labelledby="clearCartModalTitle"
+                 aria-describedby="clearCartModalDescription">
+            <div class="clear-modal-top">
+                <div class="clear-modal-icon" aria-hidden="true">♡</div>
+                <div class="clear-modal-timer">
+                    <strong id="clearCartTimer">01:00</strong>
+                    <span>Time left</span>
+                </div>
+            </div>
+            <h2 class="clear-modal-title" id="clearCartModalTitle">Clear your cart?</h2>
+            <p class="clear-modal-description" id="clearCartModalDescription">
+                Are you sure you want to remove all items from your cart? You can cancel and keep shopping.
+            </p>
+            <div class="clear-modal-actions">
+                <button type="button" id="clearCartCancel">Keep Cart</button>
+                <button type="button" id="clearCartConfirm">Yes, Clear Cart</button>
+            </div>
+        </section>
+    </div>
+
+    <script src="{{ asset('js/customer/cart.js') }}?v={{ filemtime(public_path('js/customer/cart.js')) }}"></script>
+
+
+<script>
+(() => {
+    const wrap = document.getElementById('cartProfileWrap');
+    const toggle = document.getElementById('cartProfileToggle');
+    const menu = document.getElementById('cartProfileMenu');
+    const overlay = document.getElementById('cartProfileOverlay');
+    const logout = document.getElementById('cartProfileLogout');
+    const cancel = document.getElementById('cartProfileCancel');
+
+    if (!wrap || !toggle || !menu || !overlay) return;
+
+    const closeMenu = () => {
+        menu.hidden = true;
+        toggle.setAttribute('aria-expanded', 'false');
+    };
+
+    toggle.addEventListener('click', () => {
+        const opening = menu.hidden;
+        menu.hidden = !opening;
+        toggle.setAttribute('aria-expanded', String(opening));
+    });
+
+    document.addEventListener('click', event => {
+        if (!wrap.contains(event.target)) closeMenu();
+    });
+
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') {
+            closeMenu();
+            overlay.hidden = true;
+        }
+    });
+
+    logout?.addEventListener('click', () => {
+        closeMenu();
+        overlay.hidden = false;
+    });
+
+    cancel?.addEventListener('click', () => {
+        overlay.hidden = true;
+    });
+
+    overlay.addEventListener('click', event => {
+        if (event.target === overlay) overlay.hidden = true;
+    });
+})();
+</script>
+\n
+<style>
+.cart-panel{background:#fff;border:1px solid #ffd1e3;border-radius:18px;padding:24px;box-shadow:0 12px 30px rgba(226,43,119,.08);color:#17233f}
+.cart-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding-bottom:20px;border-bottom:1px solid #f7dce7}
+.cart-header h2{margin:0;font-size:24px;font-weight:800}
+.cart-header p{margin:8px 0 0;color:#85859a}
+.clear-cart-btn{border:1px solid #f6a8c8;background:#fff;color:#d4145a;border-radius:10px;padding:12px 18px;font-weight:700;cursor:pointer}
+.cart-item{display:grid;grid-template-columns:110px minmax(0,1fr) auto;align-items:center;gap:24px;padding:28px 0 12px}
+.cart-product-image{width:110px;height:110px;display:grid;place-items:center;overflow:hidden;border-radius:14px;background:#fff0f6;color:#d4145a;font-size:40px}
+.cart-product-image img{width:100%;height:100%;object-fit:contain}
+.product-category{display:inline-block;margin-bottom:8px;padding:5px 12px;border-radius:20px;background:#ffe3ef;color:#d4145a;font-size:11px;font-weight:800}
+.cart-product-info h3{margin:0 0 10px;font-size:18px;font-weight:800}
+.product-option,.product-description{margin:8px 0;color:#77788d;font-size:14px}
+.item-price{display:block;margin-top:10px;color:#d4145a;font-size:20px}
+.cart-item-actions{display:flex;flex-direction:column;align-items:flex-end;gap:14px}
+.quantity-control{display:flex;align-items:center;overflow:hidden;border:1px solid #d9cbd2;border-radius:10px}
+.quantity-control span,.quantity-btn{min-width:42px;padding:10px;text-align:center;background:#fff;border:0;color:#17233f}
+.quantity-btn{background:#fff0f6;color:#d4145a;cursor:pointer;font-size:20px}
+.item-total{font-size:20px}
+.remove-item-btn{border:0;background:transparent;color:#85859a;cursor:pointer}
+.empty-cart{padding:28px 0;color:#77788d;text-align:center}
+@media(max-width:650px){.cart-panel{padding:16px}.cart-item{grid-template-columns:76px minmax(0,1fr);gap:14px}.cart-product-image{width:76px;height:76px}.cart-item-actions{grid-column:2;align-items:flex-start}.cart-header h2{font-size:19px}}
+</style>
+
+
+<style>
+/* Enhanced cart styling — matches the existing cart.js markup */
+.cart-items-section {
+    background: #fff;
+    border: 1px solid #ffd1e3;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 12px 30px rgba(226, 43, 119, .08);
+}
+
+.cart-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f7dce7;
+}
+
+.cart-section-header h3 {
+    margin: 0;
+    color: #17233f;
+    font-size: 23px;
+    font-weight: 800;
+}
+
+#cartItemCount {
+    display: inline-block;
+    margin-top: 7px;
+    color: #85859a;
+}
+
+.clear-cart-button {
+    border: 1px solid #f6a8c8;
+    background: #fff;
+    color: #d4145a;
+    border-radius: 10px;
+    padding: 11px 16px;
+    font-weight: 700;
+}
+
+.cart-item {
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 22px;
+    padding: 24px 0;
+    border-bottom: 1px solid #f7dce7;
+}
+
+.cart-item-image {
+    width: 110px;
+    height: 110px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border-radius: 14px;
+    background: #fff0f6;
+    color: #d4145a;
+    font-size: 38px;
+}
+
+.cart-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.cart-item-category {
+    display: inline-block;
+    margin-bottom: 8px;
+    padding: 5px 11px;
+    border-radius: 20px;
+    background: #ffe3ef;
+    color: #d4145a;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.cart-item-details h4 {
+    margin: 0 0 9px;
+    color: #17233f;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.cart-item-details p,
+.cart-item-variant {
+    margin: 7px 0;
+    color: #77788d;
+    font-size: 14px;
+}
+
+.cart-item-price {
+    display: inline-block;
+    margin-top: 8px;
+    color: #d4145a;
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.cart-item-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 13px;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border: 1px solid #f2b6cf;
+    border-radius: 10px;
+}
+
+.quantity-control span,
+.quantity-control button {
+    min-width: 40px;
+    padding: 9px 10px;
+    border: 0;
+    text-align: center;
+    background: #fff;
+    color: #17233f;
+}
+
+.quantity-control button {
+    background: #fff0f6;
+    color: #d4145a;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.item-subtotal {
+    color: #17233f;
+    font-size: 20px;
+}
+
+.remove-item {
+    border: 0;
+    background: transparent;
+    color: #85859a;
+    cursor: pointer;
+}
+
+.remove-item:hover {
+    color: #d4145a;
+}
+
+@media (max-width: 650px) {
+    .cart-items-section {
+        padding: 15px;
+    }
+
+    .cart-item {
+        grid-template-columns: 76px minmax(0, 1fr);
+        gap: 13px;
+    }
+
+    .cart-item-image {
+        width: 76px;
+        height: 76px;
+    }
+
+    .cart-item-actions {
+        grid-column: 2;
+        align-items: flex-start;
+    }
+
+    .cart-section-header h3 {
+        font-size: 19px;
+    }
+}
+</style>
+
+</body>
+
+</html>

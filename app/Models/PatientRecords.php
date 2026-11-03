@@ -65,4 +65,13 @@ protected $fillable = [
             'id'
         );
     }
+
+    public function patientTreatments()
+    {
+        return $this->hasMany(
+            PatientTreatment::class,
+            'patient_record_id',
+            'id'
+        )->orderByDesc('treatment_date')->orderByDesc('id');
+    }
 }

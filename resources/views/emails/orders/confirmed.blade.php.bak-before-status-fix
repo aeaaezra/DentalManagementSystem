@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body style="margin:0;background:#f4f6f9;padding:24px;font-family:Arial,sans-serif;color:#222;">
+<div style="max-width:600px;margin:auto;background:#fff;border-radius:10px;padding:28px;">
+    <h2 style="color:#16803d;">Order Confirmed!</h2>
+    <p>Hello {{ $order->customer?->full_name ?? 'Customer' }},</p>
+    <p>Good news! Your order has been confirmed by Shine &amp; Smile.</p>
+
+    <p><strong>Order Number:</strong> {{ $order->order_number }}</p>
+    <p><strong>Order Status:</strong> Approved</p>
+
+    <h3>Order Summary</h3>
+    <table style="width:100%;border-collapse:collapse;">
+        <thead>
+        <tr>
+            <th style="text-align:left;border-bottom:1px solid #ddd;padding:8px;">Item</th>
+            <th style="text-align:center;border-bottom:1px solid #ddd;padding:8px;">Qty</th>
+            <th style="text-align:right;border-bottom:1px solid #ddd;padding:8px;">Subtotal</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach ($order->items as $item)
+        <tr>
+            <td style="border-bottom:1px solid #eee;padding:8px;">
+                {{ $item->product?->product_name ?? 'Product' }}
+                @if ($item->variant?->name)
+                    — {{ $item->variant->name }}
+                @endif
+            </td>
+            <td style="text-align:center;border-bottom:1px solid #eee;padding:8px;">{{ $item->quantity }}</td>
+            <td style="text-align:right;border-bottom:1px solid #eee;padding:8px;">₱{{ number_format((float) $item->subtotal, 2) }}</td>
+        </tr>
+        @endforeach
+        </tbody>
+    </table>
+
+    <p style="text-align:right;font-size:18px;">
+        <strong>Total: ₱{{ number_format((float) $order->final_amount, 2) }}</strong>
+    </p>
+
+    <p>Thank you for ordering with Shine &amp; Smile. Please keep your order number for reference.</p>
+    <p style="color:#666;font-size:12px;">This is an automated notification. Please do not reply to this email.</p>
+</div>
+</body>
+</html>

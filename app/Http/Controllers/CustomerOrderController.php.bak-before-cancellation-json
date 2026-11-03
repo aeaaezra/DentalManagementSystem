@@ -1,0 +1,542 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Customer;
+use App\Models\OrderItems;
+use App\Models\Orders;
+use App\Models\Products;
+use App\Models\ProductVariant;
+use App\Models\User;
+use Filament\Notifications\Notification;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
+class CustomerOrderController extends Controller
+{
+    /*
+    |--------------------------------------------------------------------------
+    | PRODUCTS / SHOP
+    |--------------------------------------------------------------------------
+    */
+
+public function products(Request $request)
+{
+    $query = Products::query()
+        ->with(['variants' => function ($variantQuery) {
+            $variantQuery->where('is_active', true)
+                ->orderBy('id');
+        }])
+        ->where('is_active', true);
+
+    // SEARCH
+    if ($request->filled('search')) {
+        $search = $request->search;
+
+        $query->where(function ($q) use ($search) {
+            $q->where('product_name', 'like', "%{$search}%")
+                ->orWhere('sku', 'like', "%{$search}%")
+                ->orWhere('brand_name', 'like', "%{$search}%")
+                ->orWhere('category', 'like', "%{$search}%");
+        });
+    }
+
+    // CATEGORY
+    if (
+        $request->filled('category') &&
+        $request->category !== 'All Items'
+    ) {
+        $query->where('category', $request->category);
+    }
+
+    // STOCK: include products with available active variants.
+    if ($request->boolean('in_stock')) {
+        $query->where(function ($stockQuery) {
+            $stockQuery->where(function ($productQuery) {
+                $productQuery
+                    ->where('quantity', '>', 0)
+                    ->whereDoesntHave('variants', function ($variantQuery) {
+                        $variantQuery->where('is_active', true);
+                    });
+            })->orWhereHas('variants', function ($variantQuery) {
+                $variantQuery
+                    ->where('is_active', true)
+                    ->where('quantity', '>', 0);
+            });
+        });
+    }
+
+    // PRICE
+    switch ($request->price) {
+        case 'under500':
+            $query->where('selling_price', '<', 500);
+            break;
+
+        case '500to2000':
+            $query->whereBetween('selling_price', [500, 2000]);
+            break;
+
+        case 'above2000':
+            $query->where('selling_price', '>', 2000);
+            break;
+    }
+
+    // SORT
+    switch ($request->sort) {
+        case 'low':
+            $query->orderBy('selling_price', 'asc');
+            break;
+
+        case 'high':
+            $query->orderBy('selling_price', 'desc');
+            break;
+
+        case 'name':
+            $query->orderBy('product_name', 'asc');
+            break;
+
+        default:
+            $query->orderBy('id', 'desc');
+            break;
+    }
+
+    // PRODUCTS: load 20 products per page for See More
+    $products = $query
+        ->paginate(20)
+        ->withQueryString();
+
+    // CATEGORIES
+    $categories = Products::query()
+        ->where('is_active', true)
+        ->whereNotNull('category')
+        ->where('category', '!=', '')
+        ->select('category')
+        ->distinct()
+        ->orderBy('category')
+        ->pluck('category');
+
+    return view('customer.products', compact(
+        'products',
+        'categories'
+    ));
+}
+
+
+
+    public function productDetails($product)
+    {
+        $product = Products::query()
+            ->where('is_active', true)
+            ->with(['variants' => function ($query) {
+                $query->where('is_active', true)->orderBy('id');
+            }])
+            ->findOrFail($product);
+
+        $variants = $product->variants->map(function ($variant) use ($product) {
+            $options = $variant->options;
+
+            if (is_string($options)) {
+                $decoded = json_decode($options, true);
+                $options = json_last_error() === JSON_ERROR_NONE ? $decoded : $options;
+            }
+
+            $color = '';
+            if (is_array($options)) {
+                $color = $options['color'] ?? $options['Color'] ?? '';
+                if ($color === '' && count($options) === 1) {
+                    $color = reset($options);
+                }
+            } elseif (is_string($options)) {
+                $color = trim($options, " \t\n\r\0\x0B\"'");
+            }
+
+            return [
+                'id' => (int) $variant->id,
+                'name' => trim((string) $variant->name),
+                'color' => is_scalar($color) ? trim((string) $color) : '',
+                'price' => (float) ($variant->price ?? $product->selling_price),
+                'stock' => (int) $variant->quantity,
+                'image' => $variant->image,
+                'image_url' => !empty($variant->image)
+                    ? asset('storage/' . ltrim($variant->image, '/'))
+                    : null,
+                'sku' => $variant->sku,
+            ];
+        })->values();
+
+        $startingPrice = $variants->isNotEmpty()
+            ? $variants->min('price')
+            : (float) $product->selling_price;
+
+        return view('customer.product-details', compact(
+            'product',
+            'variants',
+            'startingPrice'
+        ));
+    }
+
+    public function cart()
+    {
+        return view('customer.cart');
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CHECKOUT
+    |--------------------------------------------------------------------------
+    */
+
+    public function checkout()
+    {
+        return view('customer.checkout');
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | STORE ORDER
+    |--------------------------------------------------------------------------
+    */
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'items' => ['required', 'array', 'min:1'],
+            'items.*.product_id' => ['required', 'integer', 'exists:products,id'],
+            'items.*.variant_id' => ['nullable', 'integer', 'exists:product_variants,id'],
+            'items.*.quantity' => ['required', 'integer', 'min:1', 'max:100'],
+            'payment_method' => ['required', 'in:cod,gcash,bank_transfer,card'],
+            'delivery_address' => ['required', 'string', 'max:5000'],
+            'contact_number' => ['required', 'string', 'max:30'],
+            'notes' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $user = $request->user();
+        $customer = Customer::firstOrNew(['email' => $user->email]);
+
+        if (!$customer->exists) {
+            $parts = preg_split('/\s+/', trim($user->name), 2);
+            $customer->first_name = $parts[0] ?? 'Customer';
+            $customer->last_name = $parts[1] ?? '';
+            $customer->password = \Illuminate\Support\Facades\Hash::make(
+                Str::random(48)
+            );
+        }
+
+        $customer->phone = $validated['contact_number'];
+        $customer->address = $validated['delivery_address'];
+        $customer->save();
+
+        $order = DB::transaction(function () use ($validated, $customer) {
+            $total = 0;
+            $items = [];
+            $seenLines = [];
+
+            foreach ($validated['items'] as $cartItem) {
+                $product = Products::lockForUpdate()
+                    ->findOrFail($cartItem['product_id']);
+
+                $quantity = (int) $cartItem['quantity'];
+                $variantId = isset($cartItem['variant_id']) &&
+                    $cartItem['variant_id'] !== ''
+                    ? (int) $cartItem['variant_id']
+                    : null;
+
+                if (!$product->is_active) {
+                    abort(422, $product->product_name . ' is currently unavailable.');
+                }
+
+                $lineKey = $product->id . ':' . ($variantId ?? '0');
+                if (isset($seenLines[$lineKey])) {
+                    abort(422, 'Duplicate product variant in cart. Please update your cart.');
+                }
+                $seenLines[$lineKey] = true;
+
+                $variant = null;
+
+                if ($variantId !== null) {
+                    $variant = ProductVariant::where('product_id', $product->id)
+                        ->lockForUpdate()
+                        ->findOrFail($variantId);
+
+                    if (!$variant->is_active) {
+                        abort(422, 'The selected variant for ' . $product->product_name . ' is unavailable.');
+                    }
+
+                    if ((int) $variant->quantity < $quantity) {
+                        abort(422, 'Insufficient stock for ' . $product->product_name . ' - ' . $variant->name . '.');
+                    }
+
+                    $price = $variant->price !== null
+                        ? (float) $variant->price
+                        : (float) $product->selling_price;
+                } else {
+                    $hasActiveVariants = ProductVariant::where('product_id', $product->id)
+                        ->where('is_active', true)
+                        ->exists();
+
+                    if ($hasActiveVariants) {
+                        abort(422, 'Please select a variant for ' . $product->product_name . '.');
+                    }
+
+                    if ((int) $product->quantity < $quantity) {
+                        abort(422, 'Insufficient stock for ' . $product->product_name . '.');
+                    }
+
+                    $price = (float) $product->selling_price;
+                }
+
+                $subtotal = round($price * $quantity, 2);
+                $total += $subtotal;
+
+                $items[] = [
+                    'product' => $product,
+                    'variant' => $variant,
+                    'quantity' => $quantity,
+                    'unit_price' => $price,
+                    'subtotal' => $subtotal,
+                ];
+            }
+
+            $order = Orders::create([
+                'order_number' => 'ORD-' . now()->format('YmdHis') . '-' . strtoupper(Str::random(5)),
+                'customer_id' => $customer->id,
+                'order_date' => now(),
+                'total_amount' => $total,
+                'shipping_fee' => 0,
+                'discount_amount' => 0,
+                'final_amount' => $total,
+                'payment_method' => $validated['payment_method'],
+                'payment_status' => $validated['payment_method'] === 'cod' ? 'unpaid' : 'pending',
+                'order_status' => 'pending',
+                'delivery_address' => $validated['delivery_address'],
+                'contact_number' => $validated['contact_number'],
+                'notes' => $validated['notes'] ?? null,
+            ]);
+
+            foreach ($items as $item) {
+                OrderItems::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item['product']->id,
+                    'variant_id' => $item['variant']?->id,
+                    'quantity' => $item['quantity'],
+                    'unit_price' => $item['unit_price'],
+                    'subtotal' => $item['subtotal'],
+                ]);
+
+                if ($item['variant']) {
+                    $item['variant']->decrement('quantity', $item['quantity']);
+                } else {
+                    $item['product']->decrement('quantity', $item['quantity']);
+                }
+            }
+
+            return $order;
+        });
+
+        // Save database notifications for administrators after the order succeeds.
+        $admins = User::role('admin')->get();
+
+        foreach ($admins as $admin) {
+            $notificationId = (string) \Illuminate\Support\Str::uuid();
+
+            $admin->notifications()->create([
+                'id' => $notificationId,
+                'type' => \Filament\Notifications\DatabaseNotification::class,
+                'data' => [
+                    'title' => 'New order received',
+                    'body' => "Order {$order->order_number} was placed. Total: PHP "
+                        . number_format((float) ($order->final_amount ?? $order->total_amount), 2),
+                    'icon' => 'heroicon-o-shopping-bag',
+                    'iconColor' => 'success',
+                    'color' => 'success',
+                    'duration' => 'persistent',
+                    'format' => 'filament',
+                    'actions' => [],
+                    'view' => null,
+                    'viewData' => [],
+                ],
+                'read_at' => null,
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Your order has been submitted successfully.',
+            'order_id' => $order->id,
+            'order_number' => $order->order_number,
+            'redirect' => route('customer.orders.thank-you', ['order' => $order->id]),
+        ]);
+    }
+
+
+    public function thankYou(Orders $order)
+    {
+        $customer = Customer::where('email', auth()->user()->email)->firstOrFail();
+
+        abort_unless((int) $order->customer_id === (int) $customer->id, 404);
+
+        return view('customer.thank-you', compact('order'));
+    }
+
+    public function requestCancellation(Request $request, Orders $order)
+    {
+        $validated = $request->validate([
+            'cancellation_reason' => 'required|string|max:1000',
+        ]);
+
+        $customer = Customer::where('email', auth()->user()->email)->firstOrFail();
+
+        abort_unless((int) $order->customer_id === (int) $customer->id, 404);
+
+        $result = DB::transaction(function () use ($order, $validated) {
+            $lockedOrder = Orders::whereKey($order->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if (strtolower($lockedOrder->order_status ?? '') !== 'pending') {
+                return 'order_not_pending';
+            }
+
+            if (($lockedOrder->delivery_stage ?? 'order_packed') !== 'order_packed') {
+                return 'parcel_already_processed';
+            }
+
+            if (($lockedOrder->cancellation_status ?? 'none') !== 'none') {
+                return 'request_already_exists';
+            }
+
+            $lockedOrder->cancellation_status = 'requested';
+            $lockedOrder->cancellation_reason = $validated['cancellation_reason'];
+            $lockedOrder->cancellation_requested_at = now();
+            $lockedOrder->save();
+
+            return 'requested';
+        });
+
+        if ($result !== 'requested') {
+            $messages = [
+                'order_not_pending' => 'This order is no longer eligible for cancellation.',
+                'parcel_already_processed' => 'This parcel has already moved beyond the packing stage.',
+                'request_already_exists' => 'A cancellation request has already been submitted for this order.',
+            ];
+
+            return back()->withErrors([
+                'cancellation' => $messages[$result] ?? 'Unable to request cancellation.',
+            ]);
+        }
+
+        return back()->with('success', 'Your cancellation request was submitted for admin review.');
+    }
+
+    public function orders()
+    {
+        $customer = Customer::where('email', auth()->user()->email)->first();
+
+        $orders = $customer
+            ? Orders::with(['items.product', 'items.variant'])
+                ->where('customer_id', $customer->id)
+                ->latest('order_date')
+                ->get()
+            : collect();
+
+        $customerOrdersData = $orders->map(function ($order) {
+            return [
+                'id' => $order->id,
+                'order_number' => $order->order_number,
+                'date' => $order->order_date
+                    ? $order->order_date->format('F d, Y')
+                    : '',
+                'delivery_stage' => $order->delivery_stage ?? 'order_packed',
+                'cancellation_status' => $order->cancellation_status ?? 'none',
+                'cancellation_reason' => $order->cancellation_reason ?? '',
+                'cancellation_requested_at' => $order->cancellation_requested_at
+                    ? $order->cancellation_requested_at->format('M d, Y h:i A')
+                    : '',
+                'status' => match (strtolower($order->order_status ?? 'pending')) {
+                    'confirmed' => 'processing',
+                    'pending' => 'pending',
+                    'processing' => 'processing',
+                    'completed', 'delivered' => 'completed',
+                    'cancelled', 'canceled' => 'cancelled',
+                    default => strtolower($order->order_status ?? 'pending'),
+                },
+                'payment' => $order->payment_method ?? '—',
+                'delivery' => $order->delivery_address ?: 'Pickup at Clinic',
+                'total' => (float) ($order->final_amount ?? $order->total_amount ?? 0),
+                'items' => $order->items->map(function ($item) {
+                    return [
+                        'name' => $item->product->product_name ?? 'Product',
+                        'quantity' => (int) $item->quantity,
+                        'price' => (float) $item->unit_price,
+                        'icon' => '📦',
+                    ];
+                })->values()->all(),
+            ];
+        })->values()->all();
+
+        return response()
+            ->view('customer.orders', compact('orders', 'customerOrdersData'));
+    }
+    /*
+    |--------------------------------------------------------------------------
+    | CUSTOMER SETTINGS
+    |--------------------------------------------------------------------------
+    */
+
+    public function settings()
+    {
+        return view('customer.settings');
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CUSTOMER PROFILE
+    |--------------------------------------------------------------------------
+    */
+
+public function profile()
+{
+    $user = auth()->user();
+
+    $customer = Customer::where('email', $user->email)->first();
+
+    return view('customer.profile', compact('user', 'customer'));
+}
+
+public function updateProfile(Request $request)
+{
+    $user = $request->user();
+    $oldEmail = $user->email;
+
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+        'phone' => 'nullable|string|max:30',
+        'address' => 'nullable|string|max:2000',
+    ]);
+
+    $customer = Customer::where('email', $oldEmail)->first();
+
+    $user->name = $validated['name'];
+    $user->email = $validated['email'];
+    $user->phone = $validated['phone'] ?? null;
+    $user->save();
+
+    if ($customer) {
+        $nameParts = preg_split('/\s+/', trim($validated['name']), 2);
+        $customer->first_name = $nameParts[0] ?? '';
+        $customer->last_name = $nameParts[1] ?? '';
+        $customer->email = $validated['email'];
+        $customer->phone = $validated['phone'] ?? null;
+        $customer->address = $validated['address'] ?? null;
+        $customer->save();
+    }
+
+    return redirect()->route('customer.profile')
+        ->with('success', 'Your profile has been updated successfully.');
+}
+}

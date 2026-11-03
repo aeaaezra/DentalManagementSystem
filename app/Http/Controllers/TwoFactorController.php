@@ -69,11 +69,24 @@ class TwoFactorController extends Controller
 
             } catch (\Throwable $e) {
 
-                return response()->json([
-                    'success' => false,
-                    'message' =>
-                        'Unable to read your 2FA secret.',
-                ], 500);
+                // Never replace a secret for an account with 2FA enabled.
+                if ($user->two_factor_enabled) {
+                    return response()->json([
+                        'success' => false,
+                        'message' =>
+                            'Unable to read your 2FA secret.',
+                    ], 500);
+                }
+
+                // Recover an invalid, unfinished setup.
+                $secret = $google2fa->generateSecretKey();
+
+                $user->google2fa_secret =
+                    Crypt::encryptString($secret);
+
+                $user->two_factor_enabled = false;
+                $user->two_factor_confirmed_at = null;
+                $user->save();
             }
         }
 
@@ -295,11 +308,18 @@ class TwoFactorController extends Controller
 
         session()->forget('2fa_verified');
 
-        return response()->json([
-            'success' => true,
-            'message' =>
-                'Two-factor authentication has been disabled.',
-        ]);
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' =>
+                    'Two-factor authentication has been disabled.',
+            ]);
+        }
+
+        return redirect()->back()->with(
+            'success',
+            'Two-factor authentication has been disabled.'
+        );
     }
 
 
@@ -548,7 +568,7 @@ class TwoFactorController extends Controller
 
         if ($user->hasRole('customer')) {
             return redirect()->route(
-                'customer.shop'
+                'customer.products'
             );
         }
 

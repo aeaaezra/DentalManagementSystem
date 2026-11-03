@@ -6303,3 +6303,608 @@ html.dark-mode .add-signature-button {
 .notification-wrapper:hover {
     background: transparent !important;
 }
+
+/* Notification dropdown visibility fix */
+#notificationDropdown {
+    position: absolute !important;
+    top: calc(100% + 12px) !important;
+    right: 0 !important;
+    left: auto !important;
+    z-index: 100003 !important;
+    width: 390px;
+    max-width: calc(100vw - 24px);
+}
+
+#notificationDropdown.hidden {
+    display: none !important;
+}
+
+#notificationDropdown:not(.hidden) {
+    display: block !important;
+}
+
+@media (max-width: 640px) {
+    #notificationDropdown:not(.hidden) {
+        position: fixed !important;
+        top: 74px !important;
+        left: 12px !important;
+        right: 12px !important;
+        width: auto !important;
+        max-width: none !important;
+    }
+}
+
+/* Fix notification panel sizing relative to the page, not the bell */
+#notificationWrapper {
+    position: static !important;
+    overflow: visible !important;
+}
+
+#notificationBtn {
+    position: relative !important;
+    z-index: 100004 !important;
+}
+
+#notificationDropdown {
+    position: fixed !important;
+    top: 78px !important;
+    right: 24px !important;
+    left: auto !important;
+    width: 380px !important;
+    min-width: 320px !important;
+    max-width: calc(100vw - 32px) !important;
+    max-height: 75vh !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
+    z-index: 100005 !important;
+}
+
+#notificationDropdown.hidden {
+    display: none !important;
+}
+
+#notificationDropdown:not(.hidden) {
+    display: block !important;
+}
+
+@media (max-width: 640px) {
+    #notificationDropdown {
+        top: 70px !important;
+        right: 12px !important;
+        left: 12px !important;
+        width: auto !important;
+        min-width: 0 !important;
+        max-width: none !important;
+    }
+}
+
+/* Mobile slide-out navigation */
+.mobile-sidebar-overlay,
+.mobile-sidebar {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    .mobile-sidebar-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 100010;
+        background: rgba(0, 0, 0, .58);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .25s ease, visibility .25s ease;
+    }
+
+    .mobile-sidebar {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        z-index: 100011;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: min(280px, 82vw);
+        padding: 0;
+        background: #090909;
+        color: #f5f5f5;
+        border-right: 1px solid #343434;
+        transform: translateX(-100%);
+        visibility: hidden;
+        transition: transform .25s ease, visibility .25s ease;
+        overflow-y: auto;
+    }
+
+    body.mobile-sidebar-open .mobile-sidebar {
+        transform: translateX(0);
+        visibility: visible;
+    }
+
+    body.mobile-sidebar-open .mobile-sidebar-overlay {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .mobile-sidebar-profile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 64px 18px 20px;
+        border-bottom: 1px solid #292929;
+    }
+
+    .mobile-sidebar-avatar {
+        width: 44px;
+        height: 44px;
+        flex: 0 0 44px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #e91e63;
+    }
+
+    .mobile-sidebar-user {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        min-width: 0;
+        gap: 3px;
+    }
+
+    .mobile-sidebar-user strong {
+        overflow-wrap: anywhere;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .mobile-sidebar-user span {
+        color: #999;
+        font-size: 13px;
+    }
+
+    .mobile-sidebar-close {
+        color: #999;
+        font-size: 27px;
+        line-height: 1;
+        padding: 5px;
+    }
+
+    .mobile-sidebar-links {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 18px 12px;
+    }
+
+    .mobile-sidebar-links a,
+    .mobile-sidebar-bottom a,
+    .mobile-sidebar-bottom form button {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        width: 100%;
+        min-height: 48px;
+        padding: 12px 14px;
+        color: #dedede;
+        text-decoration: none;
+        text-align: left;
+        border-radius: 7px;
+        font-size: 14px;
+    }
+
+    .mobile-sidebar-links a:hover,
+    .mobile-sidebar-bottom a:hover {
+        background: #1d1d1d;
+        color: #ff4081;
+    }
+
+    .mobile-sidebar-icon {
+        width: 20px;
+        flex: 0 0 20px;
+        text-align: center;
+        font-size: 19px;
+    }
+
+    .mobile-sidebar-bottom {
+        margin-top: auto;
+        padding: 16px 12px 22px;
+        border-top: 1px solid #292929;
+        background: #101010;
+    }
+
+    .mobile-sidebar-bottom form button {
+        color: #ff4545;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    body.mobile-sidebar-open {
+        overflow: hidden;
+    }
+}
+
+/* Mobile sidebar corrective override */
+@media screen and (max-width: 767px) {
+    #mobileSidebarOverlay {
+        display: block !important;
+        position: fixed !important;
+        inset: 0 !important;
+        background: rgba(0, 0, 0, 0.65) !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        z-index: 100010 !important;
+    }
+
+    #mobileSidebar {
+        display: flex !important;
+        flex-direction: column !important;
+        position: fixed !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: min(280px, 82vw) !important;
+        height: 100dvh !important;
+        max-height: 100dvh !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: #090909 !important;
+        color: #f5f5f5 !important;
+        transform: translateX(-105%) !important;
+        visibility: hidden !important;
+        overflow-y: auto !important;
+        z-index: 100011 !important;
+        box-sizing: border-box !important;
+    }
+
+    body.mobile-sidebar-open #mobileSidebar {
+        transform: translateX(0) !important;
+        visibility: visible !important;
+    }
+
+    body.mobile-sidebar-open #mobileSidebarOverlay {
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+    }
+
+    #mobileSidebar .mobile-sidebar-profile {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 12px !important;
+        padding: 48px 16px 18px !important;
+        border-bottom: 1px solid #292929 !important;
+    }
+
+    #mobileSidebar .mobile-sidebar-avatar {
+        display: block !important;
+        width: 44px !important;
+        height: 44px !important;
+        min-width: 44px !important;
+        max-width: 44px !important;
+        border-radius: 50% !important;
+        object-fit: cover !important;
+    }
+
+    #mobileSidebar .mobile-sidebar-user {
+        display: flex !important;
+        flex: 1 !important;
+        flex-direction: column !important;
+        min-width: 0 !important;
+    }
+
+    #mobileSidebar .mobile-sidebar-links {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 4px !important;
+        padding: 18px 12px !important;
+    }
+
+    #mobileSidebar .mobile-sidebar-links a,
+    #mobileSidebar .mobile-sidebar-bottom a,
+    #mobileSidebar .mobile-sidebar-bottom form button {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 14px !important;
+        width: 100% !important;
+        min-height: 48px !important;
+        padding: 12px 14px !important;
+        color: #dedede !important;
+        font-size: 14px !important;
+        text-decoration: none !important;
+        white-space: nowrap !important;
+        box-sizing: border-box !important;
+    }
+
+    #mobileSidebar .mobile-sidebar-bottom {
+        display: block !important;
+        margin-top: auto !important;
+        padding: 14px 12px 22px !important;
+        border-top: 1px solid #292929 !important;
+        background: #101010 !important;
+    }
+
+    #mobileSidebar .mobile-sidebar-bottom form {
+        display: block !important;
+        width: 100% !important;
+    }
+
+    #mobileSidebar .mobile-sidebar-bottom form button {
+        background: transparent !important;
+        text-align: left !important;
+        color: #ff4545 !important;
+    }
+
+    body.mobile-sidebar-open {
+        overflow: hidden !important;
+    }
+}
+
+/* Hide the drawer outside mobile view */
+@media screen and (min-width: 768px) {
+    #mobileSidebar,
+    #mobileSidebarOverlay,
+    #mobileSidebarToggle {
+        display: none !important;
+    }
+}
+
+/* Mobile sidebar visibility override */
+@media screen and (max-width: 767px) {
+    #mobileSidebarOverlay {
+        display: block !important;
+        position: fixed !important;
+        inset: 0 !important;
+        z-index: 100010 !important;
+        background: rgba(0, 0, 0, 0.58) !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+
+    #mobileSidebar {
+        display: flex !important;
+        flex-direction: column !important;
+        position: fixed !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: min(280px, 82vw) !important;
+        z-index: 100011 !important;
+        background: #090909 !important;
+        color: #f5f5f5 !important;
+        transform: translateX(-105%) !important;
+        visibility: hidden !important;
+        overflow-y: auto !important;
+        transition: transform .25s ease, visibility .25s ease !important;
+    }
+
+    body.mobile-sidebar-open #mobileSidebar {
+        transform: translateX(0) !important;
+        visibility: visible !important;
+    }
+
+    body.mobile-sidebar-open #mobileSidebarOverlay {
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+    }
+
+    #mobileSidebarToggle {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        color: #e91e63 !important;
+        font-size: 25px !important;
+        padding: 4px 8px !important;
+        line-height: 1 !important;
+    }
+}
+
+/* Procedure checkbox cards — match guest appointment form */
+#procedure-options.procedure-checkbox-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 10px;
+    margin-top: 8px;
+}
+
+#procedure-options .procedure-checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid #3c343a;
+    border-radius: 10px;
+    background: #1c1a1b;
+    color: #e7dfe4;
+    cursor: pointer;
+    transition: background .2s, border-color .2s, box-shadow .2s;
+}
+
+#procedure-options .procedure-checkbox-option:hover {
+    border-color: #f472b6;
+    background: #282027;
+}
+
+#procedure-options .procedure-checkbox-option input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 19px;
+    height: 19px;
+    flex: 0 0 19px;
+    margin: 0;
+    display: inline-grid;
+    place-content: center;
+    border: 1.5px solid #a995a1;
+    border-radius: 5px;
+    background: #242124;
+    cursor: pointer;
+}
+
+#procedure-options .procedure-checkbox-option input[type="checkbox"]:checked {
+    border-color: #db2777;
+    background: #db2777;
+}
+
+#procedure-options .procedure-checkbox-option input[type="checkbox"]:checked::before {
+    content: "✓";
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+#procedure-options .procedure-checkbox-option:has(input[type="checkbox"]:checked) {
+    border-color: #ec4899;
+    background: #30212a;
+    box-shadow: 0 0 0 1px rgba(236, 72, 153, .12);
+}
+
+@media (max-width: 600px) {
+    #procedure-options.procedure-checkbox-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* Procedure cards matching the guest appointment form */
+#procedure-options.procedure-checkbox-list {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 10px;
+    margin-top: 8px;
+}
+
+#procedure-options .procedure-checkbox-option {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid #3c343a;
+    border-radius: 10px;
+    background: #1c1a1b;
+    color: #e7dfe4;
+    cursor: pointer;
+    transition: background .2s, border-color .2s, box-shadow .2s;
+}
+
+#procedure-options .procedure-checkbox-option:hover {
+    border-color: #f472b6;
+    background: #282027;
+}
+
+#procedure-options .procedure-checkbox-option input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 19px;
+    height: 19px;
+    flex: 0 0 19px;
+    margin: 0;
+    display: inline-grid;
+    place-content: center;
+    border: 1.5px solid #a995a1;
+    border-radius: 5px;
+    background: #242124;
+    cursor: pointer;
+}
+
+#procedure-options .procedure-checkbox-option input[type="checkbox"]:checked {
+    border-color: #db2777;
+    background: #db2777;
+}
+
+#procedure-options .procedure-checkbox-option input[type="checkbox"]:checked::before {
+    content: "✓";
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+#procedure-options .procedure-checkbox-option:has(input[type="checkbox"]:checked) {
+    border-color: #ec4899;
+    background: #30212a;
+    box-shadow: 0 0 0 1px rgba(236, 72, 153, .12);
+}
+
+@media (max-width: 600px) {
+    #procedure-options.procedure-checkbox-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Keep filtered-out procedure cards hidden despite card display styling */
+#procedure-options .procedure-checkbox-option[hidden] {
+    display: none !important;
+}
+
+/* Hide procedure cards until a category is selected */
+#procedure-options .procedure-checkbox-option {
+    display: none;
+}
+
+#procedure-options .procedure-checkbox-option.is-category-visible {
+    display: flex !important;
+}
+
+/* Only show procedure cards enabled by the category filter */
+#procedure-options .procedure-checkbox-option:not(.is-category-visible) {
+    display: none !important;
+}
+
+#procedure-options .procedure-checkbox-option.is-category-visible {
+    display: flex !important;
+}
+
+/* Dark mode: appointment review/summary cards */
+html.dark-mode .summary-card,
+html.dark-mode .summary-card-header,
+html.dark-mode .summary-item,
+html.dark-mode .medical-summary-item,
+html.dark-mode .summary-large-item,
+html.dark-mode .appointment-summary-card,
+html.dark-mode .appointment-highlight,
+html.dark-mode .final-review-box {
+    background-color: #1f2937 !important;
+    color: #f3f4f6 !important;
+    border-color: #374151 !important;
+}
+
+html.dark-mode .summary-card h3,
+html.dark-mode .summary-card p,
+html.dark-mode .summary-item span,
+html.dark-mode .summary-item strong,
+html.dark-mode .medical-summary-item span,
+html.dark-mode .medical-summary-item strong,
+html.dark-mode .summary-large-item span,
+html.dark-mode .summary-large-item strong,
+html.dark-mode .appointment-highlight span,
+html.dark-mode .appointment-highlight strong,
+html.dark-mode .final-review-box h4,
+html.dark-mode .final-review-box p {
+    color: #f3f4f6 !important;
+}
+
+html.dark-mode .summary-card-header {
+    border-bottom-color: #374151 !important;
+}
+
+/* Fix appointment review header and date/time cards in dark mode */
+html.dark-mode .summary-header,
+html.dark-mode .appointment-highlight {
+    background: #1f2937 !important;
+    color: #f3f4f6 !important;
+    border-color: #374151 !important;
+}
+
+html.dark-mode .summary-header h2,
+html.dark-mode .summary-header p,
+html.dark-mode .appointment-highlight span,
+html.dark-mode .appointment-highlight strong,
+html.dark-mode .appointment-highlight small {
+    color: #f3f4f6 !important;
+}

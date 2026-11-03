@@ -64,7 +64,7 @@
 
                 <div class="cashier-dropdown-divider"></div>
 
-                <a href="{{ route('pos.profile') }}" class="cashier-dropdown-item">
+                <a href="{{ route('pos.settings') }}" class="cashier-dropdown-item">
                     <i class="fa-regular fa-user"></i>
                     <span>My Profile</span>
                 </a>

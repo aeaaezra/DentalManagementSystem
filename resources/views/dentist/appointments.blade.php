@@ -20,11 +20,7 @@
     </title>
 
     {{-- Separate CSS --}}
-    <link
-        rel="stylesheet"
-        href="{{ asset('css/dentists/dentist-appointments.css') }}"
-    >
-
+<link rel="stylesheet" href="{{ asset('css/dentists/dentist-appointments.css?v=patient-modal-pink-20261102-5') }}">
 </head>
 
 
@@ -1405,6 +1401,7 @@
 
                                                     <img
                                                         src="{{ asset('storage/' . $appointment->patientRecord->user->profile_picture) }}"
+                                                            onerror="this.onerror=null;this.src='{{ asset('images/default-profile.svg') }}';"
                                                         alt="{{ $appointment->patientRecord->patient_name }}"
                                                     >
 
@@ -3220,7 +3217,7 @@
 {{-- Separate JavaScript --}}
 
 <script
-    src="{{ asset('js/dentist/dentist-appointments.js') }}"
+    src="{{ asset('js/dentist/dentist-appointments.js') . '?v=patient-modal-20261102-3' }}"
     defer
 ></script>
 

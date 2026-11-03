@@ -1,0 +1,30 @@
+<div class="space-y-4">
+    <div>
+        <strong>Name</strong>
+        <p>{{ $contact->name }}</p>
+    </div>
+
+    <div>
+        <strong>Email</strong>
+        <p>
+            <a href="mailto:{{ $contact->email }}">
+                {{ $contact->email }}
+            </a>
+        </p>
+    </div>
+
+    <div>
+        <strong>Subject</strong>
+        <p>{{ $contact->subject }}</p>
+    </div>
+
+    <div>
+        <strong>Message</strong>
+        <div class="mt-2 whitespace-pre-wrap">{{ $contact->message }}</div>
+    </div>
+
+    <div>
+        <strong>Received</strong>
+        <p>{{ $contact->created_at?->format('M d, Y h:i A') }}</p>
+    </div>
+</div>

@@ -14,10 +14,33 @@ class PasswordResetLinkController extends Controller
     /**
      * Display the password reset link request view.
      */
-    public function create(): View
-    {
-        return view('auth.forgot-password');
+
+
+public function create(Request $request): View
+{
+    $allowedLoginRoutes = [
+        'login',
+        'admin.login',
+        'filament.admin.auth.login',
+        'appointments.login',
+        'customer.login',
+        'dentist.login',
+        'pos.login',
+        'receptionist.login',
+    ];
+
+    $portal = $request->query('portal');
+
+    if (! is_string($portal) || ! in_array($portal, $allowedLoginRoutes, true)) {
+        $portal = 'login';
     }
+
+    return view('auth.forgot-password', [
+        'portal' => $portal,
+        'backToLoginUrl' => route($portal),
+    ]);
+}
+
 
     /**
      * Handle an incoming password reset link request.

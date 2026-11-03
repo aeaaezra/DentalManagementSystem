@@ -11,6 +11,7 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Assets\Css;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -25,11 +26,24 @@ class AdminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->default()
+        
+    ->default()
+            ->assets([
+                Css::make('products-sticky-actions')
+                    ->relativePublicPath('css/filament/admin/products-sticky-actions.css'),
+            ])
             ->id('admin')
+	    ->favicon(asset('images/shine-and-smile-favicon.png'))
             ->path('admin')
             ->login()
-            ->brandName('Shine & Smile Dental Management System')
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('30s')
+	    ->renderHook(
+           'panels::sidebar.nav.start',
+	    fn () => view('filament.components.sidebar-brand'))
+           ->brandName('Shine & Smile')
+		->brandLogo(asset('images/shine-and-smile-logo.png'))
+		->brandLogoHeight('3rem')
             ->colors([
                 'primary' => Color::Pink,
                 'success' => Color::Green,

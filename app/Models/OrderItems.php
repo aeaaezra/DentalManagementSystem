@@ -11,24 +11,30 @@ class OrderItems extends Model
     protected $fillable = [
         'order_id',
         'product_id',
+        'variant_id',
         'quantity',
-        'price',
+        'unit_price',
         'subtotal',
     ];
 
     protected $casts = [
         'quantity' => 'integer',
-        'price' => 'decimal:2',
+        'unit_price' => 'decimal:2',
         'subtotal' => 'decimal:2',
     ];
 
     public function order()
     {
-        return $this->belongsTo(Orders::class);
+        return $this->belongsTo(Orders::class, 'order_id');
     }
 
     public function product()
     {
-        return $this->belongsTo(Products::class);
+        return $this->belongsTo(Products::class, 'product_id');
+    }
+
+    public function variant()
+    {
+        return $this->belongsTo(ProductVariant::class, 'variant_id');
     }
 }

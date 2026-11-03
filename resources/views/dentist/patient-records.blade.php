@@ -644,6 +644,7 @@
 
                             <img
                                 src="{{ asset('storage/' . auth()->user()->profile_picture) }}"
+                                                            onerror="this.onerror=null;this.src='{{ asset('images/default-profile.svg') }}';"
                                 alt="{{ auth()->user()->name }}"
                             >
 
@@ -1126,6 +1127,7 @@
 
                                                         <img
                                                             src="{{ asset('storage/' . $patient->user->profile_picture) }}"
+                                                            onerror="this.onerror=null;this.src='{{ asset('images/default-profile.svg') }}';"
                                                             alt="{{ $patient->patient_name }}"
                                                         >
 
@@ -1388,7 +1390,7 @@
         <h2>Patient Information</h2>
     </div>
 
-    <div class="record-ui-form-grid">
+<div class="record-ui-form-grid">
 
         {{-- FULL NAME --}}
         <div class="record-ui-form-group">
@@ -1485,7 +1487,7 @@
              PATIENT / GUARDIAN SIGNATURE
         ========================================================= --}}
 
-        <div class="record-ui-form-group full-width">
+        <div class="record-ui-form-group patient-signature-right-column">
 
             <label>
                 Patient / Guardian Signature
@@ -2191,132 +2193,73 @@
 
 
             <div class="modal-body">
-
                 <div class="form-grid">
-
                     <div class="form-group">
-
-                        <label for="treatmentDate">
-                            Date
-                        </label>
-
-                        <input
-                            type="date"
-                            id="treatmentDate"
-                            name="treatment_date"
-                            required
-                        >
-
+                        <label for="treatmentDate">Date</label>
+                        <input type="date" id="treatmentDate" name="treatment_date" required>
                     </div>
-
 
                     <div class="form-group full">
-
-                        <label for="treatmentProblemDiagnosis">
-                            Problem &amp; Diagnosis
-                        </label>
-
-                        <textarea
-                            id="treatmentProblemDiagnosis"
-                            name="problem_diagnosis"
-                            rows="4"
-                            placeholder="Enter the patient's problem and diagnosis..."
-                            required
-                        ></textarea>
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label for="treatmentAmount">
-                            Amount
-                        </label>
-
-                        <div class="currency-input">
-
-                            <span>
-                                ₱
-                            </span>
-
-                            <input
-                                type="number"
-                                id="treatmentAmount"
-                                name="amount"
-                                min="0"
-                                step="0.01"
-                                placeholder="0.00"
-                                required
-                            >
-
+                        <div class="treatment-procedures-heading">
+                            <label>Procedures</label>
+                            <button type="button" class="secondary-button" id="addTreatmentProcedure">+ Add procedure</button>
                         </div>
-
+                        <div id="treatmentProcedureRows"></div>
                     </div>
-
-
-                    <div class="form-group">
-
-                        <label for="treatmentDeposit">
-                            Deposit
-                        </label>
-
-                        <div class="currency-input">
-
-                            <span>
-                                ₱
-                            </span>
-
-                            <input
-                                type="number"
-                                id="treatmentDeposit"
-                                name="deposit"
-                                min="0"
-                                step="0.01"
-                                placeholder="0.00"
-                                value="0"
-                                required
-                            >
-
-                        </div>
-
-                    </div>
-
-
-                    {{-- BALANCE --}}
-
-                    <div class="form-group full">
-
-                        <label for="treatmentBalance">
-                            Balance
-                        </label>
-
-                        <div class="currency-input balance-input">
-
-                            <span>
-                                ₱
-                            </span>
-
-                            <input
-                                type="number"
-                                id="treatmentBalance"
-                                name="balance"
-                                value="0"
-                                readonly
-                            >
-
-                        </div>
-
-                        <small class="form-help">
-                            Balance is automatically calculated as Amount minus Deposit.
-                        </small>
-
-                    </div>
-
-
                 </div>
-
             </div>
 
+            <template id="treatmentProcedureTemplate">
+                <section class="treatment-procedure-row">
+                    <div class="treatment-procedure-row-heading">
+                        <strong class="treatment-procedure-number">Procedure</strong>
+                        <button type="button" class="secondary-button remove-treatment-procedure">Remove</button>
+                    </div>
 
+                    <div class="form-grid">
+                        <div class="form-group full">
+                            <label>Service</label>
+                            <select data-service required>
+                                <option value="">Select a service</option>
+                                @foreach ($categories ?? collect() as $category)
+                                    @if ($category->procedures->isNotEmpty())
+                                        <optgroup label="{{ $category->category_name }}">
+                                            @foreach ($category->procedures as $procedure)
+                                                <option value="{{ $procedure->id }}" data-price="{{ $procedure->price }}">
+                                                    {{ $procedure->procedure_name }} — ₱{{ number_format((float) $procedure->price, 2) }}
+                                                </option>
+                                            @endforeach
+                                        </optgroup>
+                                    @endif
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="form-group full">
+                            <label>Select Tooth/Teeth (FDI)</label>
+                            <div class="treatment-teeth-grid">
+                                <div class="treatment-teeth-quadrant"><strong>Upper right</strong><div class="treatment-teeth-options"><label><input type="checkbox" data-tooth value="18">18</label><label><input type="checkbox" data-tooth value="17">17</label><label><input type="checkbox" data-tooth value="16">16</label><label><input type="checkbox" data-tooth value="15">15</label><label><input type="checkbox" data-tooth value="14">14</label><label><input type="checkbox" data-tooth value="13">13</label><label><input type="checkbox" data-tooth value="12">12</label><label><input type="checkbox" data-tooth value="11">11</label></div></div><div class="treatment-teeth-quadrant"><strong>Upper left</strong><div class="treatment-teeth-options"><label><input type="checkbox" data-tooth value="21">21</label><label><input type="checkbox" data-tooth value="22">22</label><label><input type="checkbox" data-tooth value="23">23</label><label><input type="checkbox" data-tooth value="24">24</label><label><input type="checkbox" data-tooth value="25">25</label><label><input type="checkbox" data-tooth value="26">26</label><label><input type="checkbox" data-tooth value="27">27</label><label><input type="checkbox" data-tooth value="28">28</label></div></div><div class="treatment-teeth-quadrant"><strong>Lower right</strong><div class="treatment-teeth-options"><label><input type="checkbox" data-tooth value="48">48</label><label><input type="checkbox" data-tooth value="47">47</label><label><input type="checkbox" data-tooth value="46">46</label><label><input type="checkbox" data-tooth value="45">45</label><label><input type="checkbox" data-tooth value="44">44</label><label><input type="checkbox" data-tooth value="43">43</label><label><input type="checkbox" data-tooth value="42">42</label><label><input type="checkbox" data-tooth value="41">41</label></div></div><div class="treatment-teeth-quadrant"><strong>Lower left</strong><div class="treatment-teeth-options"><label><input type="checkbox" data-tooth value="31">31</label><label><input type="checkbox" data-tooth value="32">32</label><label><input type="checkbox" data-tooth value="33">33</label><label><input type="checkbox" data-tooth value="34">34</label><label><input type="checkbox" data-tooth value="35">35</label><label><input type="checkbox" data-tooth value="36">36</label><label><input type="checkbox" data-tooth value="37">37</label><label><input type="checkbox" data-tooth value="38">38</label></div></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Amount (₱)</label>
+                            <input type="number" data-amount min="0" step="0.01" placeholder="0.00" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Deposit (₱)</label>
+                            <input type="number" data-deposit min="0" step="0.01" value="0" required>
+                        </div>
+
+                        <div class="form-group full">
+                            <label>Balance (₱)</label>
+                            <input type="number" data-balance value="0" readonly>
+                            <small class="form-help">Balance is Amount minus Deposit.</small>
+                        </div>
+                    </div>
+                </section>
+            </template>
             {{-- FOOTER --}}
 
             <div class="modal-footer">
@@ -2942,7 +2885,7 @@
             index: "{{ route('dentist.patient-records') }}",
             show: "{{ url('/dentist/patient-records') }}",
             update: "{{ url('/dentist/patient-records') }}",
-            treatments: "{{ route('dentist.treatments.store') }}",
+            treatments: "{{ url('/dentist/patient-records') }}",
             odontogram: "{{ route('dentist.odontogram.save') }}",
             odontogramClear: "{{ route('dentist.odontogram.clear') }}"
         }

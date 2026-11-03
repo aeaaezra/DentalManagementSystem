@@ -58,6 +58,63 @@ class ReceptionistAppointmentController extends Controller
         );
     }
 
+    public function reviewLateAppointment(\Illuminate\Http\Request $request, int $appointment)
+    {
+        $validated = $request->validate([
+            'decision' => ['required', 'in:patient_arrived,patient_not_arrived'],
+            'late_review_notes' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $result = \Illuminate\Support\Facades\DB::transaction(function () use ($appointment, $validated) {
+            $record = Appointments::whereKey($appointment)->lockForUpdate()->firstOrFail();
+
+            $status = strtolower(trim($record->status ?? ''));
+
+            if (! in_array($status, ['accepted', 'confirmed'], true)) {
+                return 'This appointment is no longer eligible for late review.';
+            }
+
+            if ($record->checked_in_at || $record->treatment_started_at || $record->checked_out_at) {
+                return 'This appointment has already started its check-in or treatment workflow.';
+            }
+
+            if (! $record->appointment_date || ! $record->appointment_time) {
+                return 'The appointment date or time is missing. Please review it manually.';
+            }
+
+            $appointmentDateTime = \Carbon\Carbon::parse(
+                $record->appointment_date->format('Y-m-d') . ' ' . $record->appointment_time
+            );
+
+            if (! $appointmentDateTime->isToday() || now()->lessThanOrEqualTo($appointmentDateTime->copy()->addMinutes(30))) {
+                return 'This appointment is not currently eligible for late review.';
+            }
+
+            if ($record->late_review_status !== null) {
+                return 'This appointment has already been reviewed. Refresh the dashboard before continuing.';
+            }
+
+            $record->update([
+                'late_review_status' => $validated['decision'],
+                'late_reviewed_at' => now(),
+                'late_reviewed_by' => auth()->id(),
+                'late_review_notes' => $validated['late_review_notes'] ?? null,
+            ]);
+
+            return null;
+        });
+
+        if ($result !== null) {
+            return back()->with('error', $result);
+        }
+
+        $message = $validated['decision'] === 'patient_arrived'
+            ? 'Review saved: patient arrived. Keep the existing appointment and check the patient in.'
+            : 'Review saved: patient did not arrive. The appointment is flagged for a separate rescheduling step. No booking was changed.';
+
+        return back()->with('success', $message);
+    }
+
     public function checkIn(Appointments $appointment)
     {
         if ($appointment->checked_in_at) {

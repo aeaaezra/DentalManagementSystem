@@ -14,9 +14,10 @@ class OrderItemsTable
     {
         return $table
             ->columns([
-                TextColumn::make('order.order_no')
+                TextColumn::make('order.order_number')
                     ->label('Order No.')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
 
                 TextColumn::make('product.product_name')
                     ->label('Product')
@@ -24,7 +25,8 @@ class OrderItemsTable
 
                 TextColumn::make('quantity'),
 
-                TextColumn::make('price')
+                TextColumn::make('unit_price')
+                    ->label('Price')
                     ->money('PHP'),
 
                 TextColumn::make('subtotal')

@@ -535,8 +535,11 @@
 
                                             <td>
 
-                                                <span class="status">
-                                                    {{ ucfirst($appointment->status ?? 'N/A') }}
+                                                @php
+                                                    $appointmentStatus = strtolower(str_replace(' ', '_', trim($appointment->status ?? 'n/a')));
+                                                @endphp
+                                                <span class="status appointment-status-{{ $appointmentStatus }}">
+                                                    {{ ucwords(str_replace('_', ' ', $appointment->status ?? 'N/A')) }}
                                                 </span>
 
                                             </td>
@@ -925,7 +928,12 @@
                                             </td>
 
                                             <td>
-                                                {{ ucfirst($sale->payment_status ?? 'N/A') }}
+                                                @php
+                                                    $posPaymentStatus = strtolower($sale->payment_status ?? 'n/a');
+                                                @endphp
+                                                <span class="status pos-payment-status-{{ $posPaymentStatus }}">
+                                                    {{ ucfirst($sale->payment_status ?? 'N/A') }}
+                                                </span>
                                             </td>
 
                                             <td>
@@ -1104,11 +1112,11 @@
                                         <tr>
 
                                             <td>
-                                                {{ $order->order_no ?? 'N/A' }}
+                                                {{ $order->order_number ?? 'N/A' }}
                                             </td>
 
                                             <td>
-                                                {{ $order->customer_name ?? 'N/A' }}
+                                                {{ $order->customer?->full_name ?? 'N/A' }}
                                             </td>
 
                                             <td>
@@ -1116,17 +1124,25 @@
                                             </td>
 
                                             <td>
-                                                ₱{{ number_format((float) ($order->total_amount ?? 0), 2) }}
+                                                ₱{{ number_format((float) ($order->final_amount ?? 0), 2) }}
                                             </td>
 
                                             <td>
-                                                {{ ucfirst($order->payment_status ?? 'N/A') }}
+                                                @php
+                                                    $paymentStatus = strtolower($order->payment_status ?? 'n/a');
+                                                @endphp
+                                                <span class="status payment-status-{{ $paymentStatus }}">
+                                                    {{ ucfirst($order->payment_status ?? 'N/A') }}
+                                                </span>
                                             </td>
 
                                             <td>
 
-                                                <span class="status">
-                                                    {{ ucfirst($order->status ?? 'N/A') }}
+                                                @php
+                                                    $orderStatus = strtolower($order->order_status ?? 'n/a');
+                                                @endphp
+                                                <span class="status order-status-{{ $orderStatus }}">
+                                                    {{ ucfirst($order->order_status ?? 'N/A') }}
                                                 </span>
 
                                             </td>
@@ -2343,6 +2359,54 @@
 
         }
 
+
+
+        /* POS Transactions payment status colors */
+        .table-card .status.pos-payment-status-paid {
+            background: rgba(34, 197, 94, .16);
+            color: #4ade80;
+        }
+
+        /* Customer Orders payment status colors */
+        .table-card .status.payment-status-paid {
+            background: rgba(34, 197, 94, .16);
+            color: #4ade80;
+        }
+
+        /* Customer Orders status colors - Admin Reports only */
+        .table-card .status.order-status-pending {
+            background: rgba(234, 179, 8, .16);
+            color: #facc15;
+        }
+
+        .table-card .status.order-status-confirmed {
+            background: rgba(34, 197, 94, .16);
+            color: #4ade80;
+        }
+
+        .table-card .status.order-status-cancelled {
+            background: rgba(239, 68, 68, .16);
+            color: #f87171;
+        }
+
+        /* Appointment status colors - Admin Reports only */
+        .table-card .status.appointment-status-pending,
+        .table-card .status.appointment-status-cancellation_requested {
+            background: rgba(234, 179, 8, .16);
+            color: #facc15;
+        }
+
+        .table-card .status.appointment-status-confirmed,
+        .table-card .status.appointment-status-cancellation_confirmed {
+            background: rgba(34, 197, 94, .16);
+            color: #4ade80;
+        }
+
+        .table-card .status.appointment-status-cancelled,
+        .table-card .status.appointment-status-declined {
+            background: rgba(239, 68, 68, .16);
+            color: #f87171;
+        }
 
         /* =========================================================
            STATUS

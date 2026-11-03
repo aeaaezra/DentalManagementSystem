@@ -1054,81 +1054,18 @@ document.addEventListener("DOMContentLoaded", () => {
        PATIENT RECORD BUTTONS
     ======================================================== */
 
-    document
-        .querySelectorAll(
-            ".patient-record-button"
-        )
-        .forEach(
-            button => {
-
-                button.addEventListener(
-                    "click",
-                    () => {
-
-                        const patientId =
-                            button.dataset
-                                .patientId;
-
-
-                        if (!patientId) {
-
-                            showToast(
-                                "Patient record ID is missing.",
-                                "error"
-                            );
-
-                            return;
-
-                        }
-
-
-                        const base =
-                            config.patientRecords ||
-                            "/dentist/patient-records";
-
-
-                        window.location.href =
-                            `${base}/${patientId}`;
-
-                    }
-                );
-
-            }
-        );
-
+    document.querySelectorAll(".patient-record-button").forEach(button => {
+        button.addEventListener("click", () => {
+            window.openPatientRecordModal(button.dataset.patientId);
+        });
+    });
 
     const modalPatientRecordButton =
-        document.getElementById(
-            "modalPatientRecordButton"
-        );
+        document.getElementById("modalPatientRecordButton");
 
-
-    modalPatientRecordButton?.addEventListener(
-        "click",
-        () => {
-
-            if (!currentPatientId) {
-
-                showToast(
-                    "Patient record ID is missing.",
-                    "error"
-                );
-
-                return;
-
-            }
-
-
-            const base =
-                config.patientRecords ||
-                "/dentist/patient-records";
-
-
-            window.location.href =
-                `${base}/${currentPatientId}`;
-
-        }
-    );
+    modalPatientRecordButton?.addEventListener("click", () => {
+        window.openPatientRecordModal(currentPatientId);
+    });
 
 
     /* ========================================================
@@ -2241,3 +2178,118 @@ function initializeLogoutModal() {
 document.addEventListener("DOMContentLoaded", function () {
     initializeLogoutModal();
 });
+async function openPatientRecordModal(patientId) {
+    if (!patientId) {
+        console.error("Patient record ID is missing.");
+        return;
+    }
+
+    const base = (window.DentistAppointments || {}).patientRecords || "/dentist/patient-records";
+
+    let modal = document.getElementById("patientRecordModal");
+
+    if (!modal) {
+        modal = document.createElement("div");
+        modal.id = "patientRecordModal";
+        modal.className = "patient-record-modal";
+        modal.innerHTML = `
+            <div class="patient-record-backdrop" data-close-patient-record></div>
+            <section class="patient-record-panel" role="dialog" aria-modal="true"
+                     aria-labelledby="patientRecordModalTitle">
+                <header class="patient-record-header">
+                    <div>
+                        <span> PATIENT RECORD </span>
+                        <h2 id="patientRecordModalTitle">Loading record…</h2>
+                    </div>
+                    <button type="button" class="patient-record-close"
+                            data-close-patient-record aria-label="Close">×</button>
+                </header>
+                <div class="patient-record-content" id="patientRecordModalContent">
+                    <p>Loading patient information…</p>
+                </div>
+            </section>
+        `;
+        document.body.appendChild(modal);
+
+        modal.querySelectorAll("[data-close-patient-record]").forEach(button => {
+            button.addEventListener("click", () => {
+                modal.remove();
+                document.body.style.overflow = "";
+            });
+        });
+    }
+
+    modal.classList.add("show");
+modal.style.setProperty("background", "transparent", "important");
+
+const backdrop = modal.querySelector(".patient-record-backdrop");
+if (backdrop) {
+    backdrop.style.setProperty(
+        "background",
+        "rgba(255, 192, 203, 0.75)",
+        "important"
+    );
+    backdrop.style.setProperty("backdrop-filter", "blur(4px)", "important");
+}    
+document.body.style.overflow = "hidden";
+
+    const content = modal.querySelector("#patientRecordModalContent");
+    const title = modal.querySelector("#patientRecordModalTitle");
+    content.textContent = "Loading patient information…";
+
+    try {
+        const response = await fetch(
+            `${base}/${encodeURIComponent(patientId)}`,
+            { headers: { Accept: "application/json" } }
+        );
+
+        if (!response.ok) throw new Error("Unable to load patient record.");
+
+        const result = await response.json();
+        if (!result.success || !result.patient) {
+            throw new Error("Patient record was not returned.");
+        }
+
+        const patient = result.patient;
+        title.textContent = patient.patient_name || "Patient Record";
+
+        const field = (label, value) => `
+            <div class="patient-record-field">
+                <span>${label}</span>
+                <strong>${escapePatientRecordText(value)}</strong>
+            </div>`;
+
+        content.innerHTML = `
+            <div class="patient-record-grid">
+                ${field("Patient ID", patient.id)}
+                ${field("Age", patient.age)}
+                ${field("Sex", patient.sex)}
+                ${field("Civil Status", patient.civil_status)}
+                ${field("Contact Number", patient.tel_no)}
+                ${field("Email", patient.email)}
+                ${field("Occupation", patient.occupation)}
+                ${field("Address", patient.address)}
+            </div>
+            <h3>Medical History</h3>
+            <div class="patient-record-grid">
+                ${field("Heart Condition", patient.heart_condition ? patient.heart_condition_details || "Yes" : "No")}
+                ${field("Allergy", patient.allergy ? patient.allergy_details || "Yes" : "No")}
+                ${field("Diabetes", patient.diabetes ? patient.diabetes_details || "Yes" : "No")}
+                ${field("Hypertension", patient.hypertension ? patient.hypertension_details || "Yes" : "No")}
+                ${field("Bleeding Tendency", patient.bleeding_tendency ? patient.bleeding_tendency_details || "Yes" : "No")}
+                ${field("Asthma", patient.asthma ? patient.asthma_details || "Yes" : "No")}
+                ${field("Other Conditions", patient.other_conditions)}
+            </div>
+        `;
+    } catch (error) {
+        content.textContent = error.message || "Could not load patient record.";
+    }
+}
+
+window.openPatientRecordModal = openPatientRecordModal;
+
+function escapePatientRecordText(value) {
+    const element = document.createElement("span");
+    element.textContent = value == null || value === "" ? "—" : String(value);
+    return element.innerHTML;
+}

@@ -527,6 +527,158 @@
 }
 
 
+    
+
+        /* STOCK MOVEMENTS TABLE BORDER AND PAGINATION OVERRIDE */
+        .stock-panel {
+            border: 1px solid #e8c8d7 !important;
+            border-radius: 14px !important;
+            overflow: hidden;
+        }
+
+        .stock-table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid #e8c8d7;
+            border-radius: 10px;
+        }
+
+        .stock-table {
+            width: 100%;
+            min-width: 1050px;
+            border-collapse: separate !important;
+            border-spacing: 0;
+            border: 1px solid #e8c8d7 !important;
+            background: #fff;
+        }
+
+        .stock-table th,
+        .stock-table td {
+            padding: 14px 12px !important;
+            border-right: 1px solid #ead5df !important;
+            border-bottom: 1px solid #ead5df !important;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        .stock-table th:last-child,
+        .stock-table td:last-child {
+            border-right: 0 !important;
+        }
+
+        .stock-table thead th {
+            background: #fff0f6 !important;
+            color: #8c3158 !important;
+            border-bottom: 2px solid #e8b9ce !important;
+            font-weight: 800 !important;
+        }
+
+        .stock-table tbody tr:nth-child(even) {
+            background: #fffafd;
+        }
+
+        .stock-table tbody tr:hover {
+            background: #fff0f6 !important;
+        }
+
+        .stock-table tbody tr:last-child td {
+            border-bottom: 0 !important;
+        }
+
+        .stock-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 10px;
+            border: 1px solid #e8dce3;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: capitalize;
+        }
+
+        .stock-badge.in,
+        .stock-badge.return {
+            border-color: #a8dfc0;
+            background: #e9f9ef;
+            color: #187743;
+        }
+
+        .stock-badge.out,
+        .stock-badge.expired,
+        .stock-badge.damaged {
+            border-color: #f2b8c5;
+            background: #fff0f3;
+            color: #b42345;
+        }
+
+        .stock-badge.adjustment {
+            border-color: #f1d08b;
+            background: #fff6df;
+            color: #8c5b00;
+        }
+
+        .stock-pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 16px 0 0;
+            margin-top: 18px;
+            border-top: 1px solid #ead5df;
+        }
+
+        .stock-pagination nav {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .stock-pagination nav a,
+        .stock-pagination nav span {
+            display: inline-flex;
+            min-width: 38px;
+            min-height: 36px;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            padding: 7px 11px;
+            margin: 0;
+            border: 1px solid #e8c8d7;
+            border-radius: 8px;
+            background: #fff;
+            color: #c91361;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .stock-pagination nav span[aria-current="page"] {
+            border-color: #ec1674;
+            background: #ec1674;
+            color: #fff;
+            font-weight: 800;
+        }
+
+        .stock-pagination nav a:hover {
+            border-color: #ec1674;
+            background: #fff0f6;
+        }
+
+        .stock-empty {
+            padding: 35px !important;
+            text-align: center !important;
+            color: #68758f;
+        }
+
+        @media (max-width: 600px) {
+            .stock-pagination {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+
     </style>
 
 </head>
@@ -572,7 +724,7 @@
 
                             <div class="cashier-dropdown-divider"></div>
 
-                            <a href="{{ route('pos.profile') }}"
+                            <a href="{{ route('pos.settings') }}"
                                class="cashier-dropdown-item">
                                 <i class="fa-regular fa-user"></i>
                                 <span>My Profile</span>

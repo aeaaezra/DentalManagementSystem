@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
             "click",
             function () {
 
-                openModal();
+                window.location.href = "/dentist/login";
 
             }
         );

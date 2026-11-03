@@ -482,20 +482,38 @@ document.addEventListener(
                             // ALTERNATIVE QR CODE
                             // ----------------------------------------
 
-                            else if (
-                                data.qrCode
-                            ) {
+                            else if (data.qrCode) {
 
-                                qrContainer.innerHTML =
-                                    data.qrCode;
+                                const qrValue = String(data.qrCode).trim();
 
+                                if (/^data:image\//i.test(qrValue)) {
+                                    const image = document.createElement("img");
+                                    image.src = qrValue;
+                                    image.alt = "Google Authenticator QR Code";
+                                    image.width = 220;
+                                    image.height = 220;
+                                    image.style.maxWidth = "100%";
+                                    image.style.maxHeight = "100%";
+                                    image.style.objectFit = "contain";
+                                    image.style.display = "block";
 
-                                console.log(
-                                    "QR source: qrCode"
-                                );
+                                    qrContainer.replaceChildren(image);
+
+                                    console.log("QR source: qrCode data URL");
+                                } else if (
+                                    /^<svg[\s>]/i.test(qrValue) ||
+                                    /^<\?xml/i.test(qrValue)
+                                ) {
+                                    qrContainer.innerHTML = qrValue;
+                                    console.log("QR source: raw SVG in qrCode");
+                                } else {
+                                    throw new Error(
+                                        "The QR code response has an unsupported format."
+                                    );
+                                }
                             }
 
-
+                            
                             // ----------------------------------------
                             // QR IMAGE URL
                             // ----------------------------------------

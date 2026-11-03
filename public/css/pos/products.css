@@ -1,5 +1,6 @@
 
 /* =====================================================
+
    SHINE & SMILE POS — PRODUCTS PAGE
 ===================================================== */
 
@@ -444,4 +445,32 @@
 
 .products-topbar .cashier-chevron {
     transition: transform 0.18s ease;
+}
+/* ===== POS PRODUCTS TABLE BORDERS ===== */
+
+.sh-products-table,
+.products-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #e5cbd7;
+}
+
+.sh-products-table th,
+.sh-products-table td,
+.products-table th,
+.products-table td {
+    border: 1px solid #e5cbd7;
+    padding: 14px 16px;
+}
+
+.sh-products-table th,
+.products-table th {
+    background: #fff0f5;
+    color: #71334d;
+    font-weight: 800;
+}
+
+.sh-products-table tbody tr:hover,
+.products-table tbody tr:hover {
+    background: #fff5f8;
 }

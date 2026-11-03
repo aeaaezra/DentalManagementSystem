@@ -539,52 +539,63 @@ const signatureImage =
     document.getElementById("overviewPatientSignature");
 
 const signaturePlaceholder =
-    document.getElementById(
-        "overviewPatientSignaturePlaceholder"
-    );
+    document.getElementById("overviewPatientSignaturePlaceholder");
 
-if (
-    patient.patient_signature &&
-    String(patient.patient_signature).trim() !== ""
-) {
-    let signatureUrl =
-        String(patient.patient_signature).trim();
+const signatureValue =
+    String(patient.patient_signature || "").trim();
 
-    // Database stores paths such as:
-    // signatures/patient-record-xxxxx.png
-    //
-    // Convert to:
-    // /storage/signatures/patient-record-xxxxx.png
-    if (
-        !signatureUrl.startsWith("http://") &&
-        !signatureUrl.startsWith("https://") &&
-        !signatureUrl.startsWith("/")
-    ) {
-        signatureUrl =
-            "/storage/" +
-            signatureUrl.replace(/^\/+/, "");
-    }
+console.log("[Patient Signature Diagnostic]", {
+    patientId: patient.id,
+    signaturePresent: signatureValue.length > 0,
+    signatureFormat: signatureValue.substring(0, 30)
+});
 
-    if (signatureImage) {
-        signatureImage.src = signatureUrl;
-        signatureImage.style.display = "block";
-    }
-
-    if (signaturePlaceholder) {
-        signaturePlaceholder.style.display = "none";
-    }
-
-} else {
-
-    if (signatureImage) {
+if (signatureImage) {
+    signatureImage.onerror = function () {
         signatureImage.removeAttribute("src");
         signatureImage.style.display = "none";
-    }
 
-    if (signaturePlaceholder) {
-        signaturePlaceholder.style.display = "inline";
-        signaturePlaceholder.textContent =
-            "No signature added";
+        if (signaturePlaceholder) {
+            signaturePlaceholder.style.display = "inline";
+            signaturePlaceholder.textContent = "Signature could not be loaded";
+        }
+    };
+
+    if (signatureValue.startsWith("data:image/")) {
+        // The database contains a Base64 image data URI.
+        signatureImage.src = signatureValue;
+        signatureImage.style.display = "block";
+
+        if (signaturePlaceholder) {
+            signaturePlaceholder.style.display = "none";
+        }
+    } else if (signatureValue !== "") {
+        // The database contains a stored signature file path or URL.
+        let signatureUrl = signatureValue;
+
+        if (
+            !signatureUrl.startsWith("http://") &&
+            !signatureUrl.startsWith("https://") &&
+            !signatureUrl.startsWith("/")
+        ) {
+            signatureUrl =
+                "/storage/" + signatureUrl.replace(/^\/+/, "");
+        }
+
+        signatureImage.src = signatureUrl;
+        signatureImage.style.display = "block";
+
+        if (signaturePlaceholder) {
+            signaturePlaceholder.style.display = "none";
+        }
+    } else {
+        signatureImage.removeAttribute("src");
+        signatureImage.style.display = "none";
+
+        if (signaturePlaceholder) {
+            signaturePlaceholder.style.display = "inline";
+            signaturePlaceholder.textContent = "No signature added";
+        }
     }
 }
 
@@ -599,7 +610,32 @@ validAppointments.sort(
 );
 
 const lastVisit = validAppointments[0];
+// Populate Appointment Details from the database.
+const appointmentDetails = validAppointments[0] || null;
 
+setText(
+    "recordAppointmentService",
+    appointmentDetails?.service?.service_name ||
+    appointmentDetails?.service_name ||
+    "—"
+);
+
+setText(
+    "recordAppointmentDate",
+    appointmentDetails?.appointment_date
+        ? formatDate(appointmentDetails.appointment_date)
+        : "—"
+);
+
+setText(
+    "recordAppointmentTime",
+    appointmentDetails?.appointment_time || "—"
+);
+
+setText(
+    "recordAppointmentReason",
+    appointmentDetails?.reason || "—"
+);
         setText(
             "recordPatientLastVisit",
             lastVisit
@@ -743,8 +779,13 @@ const lastVisit = validAppointments[0];
             !falseValues.includes(value);
 
         if (checkbox) {
-            checkbox.checked =
-                hasCondition;
+            checkbox.checked = hasCondition;
+
+            const card = checkbox.closest(".medical-ui-item");
+
+            if (card) {
+                card.classList.toggle("has-condition", hasCondition);
+            }
         }
 
         if (valueElement) {
@@ -827,6 +868,14 @@ const lastVisit = validAppointments[0];
         body.innerHTML =
             treatments.map(treatment => {
 
+                const toothNumbers = Array.isArray(treatment.tooth_numbers)
+                    ? treatment.tooth_numbers.join(", ")
+                    : (
+                        treatment.tooth_number ||
+                        treatment.tooth ||
+                        "—"
+                    );
+
                 const status =
                     String(
                         treatment.status ||
@@ -857,9 +906,7 @@ const lastVisit = validAppointments[0];
 
                         <td>
                             ${escapeHtml(
-                                treatment.tooth_number ||
-                                treatment.tooth ||
-                                "—"
+                                toothNumbers
                             )}
                         </td>
 
@@ -2110,87 +2157,133 @@ const lastVisit = validAppointments[0];
         );
 
 
-    const treatmentForm =
-        $("#treatmentForm");
+    const treatmentForm = $("#treatmentForm");
+    const procedureRows = $("#treatmentProcedureRows");
+    const procedureTemplate = $("#treatmentProcedureTemplate");
 
-    treatmentForm?.addEventListener(
-        "submit",
-        async event => {
+    function updateTreatmentProcedureNames() {
+        $$(".treatment-procedure-row", procedureRows).forEach((row, index) => {
+            row.querySelector("[data-service]").name = `procedures[${index}][service_id]`;
+            row.querySelectorAll("[data-tooth]").forEach(input => {
+                input.name = `procedures[${index}][tooth_numbers][]`;
+            });
+            row.querySelector("[data-amount]").name = `procedures[${index}][amount]`;
+            row.querySelector("[data-deposit]").name = `procedures[${index}][deposit]`;
+            row.querySelector(".treatment-procedure-number").textContent = `Procedure ${index + 1}`;
+            row.querySelector(".remove-treatment-procedure").disabled =
+                $$(".treatment-procedure-row", procedureRows).length === 1;
+        });
+    }
 
-            event.preventDefault();
+    function updateProcedureBalance(row) {
+        const amount = Number(row.querySelector("[data-amount]").value || 0);
+        const deposit = Number(row.querySelector("[data-deposit]").value || 0);
+        row.querySelector("[data-balance]").value = Math.max(0, amount - deposit).toFixed(2);
+    }
 
-            const patientId =
-                $("#treatmentPatientId")?.value;
+    function addTreatmentProcedure() {
+        const row = procedureTemplate.content.firstElementChild.cloneNode(true);
+        procedureRows.appendChild(row);
+        updateTreatmentProcedureNames();
+        return row;
+    }
 
-            if (!patientId) {
+    $("#addTreatmentProcedure")?.addEventListener("click", addTreatmentProcedure);
 
-                showToast(
-                    "Patient ID is missing.",
-                    "error"
-                );
+    procedureRows?.addEventListener("click", event => {
+        const removeButton = event.target.closest(".remove-treatment-procedure");
+        if (!removeButton) return;
+        const rows = $$(".treatment-procedure-row", procedureRows);
+        if (rows.length > 1) {
+            removeButton.closest(".treatment-procedure-row").remove();
+            updateTreatmentProcedureNames();
+        }
+    });
 
+    procedureRows?.addEventListener("change", event => {
+        const row = event.target.closest(".treatment-procedure-row");
+        if (!row) return;
+
+        if (event.target.matches("[data-service]")) {
+            const selected = event.target.selectedOptions[0];
+            const price = selected?.dataset.price;
+            if (price !== undefined && price !== "") {
+                row.querySelector("[data-amount]").value = Number(price).toFixed(2);
+            }
+        }
+
+        if (event.target.matches("[data-service], [data-amount], [data-deposit]")) {
+            updateProcedureBalance(row);
+        }
+    });
+
+    procedureRows?.addEventListener("input", event => {
+        const row = event.target.closest(".treatment-procedure-row");
+        if (row && event.target.matches("[data-amount], [data-deposit]")) {
+            updateProcedureBalance(row);
+        }
+    });
+
+    treatmentForm?.addEventListener("submit", async event => {
+        event.preventDefault();
+
+        const patientId = $("#treatmentPatientId")?.value;
+        if (!patientId) {
+            showToast("Patient ID is missing.", "error");
+            return;
+        }
+
+        const rows = $$(".treatment-procedure-row", procedureRows);
+        if (!rows.length) {
+            showToast("Add at least one procedure.", "error");
+            return;
+        }
+
+        for (const [index, row] of rows.entries()) {
+            if (!row.querySelector("[data-service]").value) {
+                showToast(`Select a service for procedure ${index + 1}.`, "error");
+                return;
+            }
+            if (!row.querySelectorAll("[data-tooth]:checked").length) {
+                showToast(`Select at least one tooth for procedure ${index + 1}.`, "error");
                 return;
             }
 
-            const formData =
-                new FormData(
-                    treatmentForm
-                );
-
-            showLoading(
-                "Saving treatment..."
-            );
-
-            try {
-
-                const url =
-                    config.routes?.treatments
-                        ? `${config.routes.treatments}/${patientId}/treatments`
-                        : `${patientUrl(patientId)}/treatments`;
-
-                await apiRequest(
-                    url,
-                    {
-                        method: "POST",
-                        body: formData
-                    }
-                );
-
-                closeModal(
-                    $("#treatmentModal")
-                );
-
-                treatmentForm.reset();
-
-                showToast(
-                    "Treatment saved successfully.",
-                    "success"
-                );
-
-                await loadPatient(
-                    patientId
-                );
-
-            } catch (error) {
-
-                console.error(
-                    "Save treatment error:",
-                    error
-                );
-
-                showToast(
-                    error.message ||
-                    "Unable to save treatment.",
-                    "error"
-                );
-
-            } finally {
-
-                hideLoading();
+            const amount = Number(row.querySelector("[data-amount]").value);
+            const deposit = Number(row.querySelector("[data-deposit]").value);
+            if (!Number.isFinite(amount) || amount < 0 || !Number.isFinite(deposit) || deposit < 0 || deposit > amount) {
+                showToast(`Check the amount and deposit for procedure ${index + 1}.`, "error");
+                return;
             }
         }
-    );
 
+        updateTreatmentProcedureNames();
+        const formData = new FormData(treatmentForm);
+
+        showLoading("Saving procedures...");
+        try {
+            const url = config.routes?.treatments
+                ? `${config.routes.treatments}/${patientId}/treatments`
+                : `${patientUrl(patientId)}/treatments`;
+
+            await apiRequest(url, { method: "POST", body: formData });
+
+            closeModal($("#treatmentModal"));
+            treatmentForm.reset();
+            procedureRows.innerHTML = "";
+            addTreatmentProcedure();
+
+            showToast("Procedures saved successfully.", "success");
+            await loadPatient(patientId);
+        } catch (error) {
+            console.error("Save treatment error:", error);
+            showToast(error.message || "Unable to save procedures.", "error");
+        } finally {
+            hideLoading();
+        }
+    });
+
+    addTreatmentProcedure();
 
     $("#addPrescriptionButton")
         ?.addEventListener(
